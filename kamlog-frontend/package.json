@@ -1,0 +1,52 @@
+{
+  "name": "kamlog-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest --watch"
+  },
+  "dependencies": {
+    "next": "14.2.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.5.2",
+
+    "@tanstack/react-table": "^8.17.3",
+    "axios": "^1.7.2",
+    "swr": "^2.2.5",
+    "zustand": "^4.5.2",
+
+    "react-hook-form": "^7.52.0",
+    "zod": "^3.23.8",
+    "@hookform/resolvers": "^3.6.0",
+
+    "next-auth": "^5.0.0-beta.19",
+    "jose": "^5.6.2",
+
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-toast": "^1.2.1",
+    "shadcn-ui": "^0.8.0",
+    "tailwindcss": "^3.4.4",
+    "lucide-react": "^0.395.0",
+
+    "recharts": "^2.12.7",
+    "date-fns": "^3.6.0",
+    "react-day-picker": "^8.10.1",
+
+    "@react-pdf/renderer": "^3.4.4",
+    "next-intl": "^3.15.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/node": "^20.14.9",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.4",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^16.0.0"
+  }
+}
