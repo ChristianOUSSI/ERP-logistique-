@@ -2,7 +2,12 @@
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    serverActions: true,
+    serverActions: {
+    allowedOrigin: 'http://localhost:3000',
+    },
+  },
+  images: {
+    domains: ['localhost'],
   },
 };
 
