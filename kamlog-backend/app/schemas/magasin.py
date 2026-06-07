@@ -1,5 +1,5 @@
 # app/schemas/magasin.py - Schémas Pydantic pour le module K-magasin
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, ConfigDict
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
@@ -54,7 +54,20 @@ class MagasinBase(BaseModel):
 
 
 class MagasinCreate(MagasinBase):
-    pass
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "code": "MAG-001",
+                "nom": "Magasin Principal",
+                "adresse": "123 Rue du Port",
+                "ville": "Douala",
+                "pays": "Cameroun",
+                "telephone": "+237 123 456 789",
+                "email": "magasin@kamlog.cm",
+                "est_actif": True
+            }
+        }
+    )
 
 
 class MagasinUpdate(BaseModel):
@@ -138,7 +151,19 @@ class ArticleBase(BaseModel):
 
 
 class ArticleCreate(ArticleBase):
-    pass
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "code_article": "1000001",
+                "nom": "Conteneur 20 pieds",
+                "description": "Conteneur maritime standard 20 pieds",
+                "unite_mesure": "UDB",
+                "poids_unitaire": 2500.0,
+                "volume_unitaire": 33.0,
+                "est_actif": True
+            }
+        }
+    )
 
 
 class ArticleUpdate(BaseModel):
@@ -190,6 +215,24 @@ class DeclarationBase(BaseModel):
 
 class DeclarationCreate(DeclarationBase):
     lignes: List[LigneDeclarationCreate] = []
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "client_id": 1,
+                "date_arrivee_prevue": "2026-06-15T10:00:00",
+                "statut": "BROUILLON",
+                "notes": "Déclaration de marchandise en provenance de Chine",
+                "lignes": [
+                    {
+                        "article_id": 1,
+                        "quantite_declaree": 100.0,
+                        "unite_mesure": "UDB"
+                    }
+                ]
+            }
+        }
+    )
 
 
 class DeclarationUpdate(BaseModel):
@@ -243,6 +286,24 @@ class ReceptionBase(BaseModel):
 
 class ReceptionCreate(ReceptionBase):
     lignes: List[LigneReceptionCreate] = []
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "declaration_id": 1,
+                "magasin_id": 1,
+                "statut": "EN_COURS",
+                "notes": "Réception de marchandise déclarée",
+                "lignes": [
+                    {
+                        "article_id": 1,
+                        "quantite_recue": 95.0,
+                        "unite_mesure": "UDB"
+                    }
+                ]
+            }
+        }
+    )
 
 
 class ReceptionUpdate(BaseModel):
@@ -327,6 +388,28 @@ class CommandeBase(BaseModel):
 
 class CommandeCreate(CommandeBase):
     lignes: List[LigneCommandeCreate] = []
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "client_id": 1,
+                "date_livraison_souhaitee": "2026-06-20T14:00:00",
+                "statut": "EN_ATTENTE",
+                "est_verrouille": True,
+                "paiement_valide": False,
+                "notes": "Commande urgente pour client VIP",
+                "lignes": [
+                    {
+                        "article_id": 1,
+                        "quantite_demandee": 50.0,
+                        "quantite_livree": 0.0,
+                        "unite_mesure": "UDB",
+                        "prix_unitaire": 150000.00
+                    }
+                ]
+            }
+        }
+    )
 
 
 class CommandeUpdate(BaseModel):
@@ -384,6 +467,26 @@ class BandeLivraisonBase(BaseModel):
 
 class BandeLivraisonCreate(BandeLivraisonBase):
     lignes: List[LigneBandeLivraisonCreate] = []
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "commande_id": 1,
+                "magasin_id": 1,
+                "date_livraison": "2026-06-21T09:00:00",
+                "statut": "EN_PREPARATION",
+                "nombre_camions": 3,
+                "notes": "Livraison avec camions de 20 tonnes",
+                "lignes": [
+                    {
+                        "article_id": 1,
+                        "quantite": 25.0,
+                        "unite_mesure": "UDB"
+                    }
+                ]
+            }
+        }
+    )
 
 
 class BandeLivraisonUpdate(BaseModel):

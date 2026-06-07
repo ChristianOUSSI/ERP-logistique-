@@ -7,13 +7,17 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from app.database import engine, Base
-from app.routers import auth, tiers, transport, finance, parc, documents, alerts
+from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin
 from app.config import settings
+from app.utils.logger import setup_logger
+from app.utils.monitoring import setup_monitoring
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup : vérifier connexion DB
+    # Startup : initialiser logger, monitoring et vérifier connexion DB
+    setup_logger()
+    setup_monitoring(app)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -41,8 +45,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
 )
 
 # Routers
@@ -53,8 +57,58 @@ app.include_router(finance.router, prefix="/api/finance", tags=["Finance"])
 app.include_router(parc.router, prefix="/api/parc", tags=["Parc"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
+app.include_router(magasin.router, tags=["K-Magasin"])
 
 
 @app.get('/api/health')
 async def health_check():
+    """Health check basique."""
     return {"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}
+
+
+@app.get('/api/health/detailed')
+async def detailed_health_check():
+    """Health check détaillé avec vérification des dépendances."""
+    checks = {
+        "status": "ok",
+        "service": "KAMLOG EM-ERP",
+        "version": "1.0.0",
+        "checks": {}
+    }
+    
+    # Vérifier la base de données
+    try:
+        async with engine.begin() as conn:
+            await conn.execute("SELECT 1")
+        checks["checks"]["database"] = {"status": "ok", "message": "PostgreSQL connecté"}
+    except Exception as e:
+        checks["checks"]["database"] = {"status": "error", "message": str(e)}
+        checks["status"] = "degraded"
+    
+    # Vérifier Redis (si configuré)
+    try:
+        import redis.asyncio as redis
+        redis_client = await redis.from_url(settings.REDIS_URL)
+        await redis_client.ping()
+        await redis_client.close()
+        checks["checks"]["redis"] = {"status": "ok", "message": "Redis connecté"}
+    except Exception as e:
+        checks["checks"]["redis"] = {"status": "error", "message": str(e)}
+        checks["status"] = "degraded"
+    
+    # Vérifier MinIO (si configuré)
+    try:
+        from minio import Minio
+        minio_client = Minio(
+            settings.MINIO_ENDPOINT,
+            access_key=settings.MINIO_ACCESS_KEY,
+            secret_key=settings.MINIO_SECRET_KEY,
+            secure=settings.MINIO_SECURE
+        )
+        minio_client.bucket_exists(settings.MINIO_BUCKET_DOCUMENTS)
+        checks["checks"]["minio"] = {"status": "ok", "message": "MinIO connecté"}
+    except Exception as e:
+        checks["checks"]["minio"] = {"status": "error", "message": str(e)}
+        checks["status"] = "degraded"
+    
+    return checks

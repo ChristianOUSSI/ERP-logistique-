@@ -1,11 +1,17 @@
 # app/services/magasin_service.py - Service métier pour le module K-magasin
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, selectinload
 from typing import List, Optional
 from decimal import Decimal
 from datetime import datetime
 import random
 
+from app.exceptions import (
+    InsufficientStockError,
+    InvalidConversionError,
+    BusinessRuleViolationError
+)
+from app.utils.audit import AuditService
 from app.models.magasin import (
     Magasin, ClientMagasin, Article, Declaration, LigneDeclaration,
     Reception, LigneReception, Stock, Commande, LigneCommande,
@@ -193,13 +199,24 @@ class ConversionService:
         if unite == UniteMesure.UDB:
             return quantite
         
-        if unite == UniteMesure.KG and article.poids_unitaire:
+        if unite == UniteMesure.KG:
+            if not article.poids_unitaire:
+                raise InvalidConversionError(f"Poids unitaire non défini pour l'article {article.code_article}. Impossible de convertir KG vers UDB.")
             return quantite / Decimal(str(article.poids_unitaire))
         
-        if unite == UniteMesure.TONNE and article.poids_unitaire:
+        if unite == UniteMesure.TONNE:
+            if not article.poids_unitaire:
+                raise InvalidConversionError(f"Poids unitaire non défini pour l'article {article.code_article}. Impossible de convertir TONNE vers UDB.")
             return (quantite * Decimal("1000")) / Decimal(str(article.poids_unitaire))
         
-        if unite == UniteMesure.M3 and article.volume_unitaire:
+        if unite == UniteMesure.M3:
+            if not article.volume_unitaire:
+                raise InvalidConversionError(f"Volume unitaire non défini pour l'article {article.code_article}. Impossible de convertir M3 vers UDB.")
+            return quantite / Decimal(str(article.volume_unitaire))
+        
+        if unite == UniteMesure.M2:
+            if not article.volume_unitaire:
+                raise InvalidConversionError(f"Volume unitaire non défini pour l'article {article.code_article}. Impossible de convertir M2 vers UDB.")
             return quantite / Decimal(str(article.volume_unitaire))
         
         # Si pas de conversion possible, retourne la quantité originale
@@ -211,13 +228,24 @@ class ConversionService:
         if unite_cible == UniteMesure.UDB:
             return quantite_udb
         
-        if unite_cible == UniteMesure.KG and article.poids_unitaire:
+        if unite_cible == UniteMesure.KG:
+            if not article.poids_unitaire:
+                raise InvalidConversionError(f"Poids unitaire non défini pour l'article {article.code_article}. Impossible de convertir UDB vers KG.")
             return quantite_udb * Decimal(str(article.poids_unitaire))
         
-        if unite_cible == UniteMesure.TONNE and article.poids_unitaire:
+        if unite_cible == UniteMesure.TONNE:
+            if not article.poids_unitaire:
+                raise InvalidConversionError(f"Poids unitaire non défini pour l'article {article.code_article}. Impossible de convertir UDB vers TONNE.")
             return (quantite_udb * Decimal(str(article.poids_unitaire))) / Decimal("1000")
         
-        if unite_cible == UniteMesure.M3 and article.volume_unitaire:
+        if unite_cible == UniteMesure.M3:
+            if not article.volume_unitaire:
+                raise InvalidConversionError(f"Volume unitaire non défini pour l'article {article.code_article}. Impossible de convertir UDB vers M3.")
+            return quantite_udb * Decimal(str(article.volume_unitaire))
+        
+        if unite_cible == UniteMesure.M2:
+            if not article.volume_unitaire:
+                raise InvalidConversionError(f"Volume unitaire non défini pour l'article {article.code_article}. Impossible de convertir UDB vers M2.")
             return quantite_udb * Decimal(str(article.volume_unitaire))
         
         return quantite_udb
@@ -237,7 +265,9 @@ class DeclarationService:
 
     @staticmethod
     def get_all_declarations(db: Session, skip: int = 0, limit: int = 100) -> List[Declaration]:
-        return db.query(Declaration).offset(skip).limit(limit).all()
+        return db.query(Declaration).options(
+            selectinload(Declaration.lignes)
+        ).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_declaration(db: Session, declaration_id: int) -> Optional[Declaration]:
@@ -256,33 +286,38 @@ class DeclarationService:
         # Générer le numéro de BL
         numero_bl = DeclarationService.generate_numero_bl(db)
         
-        db_declaration = Declaration(
-            numero_bl=numero_bl,
-            cree_par=cree_par,
-            **declaration.dict(exclude={'lignes'})
-        )
-        db.add(db_declaration)
-        db.flush()
+        try:
+            # Transaction explicite
+            with db.begin():
+                db_declaration = Declaration(
+                    numero_bl=numero_bl,
+                    cree_par=cree_par,
+                    **declaration.dict(exclude={'lignes'})
+                )
+                db.add(db_declaration)
+                db.flush()
 
-        # Ajouter les lignes avec conversion en UDB
-        for ligne_data in declaration.lignes:
-            article = ArticleService.get_article(db, ligne_data.article_id)
-            quantite_udb = ConversionService.convertir_vers_udb(
-                ligne_data.quantite_declaree,
-                ligne_data.unite_mesure,
-                article
-            )
-            
-            db_ligne = LigneDeclaration(
-                declaration_id=db_declaration.id,
-                quantite_udb=quantite_udb,
-                **ligne_data.dict()
-            )
-            db.add(db_ligne)
+                # Ajouter les lignes avec conversion en UDB
+                for ligne_data in declaration.lignes:
+                    article = ArticleService.get_article(db, ligne_data.article_id)
+                    quantite_udb = ConversionService.convertir_vers_udb(
+                        ligne_data.quantite_declaree,
+                        ligne_data.unite_mesure,
+                        article
+                    )
+                    
+                    db_ligne = LigneDeclaration(
+                        declaration_id=db_declaration.id,
+                        quantite_udb=quantite_udb,
+                        **ligne_data.dict()
+                    )
+                    db.add(db_ligne)
 
-        db.commit()
-        db.refresh(db_declaration)
-        return db_declaration
+            db.refresh(db_declaration)
+            return db_declaration
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur lors de la création de la déclaration: {str(e)}")
 
     @staticmethod
     def update_declaration(db: Session, declaration_id: int, declaration: DeclarationUpdate) -> Optional[Declaration]:
@@ -329,7 +364,9 @@ class ReceptionService:
 
     @staticmethod
     def get_all_receptions(db: Session, skip: int = 0, limit: int = 100) -> List[Reception]:
-        return db.query(Reception).offset(skip).limit(limit).all()
+        return db.query(Reception).options(
+            selectinload(Reception.lignes)
+        ).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_reception(db: Session, reception_id: int) -> Optional[Reception]:
@@ -344,40 +381,45 @@ class ReceptionService:
         return db.query(Reception).filter(Reception.magasin_id == magasin_id).all()
 
     @staticmethod
-    def create_reception(db: Session, reception: ReceptionCreate, recu_par: str) -> Reception:
+    def create_reception(db: Session, reception: ReceptionCreate, recu_par: str, user_id: Optional[int] = None) -> Reception:
         # Générer le numéro de réception
         numero_reception = ReceptionService.generate_numero_reception(db)
         
-        db_reception = Reception(
-            numero_reception=numero_reception,
-            recu_par=recu_par,
-            **reception.dict(exclude={'lignes'})
-        )
-        db.add(db_reception)
-        db.flush()
+        try:
+            # Transaction explicite
+            with db.begin():
+                db_reception = Reception(
+                    numero_reception=numero_reception,
+                    recu_par=recu_par,
+                    **reception.dict(exclude={'lignes'})
+                )
+                db.add(db_reception)
+                db.flush()
 
-        # Ajouter les lignes avec conversion en UDB
-        for ligne_data in reception.lignes:
-            article = ArticleService.get_article(db, ligne_data.article_id)
-            quantite_udb = ConversionService.convertir_vers_udb(
-                ligne_data.quantite_recue,
-                ligne_data.unite_mesure,
-                article
-            )
-            
-            db_ligne = LigneReception(
-                reception_id=db_reception.id,
-                quantite_udb=quantite_udb,
-                **ligne_data.dict()
-            )
-            db.add(db_ligne)
+                # Ajouter les lignes avec conversion en UDB
+                for ligne_data in reception.lignes:
+                    article = ArticleService.get_article(db, ligne_data.article_id)
+                    quantite_udb = ConversionService.convertir_vers_udb(
+                        ligne_data.quantite_recue,
+                        ligne_data.unite_mesure,
+                        article
+                    )
+                    
+                    db_ligne = LigneReception(
+                        reception_id=db_reception.id,
+                        quantite_udb=quantite_udb,
+                        **ligne_data.dict()
+                    )
+                    db.add(db_ligne)
 
-        # Mettre à jour le stock
-        StockService.mettre_a_jour_stock_apres_reception(db, db_reception)
+                # Mettre à jour le stock avec audit trail
+                StockService.mettre_a_jour_stock_apres_reception(db, db_reception, user_id)
 
-        db.commit()
-        db.refresh(db_reception)
-        return db_reception
+            db.refresh(db_reception)
+            return db_reception
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur lors de la création de la réception: {str(e)}")
 
     @staticmethod
     def update_reception(db: Session, reception_id: int, reception: ReceptionUpdate) -> Optional[Reception]:
@@ -466,14 +508,28 @@ class StockService:
         return query.all()
 
     @staticmethod
-    def mettre_a_jour_stock_apres_reception(db: Session, reception: Reception):
+    def mettre_a_jour_stock_apres_reception(db: Session, reception: Reception, user_id: Optional[int] = None):
         """Met à jour le stock après une réception"""
         for ligne in reception.lignes:
             stock = StockService.get_stock(db, reception.magasin_id, ligne.article_id)
             
             if stock:
+                quantite_avant = float(stock.quantite_disponible)
                 stock.quantite_disponible += ligne.quantite_recue
                 stock.quantite_udb += ligne.quantite_udb
+                quantite_apres = float(stock.quantite_disponible)
+                
+                # Audit trail
+                AuditService.log_stock_modification(
+                    db=db,
+                    action="reception",
+                    article_id=ligne.article_id,
+                    magasin_id=reception.magasin_id,
+                    quantite_avant=quantite_avant,
+                    quantite_apres=quantite_apres,
+                    user_id=user_id,
+                    raison=f"Réception {reception.numero_reception}"
+                )
             else:
                 stock = Stock(
                     magasin_id=reception.magasin_id,
@@ -482,6 +538,18 @@ class StockService:
                     quantite_udb=ligne.quantite_udb
                 )
                 db.add(stock)
+                
+                # Audit trail pour création de stock
+                AuditService.log_stock_modification(
+                    db=db,
+                    action="stock_creation",
+                    article_id=ligne.article_id,
+                    magasin_id=reception.magasin_id,
+                    quantite_avant=0.0,
+                    quantite_apres=float(ligne.quantite_recue),
+                    user_id=user_id,
+                    raison=f"Création stock via réception {reception.numero_reception}"
+                )
 
     @staticmethod
     def annuler_reception_stock(db: Session, reception: Reception):
@@ -493,15 +561,36 @@ class StockService:
                 stock.quantite_udb -= ligne.quantite_udb
 
     @staticmethod
-    def mettre_a_jour_stock_apres_livraison(db: Session, bande: BandeLivraison):
+    def mettre_a_jour_stock_apres_livraison(db: Session, bande: BandeLivraison, user_id: Optional[int] = None):
         """Met à jour le stock après une livraison"""
         for ligne in bande.lignes:
             stock = StockService.get_stock(db, bande.magasin_id, ligne.article_id)
             if stock:
                 article = ArticleService.get_article(db, ligne.article_id)
                 quantite_udb = ConversionService.convertir_vers_udb(ligne.quantite, ligne.unite_mesure, article)
+                
+                # Validation: empêcher le stock de devenir négatif
+                if stock.quantite_disponible < ligne.quantite:
+                    raise InsufficientStockError(f"Stock insuffisant pour article {article.code_article}. Disponible: {stock.quantite_disponible}, Demandé: {ligne.quantite}")
+                if stock.quantite_udb < quantite_udb:
+                    raise InsufficientStockError(f"Stock UDB insuffisant pour article {article.code_article}. Disponible: {stock.quantite_udb}, Demandé: {quantite_udb}")
+                
+                quantite_avant = float(stock.quantite_disponible)
                 stock.quantite_disponible -= ligne.quantite
                 stock.quantite_udb -= quantite_udb
+                quantite_apres = float(stock.quantite_disponible)
+                
+                # Audit trail
+                AuditService.log_stock_modification(
+                    db=db,
+                    action="livraison",
+                    article_id=ligne.article_id,
+                    magasin_id=bande.magasin_id,
+                    quantite_avant=quantite_avant,
+                    quantite_apres=quantite_apres,
+                    user_id=user_id,
+                    raison=f"Bande de livraison {bande.numero_bande}"
+                )
 
 
 class CommandeService:
@@ -518,7 +607,9 @@ class CommandeService:
 
     @staticmethod
     def get_all_commandes(db: Session, skip: int = 0, limit: int = 100) -> List[Commande]:
-        return db.query(Commande).offset(skip).limit(limit).all()
+        return db.query(Commande).options(
+            selectinload(Commande.lignes)
+        ).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_commande(db: Session, commande_id: int) -> Optional[Commande]:
@@ -540,25 +631,30 @@ class CommandeService:
         # Générer le numéro de commande
         numero_commande = CommandeService.generate_numero_commande(db)
         
-        db_commande = Commande(
-            numero_commande=numero_commande,
-            cree_par=cree_par,
-            **commande.dict(exclude={'lignes'})
-        )
-        db.add(db_commande)
-        db.flush()
+        try:
+            # Transaction explicite
+            with db.begin():
+                db_commande = Commande(
+                    numero_commande=numero_commande,
+                    cree_par=cree_par,
+                    **commande.dict(exclude={'lignes'})
+                )
+                db.add(db_commande)
+                db.flush()
 
-        # Ajouter les lignes
-        for ligne_data in commande.lignes:
-            db_ligne = LigneCommande(
-                commande_id=db_commande.id,
-                **ligne_data.dict()
-            )
-            db.add(db_ligne)
+                # Ajouter les lignes
+                for ligne_data in commande.lignes:
+                    db_ligne = LigneCommande(
+                        commande_id=db_commande.id,
+                        **ligne_data.dict()
+                    )
+                    db.add(db_ligne)
 
-        db.commit()
-        db.refresh(db_commande)
-        return db_commande
+            db.refresh(db_commande)
+            return db_commande
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur lors de la création de la commande: {str(e)}")
 
     @staticmethod
     def update_commande(db: Session, commande_id: int, commande: CommandeUpdate) -> Optional[Commande]:
@@ -639,7 +735,9 @@ class BandeLivraisonService:
 
     @staticmethod
     def get_all_bandes(db: Session, skip: int = 0, limit: int = 100) -> List[BandeLivraison]:
-        return db.query(BandeLivraison).offset(skip).limit(limit).all()
+        return db.query(BandeLivraison).options(
+            selectinload(BandeLivraison.lignes)
+        ).offset(skip).limit(limit).all()
 
     @staticmethod
     def get_bande(db: Session, bande_id: int) -> Optional[BandeLivraison]:
@@ -650,32 +748,37 @@ class BandeLivraisonService:
         return db.query(BandeLivraison).filter(BandeLivraison.commande_id == commande_id).all()
 
     @staticmethod
-    def create_bande(db: Session, bande: BandeLivraisonCreate, prepare_par: str) -> BandeLivraison:
+    def create_bande(db: Session, bande: BandeLivraisonCreate, prepare_par: str, user_id: Optional[int] = None) -> BandeLivraison:
         # Générer le numéro de bande
         numero_bande = BandeLivraisonService.generate_numero_bande(db)
         
-        db_bande = BandeLivraison(
-            numero_bande=numero_bande,
-            prepare_par=prepare_par,
-            **bande.dict(exclude={'lignes'})
-        )
-        db.add(db_bande)
-        db.flush()
+        try:
+            # Transaction explicite
+            with db.begin():
+                db_bande = BandeLivraison(
+                    numero_bande=numero_bande,
+                    prepare_par=prepare_par,
+                    **bande.dict(exclude={'lignes'})
+                )
+                db.add(db_bande)
+                db.flush()
 
-        # Ajouter les lignes
-        for ligne_data in bande.lignes:
-            db_ligne = LigneBandeLivraison(
-                bande_id=db_bande.id,
-                **ligne_data.dict()
-            )
-            db.add(db_ligne)
+                # Ajouter les lignes
+                for ligne_data in bande.lignes:
+                    db_ligne = LigneBandeLivraison(
+                        bande_id=db_bande.id,
+                        **ligne_data.dict()
+                    )
+                    db.add(db_ligne)
 
-        # Mettre à jour le stock
-        StockService.mettre_a_jour_stock_apres_livraison(db, db_bande)
+                # Mettre à jour le stock avec audit trail
+                StockService.mettre_a_jour_stock_apres_livraison(db, db_bande, user_id)
 
-        db.commit()
-        db.refresh(db_bande)
-        return db_bande
+            db.refresh(db_bande)
+            return db_bande
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur lors de la création de la bande de livraison: {str(e)}")
 
     @staticmethod
     def update_bande(db: Session, bande_id: int, bande: BandeLivraisonUpdate) -> Optional[BandeLivraison]:

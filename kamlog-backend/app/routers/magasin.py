@@ -2,8 +2,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.database import get_db
+from app.utils.permissions import check_permission, get_current_user
 from app.schemas.magasin import (
     Magasin, MagasinCreate, MagasinUpdate,
     ClientMagasin, ClientMagasinCreate, ClientMagasinUpdate,
@@ -21,6 +24,7 @@ from app.services.magasin_service import (
 )
 
 
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/api/magasin", tags=["K-Magasin"])
 
 
@@ -45,12 +49,16 @@ def get_magasin(magasin_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/magasins", response_model=Magasin)
+@limiter.limit("10/minute")
+@check_permission("magasin:create")
 def create_magasin(magasin: MagasinCreate, db: Session = Depends(get_db)):
     """Crée un nouveau magasin"""
     return MagasinService.create_magasin(db, magasin)
 
 
 @router.put("/magasins/{magasin_id}", response_model=Magasin)
+@limiter.limit("20/minute")
+@check_permission("magasin:update")
 def update_magasin(magasin_id: int, magasin: MagasinUpdate, db: Session = Depends(get_db)):
     """Met à jour un magasin"""
     updated_magasin = MagasinService.update_magasin(db, magasin_id, magasin)
@@ -60,6 +68,8 @@ def update_magasin(magasin_id: int, magasin: MagasinUpdate, db: Session = Depend
 
 
 @router.delete("/magasins/{magasin_id}")
+@limiter.limit("10/minute")
+@check_permission("magasin:delete")
 def delete_magasin(magasin_id: int, db: Session = Depends(get_db)):
     """Supprime (désactive) un magasin"""
     success = MagasinService.delete_magasin(db, magasin_id)
@@ -89,12 +99,16 @@ def get_client(client_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/clients", response_model=ClientMagasin)
+@limiter.limit("10/minute")
+@check_permission("magasin:create")
 def create_client(client: ClientMagasinCreate, db: Session = Depends(get_db)):
     """Crée un nouveau client"""
     return ClientMagasinService.create_client(db, client)
 
 
 @router.put("/clients/{client_id}", response_model=ClientMagasin)
+@limiter.limit("20/minute")
+@check_permission("magasin:update")
 def update_client(client_id: int, client: ClientMagasinUpdate, db: Session = Depends(get_db)):
     """Met à jour un client"""
     updated_client = ClientMagasinService.update_client(db, client_id, client)
@@ -104,6 +118,8 @@ def update_client(client_id: int, client: ClientMagasinUpdate, db: Session = Dep
 
 
 @router.delete("/clients/{client_id}")
+@limiter.limit("10/minute")
+@check_permission("magasin:delete")
 def delete_client(client_id: int, db: Session = Depends(get_db)):
     """Supprime (désactive) un client"""
     success = ClientMagasinService.delete_client(db, client_id)
@@ -145,12 +161,16 @@ def get_article_by_code(code_article: str, db: Session = Depends(get_db)):
 
 
 @router.post("/articles", response_model=Article)
+@limiter.limit("10/minute")
+@check_permission("article:create")
 def create_article(article: ArticleCreate, db: Session = Depends(get_db)):
     """Crée un nouvel article avec génération automatique du code si non fourni"""
     return ArticleService.create_article(db, article)
 
 
 @router.put("/articles/{article_id}", response_model=Article)
+@limiter.limit("20/minute")
+@check_permission("article:update")
 def update_article(article_id: int, article: ArticleUpdate, db: Session = Depends(get_db)):
     """Met à jour un article"""
     updated_article = ArticleService.update_article(db, article_id, article)
@@ -160,6 +180,8 @@ def update_article(article_id: int, article: ArticleUpdate, db: Session = Depend
 
 
 @router.delete("/articles/{article_id}")
+@limiter.limit("10/minute")
+@check_permission("article:delete")
 def delete_article(article_id: int, db: Session = Depends(get_db)):
     """Supprime (désactive) un article"""
     success = ArticleService.delete_article(db, article_id)
@@ -201,6 +223,8 @@ def get_declaration_by_bl(numero_bl: str, db: Session = Depends(get_db)):
 
 
 @router.post("/declarations", response_model=Declaration)
+@limiter.limit("10/minute")
+@check_permission("declaration:create")
 def create_declaration(
     declaration: DeclarationCreate,
     cree_par: str = Query(..., description="Utilisateur qui crée la déclaration"),
@@ -211,6 +235,8 @@ def create_declaration(
 
 
 @router.put("/declarations/{declaration_id}", response_model=Declaration)
+@limiter.limit("20/minute")
+@check_permission("declaration:update")
 def update_declaration(declaration_id: int, declaration: DeclarationUpdate, db: Session = Depends(get_db)):
     """Met à jour une déclaration"""
     updated_declaration = DeclarationService.update_declaration(db, declaration_id, declaration)
@@ -220,6 +246,8 @@ def update_declaration(declaration_id: int, declaration: DeclarationUpdate, db: 
 
 
 @router.post("/declarations/{declaration_id}/valider", response_model=Declaration)
+@limiter.limit("30/minute")
+@check_permission("declaration:update")
 def valider_declaration(declaration_id: int, db: Session = Depends(get_db)):
     """Valide une déclaration"""
     declaration = DeclarationService.valider_declaration(db, declaration_id)
@@ -229,6 +257,8 @@ def valider_declaration(declaration_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/declarations/{declaration_id}/annuler", response_model=Declaration)
+@limiter.limit("10/minute")
+@check_permission("declaration:update")
 def annuler_declaration(declaration_id: int, db: Session = Depends(get_db)):
     """Annule une déclaration"""
     declaration = DeclarationService.annuler_declaration(db, declaration_id)
@@ -264,16 +294,21 @@ def get_reception(reception_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/receptions", response_model=Reception)
+@limiter.limit("10/minute")
+@check_permission("reception:create")
 def create_reception(
     reception: ReceptionCreate,
     recu_par: str = Query(..., description="Utilisateur qui reçoit"),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Crée une nouvelle réception avec mise à jour automatique du stock"""
-    return ReceptionService.create_reception(db, reception, recu_par)
+    return ReceptionService.create_reception(db, reception, recu_par, current_user.id)
 
 
 @router.put("/receptions/{reception_id}", response_model=Reception)
+@limiter.limit("20/minute")
+@check_permission("reception:update")
 def update_reception(reception_id: int, reception: ReceptionUpdate, db: Session = Depends(get_db)):
     """Met à jour une réception"""
     updated_reception = ReceptionService.update_reception(db, reception_id, reception)
@@ -283,6 +318,8 @@ def update_reception(reception_id: int, reception: ReceptionUpdate, db: Session 
 
 
 @router.post("/receptions/{reception_id}/completer", response_model=Reception)
+@limiter.limit("30/minute")
+@check_permission("reception:update")
 def completer_reception(reception_id: int, db: Session = Depends(get_db)):
     """Marque une réception comme complète"""
     reception = ReceptionService.completer_reception(db, reception_id)
@@ -292,6 +329,8 @@ def completer_reception(reception_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/receptions/{reception_id}/annuler", response_model=Reception)
+@limiter.limit("10/minute")
+@check_permission("reception:update")
 def annuler_reception(reception_id: int, db: Session = Depends(get_db)):
     """Annule une réception et met à jour le stock"""
     reception = ReceptionService.annuler_reception(db, reception_id)
@@ -334,6 +373,8 @@ def get_total_stock(article_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/stocks/filtres", response_model=List[Stock])
+@limiter.limit("30/minute")
+@check_permission("stock:read")
 def filter_stocks(filters: StockFilter, db: Session = Depends(get_db)):
     """Filtre les stocks selon plusieurs critères"""
     return StockService.filter_stocks(db, filters)
@@ -366,6 +407,8 @@ def get_commande(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes", response_model=Commande)
+@limiter.limit("10/minute")
+@check_permission("commande:create")
 def create_commande(
     commande: CommandeCreate,
     cree_par: str = Query(..., description="Utilisateur qui crée la commande"),
@@ -376,6 +419,8 @@ def create_commande(
 
 
 @router.put("/commandes/{commande_id}", response_model=Commande)
+@limiter.limit("20/minute")
+@check_permission("commande:update")
 def update_commande(commande_id: int, commande: CommandeUpdate, db: Session = Depends(get_db)):
     """Met à jour une commande"""
     updated_commande = CommandeService.update_commande(db, commande_id, commande)
@@ -385,6 +430,8 @@ def update_commande(commande_id: int, commande: CommandeUpdate, db: Session = De
 
 
 @router.post("/commandes/{commande_id}/valider-paiement", response_model=Commande)
+@limiter.limit("30/minute")
+@check_permission("commande:update")
 def valider_paiement(
     commande_id: int,
     valide_par: str = Query(..., description="Utilisateur qui valide le paiement"),
@@ -398,6 +445,8 @@ def valider_paiement(
 
 
 @router.post("/commandes/{commande_id}/preparer", response_model=Commande)
+@limiter.limit("30/minute")
+@check_permission("commande:update")
 def mettre_en_preparation(commande_id: int, db: Session = Depends(get_db)):
     """Met la commande en préparation"""
     commande = CommandeService.mettre_en_preparation(db, commande_id)
@@ -407,6 +456,8 @@ def mettre_en_preparation(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/prete", response_model=Commande)
+@limiter.limit("30/minute")
+@check_permission("commande:update")
 def marquer_prete(commande_id: int, db: Session = Depends(get_db)):
     """Marque la commande comme prête"""
     commande = CommandeService.marquer_prete(db, commande_id)
@@ -416,6 +467,8 @@ def marquer_prete(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/livree", response_model=Commande)
+@limiter.limit("30/minute")
+@check_permission("commande:update")
 def marquer_livree(commande_id: int, db: Session = Depends(get_db)):
     """Marque la commande comme livrée"""
     commande = CommandeService.marquer_livree(db, commande_id)
@@ -425,6 +478,8 @@ def marquer_livree(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/annuler", response_model=Commande)
+@limiter.limit("10/minute")
+@check_permission("commande:update")
 def annuler_commande(commande_id: int, db: Session = Depends(get_db)):
     """Annule une commande"""
     commande = CommandeService.annuler_commande(db, commande_id)
@@ -457,16 +512,21 @@ def get_bande(bande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/bandes-livraison", response_model=BandeLivraison)
+@limiter.limit("10/minute")
+@check_permission("bande:create")
 def create_bande(
     bande: BandeLivraisonCreate,
     prepare_par: str = Query(..., description="Utilisateur qui prépare la bande"),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Crée une nouvelle bande de livraison avec mise à jour automatique du stock"""
-    return BandeLivraisonService.create_bande(db, bande, prepare_par)
+    return BandeLivraisonService.create_bande(db, bande, prepare_par, current_user.id)
 
 
 @router.put("/bandes-livraison/{bande_id}", response_model=BandeLivraison)
+@limiter.limit("20/minute")
+@check_permission("bande:update")
 def update_bande(bande_id: int, bande: BandeLivraisonUpdate, db: Session = Depends(get_db)):
     """Met à jour une bande de livraison"""
     updated_bande = BandeLivraisonService.update_bande(db, bande_id, bande)

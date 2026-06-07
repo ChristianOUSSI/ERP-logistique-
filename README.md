@@ -145,7 +145,18 @@ docker-compose logs -f
 - Historique mouvements
 - Règle gravité Navis N4
 
-### 📄 K-Documents
+### � K-Magasin (Warehouse Management)
+- Gestion multi-magasins
+- Codes articles avec unités de mesure (UDB, KG, TONNE, M3, M2)
+- Déclarations (Bill of Lading)
+- Réceptions de marchandises
+- Gestion des stocks en temps réel
+- Commandes clients avec workflow paiement
+- Bandes de livraison
+- Conversion automatique d'unités
+- Validation stock non négatif
+
+### �📄 K-Documents
 - Génération PDF (WeasyPrint)
 - Bon de Livraison
 - Interchange
@@ -233,6 +244,7 @@ certbot --nginx -d kamlog-erp.cm
 - ✅ K-Transport Core
 - ✅ K-Finance Light
 - ✅ K-Parc Basique
+- ✅ K-Magasin (Warehouse Management)
 - ✅ Déploiement VPS
 
 ### Phase 2 (6 mois - Décembre 2026)

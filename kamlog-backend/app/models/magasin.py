@@ -1,5 +1,5 @@
 # app/models/magasin.py - Modèles pour le module K-magasin
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean, Numeric
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -68,9 +68,9 @@ class ClientMagasin(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(20), unique=True, nullable=False, index=True)
-    nom = Column(String(100), nullable=False)
+    nom = Column(String(100), nullable=False, index=True)
     prenom = Column(String(100))
-    raison_sociale = Column(String(200))
+    raison_sociale = Column(String(200), index=True)
     telephone = Column(String(20))
     email = Column(String(100))
     adresse = Column(String(255))
@@ -92,7 +92,7 @@ class Article(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code_article = Column(String(20), unique=True, nullable=False, index=True)
-    nom = Column(String(200), nullable=False)
+    nom = Column(String(200), nullable=False, index=True)
     description = Column(String(500))
     unite_mesure = Column(Enum(UniteMesure), default=UniteMesure.UDB)
     poids_unitaire = Column(Float, nullable=True)  # Poids en kg si applicable
@@ -200,6 +200,7 @@ class Stock(Base):
 
     # Contrainte d'unicité
     __table_args__ = (
+        UniqueConstraint('magasin_id', 'article_id', name='uq_stock_magasin_article'),
         {'extend_existing': True}
     )
 

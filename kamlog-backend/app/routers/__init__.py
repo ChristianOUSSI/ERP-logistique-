@@ -1,4 +1,4 @@
 # app/routers  Import tous les routers
-from app.routers import auth, tiers, transport, finance, parc, documents, alerts
+from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin
 
-__all__ = ["auth", "tiers", "transport", "finance", "parc", "documents", "alerts"]
+__all__ = ["auth", "tiers", "transport", "finance", "parc", "documents", "alerts", "magasin"]
