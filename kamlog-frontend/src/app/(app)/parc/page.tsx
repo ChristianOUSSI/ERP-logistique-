@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { parcAPI } from '@/lib/api-client';
+import { PortIllustration } from '@/components/illustrations/PortIllustration';
 
 export default function ParcPage() {
   const [stock, setStock] = useState<any[]>([]);
@@ -30,13 +31,18 @@ export default function ParcPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Parc (Yard Management)</h2>
-        <div className="space-x-2">
-          <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-            Gate In
-          </button>
-          <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
-            Gate Out
-          </button>
+        <div className="flex items-center gap-4">
+          <div className="w-32 h-20">
+            <PortIllustration className="w-full h-full" />
+          </div>
+          <div className="space-x-2">
+            <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+              Gate In
+            </button>
+            <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
+              Gate Out
+            </button>
+          </div>
         </div>
       </div>
 

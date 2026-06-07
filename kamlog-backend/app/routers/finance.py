@@ -1,4 +1,4 @@
-# app/routers/finance.py — Router Finance
+# app/routers/finance.py  Router Finance
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select

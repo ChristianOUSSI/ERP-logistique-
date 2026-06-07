@@ -1,4 +1,4 @@
-# app/models/transport.py — Modèles K-Transport Complets
+# app/models/transport.py  Modèles K-Transport Complets
 import enum
 from decimal import Decimal
 from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index

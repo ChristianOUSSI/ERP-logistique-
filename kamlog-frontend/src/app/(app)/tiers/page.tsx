@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { tiersAPI } from '@/lib/api-client';
 import { Tiers } from '@/types';
+import { PortIllustration } from '@/components/illustrations/PortIllustration';
 
 export default function TiersPage() {
   const [tiers, setTiers] = useState<Tiers[]>([]);
@@ -31,9 +32,14 @@ export default function TiersPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Tiers (Clients/Fournisseurs)</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-          Nouveau Tiers
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="w-32 h-20">
+            <PortIllustration className="w-full h-full" />
+          </div>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            Nouveau Tiers
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

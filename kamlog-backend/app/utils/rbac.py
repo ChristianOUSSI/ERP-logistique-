@@ -1,4 +1,4 @@
-# app/utils/rbac.py — Middleware RBAC KAMLOG
+# app/utils/rbac.py  Middleware RBAC KAMLOG
 from functools import wraps
 from fastapi import HTTPException, status, Depends
 from app.models.user import Role

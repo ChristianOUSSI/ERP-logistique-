@@ -29,7 +29,7 @@ declare module 'next-auth' {
   }
 }
 
-// ── Étendre JWT — CRUCIAL : typer chaque champ ────────────
+// ── Étendre JWT  CRUCIAL : typer chaque champ ────────────
 declare module 'next-auth/jwt' {
   interface JWT {
     role: string           // ← string, pas unknown !

@@ -1,4 +1,4 @@
-# app/models — Import tous les modèles
+# app/models  Import tous les modèles
 from app.models.base import Base, BaseModel
 from app.models.audit import AuditLog
 from app.models.user import User, Role

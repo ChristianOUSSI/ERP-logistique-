@@ -1,4 +1,4 @@
-# app/schemas/auth.py — Schémas Authentification
+# app/schemas/auth.py  Schémas Authentification
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from app.models.user import Role

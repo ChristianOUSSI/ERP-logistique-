@@ -1,4 +1,4 @@
-# app/models/parc.py — Modèles K-Parc (Yard Management)
+# app/models/parc.py  Modèles K-Parc (Yard Management)
 import enum
 from sqlalchemy import String, Integer, ForeignKey, Index, DateTime
 from sqlalchemy.orm import Mapped, mapped_column

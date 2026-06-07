@@ -1,4 +1,4 @@
-# Guide de Déploiement — KAMLOG EM-ERP
+# Guide de Déploiement  KAMLOG EM-ERP
 
 ## US-21: Déploiement sur VPS (Contabo)
 

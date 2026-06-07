@@ -1,5 +1,5 @@
 // src/app/(auth)/session-expired/page.tsx
-// Page standalone — PAS dans le layout split (fond sombre centré)
+// Page standalone  PAS dans le layout split (fond sombre centré)
 import Link from 'next/link'
 import { AlertTriangle, Info } from 'lucide-react'
 

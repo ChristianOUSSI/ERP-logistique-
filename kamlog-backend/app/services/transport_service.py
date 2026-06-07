@@ -1,4 +1,4 @@
-# app/services/transport_service.py — Règles Métier K-Transport
+# app/services/transport_service.py  Règles Métier K-Transport
 from decimal import Decimal
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +29,7 @@ async def valider_creation_mission(
     if camion.statut in ('EN_ROUTE', 'EN_CHARGEMENT', 'EN_LIVRAISON'):
         raise HTTPException(
             status.HTTP_403_FORBIDDEN,
-            f"Camion {camion.immatriculation} déjà en mission — statut : {camion.statut}"
+            f"Camion {camion.immatriculation} déjà en mission  statut : {camion.statut}"
         )
 
     # Règle 2 : chauffeur disponible

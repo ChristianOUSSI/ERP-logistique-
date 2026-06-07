@@ -1,4 +1,4 @@
-// src/stores/alertStore.ts — Store alertes globales KAMLOG
+// src/stores/alertStore.ts  Store alertes globales KAMLOG
 import { create } from 'zustand'
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info'

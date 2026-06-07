@@ -1,4 +1,4 @@
-# app/schemas — Import tous les schémas
+# app/schemas  Import tous les schémas
 from app.schemas.auth import (
     UserBase,
     UserCreate,

@@ -1,4 +1,4 @@
-// src/types/index.ts — Types TypeScript KAMLOG
+// src/types/index.ts  Types TypeScript KAMLOG
 
 export interface User {
   id: number;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { transportAPI } from '@/lib/api-client';
 import { Mission } from '@/types';
+import { PortIllustration } from '@/components/illustrations/PortIllustration';
 
 export default function MissionsPage() {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -43,9 +44,9 @@ export default function MissionsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Missions de Transport</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-          Nouvelle Mission
-        </button>
+        <div className="w-32 h-20">
+          <PortIllustration className="w-full h-full" />
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

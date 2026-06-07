@@ -1,4 +1,4 @@
-// src/stores/authStore.ts — Store Zustand Auth KAMLOG
+// src/stores/authStore.ts  Store Zustand Auth KAMLOG
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { UserKamlog, RoleKamlog } from '@/types/auth'
@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
       // Setter user
       setUser: (user) => set({ user }),
 
-      // Logout — reset complet
+      // Logout  reset complet
       logout: () =>
         set({
           user: null,

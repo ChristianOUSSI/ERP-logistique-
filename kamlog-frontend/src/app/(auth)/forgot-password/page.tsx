@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
       setSubmittedEmail(data.email)
       setIsSuccess(true)
     } catch {
-      // On affiche toujours le succès (sécurité — pas révéler si email existe)
+      // On affiche toujours le succès (sécurité  pas révéler si email existe)
       setSubmittedEmail(data.email)
       setIsSuccess(true)
     } finally {
@@ -124,19 +124,39 @@ export default function ForgotPasswordPage() {
       <div className="flex justify-center mb-6">
         <div className="relative">
           <div className="w-20 h-20 rounded-full bg-[#e0f7fa] 
-                          flex items-center justify-center">
+                          flex items-center justify-center shadow-lg">
             {/* Cadenas avec ? */}
             <svg viewBox="0 0 60 60" className="w-12 h-12">
+              <defs>
+                <linearGradient id="lockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#06b6d4"/>
+                  <stop offset="100%" stopColor="#0891b2"/>
+                </linearGradient>
+                <linearGradient id="lockBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3"/>
+                  <stop offset="100%" stopColor="#0891b2" stopOpacity="0.5"/>
+                </linearGradient>
+                <filter id="lockShadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodOpacity="0.3"/>
+                </filter>
+              </defs>
+              {/* Corps du cadenas avec effet 3D */}
               <rect x="10" y="28" width="40" height="28" 
-                    rx="4" fill="#06b6d4" opacity="0.2" 
-                    stroke="#06b6d4" strokeWidth="2"/>
+                    rx="4" fill="url(#lockBodyGradient)" 
+                    stroke="url(#lockGradient)" strokeWidth="2.5" filter="url(#lockShadow)"/>
+              {/* Anneau du cadenas avec dégradé */}
               <path d="M20 28 V20 A10 10 0 0 1 40 20 V28" 
-                    stroke="#06b6d4" strokeWidth="2.5" 
-                    fill="none" strokeLinecap="round"/>
+                    stroke="url(#lockGradient)" strokeWidth="3" 
+                    fill="none" strokeLinecap="round" filter="url(#lockShadow)"/>
+              {/* Point d'interrogation stylisé */}
               <text x="30" y="47" textAnchor="middle" 
-                    fill="#06b6d4" fontSize="14" fontWeight="bold">
+                    fill="url(#lockGradient)" fontSize="16" fontWeight="bold"
+                    filter="url(#lockShadow)">
                 ?
               </text>
+              {/* Reflet sur le corps du cadenas */}
+              <rect x="12" y="30" width="36" height="8" 
+                    fill="#06b6d4" opacity="0.15" rx="2"/>
             </svg>
           </div>
         </div>

@@ -1,4 +1,4 @@
-# app/config.py — Configuration Pydantic Settings KAMLOG
+# app/config.py  Configuration Pydantic Settings KAMLOG
 from pydantic_settings import BaseSettings
 from typing import List
 

@@ -1,10 +1,10 @@
 # KAMLOG EM-ERP
 
-ERP Logistique Portuaire — Port de Douala / Cameroun
+ERP Logistique Portuaire  Port de Douala / Cameroun
 
 ## 📋 Vue d'ensemble
 
-KAMLOG EM-ERP est un Progiciel de Gestion Intégré (PGI) conçu spécifiquement pour les opérateurs logistiques portuaires du Cameroun. Le Port Autonome de Douala — premier port en eau profonde d'Afrique centrale — représente le pivot économique de la région.
+KAMLOG EM-ERP est un Progiciel de Gestion Intégré (PGI) conçu spécifiquement pour les opérateurs logistiques portuaires du Cameroun. Le Port Autonome de Douala  premier port en eau profonde d'Afrique centrale  représente le pivot économique de la région.
 
 ## 🏗️ Stack Technique
 
@@ -244,14 +244,14 @@ certbot --nginx -d kamlog-erp.cm
 
 ## 🤝 Contribution
 
-Ce projet est développé par CADC — Code Axis Digital Cameroun.
+Ce projet est développé par CADC  Code Axis Digital Cameroun.
 
 ## 📄 Licence
 
-CONFIDENTIEL — CADC / KAMLOG
+CONFIDENTIEL  CADC / KAMLOG
 
 ---
 
 **Version**: 1.0  
 **Date**: Juin 2026  
-**Organisation**: CADC — Code Axis Digital Cameroun
+**Organisation**: CADC  Code Axis Digital Cameroun

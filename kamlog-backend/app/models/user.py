@@ -1,4 +1,4 @@
-# app/models/user.py — Modèle User pour Authentification
+# app/models/user.py  Modèle User pour Authentification
 import enum
 from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column

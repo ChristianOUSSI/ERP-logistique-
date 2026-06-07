@@ -1,9 +1,16 @@
 'use client';
 
+import { PortIllustration } from '@/components/illustrations/PortIllustration';
+
 export default function DashboardPage() {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+        <div className="w-48 h-24">
+          <PortIllustration className="w-full h-full" />
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">

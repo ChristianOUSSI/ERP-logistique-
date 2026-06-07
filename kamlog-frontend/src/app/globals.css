@@ -1,9 +1,9 @@
-/* src/app/globals.css — Tailwind v4 + Design System KAMLOG */
+/* src/app/globals.css  Tailwind v4 + Design System KAMLOG */
 
 @import "tailwindcss";
 
 /* ================================================================
-   DESIGN TOKENS KAMLOG — CSS Custom Properties
+   DESIGN TOKENS KAMLOG  CSS Custom Properties
    Tailwind v4 lit directement ces variables CSS
    ================================================================ */
 
@@ -13,11 +13,11 @@
   --color-kamlog-primary:     #1e40af;   /* Bleu marine portuaire */
   --color-kamlog-primary-hover: #1d3a9e;
   --color-kamlog-secondary:   #0369a1;
-  --color-kamlog-accent:      #f59e0b;   /* Ambre — alertes */
-  --color-kamlog-danger:      #dc2626;   /* Rouge — blocage crédit */
-  --color-kamlog-success:     #16a34a;   /* Vert — disponible / libre */
-  --color-kamlog-warning:     #d97706;   /* Orange — en cours */
-  --color-kamlog-info:        #0891b2;   /* Cyan — info */
+  --color-kamlog-accent:      #f59e0b;   /* Ambre  alertes */
+  --color-kamlog-danger:      #dc2626;   /* Rouge  blocage crédit */
+  --color-kamlog-success:     #16a34a;   /* Vert  disponible / libre */
+  --color-kamlog-warning:     #d97706;   /* Orange  en cours */
+  --color-kamlog-info:        #0891b2;   /* Cyan  info */
 
   /* ── Couleurs Statuts Missions ──────────────────────────── */
   --color-statut-planifie:       #6366f1;  /* Indigo */
@@ -28,10 +28,10 @@
   --color-statut-cloture:        #6b7280;  /* Gris */
 
   /* ── Couleurs Parc Yard ─────────────────────────────────── */
-  --color-yard-libre:    #16a34a;   /* Vert — emplacement libre */
-  --color-yard-occupe:   #dc2626;   /* Rouge — emplacement occupé */
-  --color-yard-reserve:  #f59e0b;   /* Ambre — réservé */
-  --color-yard-blocked:  #6b7280;   /* Gris — bloqué douane */
+  --color-yard-libre:    #16a34a;   /* Vert  emplacement libre */
+  --color-yard-occupe:   #dc2626;   /* Rouge  emplacement occupé */
+  --color-yard-reserve:  #f59e0b;   /* Ambre  réservé */
+  --color-yard-blocked:  #6b7280;   /* Gris  bloqué douane */
 
   /* ── Shadcn/ui Tokens (light mode) ─────────────────────── */
   --color-background:         #ffffff;
@@ -81,7 +81,7 @@
 }
 
 /* ================================================================
-   DARK MODE — Tokens overrides
+   DARK MODE  Tokens overrides
    ================================================================ */
 
 @media (prefers-color-scheme: dark) {
@@ -107,7 +107,7 @@
 }
 
 /* ================================================================
-   COMPOSANTS KAMLOG — Classes utilitaires custom
+   COMPOSANTS KAMLOG  Classes utilitaires custom
    ================================================================ */
 
 @layer components {
@@ -236,7 +236,7 @@
   .layout-sidebar {
     width: var(--spacing-sidebar);
     min-height: 100vh;
-    background-color: #0f172a;    /* Bleu nuit — sidebar KAMLOG */
+    background-color: #0f172a;    /* Bleu nuit  sidebar KAMLOG */
     border-right: 1px solid #1e293b;
     position: fixed;
     top: 0;

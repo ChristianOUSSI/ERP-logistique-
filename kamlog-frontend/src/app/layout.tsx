@@ -1,4 +1,4 @@
-// src/app/layout.tsx — RootLayout KAMLOG
+// src/app/layout.tsx  RootLayout KAMLOG
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'KAMLOG EM-ERP',
-  description: 'Système de Gestion Logistique Intégré — Port de Douala',
+  description: 'Système de Gestion Logistique Intégré  Port de Douala',
   icons: { icon: '/logo-kamlog.svg' },
 }
 

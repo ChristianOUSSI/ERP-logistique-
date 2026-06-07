@@ -1,4 +1,4 @@
-// src/app/page.tsx — Redirect vers dashboard
+// src/app/page.tsx  Redirect vers dashboard
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 

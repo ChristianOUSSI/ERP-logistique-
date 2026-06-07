@@ -1,4 +1,4 @@
-# app/routers/auth.py — Router Authentification
+# app/routers/auth.py  Router Authentification
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -1,4 +1,4 @@
-# app/services/finance_service.py — Calcul Encours K-Finance
+# app/services/finance_service.py  Calcul Encours K-Finance
 from decimal import Decimal
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,7 @@ from app.models.finance import Facture, Encaissement, StatutFacture
 from app.models.tiers import Tiers
 
 
-TVA_CAMEROUN = Decimal('0.1925')   # 19.25% — JAMAIS float
+TVA_CAMEROUN = Decimal('0.1925')   # 19.25%  JAMAIS float
 
 
 async def calculer_encours_client(

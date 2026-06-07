@@ -1,4 +1,4 @@
-# app/main.py — Configuration Principale FastAPI KAMLOG
+# app/main.py  Configuration Principale FastAPI KAMLOG
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,18 +25,18 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="KAMLOG EM-ERP API",
-    description="ERP Logistique Portuaire — Port de Douala",
+    description="ERP Logistique Portuaire  Port de Douala",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     lifespan=lifespan,
 )
 
-# Rate limiting — protection brute force
+# Rate limiting  protection brute force
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS — autoriser le frontend Next.js
+# CORS  autoriser le frontend Next.js
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,

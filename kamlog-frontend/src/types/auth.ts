@@ -1,4 +1,4 @@
-// src/types/auth.ts — Types Auth KAMLOG
+// src/types/auth.ts  Types Auth KAMLOG
 
 export type RoleKamlog = 
   | 'admin' 
