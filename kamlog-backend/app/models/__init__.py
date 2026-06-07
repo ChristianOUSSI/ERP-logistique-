@@ -41,6 +41,14 @@ from app.models.magasin import (
     StatutReception,
     StatutCommande,
 )
+from app.models.gateway import (
+    Passerelle,
+    CommandeFacture,
+    CommandeLivraison,
+    ReceptionStock,
+    FacturePaiement,
+    MissionFacture,
+)
 
 __all__ = [
     "Base",
@@ -80,4 +88,10 @@ __all__ = [
     "StatutDeclaration",
     "StatutReception",
     "StatutCommande",
+    "Passerelle",
+    "CommandeFacture",
+    "CommandeLivraison",
+    "ReceptionStock",
+    "FacturePaiement",
+    "MissionFacture",
 ]

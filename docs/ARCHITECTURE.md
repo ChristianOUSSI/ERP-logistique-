@@ -22,7 +22,102 @@ KAMLOG EM-ERP est une application ERP modulaire pour la gestion logistique portu
 
 ---
 
-## 🏗️ Architecture en Couches
+## � Système de Modules Colorés
+
+L'application utilise un système de couleurs distinctes pour chaque module, facilitant l'identification visuelle et la navigation.
+
+### Palette de Couleurs par Module
+
+```
+🔵 Authentification & Administration    : #3B82F6 (Bleu)
+🟢 Master Data (Tiers)                     : #10B981 (Vert)
+🟠 K-Transport                            : #F59E0B (Orange)
+💰 K-Finance                              : #8B5CF6 (Violet)
+📦 K-Magasin                              : #EF4444 (Rouge)
+🚗 K-Parc                                 : #06B6D4 (Cyan)
+📄 Documents                              : #6B7280 (Gris)
+🔔 Alertes                                : #F97316 (Orange foncé)
+```
+
+### Implémentation Frontend
+
+- **Configuration**: `kamlog-frontend/src/config/moduleColors.ts`
+- **Hook**: `kamlog-frontend/src/hooks/useModuleTheme.ts`
+- **Layout**: `kamlog-frontend/src/components/layout/ModuleLayout.tsx`
+- **Sidebar**: `kamlog-frontend/src/components/layout/ModuleSidebar.tsx`
+- **Header**: `kamlog-frontend/src/components/layout/ModuleHeader.tsx`
+
+Le système de couleurs est appliqué dynamiquement via CSS variables qui changent selon le module actif.
+
+---
+
+## 🔗 Passerelles Inter-Modules
+
+L'application utilise un système de passerelles pour connecter les modules et permettre les flux métier automatiques.
+
+### Types de Passerelles
+
+1. **COMMANDE_FACTURE**: Commande → Facture (K-Magasin → K-Finance)
+2. **COMMANDE_LIVRAISON**: Commande → Livraison (K-Magasin → K-Transport)
+3. **RECEPTION_STOCK**: Réception → Stock (K-Magasin → K-Magasin)
+4. **FACTURE_PAIEMENT**: Facture → Paiement (K-Finance → K-Finance)
+5. **MISSION_FACTURE**: Mission → Facture (K-Transport → K-Finance)
+6. **BON_LIVRAISON_FACTURE**: Bon de Livraison → Facture (K-Transport → K-Finance)
+
+### Implémentation Backend
+
+- **DTOs partagés**: `kamlog-backend/app/schemas/shared.py`
+- **Modèles**: `kamlog-backend/app/models/gateway.py`
+- **Service**: `kamlog-backend/app/services/gateway_service.py`
+- **Router**: `kamlog-backend/app/routers/gateway.py`
+
+### Flux Métier Automatisés
+
+#### Exemple 1: Commande → Facture → Livraison
+
+```
+1. Client crée une commande (K-Magasin)
+   ↓
+2. Paiement validé → Création passerelle COMMANDE_FACTURE
+   ↓
+3. Module Finance crée automatiquement la facture
+   ↓
+4. Commande mise en préparation → Création passerelle COMMANDE_LIVRAISON
+   ↓
+5. Module Transport prépare la livraison
+```
+
+#### Exemple 2: Réception → Stock
+
+```
+1. Réception validée (K-Magasin)
+   ↓
+2. Mise à jour du stock
+   ↓
+3. Création passerelle RECEPTION_STOCK
+   ↓
+4. Audit trail automatique
+```
+
+### Statuts des Passerelles
+
+- **EN_ATTENTE**: Passerelle créée, en attente de traitement
+- **TRAITE**: Passerelle traitée avec succès
+- **ECHOUE**: Erreur lors du traitement
+- **ANNULE**: Passerelle annulée
+
+### API Endpoints
+
+- `POST /api/gateway/passerelles` - Créer une passerelle
+- `GET /api/gateway/passerelles/{id}` - Récupérer une passerelle
+- `GET /api/gateway/passerelles/en-attente` - Récupérer les passerelles en attente
+- `PUT /api/gateway/passerelles/{id}` - Mettre à jour une passerelle
+- `POST /api/gateway/passerelles/{id}/traiter/{cible_id}` - Traiter une passerelle
+- `POST /api/gateway/passerelles/{id}/echouer` - Marquer comme échoué
+
+---
+
+## �🏗️ Architecture en Couches
 
 L'application suit une architecture en couches stricte:
 

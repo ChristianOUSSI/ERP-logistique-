@@ -7,7 +7,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from app.database import engine, Base
-from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin
+from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
@@ -58,6 +58,7 @@ app.include_router(parc.router, prefix="/api/parc", tags=["Parc"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
 app.include_router(magasin.router, tags=["K-Magasin"])
+app.include_router(gateway.router, tags=["Gateway"])
 
 
 @app.get('/api/health')

@@ -12,6 +12,8 @@ from app.exceptions import (
     BusinessRuleViolationError
 )
 from app.utils.audit import AuditService
+from app.services.gateway_service import gateway_service
+from app.schemas.shared import CommandeFactureDTO, CommandeLivraisonDTO, ReceptionStockDTO
 from app.models.magasin import (
     Magasin, ClientMagasin, Article, Declaration, LigneDeclaration,
     Reception, LigneReception, Stock, Commande, LigneCommande,
@@ -550,6 +552,21 @@ class StockService:
                     user_id=user_id,
                     raison=f"Création stock via réception {reception.numero_reception}"
                 )
+        
+        # Créer passerelle Réception → Stock
+        try:
+            dto = ReceptionStockDTO(
+                reception_id=reception.id,
+                magasin_id=reception.magasin_id,
+                numero_reception=reception.numero_reception,
+                lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_recue), "unite": l.unite_mesure} for l in reception.lignes]
+            )
+            gateway_service.creer_reception_stock(db, dto, str(user_id) if user_id else None)
+        except Exception as e:
+            # Log l'erreur mais ne pas bloquer le processus
+            from app.utils.logger import get_logger
+            logger = get_logger(__name__)
+            logger.error(f"Erreur création passerelle reception-stock: {str(e)}")
 
     @staticmethod
     def annuler_reception_stock(db: Session, reception: Reception):
@@ -678,6 +695,25 @@ class CommandeService:
             db_commande.date_validation = datetime.now()
             db.commit()
             db.refresh(db_commande)
+            
+            # Créer passerelle Commande → Facture
+            try:
+                dto = CommandeFactureDTO(
+                    commande_id=db_commande.id,
+                    client_id=db_commande.client_id,
+                    numero_commande=db_commande.numero_commande,
+                    montant_total=sum(ligne.quantite_demandee * (ligne.prix_unitaire or 0) for ligne in db_commande.lignes),
+                    tva=Decimal("19.25"),
+                    date_commande=db_commande.date_commande,
+                    lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_demandee), "prix": float(l.prix_unitaire or 0)} for l in db_commande.lignes]
+                )
+                gateway_service.creer_commande_facture(db, dto, valide_par)
+            except Exception as e:
+                # Log l'erreur mais ne pas bloquer le processus
+                from app.utils.logger import get_logger
+                logger = get_logger(__name__)
+                logger.error(f"Erreur création passerelle commande-facture: {str(e)}")
+                
         return db_commande
 
     @staticmethod
@@ -688,6 +724,27 @@ class CommandeService:
             db_commande.statut = StatutCommande.EN_PREPARATION
             db.commit()
             db.refresh(db_commande)
+            
+            # Créer passerelle Commande → Livraison
+            try:
+                client = db.query(ClientMagasin).filter(ClientMagasin.id == db_commande.client_id).first()
+                adresse_livraison = client.adresse if client else "Non spécifié"
+                
+                dto = CommandeLivraisonDTO(
+                    commande_id=db_commande.id,
+                    client_id=db_commande.client_id,
+                    numero_commande=db_commande.numero_commande,
+                    adresse_livraison=adresse_livraison,
+                    date_livraison_souhaitee=db_commande.date_livraison_souhaitee or datetime.now(),
+                    lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_demandee), "unite": l.unite_mesure} for l in db_commande.lignes]
+                )
+                gateway_service.creer_commande_livraison(db, dto, db_commande.cree_par)
+            except Exception as e:
+                # Log l'erreur mais ne pas bloquer le processus
+                from app.utils.logger import get_logger
+                logger = get_logger(__name__)
+                logger.error(f"Erreur création passerelle commande-livraison: {str(e)}")
+                
         return db_commande
 
     @staticmethod

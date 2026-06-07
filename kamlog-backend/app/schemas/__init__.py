@@ -50,6 +50,20 @@ from app.schemas.parc import (
     GateInRequest,
     GateOutRequest,
 )
+from app.schemas.shared import (
+    PasserelleBase,
+    PasserelleCreate,
+    PasserelleUpdate,
+    Passerelle,
+    TypePasserelle,
+    StatutPasserelle,
+    CommandeFactureDTO,
+    CommandeLivraisonDTO,
+    ReceptionStockDTO,
+    FacturePaiementDTO,
+    MissionFactureDTO,
+    BonLivraisonFactureDTO,
+)
 
 __all__ = [
     "UserBase",
@@ -93,4 +107,16 @@ __all__ = [
     "StockPhysiqueParcResponse",
     "GateInRequest",
     "GateOutRequest",
+    "PasserelleBase",
+    "PasserelleCreate",
+    "PasserelleUpdate",
+    "Passerelle",
+    "TypePasserelle",
+    "StatutPasserelle",
+    "CommandeFactureDTO",
+    "CommandeLivraisonDTO",
+    "ReceptionStockDTO",
+    "FacturePaiementDTO",
+    "MissionFactureDTO",
+    "BonLivraisonFactureDTO",
 ]
