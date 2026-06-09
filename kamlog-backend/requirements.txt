@@ -21,6 +21,8 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.9
 pgcrypto==0.1.0
 slowapi==0.1.9
+pyotp==2.9.0
+qrcode==7.4.2
 
 # --- Cache & File de tâches ---
 redis==5.0.6

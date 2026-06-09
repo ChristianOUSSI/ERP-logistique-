@@ -12,6 +12,7 @@ from app.exceptions import (
     BusinessRuleViolationError
 )
 from app.utils.audit import AuditService
+from app.utils.logger import get_logger
 from app.services.gateway_service import gateway_service
 from app.schemas.shared import CommandeFactureDTO, CommandeLivraisonDTO, ReceptionStockDTO
 from app.models.magasin import (
@@ -27,6 +28,7 @@ from app.schemas.magasin import (
     CommandeCreate, CommandeUpdate, BandeLivraisonCreate, BandeLivraisonUpdate,
     StockFilter
 )
+from app.utils.cache import cache_service, invalidate_cache_pattern
 
 
 class MagasinService:
@@ -34,15 +36,35 @@ class MagasinService:
 
     @staticmethod
     def get_all_magasins(db: Session, skip: int = 0, limit: int = 100) -> List[Magasin]:
-        return db.query(Magasin).filter(Magasin.est_actif == True).offset(skip).limit(limit).all()
+        cache_key = f"magasin:magasins:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Magasin).filter(Magasin.est_actif == True).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_magasin(db: Session, magasin_id: int) -> Optional[Magasin]:
-        return db.query(Magasin).filter(Magasin.id == magasin_id).first()
+        cache_key = f"magasin:magasin:{magasin_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Magasin).filter(Magasin.id == magasin_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_magasin_by_code(db: Session, code: str) -> Optional[Magasin]:
-        return db.query(Magasin).filter(Magasin.code == code).first()
+        cache_key = f"magasin:magasin:code:{code}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Magasin).filter(Magasin.code == code).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def create_magasin(db: Session, magasin: MagasinCreate) -> Magasin:
@@ -50,6 +72,10 @@ class MagasinService:
         db.add(db_magasin)
         db.commit()
         db.refresh(db_magasin)
+        
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:magasins:*")
+        
         return db_magasin
 
     @staticmethod
@@ -60,6 +86,9 @@ class MagasinService:
                 setattr(db_magasin, field, value)
             db.commit()
             db.refresh(db_magasin)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:magasins:*")
         return db_magasin
 
     @staticmethod
@@ -68,6 +97,9 @@ class MagasinService:
         if db_magasin:
             db_magasin.est_actif = False
             db.commit()
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:magasins:*")
             return True
         return False
 
@@ -77,15 +109,35 @@ class ClientMagasinService:
 
     @staticmethod
     def get_all_clients(db: Session, skip: int = 0, limit: int = 100) -> List[ClientMagasin]:
-        return db.query(ClientMagasin).filter(ClientMagasin.est_actif == True).offset(skip).limit(limit).all()
+        cache_key = f"magasin:clients:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(ClientMagasin).filter(ClientMagasin.est_actif == True).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_client(db: Session, client_id: int) -> Optional[ClientMagasin]:
-        return db.query(ClientMagasin).filter(ClientMagasin.id == client_id).first()
+        cache_key = f"magasin:client:{client_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(ClientMagasin).filter(ClientMagasin.id == client_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_client_by_code(db: Session, code: str) -> Optional[ClientMagasin]:
-        return db.query(ClientMagasin).filter(ClientMagasin.code == code).first()
+        cache_key = f"magasin:client:code:{code}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(ClientMagasin).filter(ClientMagasin.code == code).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def create_client(db: Session, client: ClientMagasinCreate) -> ClientMagasin:
@@ -93,6 +145,10 @@ class ClientMagasinService:
         db.add(db_client)
         db.commit()
         db.refresh(db_client)
+        
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:clients:*")
+        
         return db_client
 
     @staticmethod
@@ -103,6 +159,9 @@ class ClientMagasinService:
                 setattr(db_client, field, value)
             db.commit()
             db.refresh(db_client)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:clients:*")
         return db_client
 
     @staticmethod
@@ -111,6 +170,9 @@ class ClientMagasinService:
         if db_client:
             db_client.est_actif = False
             db.commit()
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:clients:*")
             return True
         return False
 
@@ -138,19 +200,43 @@ class ArticleService:
 
     @staticmethod
     def get_all_articles(db: Session, skip: int = 0, limit: int = 100) -> List[Article]:
-        return db.query(Article).filter(Article.est_actif == True).offset(skip).limit(limit).all()
+        cache_key = f"magasin:articles:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Article).filter(Article.est_actif == True).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_article(db: Session, article_id: int) -> Optional[Article]:
-        return db.query(Article).filter(Article.id == article_id).first()
+        cache_key = f"magasin:article:{article_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Article).filter(Article.id == article_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_article_by_code(db: Session, code_article: str) -> Optional[Article]:
-        return db.query(Article).filter(Article.code_article == code_article).first()
+        cache_key = f"magasin:article:code:{code_article}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Article).filter(Article.code_article == code_article).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def search_articles(db: Session, query: str) -> List[Article]:
-        return db.query(Article).filter(
+        cache_key = f"magasin:articles:search:{query}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Article).filter(
             and_(
                 Article.est_actif == True,
                 or_(
@@ -159,6 +245,8 @@ class ArticleService:
                 )
             )
         ).all()
+        cache_service.set(cache_key, result, expire=180)
+        return result
 
     @staticmethod
     def create_article(db: Session, article: ArticleCreate) -> Article:
@@ -170,6 +258,10 @@ class ArticleService:
         db.add(db_article)
         db.commit()
         db.refresh(db_article)
+        
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:articles:*")
+        
         return db_article
 
     @staticmethod
@@ -180,6 +272,9 @@ class ArticleService:
                 setattr(db_article, field, value)
             db.commit()
             db.refresh(db_article)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:articles:*")
         return db_article
 
     @staticmethod
@@ -188,6 +283,9 @@ class ArticleService:
         if db_article:
             db_article.est_actif = False
             db.commit()
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:articles:*")
             return True
         return False
 
@@ -267,21 +365,47 @@ class DeclarationService:
 
     @staticmethod
     def get_all_declarations(db: Session, skip: int = 0, limit: int = 100) -> List[Declaration]:
-        return db.query(Declaration).options(
+        cache_key = f"magasin:declarations:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Declaration).options(
             selectinload(Declaration.lignes)
         ).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_declaration(db: Session, declaration_id: int) -> Optional[Declaration]:
-        return db.query(Declaration).filter(Declaration.id == declaration_id).first()
+        cache_key = f"magasin:declaration:{declaration_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Declaration).filter(Declaration.id == declaration_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_declaration_by_bl(db: Session, numero_bl: str) -> Optional[Declaration]:
-        return db.query(Declaration).filter(Declaration.numero_bl == numero_bl).first()
+        cache_key = f"magasin:declaration:bl:{numero_bl}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Declaration).filter(Declaration.numero_bl == numero_bl).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_declarations_by_client(db: Session, client_id: int) -> List[Declaration]:
-        return db.query(Declaration).filter(Declaration.client_id == client_id).all()
+        cache_key = f"magasin:declarations:client:{client_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Declaration).filter(Declaration.client_id == client_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def create_declaration(db: Session, declaration: DeclarationCreate, cree_par: str) -> Declaration:
@@ -316,6 +440,10 @@ class DeclarationService:
                     db.add(db_ligne)
 
             db.refresh(db_declaration)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:declarations:*")
+            
             return db_declaration
         except Exception as e:
             db.rollback()
@@ -329,6 +457,9 @@ class DeclarationService:
                 setattr(db_declaration, field, value)
             db.commit()
             db.refresh(db_declaration)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:declarations:*")
         return db_declaration
 
     @staticmethod
@@ -339,6 +470,9 @@ class DeclarationService:
             db_declaration.statut = StatutDeclaration.VALIDEE
             db.commit()
             db.refresh(db_declaration)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:declarations:*")
         return db_declaration
 
     @staticmethod
@@ -349,6 +483,9 @@ class DeclarationService:
             db_declaration.statut = StatutDeclaration.ANNULEE
             db.commit()
             db.refresh(db_declaration)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:declarations:*")
         return db_declaration
 
 
@@ -366,21 +503,44 @@ class ReceptionService:
 
     @staticmethod
     def get_all_receptions(db: Session, skip: int = 0, limit: int = 100) -> List[Reception]:
-        return db.query(Reception).options(
-            selectinload(Reception.lignes)
-        ).offset(skip).limit(limit).all()
+        cache_key = f"magasin:receptions:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Reception).options(selectinload(Reception.lignes)).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_reception(db: Session, reception_id: int) -> Optional[Reception]:
-        return db.query(Reception).filter(Reception.id == reception_id).first()
+        cache_key = f"magasin:reception:{reception_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Reception).filter(Reception.id == reception_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_receptions_by_declaration(db: Session, declaration_id: int) -> List[Reception]:
-        return db.query(Reception).filter(Reception.declaration_id == declaration_id).all()
+        cache_key = f"magasin:receptions:declaration:{declaration_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Reception).filter(Reception.declaration_id == declaration_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_receptions_by_magasin(db: Session, magasin_id: int) -> List[Reception]:
-        return db.query(Reception).filter(Reception.magasin_id == magasin_id).all()
+        cache_key = f"magasin:receptions:magasin:{magasin_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Reception).filter(Reception.magasin_id == magasin_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def create_reception(db: Session, reception: ReceptionCreate, recu_par: str, user_id: Optional[int] = None) -> Reception:
@@ -418,6 +578,11 @@ class ReceptionService:
                 StockService.mettre_a_jour_stock_apres_reception(db, db_reception, user_id)
 
             db.refresh(db_reception)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:receptions:*")
+            invalidate_cache_pattern("magasin:stocks:*")
+            
             return db_reception
         except Exception as e:
             db.rollback()
@@ -431,6 +596,9 @@ class ReceptionService:
                 setattr(db_reception, field, value)
             db.commit()
             db.refresh(db_reception)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:receptions:*")
         return db_reception
 
     @staticmethod
@@ -441,6 +609,9 @@ class ReceptionService:
             db_reception.statut = StatutReception.COMPLETEE
             db.commit()
             db.refresh(db_reception)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:receptions:*")
         return db_reception
 
     @staticmethod
@@ -452,6 +623,10 @@ class ReceptionService:
             StockService.annuler_reception_stock(db, db_reception)
             db.commit()
             db.refresh(db_reception)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:receptions:*")
+            invalidate_cache_pattern("magasin:stocks:*")
         return db_reception
 
 
@@ -460,27 +635,58 @@ class StockService:
 
     @staticmethod
     def get_stock(db: Session, magasin_id: int, article_id: int) -> Optional[Stock]:
-        return db.query(Stock).filter(
+        cache_key = f"magasin:stock:{magasin_id}:{article_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Stock).filter(
             and_(Stock.magasin_id == magasin_id, Stock.article_id == article_id)
         ).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_all_stocks(db: Session, skip: int = 0, limit: int = 100) -> List[Stock]:
-        return db.query(Stock).offset(skip).limit(limit).all()
+        cache_key = f"magasin:stocks:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Stock).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_stocks_by_magasin(db: Session, magasin_id: int) -> List[Stock]:
-        return db.query(Stock).filter(Stock.magasin_id == magasin_id).all()
+        cache_key = f"magasin:stocks:magasin:{magasin_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Stock).filter(Stock.magasin_id == magasin_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_stocks_by_article(db: Session, article_id: int) -> List[Stock]:
-        return db.query(Stock).filter(Stock.article_id == article_id).all()
+        cache_key = f"magasin:stocks:article:{article_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Stock).filter(Stock.article_id == article_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_total_stock_by_article(db: Session, article_id: int) -> Decimal:
         """Calcule le stock total d'un article tous magasins confondus"""
+        cache_key = f"magasin:stock:total:{article_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
         stocks = StockService.get_stocks_by_article(db, article_id)
-        return sum(stock.quantite_udb for stock in stocks)
+        result = sum(stock.quantite_udb for stock in stocks)
+        cache_service.set(cache_key, result, expire=180)
+        return result
 
     @staticmethod
     def filter_stocks(db: Session, filters: StockFilter) -> List[Stock]:
@@ -553,6 +759,9 @@ class StockService:
                     raison=f"Création stock via réception {reception.numero_reception}"
                 )
         
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:stocks:*")
+        
         # Créer passerelle Réception → Stock
         try:
             dto = ReceptionStockDTO(
@@ -576,6 +785,9 @@ class StockService:
             if stock:
                 stock.quantite_disponible -= ligne.quantite_recue
                 stock.quantite_udb -= ligne.quantite_udb
+        
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:stocks:*")
 
     @staticmethod
     def mettre_a_jour_stock_apres_livraison(db: Session, bande: BandeLivraison, user_id: Optional[int] = None):
@@ -608,6 +820,9 @@ class StockService:
                     user_id=user_id,
                     raison=f"Bande de livraison {bande.numero_bande}"
                 )
+        
+        # Invalider le cache
+        invalidate_cache_pattern("magasin:stocks:*")
 
 
 class CommandeService:
@@ -624,24 +839,47 @@ class CommandeService:
 
     @staticmethod
     def get_all_commandes(db: Session, skip: int = 0, limit: int = 100) -> List[Commande]:
-        return db.query(Commande).options(
-            selectinload(Commande.lignes)
-        ).offset(skip).limit(limit).all()
+        cache_key = f"magasin:commandes:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Commande).options(selectinload(Commande.lignes)).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_commande(db: Session, commande_id: int) -> Optional[Commande]:
-        return db.query(Commande).filter(Commande.id == commande_id).first()
+        cache_key = f"magasin:commande:{commande_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Commande).filter(Commande.id == commande_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_commandes_by_client(db: Session, client_id: int) -> List[Commande]:
-        return db.query(Commande).filter(Commande.client_id == client_id).all()
+        cache_key = f"magasin:commandes:client:{client_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Commande).filter(Commande.client_id == client_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_commandes_verrouillees(db: Session) -> List[Commande]:
         """Récupère les commandes verrouillées (en attente de paiement)"""
-        return db.query(Commande).filter(
+        cache_key = "magasin:commandes:verrouillees"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Commande).filter(
             and_(Commande.est_verrouille == True, Commande.paiement_valide == False)
         ).all()
+        cache_service.set(cache_key, result, expire=180)
+        return result
 
     @staticmethod
     def create_commande(db: Session, commande: CommandeCreate, cree_par: str) -> Commande:
@@ -668,6 +906,10 @@ class CommandeService:
                     db.add(db_ligne)
 
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
+            
             return db_commande
         except Exception as e:
             db.rollback()
@@ -681,6 +923,9 @@ class CommandeService:
                 setattr(db_commande, field, value)
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
         return db_commande
 
     @staticmethod
@@ -695,6 +940,9 @@ class CommandeService:
             db_commande.date_validation = datetime.now()
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
             
             # Créer passerelle Commande → Facture
             try:
@@ -724,6 +972,9 @@ class CommandeService:
             db_commande.statut = StatutCommande.EN_PREPARATION
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
             
             # Créer passerelle Commande → Livraison
             try:
@@ -755,6 +1006,9 @@ class CommandeService:
             db_commande.statut = StatutCommande.PRETE
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
         return db_commande
 
     @staticmethod
@@ -765,6 +1019,9 @@ class CommandeService:
             db_commande.statut = StatutCommande.LIVREE
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
         return db_commande
 
     @staticmethod
@@ -775,6 +1032,9 @@ class CommandeService:
             db_commande.statut = StatutCommande.ANNULEE
             db.commit()
             db.refresh(db_commande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:commandes:*")
         return db_commande
 
 
@@ -792,17 +1052,34 @@ class BandeLivraisonService:
 
     @staticmethod
     def get_all_bandes(db: Session, skip: int = 0, limit: int = 100) -> List[BandeLivraison]:
-        return db.query(BandeLivraison).options(
-            selectinload(BandeLivraison.lignes)
-        ).offset(skip).limit(limit).all()
+        cache_key = f"magasin:bandes:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(BandeLivraison).options(selectinload(BandeLivraison.lignes)).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def get_bande(db: Session, bande_id: int) -> Optional[BandeLivraison]:
-        return db.query(BandeLivraison).filter(BandeLivraison.id == bande_id).first()
+        cache_key = f"magasin:bande:{bande_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(BandeLivraison).filter(BandeLivraison.id == bande_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
 
     @staticmethod
     def get_bandes_by_commande(db: Session, commande_id: int) -> List[BandeLivraison]:
-        return db.query(BandeLivraison).filter(BandeLivraison.commande_id == commande_id).all()
+        cache_key = f"magasin:bandes:commande:{commande_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(BandeLivraison).filter(BandeLivraison.commande_id == commande_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
 
     @staticmethod
     def create_bande(db: Session, bande: BandeLivraisonCreate, prepare_par: str, user_id: Optional[int] = None) -> BandeLivraison:
@@ -832,6 +1109,10 @@ class BandeLivraisonService:
                 StockService.mettre_a_jour_stock_apres_livraison(db, db_bande, user_id)
 
             db.refresh(db_bande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:bandes:*")
+            
             return db_bande
         except Exception as e:
             db.rollback()
@@ -845,4 +1126,7 @@ class BandeLivraisonService:
                 setattr(db_bande, field, value)
             db.commit()
             db.refresh(db_bande)
+            
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:bandes:*")
         return db_bande

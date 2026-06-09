@@ -8,6 +8,7 @@ import { Search, Filter, Warehouse, Package, Calendar, User } from 'lucide-react
 import { DataTable } from '@/components/shared/DataTable'
 import { Stock, StockFilter } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
+import { ModuleLayout } from '@/components/layout/ModuleLayout'
 
 export default function StocksPage() {
   const [stocks, setStocks] = useState<Stock[]>([])
@@ -98,127 +99,129 @@ export default function StocksPage() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Stocks</h1>
-          <p className="text-gray-600 mt-1">Vérification et gestion des stocks avec filtres avancés</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="w-32 h-20">
-            <PortIllustration className="w-full h-full" />
+    <ModuleLayout moduleName="magasin">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Stocks</h1>
+            <p className="text-gray-600 mt-1">Vérification et gestion des stocks avec filtres avancés</p>
           </div>
-          <Button onClick={() => setShowFilters(!showFilters)}>
-            <Filter className="mr-2 h-4 w-4" />
-            Filtres
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-20">
+              <PortIllustration className="w-full h-full" />
+            </div>
+            <Button onClick={() => setShowFilters(!showFilters)}>
+              <Filter className="mr-2 h-4 w-4" />
+              Filtres
+            </Button>
+          </div>
         </div>
+
+        {showFilters && (
+          <div className="mb-6 rounded-lg bg-gray-50 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <Package className="h-4 w-4" />
+                  Code article
+                </label>
+                <Input
+                  placeholder="Ex: 1000001"
+                  value={filters.code_article}
+                  onChange={(e) => setFilters({ ...filters, code_article: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <Package className="h-4 w-4" />
+                  Nom article
+                </label>
+                <Input
+                  placeholder="Ex: Riz Bellaluna"
+                  value={filters.nom_article}
+                  onChange={(e) => setFilters({ ...filters, nom_article: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <Warehouse className="h-4 w-4" />
+                  Magasin
+                </label>
+                <Select
+                  value={filters.magasin_id?.toString() || ''}
+                  onValueChange={(value) => setFilters({ ...filters, magasin_id: value ? parseInt(value) : undefined })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tous les magasins" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Tous les magasins</SelectItem>
+                    <SelectItem value="1">Magasin Principal</SelectItem>
+                    <SelectItem value="2">Magasin Secondaire</SelectItem>
+                    <SelectItem value="3">Magasin Tertiaire</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <User className="h-4 w-4" />
+                  Client
+                </label>
+                <Select
+                  value={filters.client_id?.toString() || ''}
+                  onValueChange={(value) => setFilters({ ...filters, client_id: value ? parseInt(value) : undefined })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tous les clients" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Tous les clients</SelectItem>
+                    <SelectItem value="1">Client 1</SelectItem>
+                    <SelectItem value="2">Client 2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <Calendar className="h-4 w-4" />
+                  Date début
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_debut}
+                  onChange={(e) => setFilters({ ...filters, date_debut: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
+                  <Calendar className="h-4 w-4" />
+                  Date fin
+                </label>
+                <Input
+                  type="date"
+                  value={filters.date_fin}
+                  onChange={(e) => setFilters({ ...filters, date_fin: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" onClick={handleReset}>
+                Réinitialiser
+              </Button>
+              <Button onClick={handleFilter}>
+                <Search className="mr-2 h-4 w-4" />
+                Filtrer
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <DataTable
+          columns={columns}
+          data={stocks}
+          isLoading={isLoading}
+        />
       </div>
-
-      {showFilters && (
-        <div className="mb-6 rounded-lg bg-gray-50 p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <Package className="h-4 w-4" />
-                Code article
-              </label>
-              <Input
-                placeholder="Ex: 1000001"
-                value={filters.code_article}
-                onChange={(e) => setFilters({ ...filters, code_article: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <Package className="h-4 w-4" />
-                Nom article
-              </label>
-              <Input
-                placeholder="Ex: Riz Bellaluna"
-                value={filters.nom_article}
-                onChange={(e) => setFilters({ ...filters, nom_article: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <Warehouse className="h-4 w-4" />
-                Magasin
-              </label>
-              <Select
-                value={filters.magasin_id?.toString() || ''}
-                onValueChange={(value) => setFilters({ ...filters, magasin_id: value ? parseInt(value) : undefined })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les magasins" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Tous les magasins</SelectItem>
-                  <SelectItem value="1">Magasin Principal</SelectItem>
-                  <SelectItem value="2">Magasin Secondaire</SelectItem>
-                  <SelectItem value="3">Magasin Tertiaire</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <User className="h-4 w-4" />
-                Client
-              </label>
-              <Select
-                value={filters.client_id?.toString() || ''}
-                onValueChange={(value) => setFilters({ ...filters, client_id: value ? parseInt(value) : undefined })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les clients" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Tous les clients</SelectItem>
-                  <SelectItem value="1">Client 1</SelectItem>
-                  <SelectItem value="2">Client 2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <Calendar className="h-4 w-4" />
-                Date début
-              </label>
-              <Input
-                type="date"
-                value={filters.date_debut}
-                onChange={(e) => setFilters({ ...filters, date_debut: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <Calendar className="h-4 w-4" />
-                Date fin
-              </label>
-              <Input
-                type="date"
-                value={filters.date_fin}
-                onChange={(e) => setFilters({ ...filters, date_fin: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" onClick={handleReset}>
-              Réinitialiser
-            </Button>
-            <Button onClick={handleFilter}>
-              <Search className="mr-2 h-4 w-4" />
-              Filtrer
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <DataTable
-        columns={columns}
-        data={stocks}
-        isLoading={isLoading}
-      />
-    </div>
+    </ModuleLayout>
   )
 }

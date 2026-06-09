@@ -216,22 +216,38 @@ kamlog-erp/
 ### Authentification
 - JWT (JSON Web Tokens) pour l'authentification
 - Tokens signés avec clé secrète configurable
-- Expiration des tokens
+- Expiration des tokens (30 minutes access token)
+- Refresh tokens pour les sessions prolongées
+
+### Multi-Factor Authentication (MFA)
+- MFA obligatoire pour les comptes admin
+- Support TOTP (Time-based One-Time Password)
+- QR code pour la configuration facile
+- Codes de secours en cas de perte d'accès
+- Endpoints MFA:
+  - `POST /api/auth/mfa/setup` - Configuration avec QR code
+  - `POST /api/auth/mfa/enable` - Activation après vérification
+  - `POST /api/auth/mfa/disable` - Désactivation
+  - `POST /api/auth/mfa/verify-backup` - Vérification codes de secours
+  - `GET /api/auth/mfa/status` - Statut MFA
 
 ### Autorisation (RBAC)
 - Rôles: admin, dispatcher, finance, douane, gate_agent
 - Permissions granulaires par endpoint
-- Décorateurs `@check_permission` sur les endpoints sensibles
+- Décorateurs `@require_permission` et `@require_role` sur les endpoints sensibles
+- Vérification automatique des permissions
 
 ### Rate Limiting
 - Protection contre les attaques par force brute
 - Limites configurables par endpoint (ex: 10/minute pour POST)
 - Utilisation de `slowapi`
+- Limites spécifiques par endpoint (auth: 10/hour register, 5/minute login)
 
 ### Sanitization
 - Validation et nettoyage des entrées utilisateur
 - Protection contre XSS et injection SQL
 - Validation des emails, téléphones, URLs
+- Système de sanitization complet (`app/utils/sanitization.py`)
 
 ---
 
@@ -248,6 +264,20 @@ kamlog-erp/
 - Métriques de base de données (connexions, requêtes)
 - Métriques métier (modifications de stock, commandes)
 - Endpoint `/metrics` pour l'export Prometheus
+- Instrumentation avec `prometheus-fastapi-instrumentator`
+
+### Alertes Prometheus
+- Fichier de configuration: `kamlog-backend/prometheus/alerts.yml`
+- Groupes d'alertes:
+  - **Application Health**: ApplicationDown, HighErrorRate, HighLatency
+  - **Database**: ConnectionPoolExhausted, SlowDatabaseQueries
+  - **Redis**: RedisDown, RedisMemoryHigh, RedisConnectionPoolExhausted
+  - **Business Logic**: FailedLoginAttempts, CreditLimitExceeded, FuelSiphoningDetected, LowStockAlert
+  - **System Resources**: HighCPUUsage, HighMemoryUsage, DiskSpaceLow
+  - **API Performance**: HighAPIResponseTime, APIRequestRateHigh
+  - **Cache Performance**: LowCacheHitRate, HighCacheEvictionRate
+  - **Security**: UnauthorizedAccessAttempts, ForbiddenAccessAttempts
+  - **Module-Specific**: TiersServiceSlow, FinanceServiceSlow, TransportServiceSlow, MagasinServiceSlow, ParcServiceSlow
 
 ### Health Checks
 - Endpoint `/api/health` - Health check basique
@@ -278,10 +308,17 @@ kamlog-erp/
 ## 🚀 Performance
 
 ### Cache Redis
-- Cache des données fréquemment accédées (articles, clients)
-- Décorateur `@cache_result` pour les fonctions
-- Invalidation automatique du cache
-- TTL configurable par défaut (3600 secondes)
+- Cache des données fréquemment accédées (articles, clients, tiers, camions, chauffeurs)
+- Service de cache: `app/utils/cache.py` avec client Redis async
+- Cache keys par module: `tiers:all:skip:limit`, `parc:zones:all:skip:limit`, `finance:factures:all:skip:limit`, `transport:camions:all:skip:limit`, `magasin:magasins:all:skip:limit`
+- TTL configurable par type de données:
+  - Listes: 300 secondes
+  - Entités uniques: 600 secondes
+  - Requêtes dynamiques: 180 secondes
+  - Données fréquemment modifiées: 120 secondes
+- Invalidation automatique du cache sur les opérations d'écriture (create, update, delete)
+- Invalidation par pattern: `invalidate_cache_pattern("magasin:stocks:*")`
+- Cache intégré dans tous les services: TiersService, ParcService, FinanceService, TransportService, MagasinService
 
 ### Eager Loading
 - Utilisation de `selectinload()` pour éviter les N+1 queries
@@ -309,6 +346,17 @@ kamlog-erp/
 - Tests d'intégration avec httpx
 - Couverture de code minimale: 80%
 - Factory Boy pour les fixtures de test
+- Tests créés pour tous les modules:
+  - `tests/test_auth.py` - Authentification
+  - `tests/test_tiers.py` - Module Tiers
+  - `tests/test_parc.py` - Module Parc
+  - `tests/test_finance.py` - Module Finance
+  - `tests/test_transport.py` - Module Transport
+  - `tests/test_magasin.py` - Module Magasin
+- Fixtures pytest dans `tests/conftest.py`:
+  - `db_session` - Session de base de données de test
+  - `client` - Client HTTP de test
+  - `auth_headers` - Headers d'authentification
 
 ---
 
@@ -420,13 +468,23 @@ kamlog-erp/
 
 ## 🚧 Roadmap
 
+### ✅ Accompli (Juin 2026)
+- [x] Implémentation du cache Redis complet sur tous les services
+- [x] Configuration des alertes Prometheus
+- [x] Ajout des tests dans le pipeline CI/CD pour tous les modules
+- [x] Implémentation MFA pour les comptes admin
+- [x] Documentation API complète avec exemples
+- [x] Application RBAC sur tous les endpoints
+- [x] Intégration ModuleLayout dans toutes les pages frontend
+
 ### Court Terme (1-3 mois)
 - [ ] Compléter l'implémentation du repository pattern
 - [ ] Ajouter des tests E2E avec Playwright
-- [ ] Implémenter le cache Redis sur tous les endpoints
+- [ ] Atteindre 80% de couverture de tests
 - [ ] Ajouter des tests de charge avec Locust
 
 ### Moyen Terme (3-6 mois)
+- [ ] Migrer vers async/await complet
 - [ ] Migrer vers Kubernetes
 - [ ] Implémenter GraphQL pour le frontend
 - [ ] Ajouter un système de notifications en temps réel

@@ -8,6 +8,7 @@ import { Plus, Search, Edit, Trash2, FileText, CheckCircle, XCircle, Calendar } 
 import { DataTable } from '@/components/shared/DataTable'
 import { Declaration, DeclarationCreate, LigneDeclarationCreate, StatutDeclaration, UniteMesure } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
+import { ModuleLayout } from '@/components/layout/ModuleLayout'
 
 export default function DeclarationsPage() {
   const [declarations, setDeclarations] = useState<Declaration[]>([])
@@ -143,96 +144,98 @@ export default function DeclarationsPage() {
   )
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Déclarations (Bill of Lading)</h1>
-          <p className="text-gray-600 mt-1">Gestion des déclarations de marchandises</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="w-32 h-20">
-            <PortIllustration className="w-full h-full" />
+    <ModuleLayout moduleName="magasin">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Déclarations (Bill of Lading)</h1>
+            <p className="text-gray-600 mt-1">Gestion des déclarations de marchandises</p>
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouvelle Déclaration
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-20">
+              <PortIllustration className="w-full h-full" />
+            </div>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nouvelle Déclaration
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Rechercher par N° BL ou client..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredDeclarations}
-        isLoading={isLoading}
-      />
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-4xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Nouvelle Déclaration</h2>
-            <DeclarationForm
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to create declaration
-                  // const response = await apiClient.post('/api/magasin/declarations', data, { params: { cree_par: 'user' } })
-                  // setDeclarations([...declarations, response.data])
-                  setShowCreateModal(false)
-                } catch (error) {
-                  console.error('Error creating declaration:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => setShowCreateModal(false)}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Rechercher par N° BL ou client..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
             />
           </div>
         </div>
-      )}
 
-      {/* Edit Modal */}
-      {showEditModal && selectedDeclaration && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-4xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Modifier Déclaration</h2>
-            <DeclarationForm
-              initialData={selectedDeclaration}
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to update declaration
-                  // const response = await apiClient.put(`/api/magasin/declarations/${selectedDeclaration.id}`, data)
-                  // setDeclarations(declarations.map(d => d.id === selectedDeclaration.id ? response.data : d))
+        <DataTable
+          columns={columns}
+          data={filteredDeclarations}
+          isLoading={isLoading}
+        />
+
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-4xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Nouvelle Déclaration</h2>
+              <DeclarationForm
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to create declaration
+                    // const response = await apiClient.post('/api/magasin/declarations', data, { params: { cree_par: 'user' } })
+                    // setDeclarations([...declarations, response.data])
+                    setShowCreateModal(false)
+                  } catch (error) {
+                    console.error('Error creating declaration:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => setShowCreateModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && selectedDeclaration && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-4xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Modifier Déclaration</h2>
+              <DeclarationForm
+                initialData={selectedDeclaration}
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to update declaration
+                    // const response = await apiClient.put(`/api/magasin/declarations/${selectedDeclaration.id}`, data)
+                    // setDeclarations(declarations.map(d => d.id === selectedDeclaration.id ? response.data : d))
+                    setShowEditModal(false)
+                    setSelectedDeclaration(null)
+                  } catch (error) {
+                    console.error('Error updating declaration:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => {
                   setShowEditModal(false)
                   setSelectedDeclaration(null)
-                } catch (error) {
-                  console.error('Error updating declaration:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => {
-                setShowEditModal(false)
-                setSelectedDeclaration(null)
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </ModuleLayout>
   )
 }
 

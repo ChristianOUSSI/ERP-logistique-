@@ -8,6 +8,7 @@ import { Plus, Search, Edit, Trash2, Package, Scale, Box } from 'lucide-react'
 import { DataTable } from '@/components/shared/DataTable'
 import { Article, ArticleCreate, ArticleUpdate, UniteMesure } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
+import { ModuleLayout } from '@/components/layout/ModuleLayout'
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([])
@@ -123,96 +124,98 @@ export default function ArticlesPage() {
   )
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Codes Article</h1>
-          <p className="text-gray-600 mt-1">Gestion des codes d'article (génération automatique)</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="w-32 h-20">
-            <PortIllustration className="w-full h-full" />
+    <ModuleLayout moduleName="magasin">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Codes Article</h1>
+            <p className="text-gray-600 mt-1">Gestion des codes d'article (génération automatique)</p>
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouvel Article
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-20">
+              <PortIllustration className="w-full h-full" />
+            </div>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nouvel Article
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Rechercher par code ou nom..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredArticles}
-        isLoading={isLoading}
-      />
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Nouvel Article</h2>
-            <ArticleForm
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to create article
-                  // const response = await apiClient.post('/api/magasin/articles', data)
-                  // setArticles([...articles, response.data])
-                  setShowCreateModal(false)
-                } catch (error) {
-                  console.error('Error creating article:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => setShowCreateModal(false)}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Rechercher par code ou nom..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
             />
           </div>
         </div>
-      )}
 
-      {/* Edit Modal */}
-      {showEditModal && selectedArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Modifier Article</h2>
-            <ArticleForm
-              initialData={selectedArticle}
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to update article
-                  // const response = await apiClient.put(`/api/magasin/articles/${selectedArticle.id}`, data)
-                  // setArticles(articles.map(a => a.id === selectedArticle.id ? response.data : a))
+        <DataTable
+          columns={columns}
+          data={filteredArticles}
+          isLoading={isLoading}
+        />
+
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Nouvel Article</h2>
+              <ArticleForm
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to create article
+                    // const response = await apiClient.post('/api/magasin/articles', data)
+                    // setArticles([...articles, response.data])
+                    setShowCreateModal(false)
+                  } catch (error) {
+                    console.error('Error creating article:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => setShowCreateModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && selectedArticle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Modifier Article</h2>
+              <ArticleForm
+                initialData={selectedArticle}
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to update article
+                    // const response = await apiClient.put(`/api/magasin/articles/${selectedArticle.id}`, data)
+                    // setArticles(articles.map(a => a.id === selectedArticle.id ? response.data : a))
+                    setShowEditModal(false)
+                    setSelectedArticle(null)
+                  } catch (error) {
+                    console.error('Error updating article:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => {
                   setShowEditModal(false)
                   setSelectedArticle(null)
-                } catch (error) {
-                  console.error('Error updating article:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => {
-                setShowEditModal(false)
-                setSelectedArticle(null)
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </ModuleLayout>
   )
 }
 

@@ -7,13 +7,13 @@ from app.config import settings
 
 
 class CacheService:
-    """Service pour la gestion du cache Redis."""
+    """Service pour la gestion du cache Redis (async)."""
     
     def __init__(self):
         self.redis_client: Optional[redis.Redis] = None
     
     async def get_client(self) -> redis.Redis:
-        """Récupère ou initialise le client Redis."""
+        """Récupère ou initialise le client Redis async."""
         if self.redis_client is None:
             self.redis_client = await redis.from_url(
                 settings.REDIS_URL,
@@ -115,7 +115,7 @@ cache_service = CacheService()
 
 def cache_result(key_prefix: str, expire: int = 3600):
     """
-    Décorateur pour mettre en cache les résultats de fonction.
+    Décorateur pour mettre en cache les résultats de fonction (async).
     
     Args:
         key_prefix: Préfixe pour la clé de cache
@@ -148,7 +148,7 @@ def cache_result(key_prefix: str, expire: int = 3600):
     return decorator
 
 
-def invalidate_cache_pattern(pattern: str):
+async def invalidate_cache_pattern(pattern: str) -> int:
     """
     Invalide toutes les clés correspondant au pattern.
     
@@ -158,5 +158,4 @@ def invalidate_cache_pattern(pattern: str):
     Returns:
         Nombre de clés invalidées
     """
-    import asyncio
-    return asyncio.run(cache_service.delete_pattern(pattern))
+    return await cache_service.delete_pattern(pattern)

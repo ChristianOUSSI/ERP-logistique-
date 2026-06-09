@@ -65,6 +65,61 @@ Ce guide vous aide à résoudre les problèmes courants lors de l'installation, 
 
 3. Pour les tests, utilisez un compte admin avec tous les droits.
 
+### Erreur "MFA token required"
+
+**Symptôme**: 403 Forbidden avec "MFA token required" lors du login.
+
+**Solutions**:
+1. Vérifiez que MFA est activé pour le compte admin:
+   ```bash
+   curl -X GET https://kamlog-erp.cm/api/auth/mfa/status \
+     -H "Authorization: Bearer YOUR_TOKEN"
+   ```
+
+2. Configurez MFA pour le compte admin:
+   ```bash
+   curl -X POST https://kamlog-erp.cm/api/auth/mfa/setup \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"password":"your_password"}'
+   ```
+
+3. Activez MFA avec le code TOTP:
+   ```bash
+   curl -X POST https://kamlog-erp.cm/api/auth/mfa/enable \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"token":"123456"}'
+   ```
+
+4. Pour le login avec MFA, incluez le token TOTP:
+   ```bash
+   curl -X POST https://kamlog-erp.cm/api/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"username":"admin","password":"password","mfa_token":"123456"}'
+   ```
+
+### Erreur "Invalid MFA token"
+
+**Symptôme**: 401 Unauthorized avec "Invalid MFA token".
+
+**Solutions**:
+1. Vérifiez que l'horloge de votre appareil est synchronisée (MFA TOTP dépend du temps).
+
+2. Utilisez un code de secours si vous n'avez pas accès à votre authenticator:
+   ```bash
+   curl -X POST https://kamlog-erp.cm/api/auth/mfa/verify-backup \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"code":"ABCD1234"}'
+   ```
+
+3. Désactivez et réactivez MFA si nécessaire:
+   ```bash
+   curl -X POST https://kamlog-erp.cm/api/auth/mfa/disable \
+     -H "Authorization: Bearer YOUR_TOKEN" \
+     -d '{"password":"your_password"}'
+   ```
+
 ---
 
 ## 📊 Problèmes de Base de Données

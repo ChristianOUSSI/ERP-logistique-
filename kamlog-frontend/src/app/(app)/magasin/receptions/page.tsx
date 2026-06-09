@@ -8,6 +8,7 @@ import { Plus, Search, Edit, Trash2, Truck, CheckCircle, XCircle, Calendar, Ware
 import { DataTable } from '@/components/shared/DataTable'
 import { Reception, ReceptionCreate, LigneReceptionCreate, StatutReception, UniteMesure } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
+import { ModuleLayout } from '@/components/layout/ModuleLayout'
 
 export default function ReceptionsPage() {
   const [receptions, setReceptions] = useState<Reception[]>([])
@@ -146,96 +147,98 @@ export default function ReceptionsPage() {
   )
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Réceptions</h1>
-          <p className="text-gray-600 mt-1">Réception des marchandises dans les magasins</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="w-32 h-20">
-            <PortIllustration className="w-full h-full" />
+    <ModuleLayout moduleName="magasin">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Réceptions</h1>
+            <p className="text-gray-600 mt-1">Réception des marchandises dans les magasins</p>
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouvelle Réception
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-20">
+              <PortIllustration className="w-full h-full" />
+            </div>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nouvelle Réception
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Rechercher par N° réception ou déclaration..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredReceptions}
-        isLoading={isLoading}
-      />
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-4xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Nouvelle Réception</h2>
-            <ReceptionForm
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to create reception
-                  // const response = await apiClient.post('/api/magasin/receptions', data, { params: { recu_par: 'user' } })
-                  // setReceptions([...receptions, response.data])
-                  setShowCreateModal(false)
-                } catch (error) {
-                  console.error('Error creating reception:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => setShowCreateModal(false)}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Rechercher par N° réception ou déclaration..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
             />
           </div>
         </div>
-      )}
 
-      {/* Edit Modal */}
-      {showEditModal && selectedReception && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-4xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Modifier Réception</h2>
-            <ReceptionForm
-              initialData={selectedReception}
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to update reception
-                  // const response = await apiClient.put(`/api/magasin/receptions/${selectedReception.id}`, data)
-                  // setReceptions(receptions.map(r => r.id === selectedReception.id ? response.data : r))
+        <DataTable
+          columns={columns}
+          data={filteredReceptions}
+          isLoading={isLoading}
+        />
+
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-4xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Nouvelle Réception</h2>
+              <ReceptionForm
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to create reception
+                    // const response = await apiClient.post('/api/magasin/receptions', data, { params: { recu_par: 'user' } })
+                    // setReceptions([...receptions, response.data])
+                    setShowCreateModal(false)
+                  } catch (error) {
+                    console.error('Error creating reception:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => setShowCreateModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && selectedReception && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-4xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Modifier Réception</h2>
+              <ReceptionForm
+                initialData={selectedReception}
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to update reception
+                    // const response = await apiClient.put(`/api/magasin/receptions/${selectedReception.id}`, data)
+                    // setReceptions(receptions.map(r => r.id === selectedReception.id ? response.data : r))
+                    setShowEditModal(false)
+                    setSelectedReception(null)
+                  } catch (error) {
+                    console.error('Error updating reception:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => {
                   setShowEditModal(false)
                   setSelectedReception(null)
-                } catch (error) {
-                  console.error('Error updating reception:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => {
-                setShowEditModal(false)
-                setSelectedReception(null)
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </ModuleLayout>
   )
 }
 

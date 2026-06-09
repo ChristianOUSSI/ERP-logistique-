@@ -179,6 +179,31 @@ python scripts/seed_data.py
 exit
 ```
 
+### Étape 8: Configuration MFA (Multi-Factor Authentication)
+
+Pour les comptes admin, MFA est obligatoire. Voici comment le configurer:
+
+```bash
+# Se connecter à l'application et obtenir un token admin
+curl -X POST https://kamlog-erp.cm/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin_password"}'
+
+# Configurer MFA pour l'admin
+curl -X POST https://kamlog-erp.cm/api/auth/mfa/setup \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"password":"admin_password"}'
+
+# Activer MFA avec le code TOTP généré par l'app authenticator
+curl -X POST https://kamlog-erp.cm/api/auth/mfa/enable \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"token":"123456"}'
+```
+
+**Note**: Sauvegardez les codes de secours fournis lors de la configuration MFA.
+
 ### Étape 8: Vérification
 
 ```bash

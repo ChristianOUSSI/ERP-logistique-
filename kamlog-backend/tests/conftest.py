@@ -40,3 +40,31 @@ async def client(db_session: AsyncSession):
         yield ac
     
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(scope="function")
+async def auth_headers(client: AsyncClient):
+    """Fixture pour les headers d'authentification."""
+    # Créer un utilisateur de test
+    await client.post(
+        "/api/auth/register",
+        json={
+            "email": "test@example.com",
+            "username": "testuser",
+            "password": "testpass123",
+            "full_name": "Test User",
+            "role": "admin",
+        }
+    )
+    
+    # Se connecter pour obtenir le token
+    response = await client.post(
+        "/api/auth/login",
+        json={
+            "username": "testuser",
+            "password": "testpass123",
+        }
+    )
+    
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

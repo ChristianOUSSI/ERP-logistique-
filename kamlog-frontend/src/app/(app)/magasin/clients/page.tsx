@@ -7,6 +7,7 @@ import { Plus, Search, Edit, Trash2, Phone, Mail, MapPin } from 'lucide-react'
 import { DataTable } from '@/components/shared/DataTable'
 import { ClientMagasin, ClientMagasinCreate, ClientMagasinUpdate } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
+import { ModuleLayout } from '@/components/layout/ModuleLayout'
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<ClientMagasin[]>([])
@@ -124,96 +125,98 @@ export default function ClientsPage() {
   )
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
-          <p className="text-gray-600 mt-1">Gestion des profils clients</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="w-32 h-20">
-            <PortIllustration className="w-full h-full" />
+    <ModuleLayout moduleName="magasin">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
+            <p className="text-gray-600 mt-1">Gestion des profils clients</p>
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouveau Client
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="w-32 h-20">
+              <PortIllustration className="w-full h-full" />
+            </div>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nouveau Client
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Rechercher par code, nom ou raison sociale..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredClients}
-        isLoading={isLoading}
-      />
-
-      {/* Create Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Nouveau Client</h2>
-            <ClientForm
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to create client
-                  // const response = await apiClient.post('/api/magasin/clients', data)
-                  // setClients([...clients, response.data])
-                  setShowCreateModal(false)
-                } catch (error) {
-                  console.error('Error creating client:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => setShowCreateModal(false)}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Rechercher par code, nom ou raison sociale..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
             />
           </div>
         </div>
-      )}
 
-      {/* Edit Modal */}
-      {showEditModal && selectedClient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Modifier Client</h2>
-            <ClientForm
-              initialData={selectedClient}
-              onSubmit={async (data) => {
-                setIsLoading(true)
-                try {
-                  // API call to update client
-                  // const response = await apiClient.put(`/api/magasin/clients/${selectedClient.id}`, data)
-                  // setClients(clients.map(c => c.id === selectedClient.id ? response.data : c))
+        <DataTable
+          columns={columns}
+          data={filteredClients}
+          isLoading={isLoading}
+        />
+
+        {/* Create Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Nouveau Client</h2>
+              <ClientForm
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to create client
+                    // const response = await apiClient.post('/api/magasin/clients', data)
+                    // setClients([...clients, response.data])
+                    setShowCreateModal(false)
+                  } catch (error) {
+                    console.error('Error creating client:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => setShowCreateModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && selectedClient && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6">
+              <h2 className="mb-4 text-xl font-bold">Modifier Client</h2>
+              <ClientForm
+                initialData={selectedClient}
+                onSubmit={async (data) => {
+                  setIsLoading(true)
+                  try {
+                    // API call to update client
+                    // const response = await apiClient.put(`/api/magasin/clients/${selectedClient.id}`, data)
+                    // setClients(clients.map(c => c.id === selectedClient.id ? response.data : c))
+                    setShowEditModal(false)
+                    setSelectedClient(null)
+                  } catch (error) {
+                    console.error('Error updating client:', error)
+                  } finally {
+                    setIsLoading(false)
+                  }
+                }}
+                onCancel={() => {
                   setShowEditModal(false)
                   setSelectedClient(null)
-                } catch (error) {
-                  console.error('Error updating client:', error)
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
-              onCancel={() => {
-                setShowEditModal(false)
-                setSelectedClient(null)
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </ModuleLayout>
   )
 }
 

@@ -5,11 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token
 from app.utils.security import verify_password, get_password_hash, create_access_token, create_refresh_token, decode_token
+from app.utils.mfa import generate_mfa_secret, generate_mfa_qr_code, verify_totp_token, generate_backup_codes, verify_backup_code, is_mfa_required_for_user
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
@@ -90,6 +92,7 @@ async def register(
 async def login(
     request: Request,
     credentials: UserLogin,
+    mfa_token: str | None = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Authentifie un utilisateur et retourne les tokens JWT."""
@@ -108,6 +111,32 @@ async def login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is disabled"
         )
+    
+    # Vérifier MFA si activé ou requis
+    mfa_required = is_mfa_required_for_user(user.role) or user.mfa_enabled
+    
+    if mfa_required:
+        if user.mfa_enabled:
+            # MFA est activé, vérifier le token
+            if not mfa_token:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="MFA token required",
+                    headers={"X-MFA-Required": "true"}
+                )
+            
+            if not verify_totp_token(user.mfa_secret, mfa_token):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid MFA token"
+                )
+        else:
+            # MFA est requis mais pas encore activé
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="MFA setup required for this role",
+                headers={"X-MFA-Setup-Required": "true"}
+            )
     
     access_token = create_access_token(data={"sub": user.username})
     refresh_token = create_refresh_token(data={"sub": user.username})
@@ -155,3 +184,171 @@ async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
 async def get_me(current_user: User = Depends(get_current_user)):
     """Retourne les informations de l'utilisateur courant."""
     return current_user
+
+
+# MFA Schemas
+class MFASetupRequest(BaseModel):
+    """Request pour la configuration MFA."""
+    password: str
+
+
+class MFAVerifyRequest(BaseModel):
+    """Request pour la vérification MFA."""
+    token: str
+
+
+class MFASetupResponse(BaseModel):
+    """Response pour la configuration MFA."""
+    qr_code: str
+    backup_codes: list[str]
+
+
+@router.post("/mfa/setup", response_model=MFASetupResponse)
+@limiter.limit("3/hour")
+async def setup_mfa(
+    request: Request,
+    mfa_data: MFASetupRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Configure MFA pour l'utilisateur courant.
+    Génère un secret TOTP et des codes de secours.
+    """
+    # Vérifier le mot de passe
+    if not verify_password(mfa_data.password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password"
+        )
+    
+    # Vérifier si MFA est déjà activé
+    if current_user.mfa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA is already enabled"
+        )
+    
+    # Générer le secret MFA
+    secret = generate_mfa_secret()
+    
+    # Générer le QR code
+    qr_code = generate_mfa_qr_code(current_user.username, secret)
+    
+    # Générer les codes de secours
+    backup_codes = generate_backup_codes()
+    
+    # Stocker temporairement (ne pas activer encore)
+    current_user.mfa_secret = secret
+    current_user.mfa_backup_codes = backup_codes
+    await db.commit()
+    
+    return {
+        "qr_code": qr_code,
+        "backup_codes": backup_codes
+    }
+
+
+@router.post("/mfa/enable")
+@limiter.limit("5/hour")
+async def enable_mfa(
+    request: Request,
+    mfa_data: MFAVerifyRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Active MFA après vérification du token TOTP.
+    """
+    # Vérifier que le secret existe
+    if not current_user.mfa_secret:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA setup not initiated. Call /mfa/setup first."
+        )
+    
+    # Vérifier le token TOTP
+    if not verify_totp_token(current_user.mfa_secret, mfa_data.token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid TOTP token"
+        )
+    
+    # Activer MFA
+    current_user.mfa_enabled = True
+    await db.commit()
+    
+    return {"message": "MFA enabled successfully"}
+
+
+@router.post("/mfa/disable")
+@limiter.limit("5/hour")
+async def disable_mfa(
+    request: Request,
+    password: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Désactive MFA pour l'utilisateur courant.
+    """
+    # Vérifier le mot de passe
+    if not verify_password(password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password"
+        )
+    
+    # Vérifier si MFA est activé
+    if not current_user.mfa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA is not enabled"
+        )
+    
+    # Désactiver MFA
+    current_user.mfa_enabled = False
+    current_user.mfa_secret = None
+    current_user.mfa_backup_codes = None
+    await db.commit()
+    
+    return {"message": "MFA disabled successfully"}
+
+
+@router.post("/mfa/verify-backup")
+@limiter.limit("10/hour")
+async def verify_backup_code(
+    request: Request,
+    code: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Vérifie un code de secours MFA.
+    """
+    if not current_user.mfa_enabled or not current_user.mfa_backup_codes:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA not enabled or no backup codes available"
+        )
+    
+    is_valid, updated_codes = verify_backup_code(current_user.mfa_backup_codes, code)
+    
+    if is_valid:
+        current_user.mfa_backup_codes = updated_codes
+        await db.commit()
+        return {"message": "Backup code verified successfully"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid backup code"
+        )
+
+
+@router.get("/mfa/status")
+async def get_mfa_status(current_user: User = Depends(get_current_user)):
+    """Retourne le statut MFA de l'utilisateur courant."""
+    return {
+        "mfa_enabled": current_user.mfa_enabled,
+        "mfa_required": is_mfa_required_for_user(current_user.role)
+    }
