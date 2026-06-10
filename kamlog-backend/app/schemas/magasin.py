@@ -16,6 +16,33 @@ class UniteMesure(str, Enum):
     UNITE = "UNITE"
 
 
+class CategorieArticle(str, Enum):
+    """Catégories d'articles"""
+    ALIMENTAIRE = "ALIMENTAIRE"
+    PHARMACEUTIQUE = "PHARMACEUTIQUE"
+    MATIERES_PREMIERES = "MATIERES_PREMIERES"
+    PRODUITS_FINIS = "PRODUITS_FINIS"
+    EMBALLAGES_PALETES = "EMBALLAGES_PALETES"
+    EQUIPEMENT = "EQUIPEMENT"
+    PIECES_DETACHEES = "PIECES_DETACHEES"
+    MOBILIER_BUREAU_INFORMATIQUE = "MOBILIER_BUREAU_INFORMATIQUE"
+    PRODUITS_DANGEREUX = "PRODUITS_DANGEREUX"
+    PRODUITS_LUXE_VALEUR = "PRODUITS_LUXE_VALEUR"
+    VRAC = "VRAC"
+    HORS_GABARIT = "HORS_GABARIT"
+
+
+class StatutStock(str, Enum):
+    """Statuts du stock"""
+    NORMAL = "NORMAL"
+    DECHIRE = "DECHIRE"
+    MOUILLE = "MOUILLE"
+    ENDOMMAGE = "ENDOMMAGE"
+    PERIME = "PERIME"
+    EN_ATTENTE = "EN_ATTENTE"
+    RESERVE = "RESERVE"
+
+
 class StatutDeclaration(str, Enum):
     """Statuts des déclarations"""
     BROUILLON = "BROUILLON"
@@ -135,6 +162,7 @@ class ArticleBase(BaseModel):
     code_article: str = Field(..., min_length=7, max_length=20)
     nom: str = Field(..., min_length=2, max_length=200)
     description: Optional[str] = Field(None, max_length=500)
+    categorie: Optional[CategorieArticle] = None
     unite_mesure: UniteMesure = UniteMesure.UDB
     poids_unitaire: Optional[float] = Field(None, ge=0)
     volume_unitaire: Optional[float] = Field(None, ge=0)
@@ -142,11 +170,11 @@ class ArticleBase(BaseModel):
 
     @validator('code_article')
     def validate_code_article(cls, v):
-        """Le code d'article doit commencer par 1 et avoir 7 chiffres minimum"""
-        if not v.startswith('1'):
-            raise ValueError('Le code d\'article doit commencer par 1')
-        if len(v) < 7:
-            raise ValueError('Le code d\'article doit avoir au moins 7 chiffres')
+        """Le code d'article doit avoir 7 chiffres"""
+        if len(v) != 7:
+            raise ValueError('Le code d\'article doit avoir exactement 7 chiffres')
+        if not v.isdigit():
+            raise ValueError('Le code d\'article doit contenir uniquement des chiffres')
         return v
 
 
@@ -154,12 +182,13 @@ class ArticleCreate(ArticleBase):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "code_article": "1000001",
-                "nom": "Conteneur 20 pieds",
-                "description": "Conteneur maritime standard 20 pieds",
+                "code_article": "1111110",
+                "nom": "Gobelet",
+                "description": "Gobelet en plastique",
+                "categorie": "EMBALLAGES_PALETES",
                 "unite_mesure": "UDB",
-                "poids_unitaire": 2500.0,
-                "volume_unitaire": 33.0,
+                "poids_unitaire": 0.005,
+                "volume_unitaire": 0.0005,
                 "est_actif": True
             }
         }
@@ -169,6 +198,7 @@ class ArticleCreate(ArticleBase):
 class ArticleUpdate(BaseModel):
     nom: Optional[str] = Field(None, min_length=2, max_length=200)
     description: Optional[str] = Field(None, max_length=500)
+    categorie: Optional[CategorieArticle] = None
     unite_mesure: Optional[UniteMesure] = None
     poids_unitaire: Optional[float] = Field(None, ge=0)
     volume_unitaire: Optional[float] = Field(None, ge=0)
@@ -208,6 +238,9 @@ class LigneDeclaration(LigneDeclarationBase):
 # ============ DECLARATION ============
 class DeclarationBase(BaseModel):
     client_id: int
+    incoterm_id: Optional[int] = None
+    type_conteneur_id: Optional[int] = None
+    numero_conteneur: Optional[str] = Field(None, max_length=50)
     date_arrivee_prevue: Optional[datetime] = None
     statut: StatutDeclaration = StatutDeclaration.BROUILLON
     notes: Optional[str] = Field(None, max_length=500)
@@ -220,6 +253,9 @@ class DeclarationCreate(DeclarationBase):
         json_schema_extra={
             "example": {
                 "client_id": 1,
+                "incoterm_id": 1,
+                "type_conteneur_id": 1,
+                "numero_conteneur": "ABCD1234567",
                 "date_arrivee_prevue": "2026-06-15T10:00:00",
                 "statut": "BROUILLON",
                 "notes": "Déclaration de marchandise en provenance de Chine",
@@ -236,6 +272,9 @@ class DeclarationCreate(DeclarationBase):
 
 
 class DeclarationUpdate(BaseModel):
+    incoterm_id: Optional[int] = None
+    type_conteneur_id: Optional[int] = None
+    numero_conteneur: Optional[str] = Field(None, max_length=50)
     date_arrivee_prevue: Optional[datetime] = None
     statut: Optional[StatutDeclaration] = None
     notes: Optional[str] = Field(None, max_length=500)
@@ -332,6 +371,7 @@ class StockBase(BaseModel):
     article_id: int
     quantite_disponible: Decimal = Field(default=0, ge=0, decimal_places=3)
     quantite_udb: Decimal = Field(default=0, ge=0, decimal_places=3)
+    statut: StatutStock = StatutStock.NORMAL
 
 
 class StockCreate(StockBase):
@@ -341,6 +381,7 @@ class StockCreate(StockBase):
 class StockUpdate(BaseModel):
     quantite_disponible: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
     quantite_udb: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
+    statut: Optional[StatutStock] = None
 
 
 class Stock(StockBase):
@@ -348,6 +389,22 @@ class Stock(StockBase):
     derniere_maj: Optional[datetime] = None
     date_creation: datetime
     magasin: Optional[Magasin] = None
+    article: Optional[Article] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ============ FILTRE STOCK ============
+class StockFilter(BaseModel):
+    """Filtres avancés pour la recherche de stock"""
+    code_article: Optional[str] = None
+    magasin_ids: Optional[List[int]] = None  # Peut choisir plusieurs magasins
+    client_id: Optional[int] = None
+    date_debut: Optional[datetime] = None
+    date_fin: Optional[datetime] = None
+    statut: Optional[StatutStock] = None
+    categorie: Optional[CategorieArticle] = None
     article: Optional[Article] = None
 
     class Config:
@@ -502,17 +559,177 @@ class BandeLivraison(BandeLivraisonBase):
     date_creation: datetime
     prepare_par: Optional[str] = None
     commande: Optional[Commande] = None
-    lignes: List[LigneBandeLivraison] = []
+    magasin: Optional[Magasin] = None
+    lignes_bande: List[LigneBandeLivraison] = []
 
     class Config:
         from_attributes = True
 
 
-# ============ FILTRES STOCK ============
-class StockFilter(BaseModel):
-    code_article: Optional[str] = None
-    nom_article: Optional[str] = None
-    magasin_id: Optional[int] = None
-    client_id: Optional[int] = None
-    date_debut: Optional[datetime] = None
-    date_fin: Optional[datetime] = None
+# ============ INCOTERM ============
+class IncotermBase(BaseModel):
+    code: str = Field(..., min_length=2, max_length=5)
+    nom: str = Field(..., min_length=2, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    est_actif: bool = True
+
+
+class IncotermCreate(IncotermBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "code": "FOB",
+                "nom": "Free On Board",
+                "description": "Le vendeur met les marchandises à bord du navire",
+                "est_actif": True
+            }
+        }
+    )
+
+
+class IncotermUpdate(BaseModel):
+    nom: Optional[str] = Field(None, min_length=2, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    est_actif: Optional[bool] = None
+
+
+class Incoterm(IncotermBase):
+    id: int
+    date_creation: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ============ TYPE CONTENEUR ============
+class TypeConteneurBase(BaseModel):
+    code: str = Field(..., min_length=2, max_length=20)
+    nom: str = Field(..., min_length=2, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    longueur: Optional[str] = Field(None, max_length=10)
+    type_conteneur: Optional[str] = Field(None, max_length=50)
+    est_actif: bool = True
+
+
+class TypeConteneurCreate(TypeConteneurBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "code": "20DRY",
+                "nom": "20' Dry",
+                "description": "Conteneur sec 20 pieds",
+                "longueur": "20'",
+                "type_conteneur": "Dry",
+                "est_actif": True
+            }
+        }
+    )
+
+
+class TypeConteneurUpdate(BaseModel):
+    nom: Optional[str] = Field(None, min_length=2, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    longueur: Optional[str] = Field(None, max_length=10)
+    type_conteneur: Optional[str] = Field(None, max_length=50)
+    est_actif: Optional[bool] = None
+
+
+class TypeConteneur(TypeConteneurBase):
+    id: int
+    date_creation: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ============ TRANSACTION ============
+class TransactionBase(BaseModel):
+    code_transaction: str = Field(..., min_length=2, max_length=10)
+    nom: str = Field(..., min_length=2, max_length=200)
+    description: Optional[str] = Field(None, max_length=500)
+    interface: str = Field(..., min_length=2, max_length=100)
+    role_requis: Optional[str] = Field(None, max_length=50)
+    est_actif: bool = True
+
+
+class TransactionCreate(TransactionBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "code_transaction": "KM24",
+                "nom": "Réception marchandise",
+                "description": "Réception de marchandises dans un magasin",
+                "interface": "reception_create",
+                "role_requis": "MAGASINIER",
+                "est_actif": True
+            }
+        }
+    )
+
+
+class TransactionUpdate(BaseModel):
+    nom: Optional[str] = Field(None, min_length=2, max_length=200)
+    description: Optional[str] = Field(None, max_length=500)
+    interface: Optional[str] = Field(None, min_length=2, max_length=100)
+    role_requis: Optional[str] = Field(None, max_length=50)
+    est_actif: Optional[bool] = None
+
+
+class Transaction(TransactionBase):
+    id: int
+    date_creation: datetime
+    date_modification: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ============ OPERATION TRACE ============
+class OperationTraceBase(BaseModel):
+    numero_ot: str = Field(..., min_length=9, max_length=20)
+    type_operation: str = Field(..., min_length=2, max_length=50)
+    table_cible: str = Field(..., min_length=2, max_length=100)
+    enregistrement_id: int
+    utilisateur_id: Optional[int] = None
+    donnees_operation: Optional[str] = Field(None, max_length=5000)
+
+
+class OperationTraceCreate(OperationTraceBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "numero_ot": "780494878",
+                "type_operation": "CREATION_ARTICLE",
+                "table_cible": "articles",
+                "enregistrement_id": 1,
+                "utilisateur_id": 1,
+                "donnees_operation": '{"code_article": "1111110", "nom": "Gobelet"}'
+            }
+        }
+    )
+
+
+class OperationTrace(OperationTraceBase):
+    id: int
+    date_operation: datetime
+    est_annule: bool
+    date_annulation: Optional[datetime] = None
+    annule_par: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ============ ANNULATION OPERATION ============
+class OperationCancelRequest(BaseModel):
+    numero_ot: str = Field(..., min_length=9, max_length=20)
+    annule_par: str = Field(..., min_length=2, max_length=100)
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "numero_ot": "780494878",
+                "annule_par": "admin"
+            }
+        }
+    )

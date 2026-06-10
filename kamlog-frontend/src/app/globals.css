@@ -1,10 +1,12 @@
-/* src/app/globals.css  Tailwind v4 + Design System KAMLOG */
+/* src/app/globals.css  Tailwind v3 + Design System KAMLOG */
 
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ================================================================
    DESIGN TOKENS KAMLOG  CSS Custom Properties
-   Tailwind v4 lit directement ces variables CSS
+   Tailwind v3 lit ces variables CSS via theme.extend
    ================================================================ */
 
 :root {

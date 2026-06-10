@@ -7,6 +7,155 @@ Ce guide vous aide à résoudre les problèmes courants lors de l'installation, 
 
 ---
 
+## 🚀 Problèmes d'Installation
+
+### Script d'installation échoue
+
+**Symptôme**: Le script `setup.ps1` ou `setup.sh` échoue.
+
+**Solutions**:
+1. **Windows - PowerShell**: Exécutez en tant qu'administrateur:
+   ```powershell
+   # Ouvrez PowerShell en tant qu'administrateur
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   .\setup.ps1
+   ```
+
+2. **Linux/macOS**: Rendez le script exécutable:
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
+   ```
+
+3. **Python non trouvé**: Installez Python 3.12+ depuis https://www.python.org/downloads/
+   - Windows: Cochez "Add Python to PATH" lors de l'installation
+   - Linux: `sudo apt install python3.12 python3-pip`
+   - macOS: `brew install python@3.12`
+
+4. **Node.js non trouvé**: Installez Node.js 20+ depuis https://nodejs.org/
+   - Vérifiez avec `node --version` et `npm --version`
+
+### Erreur "Module not found" lors du build frontend
+
+**Symptôme**: `npm run build` échoue avec des erreurs de modules manquants.
+
+**Solutions**:
+1. Nettoyez et réinstallez les dépendances:
+   ```bash
+   cd kamlog-frontend
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+2. Si le problème persiste, installez les dépendances manquantes:
+   ```bash
+   npm install react-hook-form @hookform/resolvers zod
+   npm install next-auth @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-checkbox @radix-ui/react-select
+   npm install @hugeicons/react @hugeicons/core-free-icons
+   ```
+
+### Erreur "Cannot find module '@tailwindcss/postcss'"
+
+**Symptôme**: Le build échoue avec cette erreur.
+
+**Solutions**:
+```bash
+cd kamlog-frontend
+npm install @tailwindcss/postcss
+```
+
+### Erreur "Can't resolve 'tailwindcss'"
+
+**Symptôme**: Le build échoue avec cette erreur dans globals.css.
+
+**Solutions**:
+1. Vérifiez que tailwindcss est installé:
+   ```bash
+   cd kamlog-frontend
+   npm install tailwindcss
+   ```
+
+2. Vérifiez que globals.css utilise la syntaxe correcte pour Tailwind v3:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+   (Au lieu de `@import "tailwindcss"` qui est la syntaxe Tailwind v4)
+
+### Erreur "Can't resolve 'radix-ui'"
+
+**Symptôme**: Le build échoue avec des erreurs d'imports radix-ui.
+
+**Solutions**:
+1. Les imports doivent utiliser les packages spécifiques @radix-ui/react-*:
+   ```typescript
+   // Incorrect
+   import { Slot } from "radix-ui"
+   
+   // Correct
+   import { Slot } from "@radix-ui/react-slot"
+   ```
+
+2. Installez les dépendances radix-ui manquantes:
+   ```bash
+   cd kamlog-frontend
+   npm install @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-checkbox
+   npm install @radix-ui/react-select @radix-ui/react-dialog @radix-ui/react-dropdown-menu
+   npm install @radix-ui/react-separator @radix-ui/react-popover @radix-ui/react-navigation-menu
+   npm install @radix-ui/react-menubar @radix-ui/react-hover-card @radix-ui/react-direction
+   npm install @radix-ui/react-context-menu @radix-ui/react-collapsible @radix-ui/react-avatar
+   npm install @radix-ui/react-aspect-ratio @radix-ui/react-alert-dialog @radix-ui/react-accordion
+   ```
+
+### Erreur "The Middleware must export a `middleware` or a `default` function"
+
+**Symptôme**: Next.js échoue au démarrage avec cette erreur.
+
+**Solutions**:
+1. Si vous n'avez pas besoin de middleware personnalisé, supprimez le fichier:
+   ```bash
+   cd kamlog-frontend
+   rm src/middleware.ts
+   ```
+
+2. Si vous avez besoin de middleware, assurez-vous qu'il exporte une fonction:
+   ```typescript
+   // src/middleware.ts
+   import { NextResponse } from 'next/server'
+   import type { NextRequest } from 'next/server'
+
+   export function middleware(request: NextRequest) {
+     return NextResponse.next()
+   }
+
+   export const config = {
+     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+   }
+   ```
+
+### Erreur "auth is not a function"
+
+**Symptôme**: TypeError: (0 , _lib_auth__WEBPACK_IMPORTED_MODULE_1__.auth) is not a function
+
+**Solutions**:
+1. Vérifiez que src/lib/auth.ts exporte correctement la fonction auth:
+   ```typescript
+   // Pour NextAuth v4
+   import { getServerSession } from 'next-auth'
+
+   export async function auth() {
+     return await getServerSession()
+   }
+   ```
+
+2. Assurez-vous que l'import dans vos pages est correct:
+   ```typescript
+   import { auth } from '@/lib/auth'
+   ```
+
+---
+
 ## 🚀 Problèmes de Démarrage
 
 ### L'application ne démarre pas
@@ -331,6 +480,37 @@ Si vous ne trouvez pas la solution ici:
    DEBUG=True
    ```
 
+### Problèmes fréquents pour les nouveaux développeurs
+
+**Q: J'ai cloné le projet mais je ne sais pas par où commencer.**
+- A: Exécutez le script d'installation automatique:
+  - Windows: `.\setup.ps1`
+  - Linux/macOS: `./setup.sh`
+
+**Q: Le script d'installation échoue.**
+- A: Vérifiez que Python 3.12+ et Node.js 20+ sont installés et dans le PATH.
+
+**Q: Le frontend ne se compile pas.**
+- A: Nettoyez et réinstallez les dépendances:
+  ```bash
+  cd kamlog-frontend
+  rm -rf node_modules package-lock.json
+  npm install
+  ```
+
+**Q: Le backend ne se connecte pas à la base de données.**
+- A: Assurez-vous que Docker est en cours d'exécution et que les conteneurs sont démarrés:
+  ```bash
+  docker-compose up -d db redis minio
+  ```
+
+**Q: J'ai des erreurs de permissions sur Linux.**
+- A: Ajoutez votre utilisateur au groupe docker:
+  ```bash
+  sudo usermod -aG docker $USER
+  # Déconnectez-vous et reconnectez-vous
+  ```
+
 ---
 
 ## 📞 Support
@@ -338,4 +518,4 @@ Si vous ne trouvez pas la solution ici:
 Pour le support technique:
 - Email: support@kamlog.cm
 - Documentation: https://docs.kamlog.cm
-- Issues: https://github.com/kamlog/erp/issues
+- Issues: https://github.com/cadc/kamlog-em-erp/issues

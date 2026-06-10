@@ -44,14 +44,39 @@ KAMLOG-EM-ERP/
 
 ## 🚀 Démarrage Rapide
 
-### Prérequis
+### Installation Automatique (Recommandé)
 
-- Python 3.12+
-- Node.js 20+
-- Docker & Docker Compose
-- PostgreSQL 17
+#### Windows
+```powershell
+# Exécuter le script PowerShell
+.\setup.ps1
+```
 
-### Backend Setup
+#### Linux/macOS
+```bash
+# Rendre le script exécutable
+chmod +x setup.sh
+
+# Exécuter le script
+./setup.sh
+```
+
+Le script va:
+- ✅ Vérifier les prérequis (Python, Node.js, Docker)
+- ✅ Installer toutes les dépendances
+- ✅ Créer les fichiers de configuration (.env)
+- ✅ Afficher les instructions de démarrage
+
+### Installation Manuelle
+
+#### Prérequis
+
+- **Python 3.12+** - [Télécharger](https://www.python.org/downloads/)
+- **Node.js 20+** - [Télécharger](https://nodejs.org/)
+- **Docker & Docker Compose** - [Télécharger](https://www.docker.com/products/docker-desktop/)
+- **PostgreSQL 17** (optionnel, inclus dans Docker Compose)
+
+#### Backend Setup
 
 ```bash
 cd kamlog-backend
@@ -59,13 +84,14 @@ cd kamlog-backend
 # Créer l'environnement virtuel
 python -m venv .venv
 .venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/macOS
 
 # Installer les dépendances
 pip install -r requirements.txt
 
 # Configurer l'environnement
 cp .env.example .env
-# Éditer .env avec vos valeurs
+# Éditer .env avec vos valeurs (voir section Configuration)
 
 # Lancer Docker (PostgreSQL, Redis, MinIO)
 cd ..
@@ -81,7 +107,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 L'API est disponible sur http://localhost:8000/api/docs
 
-### Frontend Setup
+#### Frontend Setup
 
 ```bash
 cd kamlog-frontend
@@ -91,7 +117,7 @@ npm install
 
 # Configurer l'environnement
 cp .env.local.example .env.local
-# Éditer .env.local avec vos valeurs
+# Éditer .env.local avec vos valeurs (voir section Configuration)
 
 # Lancer le serveur de développement
 npm run dev
@@ -99,7 +125,7 @@ npm run dev
 
 L'application est disponible sur http://localhost:3000
 
-### Docker Compose (Tout en un)
+#### Docker Compose (Tout en un)
 
 ```bash
 # Lancer tous les services
@@ -167,13 +193,66 @@ docker-compose logs -f
 
 ### Variables d'environnement
 
-Voir `.env.example` pour la configuration complète :
+#### Backend (.env)
+Voir `kamlog-backend/.env.example` pour la configuration complète :
 
 - `DATABASE_URL` : Connexion PostgreSQL
 - `REDIS_URL` : Connexion Redis
-- `JWT_SECRET_KEY` : Clé secrète JWT
+- `JWT_SECRET_KEY` : Clé secrète JWT (min 32 caractères)
 - `MINIO_*` : Configuration stockage objet
 - `SMTP_*` : Configuration email
+
+#### Frontend (.env.local)
+Voir `kamlog-frontend/.env.local.example` pour la configuration complète :
+
+- `NEXT_PUBLIC_API_URL` : URL de l'API backend
+- `NEXTAUTH_URL` : URL de l'application
+- `NEXTAUTH_SECRET` : Clé secrète NextAuth (min 32 caractères)
+
+### Dépendances Système
+
+#### Windows
+- Python 3.12+ avec pip
+- Node.js 20+ avec npm
+- Docker Desktop (optionnel mais recommandé)
+- Git
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Python et pip
+sudo apt update
+sudo apt install python3.12 python3-pip python3-venv
+
+# Node.js et npm
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Git
+sudo apt install git
+```
+
+#### macOS
+```bash
+# Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Python
+brew install python@3.12
+
+# Node.js
+brew install node
+
+# Docker
+brew install --cask docker
+
+# Git
+brew install git
+```
 
 ## 📊 API Documentation
 

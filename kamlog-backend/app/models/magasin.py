@@ -16,6 +16,33 @@ class UniteMesure(enum.Enum):
     UNITE = "UNITE"  # Unité générique
 
 
+class CategorieArticle(enum.Enum):
+    """Catégories d'articles"""
+    ALIMENTAIRE = "ALIMENTAIRE"
+    PHARMACEUTIQUE = "PHARMACEUTIQUE"
+    MATIERES_PREMIERES = "MATIERES_PREMIERES"
+    PRODUITS_FINIS = "PRODUITS_FINIS"
+    EMBALLAGES_PALETES = "EMBALLAGES_PALETES"
+    EQUIPEMENT = "EQUIPEMENT"
+    PIECES_DETACHEES = "PIECES_DETACHEES"
+    MOBILIER_BUREAU_INFORMATIQUE = "MOBILIER_BUREAU_INFORMATIQUE"
+    PRODUITS_DANGEREUX = "PRODUITS_DANGEREUX"
+    PRODUITS_LUXE_VALEUR = "PRODUITS_LUXE_VALEUR"
+    VRAC = "VRAC"
+    HORS_GABARIT = "HORS_GABARIT"
+
+
+class StatutStock(enum.Enum):
+    """Statuts du stock"""
+    NORMAL = "NORMAL"
+    DECHIRE = "DECHIRE"
+    MOUILLE = "MOUILLE"
+    ENDOMMAGE = "ENDOMMAGE"
+    PERIME = "PERIME"
+    EN_ATTENTE = "EN_ATTENTE"
+    RESERVE = "RESERVE"
+
+
 class StatutDeclaration(enum.Enum):
     """Statuts des déclarations"""
     BROUILLON = "BROUILLON"
@@ -94,6 +121,7 @@ class Article(Base):
     code_article = Column(String(20), unique=True, nullable=False, index=True)
     nom = Column(String(200), nullable=False, index=True)
     description = Column(String(500))
+    categorie = Column(Enum(CategorieArticle), nullable=True)
     unite_mesure = Column(Enum(UniteMesure), default=UniteMesure.UDB)
     poids_unitaire = Column(Float, nullable=True)  # Poids en kg si applicable
     volume_unitaire = Column(Float, nullable=True)  # Volume en m³ si applicable
@@ -115,6 +143,9 @@ class Declaration(Base):
     id = Column(Integer, primary_key=True, index=True)
     numero_bl = Column(String(50), unique=True, nullable=False, index=True)
     client_id = Column(Integer, ForeignKey("clients_magasin.id"), nullable=False)
+    incoterm_id = Column(Integer, ForeignKey("incoterms.id"), nullable=True)
+    type_conteneur_id = Column(Integer, ForeignKey("types_conteneur.id"), nullable=True)
+    numero_conteneur = Column(String(50), nullable=True)
     date_declaration = Column(DateTime(timezone=True), server_default=func.now())
     date_arrivee_prevue = Column(DateTime(timezone=True))
     statut = Column(Enum(StatutDeclaration), default=StatutDeclaration.BROUILLON)
@@ -191,6 +222,7 @@ class Stock(Base):
     article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
     quantite_disponible = Column(Numeric(15, 3), default=0)
     quantite_udb = Column(Numeric(15, 3), default=0)
+    statut = Column(Enum(StatutStock), default=StatutStock.NORMAL)
     derniere_maj = Column(DateTime(timezone=True), onupdate=func.now())
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -279,3 +311,61 @@ class LigneBandeLivraison(Base):
 
     # Relations
     bande = relationship("BandeLivraison", back_populates="lignes_bande")
+
+
+class Incoterm(Base):
+    """Modèle pour les Incoterms"""
+    __tablename__ = "incoterms"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(5), unique=True, nullable=False, index=True)
+    nom = Column(String(100), nullable=False)
+    description = Column(String(500))
+    est_actif = Column(Boolean, default=True)
+    date_creation = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TypeConteneur(Base):
+    """Modèle pour les types de conteneurs"""
+    __tablename__ = "types_conteneur"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(20), unique=True, nullable=False, index=True)
+    nom = Column(String(100), nullable=False)
+    description = Column(String(500))
+    longueur = Column(String(10))  # ex: "20'", "40'"
+    type_conteneur = Column(String(50))  # ex: "Dry", "Reefer", "Open Top"
+    est_actif = Column(Boolean, default=True)
+    date_creation = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Transaction(Base):
+    """Modèle pour les transactions (codes d'accès aux interfaces)"""
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code_transaction = Column(String(10), unique=True, nullable=False, index=True)
+    nom = Column(String(200), nullable=False)
+    description = Column(String(500))
+    interface = Column(String(100), nullable=False)  # Nom de l'interface/route
+    role_requis = Column(String(50))  # Rôle requis pour accéder (ex: "MAGASINIER", "TRANSITAIRE")
+    est_actif = Column(Boolean, default=True)
+    date_creation = Column(DateTime(timezone=True), server_default=func.now())
+    date_modification = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class OperationTrace(Base):
+    """Modèle pour tracer les opérations avec numéro d'OT"""
+    __tablename__ = "operations_trace"
+
+    id = Column(Integer, primary_key=True, index=True)
+    numero_ot = Column(String(20), unique=True, nullable=False, index=True)
+    type_operation = Column(String(50), nullable=False)  # ex: "CREATION_ARTICLE", "RECEPTION", "DECLARATION"
+    table_cible = Column(String(100), nullable=False)  # Nom de la table concernée
+    enregistrement_id = Column(Integer, nullable=False)  # ID de l'enregistrement
+    utilisateur_id = Column(Integer, nullable=True)
+    date_operation = Column(DateTime(timezone=True), server_default=func.now())
+    est_annule = Column(Boolean, default=False)
+    date_annulation = Column(DateTime(timezone=True), nullable=True)
+    annule_par = Column(String(100), nullable=True)
+    donnees_operation = Column(String(5000))  # JSON des données de l'opération

@@ -43,11 +43,25 @@ export default function MagasinPage() {
       color: 'bg-cyan-500'
     },
     {
+      title: 'Recherche Stock',
+      description: 'Recherche avancée de stock',
+      icon: Warehouse,
+      href: '/magasin/stocks/search',
+      color: 'bg-teal-500'
+    },
+    {
       title: 'Commandes',
       description: 'Commandes clients et livraisons',
       icon: ShoppingCart,
       href: '/magasin/commandes',
       color: 'bg-pink-500'
+    },
+    {
+      title: 'Transactions',
+      description: 'Recherche de transactions et opérations',
+      icon: Lock,
+      href: '/magasin/transactions',
+      color: 'bg-indigo-500'
     },
     {
       title: 'Validation Paiements',

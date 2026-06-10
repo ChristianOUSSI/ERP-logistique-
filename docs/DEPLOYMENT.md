@@ -1,4 +1,7 @@
-# Guide de Déploiement  KAMLOG EM-ERP
+# Guide de Déploiement - KAMLOG EM-ERP
+
+**Version**: 1.1  
+**Date**: Juin 2026 (Mis à jour le 10 Juin 2026)
 
 ## US-21: Déploiement sur VPS (Contabo)
 
@@ -179,6 +182,8 @@ python scripts/seed_data.py
 exit
 ```
 
+**Note**: Si vous rencontrez des erreurs de migration, assurez-vous que les modèles sont correctement importés dans `app/models/__init__.py`.
+
 ### Étape 8: Configuration MFA (Multi-Factor Authentication)
 
 Pour les comptes admin, MFA est obligatoire. Voici comment le configurer:
@@ -219,7 +224,24 @@ curl -X POST https://kamlog-erp.cm/api/auth/login \
   -d '{"username":"admin","password":"admin123"}'
 ```
 
-### Étape 9: Monitoring
+### Étape 9: Vérification Frontend
+
+```bash
+# Vérifier que le frontend compile correctement
+docker-compose -f docker-compose.prod.yml exec frontend npm run build
+
+# Vérifier les logs du frontend
+docker-compose -f docker-compose.prod.yml logs -f frontend
+```
+
+**Note**: Le frontend utilise TailwindCSS v3. Assurez-vous que `globals.css` contient:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Les composants UI utilisent les packages `@radix-ui/react-*` spécifiques et non le package générique `radix-ui`.
 
 ```bash
 # Logs en temps réel
@@ -239,7 +261,7 @@ docker-compose -f docker-compose.prod.yml exec db pg_dump -U kamlog kamlog_erp >
 docker-compose -f docker-compose.prod.yml exec minio mc mirror /data /backup/minio
 ```
 
-### Mise à jour (Update)
+### Étape 12: Mise à jour (Update)
 
 ```bash
 # Pull les dernières modifications
