@@ -34,7 +34,7 @@ services:
 
   # ─── MinIO (stockage objets S3) ───────────────────────────
   minio:
-    image: minio/minio:RELEASE.2024-06-04T19-20-08Z
+    image: minio/minio:RELEASE.2026-06-04T19-20-08Z
     container_name: kamlog_minio
     command: server /data --console-address ':9001'
     environment:
