@@ -311,8 +311,8 @@ function ReceptionForm({
               <SelectValue placeholder="Sélectionner une déclaration" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1">BL-2024-0001 - Client 1</SelectItem>
-              <SelectItem value="2">BL-2024-0002 - Client 2</SelectItem>
+              <SelectItem value="1">BL-2026-0001 - Client 1</SelectItem>
+              <SelectItem value="2">BL-2026-0002 - Client 2</SelectItem>
             </SelectContent>
           </Select>
         </div>
