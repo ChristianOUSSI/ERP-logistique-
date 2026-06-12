@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Historique des Mouvements - K-Magasin</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#00714d",
+                        "on-background": "#151c27",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#005ac2",
+                        "surface-container": "#e7eefe",
+                        "tertiary-fixed": "#ffddb8",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary-container": "#fffbff",
+                        "outline-variant": "#c2c6d6",
+                        "surface-container-high": "#e2e8f8",
+                        "on-surface": "#151c27",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary": "#0058be",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "secondary-container": "#6cf8bb",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-error-container": "#93000a",
+                        "secondary": "#006c49",
+                        "surface-bright": "#f9f9ff",
+                        "on-surface-variant": "#424754",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "surface": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "outline": "#727785",
+                        "on-primary-fixed-variant": "#004395",
+                        "primary-container": "#2170e4",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed": "#002113",
+                        "tertiary": "#825100",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary-container": "#fefcff",
+                        "inverse-surface": "#2a313d",
+                        "surface-container-highest": "#dce2f3"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "lg": "1.5rem",
+                        "max-width": "1600px",
+                        "xl": "2rem",
+                        "xxs": "0.25rem",
+                        "md": "1rem",
+                        "xs": "0.5rem",
+                        "margin-desktop": "1.5rem",
+                        "gutter": "1rem",
+                        "sm": "0.75rem"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "title-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+                        "title-md": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+                        "data-tabular": ["13px", { lineHeight: "16px", fontWeight: "400" }],
+                        "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "label-sm": ["11px", { lineHeight: "16px", fontWeight: "600" }],
+                        "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "title-lg": ["18px", { lineHeight: "24px", fontWeight: "500" }],
+                        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Red Warehouse Theme Overrides for specific accents */
+        .theme-accent { @apply bg-error text-on-error; }
+        .theme-accent-container { @apply bg-error-container text-on-error-container; }
+        .theme-accent-border { @apply border-error; }
+        .theme-accent-text { @apply text-error; }
+        
+        /* High density table row */
+        .table-row-dense { height: 36px; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface antialiased min-h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="bg-surface-container-lowest dark:bg-inverse-surface fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant dark:border-outline shadow-sm flex flex-col h-screen p-4 z-50">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container icon-fill">view_in_ar</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold tracking-tight">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary text-on-primary font-title-md text-title-md py-2 px-4 rounded mb-6 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined">add</span>
+            Nouvelle Opération
+        </button>
+<!-- Navigation -->
+<nav class="flex-1 space-y-1">
+<!-- Active Item (Tableau de bord is default closest match if general, but since context is K-Magasin/Stock, let's keep it structurally as requested but style 'Tableau de bord' as active based on typical logic if 'Stocks' isn't in side nav) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded text-primary dark:text-primary-fixed bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Transport</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Finances</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Parc Automobile</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Paramètres</span>
+</a>
+</nav>
+<!-- Footer -->
+<div class="mt-auto border-t border-outline-variant pt-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Déconnexion</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[260px] flex flex-col min-w-0">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface dark:bg-on-background sticky top-0 w-full z-40 border-b border-outline-variant dark:border-outline flex justify-between items-center h-[64px] px-gutter">
+<div class="flex items-center gap-8">
+<div class="font-title-sm text-title-sm text-on-surface dark:text-on-primary-container font-black">KAMLOG EM-ERP</div>
+<nav class="hidden md:flex items-center gap-6 h-full pt-4">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all font-body-base text-body-base pb-4" href="#">Articles</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all font-body-base text-body-base pb-4" href="#">Clients</a>
+<!-- Active State for Stocks -->
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-3 font-body-base text-body-base font-medium" href="#">Stocks</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all font-body-base text-body-base pb-4" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface-container text-on-surface border-none rounded text-sm w-48 focus:outline-none placeholder-on-surface-variant" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span class="material-symbols-outlined">verified_user</span></button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-4">
+<a class="hover:text-primary transition-colors" href="#">Accueil</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Stocks</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-on-surface font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full theme-accent inline-block"></span>
+                    K-Magasin
+                </span>
+</nav>
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-3">
+                        Historique des Mouvements
+                        <span class="theme-accent-container font-label-sm text-label-sm px-2 py-0.5 rounded uppercase tracking-widest border theme-accent-border">K-MAG-01</span>
+</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Consultez et filtrez les entrées, sorties et ajustements d'inventaire.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded font-title-md text-title-md text-on-surface hover:bg-surface-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Exporter
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 theme-accent rounded font-title-md text-title-md shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+                        Mouvement Manuel
+                    </button>
+</div>
+</div>
+<!-- Filter Grid (Bento Style) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 mb-6 shadow-sm flex flex-wrap gap-4 items-end relative overflow-hidden">
+<!-- Decorative subtle red accent for K-Magasin theme -->
+<div class="absolute left-0 top-0 bottom-0 w-1 theme-accent"></div>
+<div class="flex-1 min-w-[200px]">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Code Article / Description</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm">qr_code_2</span>
+<input class="w-full pl-8 pr-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-body-sm focus:border-error focus:ring-1 focus:ring-error transition-all outline-none" placeholder="Ex: ART-90210" type="text"/>
+</div>
+</div>
+<div class="flex-1 min-w-[250px]">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Période</label>
+<div class="flex items-center gap-2">
+<input class="w-full px-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-body-sm focus:border-error focus:ring-1 focus:ring-error transition-all outline-none text-on-surface" type="date"/>
+<span class="text-outline-variant">-</span>
+<input class="w-full px-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-body-sm focus:border-error focus:ring-1 focus:ring-error transition-all outline-none text-on-surface" type="date"/>
+</div>
+</div>
+<div class="flex-1 min-w-[250px]">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Type de Mouvement</label>
+<div class="flex gap-2 p-1 border border-outline-variant rounded bg-surface-container-lowest">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="text-center py-1 rounded font-label-md text-label-md peer-checked:bg-secondary-container peer-checked:text-on-secondary-container text-on-surface-variant transition-colors">Réception</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="text-center py-1 rounded font-label-md text-label-md peer-checked:bg-primary-container peer-checked:text-on-primary-container text-on-surface-variant transition-colors">Expédition</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" type="checkbox"/>
+<div class="text-center py-1 rounded font-label-md text-label-md peer-checked:theme-accent-container peer-checked:theme-accent-text text-on-surface-variant transition-colors">Ajustement</div>
+</label>
+</div>
+</div>
+</div>
+<!-- High Density Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse whitespace-nowrap">
+<thead>
+<tr class="bg-surface-container text-on-surface border-b border-outline-variant">
+<th class="font-label-md text-label-md py-2 px-4 font-semibold w-12 text-center">
+<input class="rounded border-outline-variant text-error focus:ring-error" type="checkbox"/>
+</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold">Date / Heure</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold">Code Article</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold w-full">Description</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold">Type</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold text-right">Qté</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold">Emplacement</th>
+<th class="font-label-md text-label-md py-2 px-3 font-semibold">Réf. Document</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular text-on-surface">
+<!-- Row 1 -->
+<tr class="table-row-dense even:bg-surface-bright odd:bg-surface-container-lowest hover:bg-surface-container-high transition-colors border-b border-outline-variant/50 last:border-0">
+<td class="px-4 text-center"><input class="rounded border-outline-variant text-error focus:ring-error" type="checkbox"/></td>
+<td class="px-3 text-on-surface-variant">2023-10-27 14:32</td>
+<td class="px-3 font-medium">ART-4402</td>
+<td class="px-3 truncate max-w-[200px]">Palettes Europe 120x80</td>
+<td class="px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-secondary-container text-on-secondary-container font-label-sm text-[10px] uppercase">
+                                        Réception
+                                    </span>
+</td>
+<td class="px-3 text-right font-medium text-secondary">+250</td>
+<td class="px-3">Z1-A12</td>
+<td class="px-3 text-primary hover:underline cursor-pointer">BL-2023-8991</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-dense even:bg-surface-bright odd:bg-surface-container-lowest hover:bg-surface-container-high transition-colors border-b border-outline-variant/50 last:border-0">
+<td class="px-4 text-center"><input class="rounded border-outline-variant text-error focus:ring-error" type="checkbox"/></td>
+<td class="px-3 text-on-surface-variant">2023-10-27 11:15</td>
+<td class="px-3 font-medium">ART-991B</td>
+<td class="px-3 truncate max-w-[200px]">Moteur Industriel V8-T</td>
+<td class="px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-primary-container text-on-primary-container font-label-sm text-[10px] uppercase">
+                                        Expédition
+                                    </span>
+</td>
+<td class="px-3 text-right font-medium">-2</td>
+<td class="px-3">Z3-C04</td>
+<td class="px-3 text-primary hover:underline cursor-pointer">EXP-2023-441</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-dense even:bg-surface-bright odd:bg-surface-container-lowest hover:bg-surface-container-high transition-colors border-b border-outline-variant/50 last:border-0">
+<td class="px-4 text-center"><input class="rounded border-outline-variant text-error focus:ring-error" type="checkbox"/></td>
+<td class="px-3 text-on-surface-variant">2023-10-26 16:45</td>
+<td class="px-3 font-medium">ART-4402</td>
+<td class="px-3 truncate max-w-[200px]">Palettes Europe 120x80</td>
+<td class="px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm theme-accent-container font-label-sm text-[10px] uppercase">
+                                        Ajustement
+                                    </span>
+</td>
+<td class="px-3 text-right font-medium text-error">-5</td>
+<td class="px-3">Z1-A12</td>
+<td class="px-3 text-primary hover:underline cursor-pointer">INV-2023-01</td>
+</tr>
+<!-- Row 4 -->
+<tr class="table-row-dense even:bg-surface-bright odd:bg-surface-container-lowest hover:bg-surface-container-high transition-colors border-b border-outline-variant/50 last:border-0">
+<td class="px-4 text-center"><input class="rounded border-outline-variant text-error focus:ring-error" type="checkbox"/></td>
+<td class="px-3 text-on-surface-variant">2023-10-26 09:10</td>
+<td class="px-3 font-medium">ART-772C</td>
+<td class="px-3 truncate max-w-[200px]">Câble Acier 15mm (Bobine)</td>
+<td class="px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-sm bg-secondary-container text-on-secondary-container font-label-sm text-[10px] uppercase">
+                                        Réception
+                                    </span>
+</td>
+<td class="px-3 text-right font-medium text-secondary">+12</td>
+<td class="px-3">Z2-B08</td>
+<td class="px-3 text-primary hover:underline cursor-pointer">BL-2023-8980</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="bg-surface border-t border-outline-variant p-2 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-2">Affichage de 1-4 sur 1,204 résultats</span>
+<div class="flex items-center gap-1">
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded disabled:opacity-50"><span class="material-symbols-outlined text-sm">first_page</span></button>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded disabled:opacity-50"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<span class="font-label-md text-label-md px-2">Page 1</span>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">last_page</span></button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

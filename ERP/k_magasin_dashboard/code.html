@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Magasin (Warehouse Management) Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#54647a",
+                        "surface-container-highest": "#e1e2ec",
+                        "outline-variant": "#c2c6d6",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#311400",
+                        "surface-bright": "#f9f9ff",
+                        "primary": "#EF4444", /* Theme: Red */
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d8d9e3",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-background": "#191b23",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#727785",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "surface-variant": "#e1e2ec",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "surface-container-low": "#f2f3fd",
+                        "surface": "#f9f9ff",
+                        "inverse-on-surface": "#eff0fa",
+                        "on-primary-container": "#fefcff",
+                        "primary-container": "#FEE2E2", /* Adapted for Red theme */
+                        "surface-container-high": "#e6e7f2",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-primary-fixed": "#001a42",
+                        "on-surface": "#191b23",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "secondary": "#505f76",
+                        "inverse-primary": "#adc6ff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-surface-variant": "#424754",
+                        "tertiary-container": "#b75b00",
+                        "inverse-surface": "#2e3038",
+                        "tertiary": "#924700",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container": "#ecedf7",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#EF4444",
+                        "background": "#f9f9ff",
+                        "secondary-container": "#d0e1fb"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "grid-row-height": "40px",
+                        "stack-lg": "1.5rem",
+                        "stack-md": "1rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "container-margin": "2rem"
+                    },
+                    fontFamily: {
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "title-sm": ["Inter"],
+                        "mono-data": ["JetBrains Mono"],
+                        "display-lg": ["Inter"],
+                        "body-base": ["Inter"]
+                    },
+                    fontSize: {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "mono-data": ["13px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-base": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface-container-lowest text-on-surface flex flex-col h-screen p-stack-md fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm z-50">
+<div class="mb-stack-lg flex items-center gap-3 px-3">
+<div class="w-10 h-10 bg-primary text-on-primary rounded flex items-center justify-center font-bold font-title-sm">
+                K
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Port Operations</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary rounded py-2 px-4 flex items-center justify-center gap-2 mb-stack-lg font-title-sm hover:opacity-90 active:scale-95 duration-150 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+            Nouvelle Opération
+        </button>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Tableau de bord
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                Transport
+            </a>
+<!-- Active State on Stocks (K-Magasin logic) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded text-primary bg-primary-container font-bold font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined fill-icon">warehouse</span>
+                K-Magasin
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Finances
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+                Parc Automobile
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Paramètres
+            </a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 border-t border-outline-variant pt-3">
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Déconnexion
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[260px] flex flex-col h-screen bg-surface">
+<!-- TopNavBar -->
+<header class="bg-surface text-primary sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
+<div class="flex items-center gap-stack-lg">
+<h2 class="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</h2>
+<nav class="hidden md:flex gap-stack-md">
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Articles</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Clients</a>
+<!-- Active top nav -->
+<a class="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Stocks</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-stack-md">
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface-container-highest border-none rounded text-on-surface font-mono-data text-mono-data focus:outline-none w-48" placeholder="Rechercher T-Code" type="text" value="KM24"/>
+<div class="absolute right-0 top-full mt-1 w-full bg-surface-container-lowest border border-outline-variant rounded shadow-lg z-50 hidden">
+<!-- Quick Jump Hint for T-Code -->
+<div class="p-2 flex items-center gap-2 hover:bg-surface-container-high cursor-pointer">
+<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+<span class="font-mono-data text-xs text-on-surface">Jump to Reception KM24</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined">verified_user</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Canvas / Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-container-margin">
+<!-- Dashboard Header -->
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h3 class="font-display-lg text-display-lg text-on-surface mb-1">K-Magasin</h3>
+<p class="font-body-base text-body-base text-on-surface-variant">Warehouse Management Overview</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-lowest border border-outline-variant text-on-surface px-4 py-2 rounded font-title-sm text-sm hover:bg-surface-container-high flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export
+                    </button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded font-title-sm text-sm hover:opacity-90 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm">sync</span>
+                        Refresh Data
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-stack-md">
+<!-- KPI Cards (Cols 1-8, top row) -->
+<div class="col-span-12 lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-stack-md">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-secondary">Total Stock Value</span>
+<span class="material-symbols-outlined text-outline">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">€ 2.4M</div>
+<div class="font-body-sm text-body-sm text-primary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">trending_up</span> +3.2%
+                            </div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-secondary">Occupation Rate</span>
+<span class="material-symbols-outlined text-outline">warehouse</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">85%</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 mt-2">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-secondary">Pending Receptions</span>
+<span class="material-symbols-outlined text-outline">input</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">14 <span class="text-sm text-on-surface-variant font-normal">T-Codes</span></div>
+<div class="font-body-sm text-body-sm text-secondary mt-1">Next: KM24</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-secondary">Active Declarations</span>
+<span class="material-symbols-outlined text-outline">description</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface">8</div>
+<div class="font-body-sm text-body-sm text-secondary mt-1">Alert: KT10</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions (Cols 9-12, top row) -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm">
+<h4 class="font-label-caps text-label-caps text-secondary mb-3 border-b border-outline-variant pb-2">Quick Actions</h4>
+<div class="flex flex-col gap-2">
+<button class="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">add_box</span>
+<span class="font-body-base text-sm font-medium text-on-surface">New Reception</span>
+</div>
+<span class="font-mono-data text-xs text-on-surface-variant">NR</span>
+</button>
+<button class="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">search</span>
+<span class="font-body-base text-sm font-medium text-on-surface">Stock Search</span>
+</div>
+<span class="font-mono-data text-xs text-on-surface-variant">SS</span>
+</button>
+<button class="w-full text-left px-3 py-2 rounded bg-error-container text-on-error-container hover:bg-opacity-80 transition-colors flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">cancel</span>
+<span class="font-body-base text-sm font-medium">Cancel Operation (OT)</span>
+</div>
+<span class="font-mono-data text-xs opacity-70">CO</span>
+</button>
+</div>
+</div>
+<!-- Recent Operation Trace Table (Cols 1-8, bottom row) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center">
+<h4 class="font-title-sm text-title-sm text-on-surface">Recent Operation Trace</h4>
+<button class="text-primary text-sm font-medium hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-highest border-b border-outline-variant">
+<th class="px-4 py-2 font-label-caps text-label-caps text-secondary">numero_ot</th>
+<th class="px-4 py-2 font-label-caps text-label-caps text-secondary">type_operation</th>
+<th class="px-4 py-2 font-label-caps text-label-caps text-secondary">user</th>
+<th class="px-4 py-2 font-label-caps text-label-caps text-secondary">status</th>
+<th class="px-4 py-2"></th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group h-grid-row-height">
+<td class="px-4 py-2 font-mono-data">OT-2023-881</td>
+<td class="px-4 py-2">Reception (KM24)</td>
+<td class="px-4 py-2">J. Dupont</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 border border-green-200">Terminé</span>
+</td>
+<td class="px-4 py-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-sm">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group h-grid-row-height">
+<td class="px-4 py-2 font-mono-data">OT-2023-882</td>
+<td class="px-4 py-2">Expédition</td>
+<td class="px-4 py-2">M. Lavoie</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">En cours</span>
+</td>
+<td class="px-4 py-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-sm">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group h-grid-row-height">
+<td class="px-4 py-2 font-mono-data">OT-2023-883</td>
+<td class="px-4 py-2">Inventaire</td>
+<td class="px-4 py-2">A. Martin</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">En attente</span>
+</td>
+<td class="px-4 py-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-sm">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group h-grid-row-height">
+<td class="px-4 py-2 font-mono-data">OT-2023-884</td>
+<td class="px-4 py-2">Déclaration (KT10)</td>
+<td class="px-4 py-2">S. Bernard</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-error-container text-on-error-container border border-error">Bloqué</span>
+</td>
+<td class="px-4 py-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-sm">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group h-grid-row-height">
+<td class="px-4 py-2 font-mono-data">OT-2023-885</td>
+<td class="px-4 py-2">Transfert</td>
+<td class="px-4 py-2">L. Petit</td>
+<td class="px-4 py-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 border border-green-200">Terminé</span>
+</td>
+<td class="px-4 py-2 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-sm">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Warehouse Capacity Chart (Cols 9-12, bottom row) -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col items-center justify-center relative min-h-[300px]">
+<h4 class="font-title-sm text-title-sm text-on-surface absolute top-4 left-4 w-full text-left">Capacity</h4>
+<!-- CSS Donut Chart Representation -->
+<div class="relative w-48 h-48 rounded-full flex items-center justify-center mt-6" style="background: conic-gradient(#EF4444 0% 85%, #e1e2ec 85% 100%);">
+<div class="absolute inset-0 m-4 bg-surface-container-lowest rounded-full flex flex-col items-center justify-center shadow-inner">
+<span class="font-display-lg text-display-lg text-on-surface">85%</span>
+<span class="font-label-caps text-label-caps text-secondary">Utilisé</span>
+</div>
+</div>
+<div class="mt-6 w-full flex justify-around text-sm">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-sm bg-primary"></div>
+<span class="text-on-surface-variant font-body-sm">Occupied</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-sm bg-surface-container-highest"></div>
+<span class="text-on-surface-variant font-body-sm">Available</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

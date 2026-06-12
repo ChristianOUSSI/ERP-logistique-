@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Parc | Gestion de Flotte</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#00714d",
+                      "on-background": "#151c27",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#adc6ff",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "surface-container-low": "#f0f3ff",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#005ac2",
+                      "surface-container": "#e7eefe",
+                      "tertiary-fixed": "#ffddb8",
+                      "tertiary-container": "#a36700",
+                      "on-tertiary-container": "#fffbff",
+                      "outline-variant": "#c2c6d6",
+                      "surface-container-high": "#e2e8f8",
+                      "on-surface": "#151c27",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary": "#0058be",
+                      "on-secondary-fixed-variant": "#005236",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-variant": "#dce2f3",
+                      "on-tertiary-fixed-variant": "#653e00",
+                      "secondary-container": "#6cf8bb",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed": "#2a1700",
+                      "on-error-container": "#93000a",
+                      "secondary": "#006c49",
+                      "surface-bright": "#f9f9ff",
+                      "on-surface-variant": "#424754",
+                      "background": "#f9f9ff",
+                      "surface-dim": "#d3daea",
+                      "surface": "#f9f9ff",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#4edea3",
+                      "outline": "#727785",
+                      "on-primary-fixed-variant": "#004395",
+                      "primary-container": "#2170e4",
+                      "primary-fixed": "#d8e2ff",
+                      "on-secondary-fixed": "#002113",
+                      "tertiary": "#825100",
+                      "error-container": "#ffdad6",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-primary-fixed": "#001a42",
+                      "on-primary-container": "#fefcff",
+                      "inverse-surface": "#2a313d",
+                      "surface-container-highest": "#dce2f3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "lg": "1.5rem",
+                      "max-width": "1600px",
+                      "xl": "2rem",
+                      "xxs": "0.25rem",
+                      "md": "1rem",
+                      "xs": "0.5rem",
+                      "margin-desktop": "1.5rem",
+                      "gutter": "1rem",
+                      "sm": "0.75rem",
+                      "sidebar": "260px",
+                      "header": "64px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "title-md": ["Inter"],
+                      "data-tabular": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "title-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm z-50 flex flex-col p-md">
+<!-- Brand / Header -->
+<div class="flex items-center gap-sm mb-xl px-xs">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">directions_boat</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Port Operations</p>
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full mb-lg bg-primary text-on-primary rounded-lg py-sm px-md flex items-center justify-center gap-xs font-title-sm hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-sm">add</span>
+            Nouvelle Opération
+        </button>
+<!-- Navigation Links -->
+<nav class="flex-1 flex flex-col gap-xs overflow-y-auto scrollbar-hide">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">dashboard</span>
+<span class="flex-1">Tableau de bord</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">local_shipping</span>
+<span class="flex-1">Transport</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">payments</span>
+<span class="flex-1">Finances</span>
+</a>
+<!-- ACTIVE TAB: Parc Automobile -->
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-primary bg-secondary-container font-bold relative overflow-hidden group" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">minor_crash</span>
+<span class="flex-1">Parc Automobile</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group mt-auto" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">settings</span>
+<span class="flex-1">Paramètres</span>
+</a>
+</nav>
+<!-- Footer Links -->
+<div class="mt-md pt-md border-t border-outline-variant flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-error hover:bg-error-container transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Déconnexion</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface flex justify-between items-center h-[64px] px-gutter ml-[260px] border-b border-outline-variant w-[calc(100%-260px)]">
+<!-- Left / Brand (Hidden on Desktop if side nav is present, but requested by JSON) -->
+<div class="flex items-center gap-md hidden">
+<span class="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
+</div>
+<!-- Center / Navigation Links (Contextual Sub-Nav) -->
+<nav class="flex items-center gap-lg h-full">
+<a class="h-full flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all relative" href="#">
+                Articles
+                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-transparent transition-colors"></div>
+</a>
+<a class="h-full flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all relative" href="#">
+                Clients
+                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-transparent transition-colors"></div>
+</a>
+<!-- ACTIVE SUB-TAB mapping to context (Assuming Stocks/Assets for Parc) -->
+<a class="h-full flex items-center font-body-base text-body-base text-primary border-b-2 border-primary pb-1 relative" href="#">
+                Stocks
+            </a>
+<a class="h-full flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all relative" href="#">
+                Rapports
+            </a>
+</nav>
+<!-- Right / Search & Actions -->
+<div class="flex items-center gap-md">
+<!-- Search Bar -->
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded-lg">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-xl pr-sm py-1.5 bg-surface-container border border-outline-variant rounded-lg text-sm focus:outline-none w-64 placeholder-on-surface-variant" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<!-- Icon Actions -->
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">verified_user</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<!-- Profile -->
+<div class="w-10 h-10 rounded-full bg-primary-container border-2 border-surface overflow-hidden shrink-0 cursor-pointer">
+<img alt="User profile with MFA status" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp_dOAPhd-3cthLhUZW4zVDw7ldWURQZH8NOEYg1OQndfNmd_yrNJUZEByvdnYzL6WjpKHdwBlKI5ZIxKCHqC4eCVHt80_BgoUBpjNNK07cg16WV-bFfDUryIjKpBCSRguFrzPHeiVgKlfDa03tuAe895fo1MWT5GX3jZLfPB-kQjoUnqhqJ-f-XyLU_sWAYRjxh4KHkaZY10NSrGCVM-Nu7AM4qzSPBm80ai4evNyCeeF9xaSVWkvMyBq4nKKyXwQ5Klm8C5QHkE"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] p-gutter max-w-max-width mx-auto">
+<!-- Breadcrumbs & Header -->
+<div class="mb-md">
+<nav class="flex items-center gap-xs text-sm text-on-surface-variant mb-xs">
+<a class="hover:text-primary transition-colors font-label-md" href="#">KAMLOG ERP</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors font-label-md" href="#">Parc Automobile</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface font-label-md font-medium">Tableau de Bord</span>
+</nav>
+<div class="flex justify-between items-end">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Gestion de Flotte</h2>
+<div class="flex gap-sm">
+<button class="px-md py-sm bg-surface rounded-lg border border-outline-variant flex items-center gap-xs hover:bg-surface-container transition-colors text-sm font-medium text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Exporter
+                    </button>
+<button class="px-md py-sm bg-primary text-on-primary rounded-lg flex items-center gap-xs hover:bg-primary-container transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-sm">add</span>
+                        Nouveau Véhicule
+                    </button>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-md">
+<!-- Fleet Health Summary Cards (Row 1, Cols 1-12) -->
+<div class="col-span-12 grid grid-cols-4 gap-md">
+<!-- Total Vehicles -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 p-sm opacity-10">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<div class="flex items-center justify-between mb-sm relative z-10">
+<span class="font-title-sm text-on-surface-variant">Total Flotte</span>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">dataset</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="font-headline-lg text-on-surface">142</span>
+<span class="text-sm text-on-surface-variant ml-xs">Unités</span>
+</div>
+</div>
+<!-- Active -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex items-center justify-between mb-sm relative z-10">
+<span class="font-title-sm text-on-surface-variant">En Mission</span>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm">route</span>
+</div>
+</div>
+<div class="relative z-10 flex items-end gap-sm">
+<span class="font-headline-lg text-on-surface">89</span>
+<span class="text-sm text-secondary font-medium mb-1 bg-secondary/10 px-xs py-0.5 rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                        </span>
+</div>
+</div>
+<!-- Maintenance -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="flex items-center justify-between mb-sm relative z-10">
+<span class="font-title-sm text-on-surface-variant">En Maintenance</span>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-sm">build</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="font-headline-lg text-on-surface">14</span>
+<span class="text-sm text-on-surface-variant ml-xs">Atelier K-Parc</span>
+</div>
+</div>
+<!-- Idle / Available -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-outline"></div>
+<div class="flex items-center justify-between mb-sm relative z-10">
+<span class="font-title-sm text-on-surface-variant">Disponibles (Parc)</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">local_parking</span>
+</div>
+</div>
+<div class="relative z-10 flex items-end gap-sm">
+<span class="font-headline-lg text-on-surface">39</span>
+</div>
+</div>
+</div>
+<!-- Map Module (Row 2, Cols 1-8) -->
+<div class="col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm h-[500px] flex flex-col overflow-hidden relative">
+<div class="px-md py-sm border-b border-outline-variant flex justify-between items-center bg-surface-bright z-10">
+<h3 class="font-title-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-sm">map</span>
+                        Localisation en Temps Réel
+                    </h3>
+<div class="flex gap-xs">
+<button class="p-xs bg-surface-container rounded hover:bg-surface-variant transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-sm">filter_alt</span></button>
+<button class="p-xs bg-surface-container rounded hover:bg-surface-variant transition-colors text-on-surface-variant"><span class="material-symbols-outlined text-sm">zoom_in_map</span></button>
+</div>
+</div>
+<!-- Map Placeholder / Background -->
+<div class="flex-1 bg-surface-variant relative overflow-hidden">
+<!-- Abstract representation of a map since we can't load real maps directly without iframe/api -->
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.4) 1px, transparent 0); background-size: 24px 24px;"></div>
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply" data-alt="A stylized, high-contrast aerial map view of a large industrial shipping port. The map is designed in a modern, flat interface style with muted grays and subtle blue undertones, typical of enterprise logistics software in light mode. There are faint geometric lines indicating road networks and shipping lanes. The overall aesthetic is clean, systematic, and data-focused, lacking realistic textures in favor of crisp UI-friendly vector-like visuals." data-location="Port de Dakar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqbRuY_T3lGcs6DvJeJTfabLYXyxRu7FwfSA8uQN1g2VLuQerPWlHtfgx99YfoE3aaXLtd_oAHH2j_4VntpibT1zwBPliXOncFdgOCtdntMFFueUN8zWwvp-yVUZop9SQEUeHHCW9o9Vl91Kgc4ZAtg3CFvN567ssv3JUgrmDvujmFn1w8y_dl78iwUEhTpbouAjud0K08lF3MU-K9sjFRXVPLWdFsIvG35WERDyaC1914u6cvKLku-0rXhvlvSvRCE0lINMzw82I"/>
+<!-- Map Markers -->
+<div class="absolute top-[30%] left-[40%] flex flex-col items-center group cursor-pointer">
+<div class="bg-secondary text-on-secondary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-8492 (En route)</div>
+<div class="w-6 h-6 bg-secondary rounded-full border-2 border-surface flex items-center justify-center shadow-sm relative">
+<span class="material-symbols-outlined text-[12px] text-on-secondary" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<div class="absolute inset-0 bg-secondary rounded-full animate-ping opacity-30"></div>
+</div>
+</div>
+<div class="absolute top-[60%] left-[20%] flex flex-col items-center group cursor-pointer">
+<div class="bg-tertiary text-on-tertiary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-1102 (Panne)</div>
+<div class="w-6 h-6 bg-tertiary rounded-full border-2 border-surface flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[12px] text-on-tertiary" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+</div>
+<div class="absolute top-[45%] left-[70%] flex flex-col items-center group cursor-pointer">
+<div class="bg-secondary text-on-secondary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-9931 (Déchargement)</div>
+<div class="w-6 h-6 bg-secondary rounded-full border-2 border-surface flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[12px] text-on-secondary" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+</div>
+<!-- Map Controls overlay -->
+<div class="absolute bottom-md right-md flex flex-col gap-xs bg-surface-container-lowest p-xs rounded-lg shadow-sm border border-outline-variant">
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-on-surface-variant"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="h-px bg-outline-variant w-full"></div>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-on-surface-variant"><span class="material-symbols-outlined text-sm">remove</span></button>
+</div>
+</div>
+</div>
+<!-- Maintenance Alerts & Quick Actions (Row 2, Cols 9-12) -->
+<div class="col-span-4 flex flex-col gap-md">
+<!-- Critical Alerts -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-md flex-1">
+<h3 class="font-title-md text-on-surface flex items-center gap-sm mb-md pb-xs border-b border-outline-variant">
+<span class="material-symbols-outlined text-error text-sm" style="font-variation-settings: 'FILL' 1;">error</span>
+                        Alertes Critiques
+                    </h3>
+<ul class="flex flex-col gap-sm">
+<li class="bg-error-container/20 border border-error-container p-sm rounded-lg flex items-start gap-sm">
+<span class="material-symbols-outlined text-error text-[18px] mt-0.5">oil_barrel</span>
+<div>
+<h4 class="font-label-md text-on-surface">T-1102 - Niveau d'huile critique</h4>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Immobilisé Z.I. Nord. Équipe prévenue.</p>
+<span class="text-[10px] text-error font-medium mt-1 inline-block">Il y a 15 min</span>
+</div>
+</li>
+<li class="bg-tertiary-container/10 border border-tertiary-container/30 p-sm rounded-lg flex items-start gap-sm">
+<span class="material-symbols-outlined text-tertiary text-[18px] mt-0.5">tire_repair</span>
+<div>
+<h4 class="font-label-md text-on-surface">T-8492 - Pression Pneu Anormale</h4>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Essieu arrière gauche. En route.</p>
+<span class="text-[10px] text-tertiary font-medium mt-1 inline-block">Il y a 1h</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Driver Assignment Snapshot -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-md flex-1">
+<div class="flex justify-between items-center mb-md pb-xs border-b border-outline-variant">
+<h3 class="font-title-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-sm">badge</span>
+                            Chauffeurs Actifs
+                        </h3>
+<a class="text-[12px] text-primary hover:underline" href="#">Voir tout</a>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between p-xs hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="Profile of driver M. Diop" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNL0ocdT4GPQhqST2tit3ivGyRaeVlffvGsJouG4ijkZQhwbk-VfYEOH1HvCOtu3UNJu7b-nPmr-kpvMu7jGEkteKkrT8tHRYLTR15Mhf9edNnmgv1Jwx709QzWJXKjdKZktFG1REQ1l6nDGFZiAsOuiFd9ckaPjioHLhLyekmhijWddyNazmAmPho9p-gLfya-wu9AB7SfVIcUS2MU3TA7wsuzReA_Z4TgXqv40fis8BmWddQ7U_Hpbib4UtuQ1fcQuZ6xbXa8Xg"/>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface">Moussa Diop</h4>
+<p class="text-[11px] text-on-surface-variant">T-8492 • En mission</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-xs hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="Profile of driver A. Sy" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIxmEXX_F8Icfhvi9gGkGdfxzVy7pbm3Rh5TimVs099SHB9f0lb9nhiYriisCIwGN0hwA5ZQgpH-SiU6KBlBIV91_nsci8ZPaltFfD28fxKGrbYw02JmMXjpi_pPAUiSLVlefyapbLxpoevL-H-XXjVsUwF-GpEkJlCxRhBemWCOpoGHBXuWYSaQ7W1pwi_JIB9EDTjkPzkDiQauYypB3A9x3N0iqegQbZJVvUSZTwEqh7lue-LrSPYUVlOfjtXEnCaoBaH1t0ktY"/>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface">Abdoulaye Sy</h4>
+<p class="text-[11px] text-on-surface-variant">T-9931 • Sur site</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Vehicle List (Row 3, Cols 1-12) -->
+<div class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<div class="px-md py-sm border-b border-outline-variant bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-sm">view_list</span>
+                        Registre des Véhicules
+                    </h3>
+<div class="flex items-center gap-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
+<input class="pl-8 pr-3 py-1 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:border-primary w-48 text-[12px]" placeholder="Filtrer par ID, Statut..." type="text"/>
+</div>
+<button class="p-1 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[16px]">filter_list</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low font-label-md text-on-surface-variant border-b border-outline-variant">
+<th class="py-2 px-4 font-medium">ID Véhicule</th>
+<th class="py-2 px-4 font-medium">Modèle / Type</th>
+<th class="py-2 px-4 font-medium">Statut</th>
+<th class="py-2 px-4 font-medium">Odomètre (km)</th>
+<th class="py-2 px-4 font-medium">Niveau Carburant</th>
+<th class="py-2 px-4 font-medium">Chauffeur Assigné</th>
+<th class="py-2 px-4 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-on-surface divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-white">
+<td class="py-3 px-4 font-medium">T-8492</td>
+<td class="py-3 px-4">Volvo FH16 (Tracteur)</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Actif
+                                    </span>
+</td>
+<td class="py-3 px-4">124,500</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[75%]"></div>
+</div>
+<span class="text-[11px] text-on-surface-variant">75%</span>
+</div>
+</td>
+<td class="py-3 px-4 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-surface-container overflow-hidden">
+<img alt="Avatar driver" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lgz6EtCKgcuAdIGXT4yCkNNQaL40cuv6YcHic9LWbaO7fcCzsBsS7nh1Ap2dcPP20BbeO4V2U2LmwK7TyNevt5jPpZnA-VcPv0R5mWb0Ix20a_k_VydTxtlS2VWyKXZ6HtSg35dym1sLPj112B4xEJzxNT263ybKjgJHlj_8V4r-GTjwbviaoFw1hoS3XCDwQce_8iiVHtjWuzuezfBfu1JgU8ZfXK1DH3cI6MvAdcXToew0TYbt9c2FEAsfdkSJ6hvekfJQQog"/>
+</div>
+                                     Moussa Diop
+                                </td>
+<td class="py-3 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-bright">
+<td class="py-3 px-4 font-medium">T-1102</td>
+<td class="py-3 px-4">Renault Trucks T (Tracteur)</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Maintenance
+                                    </span>
+</td>
+<td class="py-3 px-4">245,120</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error w-[15%]"></div>
+</div>
+<span class="text-[11px] text-error font-medium">15%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-on-surface-variant text-[12px] italic">Non assigné</td>
+<td class="py-3 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-white">
+<td class="py-3 px-4 font-medium">T-9931</td>
+<td class="py-3 px-4">Mercedes Actros (Porteur)</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Actif
+                                    </span>
+</td>
+<td class="py-3 px-4">89,340</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[90%]"></div>
+</div>
+<span class="text-[11px] text-on-surface-variant">90%</span>
+</div>
+</td>
+<td class="py-3 px-4 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-surface-container overflow-hidden">
+<img alt="Avatar driver" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBICek52V-OUz5_S2b1u5IPb5VOXzhA3FNCbk80z7lu0sht5y_mgPKNe2nt88yflHPvz-Z-mzCduTlDnSztXQG7s9WjELtFqEo9UsICcoaZKb9sbc_4S-siN-eWG9EpcN74TrXYMlls3ItgickrGIvHRnZvWxXeRfwyAfzJ5WPSFUX2GJ4_vOxqbn6Cn7rKYv37IwoumCIyLUbGSSdlNfgJTWE3uTohvgxRg4oF_JGEP-_Db4PDT7m1J2ETQwmTSy6dnI5dDONOSgI"/>
+</div>
+                                     Abdoulaye Sy
+                                </td>
+<td class="py-3 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-bright">
+<td class="py-3 px-4 font-medium">L-0442</td>
+<td class="py-3 px-4">Peugeot Partner (Léger)</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-outline-variant/30 text-on-surface-variant text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Disponible
+                                    </span>
+</td>
+<td class="py-3 px-4">42,800</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[50%]"></div>
+</div>
+<span class="text-[11px] text-on-surface-variant">50%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-on-surface-variant text-[12px] italic">Parc Central</td>
+<td class="py-3 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-md py-sm border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<span class="text-[12px] text-on-surface-variant">Affichage 1-4 sur 142 véhicules</span>
+<div class="flex gap-1">
+<button class="p-1 rounded border border-outline-variant text-outline disabled:opacity-50"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+<button class="p-1 rounded border border-outline-variant text-on-surface hover:bg-surface-container"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

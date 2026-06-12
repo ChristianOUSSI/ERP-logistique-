@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP | Gestion des Rôles et Permissions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#001a42",
+                    "surface": "#f9f9ff",
+                    "secondary-container": "#6cf8bb",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-bright": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#a36700",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-variant": "#dce2f3",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#e2e8f8",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#e7eefe",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c2c6d6",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-surface-variant": "#424754",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-secondary-fixed": "#002113",
+                    "surface-container-low": "#f0f3ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "on-tertiary-container": "#fffbff",
+                    "on-secondary-container": "#00714d",
+                    "on-primary-container": "#fefcff",
+                    "on-error": "#ffffff",
+                    "secondary": "#006c49",
+                    "surface-dim": "#d3daea",
+                    "inverse-primary": "#adc6ff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#2a313d",
+                    "primary": "#0058be",
+                    "primary-container": "#2170e4",
+                    "on-primary-fixed-variant": "#004395",
+                    "surface-tint": "#005ac2",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#151c27",
+                    "outline": "#727785",
+                    "on-surface": "#151c27",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#dce2f3",
+                    "primary-fixed": "#d8e2ff",
+                    "tertiary": "#825100"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sm": "0.75rem",
+                    "md": "1rem",
+                    "max-width": "1600px",
+                    "gutter": "1rem",
+                    "lg": "1.5rem",
+                    "xl": "2rem",
+                    "xxs": "0.25rem",
+                    "xs": "0.5rem",
+                    "margin-desktop": "1.5rem"
+            },
+            "fontFamily": {
+                    "data-tabular": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-md": ["Inter"]
+            },
+            "fontSize": {
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .matrix-cell:hover { background-color: rgba(0, 88, 190, 0.05); }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low font-body-md text-on-surface">
+<!-- Primary Sidebar -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col p-stack-md z-50">
+<div class="px-gutter py-xl">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold">KAMLOG ERP</h1>
+<p class="font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim uppercase tracking-widest text-[10px] mt-1">Port Operations</p>
+</div>
+<button class="mx-gutter mb-lg bg-primary text-on-primary py-sm px-md rounded-lg flex items-center justify-center gap-xs font-bold active:scale-95 duration-150 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-label-md text-label-md">Nouvelle Opération</span>
+</button>
+<nav class="flex-1 px-xs space-y-xxs">
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Tableau de bord</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-caps text-label-caps">Transport</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Finances</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+<span class="font-label-caps text-label-caps">Parc Automobile</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-primary dark:text-primary-fixed bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold transition-colors group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Paramètres</span>
+</a>
+</nav>
+<div class="mt-auto p-gutter border-t border-outline-variant">
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-caps text-label-caps">Déconnexion</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 ml-[260px] bg-surface dark:bg-on-background border-b border-outline-variant dark:border-outline z-40">
+<div class="flex justify-between items-center h-[64px] px-gutter">
+<div class="flex items-center gap-xl">
+<span class="font-title-sm text-title-sm text-on-surface dark:text-on-primary-container font-black">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base hover:text-primary transition-all" href="#">Articles</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base hover:text-primary transition-all" href="#">Clients</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base hover:text-primary transition-all" href="#">Stocks</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base hover:text-primary transition-all" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative group">
+<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-2 focus:ring-primary transition-all text-body-sm" placeholder="Rechercher T-Code" type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[20px]">search</span>
+</div>
+<div class="flex items-center gap-sm border-l border-outline-variant pl-md">
+<button class="p-xs hover:bg-surface-container-high rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-xs hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">verified_user</span>
+</button>
+<img alt="User profile with MFA status" class="w-8 h-8 rounded-full border border-outline shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTxVCyrn3mLDbBJ3EC4n_Ik42xncgFaI87XM5_DARIo3XLU9BsOC-IkRBod4OivERp31PN0FYHOb1MM4PgsHpjKe37q-QAdlmRHnuChTIZaRDzgx_FIAJ-ZtNmarXGeUNyDLmaOi7x3rkD-LHJl3SSdXSVC9MMqJ26IIYAfZ69fCUACXkHM7g1OvndJrS0AS-h9gWR3F-7RDXDZZYtVfq7hlE-1zkKXOb0WnM8-_1pG_WGao9BLqxdodgPuynMCx4obhHQaur7KA"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Stage -->
+<main class="ml-[260px] p-gutter min-h-[calc(100vh-64px)]">
+<!-- Breadcrumbs & Header -->
+<div class="mb-lg">
+<nav class="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
+<span>Administration</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Rôles &amp; Permissions</span>
+</nav>
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Matrice de Sécurité</h2>
+<p class="text-body-md text-on-surface-variant mt-1">Définissez les privilèges d'accès granulaires pour les modules ERP.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-outline text-primary font-bold rounded-lg flex items-center gap-xs hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Audit Logs
+                    </button>
+<button class="px-md py-sm bg-primary text-on-primary font-bold rounded-lg flex items-center gap-xs shadow-sm hover:bg-primary-container transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Appliquer les Changements
+                    </button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Bento Stats / Info Section -->
+<div class="col-span-12 lg:col-span-3 space-y-gutter">
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-title-md text-title-md">Rôles Actifs</h3>
+<span class="material-symbols-outlined text-primary">groups</span>
+</div>
+<div class="text-[32px] font-black text-on-surface">14</div>
+<div class="text-body-sm text-on-surface-variant mt-1">+2 créés ce mois-ci</div>
+<div class="mt-md space-y-xs">
+<div class="flex justify-between items-center text-body-sm">
+<span class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-primary"></span> Administrateurs</span>
+<span class="font-bold">3</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-secondary"></span> Opérateurs</span>
+<span class="font-bold">8</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-tertiary"></span> Finance</span>
+<span class="font-bold">3</span>
+</div>
+</div>
+</div>
+<!-- Special Approvers Section -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-title-md text-title-md">Approbateurs Spéciaux</h3>
+<span class="material-symbols-outlined text-tertiary">verified</span>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-md">Utilisateurs habilités pour les transactions &gt; 50M FCFA.</p>
+<div class="space-y-sm">
+<div class="flex items-center gap-md p-xs hover:bg-surface-container rounded-lg transition-colors cursor-pointer">
+<img alt="Approver Avatar" class="w-10 h-10 rounded-full bg-surface-container-high" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUo6S36vgUeIDaD7scJt1BOn--eFH_NTHwhypelW9fzhLeBVX379QNyAVkHBoCUFxZIO7gO37rqQt8ouHZO-W3_txpevpohL-1ZIsBT5LF5_en8gvFW4MvOanXZs4jYjUSk-skh4iGdbo8JV3h5xv1386x7pOqI61MhsEUSqdEbcyGbseMDJTRQRAZiA1qjjxWmmU41rdtYXluwwgzp6p8HyMSb4xXOkdgOn8rHHZqJCPTXco3kpXAZh6T1HR4fx6iLjcNxMVjhg"/>
+<div>
+<div class="font-bold text-body-md">Marc Ebongue</div>
+<div class="text-label-sm text-on-surface-variant">Direction Financière</div>
+</div>
+</div>
+<div class="flex items-center gap-md p-xs hover:bg-surface-container rounded-lg transition-colors cursor-pointer border-l-2 border-primary bg-primary-fixed/20">
+<img alt="Approver Avatar" class="w-10 h-10 rounded-full bg-surface-container-high" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGmLAxG3YGJtGipRlcceaURmbsgAYzNA1oDmkZpmyx2kZ1qxOmqT8QbWcjUiyT548yLtTrmyuvbTKfP8CzTL3AAHF0uJGbk4gLdcHqgl0fSLeQ_MgPHGnh2hlL8Jox8bxHEu7KeIu9fpP_JEpE0X15afdpFiESzH2_Clnz6eAclLlMvMxRTMPuim93bV3j47dh-sp4zINHxowX8b7cPpkXQOQwUHrNMr09l2qDgHJXlHFJjytjxdWXMGP4b2VqXA5d-JDojknWuA"/>
+<div>
+<div class="font-bold text-body-md">Sarah Kameni</div>
+<div class="text-label-sm text-on-surface-variant">Chef d'Exploitation</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg py-xs border-2 border-dashed border-outline-variant rounded-lg text-on-surface-variant font-label-md flex items-center justify-center gap-xs hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                        Ajouter un Approbateur
+                    </button>
+</div>
+</div>
+<!-- Main Permission Matrix -->
+<div class="col-span-12 lg:col-span-9">
+<div class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<div class="flex gap-md">
+<button class="px-sm py-xs bg-primary-fixed text-primary font-bold rounded text-body-sm">Tous les Modules</button>
+<button class="px-sm py-xs hover:bg-surface-container rounded text-on-surface-variant text-body-sm">Finance</button>
+<button class="px-sm py-xs hover:bg-surface-container rounded text-on-surface-variant text-body-sm">Logistique</button>
+<button class="px-sm py-xs hover:bg-surface-container rounded text-on-surface-variant text-body-sm">Ressources Humaines</button>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-sm text-on-surface-variant uppercase">Visualisation :</span>
+<div class="flex bg-surface-container-low p-xxs rounded">
+<button class="p-xs bg-white shadow-sm rounded"><span class="material-symbols-outlined text-[18px]">grid_on</span></button>
+<button class="p-xs"><span class="material-symbols-outlined text-[18px]">list</span></button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="bg-surface-container-low sticky top-0 z-10">
+<th class="p-md font-bold text-label-md border-b border-outline-variant w-64">MODULE / ROLE</th>
+<th class="p-md font-bold text-label-md border-b border-outline-variant text-center">LIRE</th>
+<th class="p-md font-bold text-label-md border-b border-outline-variant text-center">ÉCRIRE</th>
+<th class="p-md font-bold text-label-md border-b border-outline-variant text-center">SUPPRIMER</th>
+<th class="p-md font-bold text-label-md border-b border-outline-variant text-center">APPROUVER</th>
+<th class="p-md font-bold text-label-md border-b border-outline-variant text-right">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Module Finance -->
+<tr class="bg-surface-container-lowest matrix-cell group">
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-bold text-body-md">K-Finance</div>
+<div class="text-label-sm text-on-surface-variant">Facturation &amp; Audit</div>
+</div>
+</div>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">edit</span></button>
+</td>
+</tr>
+<!-- Module Transport -->
+<tr class="bg-white matrix-cell group">
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</div>
+<div>
+<div class="font-bold text-body-md">K-Transport</div>
+<div class="text-label-sm text-on-surface-variant">Gestion de Flotte</div>
+</div>
+</div>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">edit</span></button>
+</td>
+</tr>
+<!-- Module Parc -->
+<tr class="bg-surface-container-lowest matrix-cell group">
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">warehouse</span>
+</div>
+<div>
+<div class="font-bold text-body-md">K-Parc</div>
+<div class="text-label-sm text-on-surface-variant">Maintenance Automobile</div>
+</div>
+</div>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-md text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">edit</span></button>
+</td>
+</tr>
+<!-- Module Admin -->
+<tr class="bg-white matrix-cell group">
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-on-primary-fixed/10 flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+</div>
+<div>
+<div class="font-bold text-body-md">K-Admin</div>
+<div class="text-label-sm text-on-surface-variant">Système &amp; Utilisateurs</div>
+</div>
+</div>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary opacity-50" disabled="" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary opacity-50" disabled="" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary opacity-50" disabled="" type="checkbox"/>
+</td>
+<td class="p-md text-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary opacity-50" disabled="" type="checkbox"/>
+</td>
+<td class="p-md text-right">
+<span class="material-symbols-outlined text-on-surface-variant/40">lock</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-md bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center">
+<div class="text-label-md text-on-surface-variant">Affichage de 1-4 sur 12 modules</div>
+<div class="flex gap-xs">
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary font-bold rounded">1</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high">2</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high">3</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-container-high"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Role Selection Slider/Pills -->
+<div class="mt-lg">
+<h3 class="font-title-md text-title-md mb-md">Configuration par Rôle</h3>
+<div class="flex gap-sm overflow-x-auto pb-xs custom-scrollbar">
+<button class="flex-shrink-0 px-md py-sm rounded-full border-2 border-primary bg-primary/5 text-primary font-bold flex items-center gap-xs transition-all">
+                            Chef de Service
+                        </button>
+<button class="flex-shrink-0 px-md py-sm rounded-full border border-outline text-on-surface-variant font-medium flex items-center gap-xs hover:border-primary/50 transition-all">
+                            Contrôleur de Gestion
+                        </button>
+<button class="flex-shrink-0 px-md py-sm rounded-full border border-outline text-on-surface-variant font-medium flex items-center gap-xs hover:border-primary/50 transition-all">
+                            Agent de Quai
+                        </button>
+<button class="flex-shrink-0 px-md py-sm rounded-full border border-outline text-on-surface-variant font-medium flex items-center gap-xs hover:border-primary/50 transition-all">
+                            Superviseur Logistique
+                        </button>
+<button class="flex-shrink-0 px-md py-sm rounded-full border border-outline text-on-surface-variant font-medium flex items-center gap-xs hover:border-primary/50 transition-all">
+                            Agent Transit
+                        </button>
+<button class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full border border-outline text-on-surface-variant hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- System Alerts / Notifications Footer inside main -->
+<div class="mt-xl grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-error-container text-on-error-container p-md rounded-xl flex items-start gap-md">
+<span class="material-symbols-outlined">warning</span>
+<div>
+<div class="font-bold text-body-md">Alerte de Sécurité</div>
+<p class="text-body-sm opacity-90 mt-1">Le rôle 'Agent de Quai' possède actuellement des permissions d'écriture sur K-Finance. Veuillez vérifier cette anomalie.</p>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container p-md rounded-xl flex items-start gap-md">
+<span class="material-symbols-outlined">info</span>
+<div>
+<div class="font-bold text-body-md">Mise à jour Système</div>
+<p class="text-body-sm opacity-90 mt-1">De nouvelles colonnes 'Archiver' et 'Exporter' seront disponibles dans la prochaine mise à jour (v2.4).</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) - Suppressed per context rules for details/settings, but kept here for demo if user desired a global action, but following the mandate: "Contextual FAB Suppression" on settings/details. -->
+<script>
+        // Micro-interactions for matrix checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.parentElement.parentElement.classList.add('bg-primary/5');
+                    setTimeout(() => {
+                        this.parentElement.parentElement.classList.remove('bg-primary/5');
+                    }, 500);
+                }
+            });
+        });
+
+        // Search highlight logic simulation
+        const searchInput = document.querySelector('input[placeholder="Rechercher T-Code"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary');
+        });
+    </script>
+</body></html>

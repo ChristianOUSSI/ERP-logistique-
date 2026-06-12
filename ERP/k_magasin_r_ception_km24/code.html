@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP | K-Magasin Reception</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c2c6d6;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daea",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#825100",
+                      "secondary-fixed-dim": "#4edea3",
+                      "secondary-container": "#6cf8bb",
+                      "tertiary-fixed": "#ffddb8",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#00714d",
+                      "on-primary-fixed": "#001a42",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container": "#e7eefe",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#006c49",
+                      "on-secondary-fixed": "#002113",
+                      "primary-fixed": "#d8e2ff",
+                      "on-background": "#151c27",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#2a1700",
+                      "primary-fixed-dim": "#adc6ff",
+                      "outline": "#727785",
+                      "surface-container-highest": "#dce2f3",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#424754",
+                      "inverse-surface": "#2a313d",
+                      "on-primary-container": "#fefcff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary": "#0058be",
+                      "primary-container": "#2170e4",
+                      "on-tertiary-container": "#fffbff",
+                      "surface": "#f9f9ff",
+                      "surface-bright": "#f9f9ff",
+                      "background": "#f9f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c2c6d6",
+                      "surface-variant": "#dce2f3",
+                      "surface-tint": "#005ac2",
+                      "on-surface": "#151c27",
+                      "surface-container-high": "#e2e8f8",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#653e00",
+                      "km-red": "#EF4444"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "1rem",
+                      "lg": "1.5rem",
+                      "margin-desktop": "1.5rem",
+                      "max-width": "1600px",
+                      "sm": "0.75rem",
+                      "xs": "0.5rem",
+                      "gutter": "1rem",
+                      "xl": "2rem",
+                      "xxs": "0.25rem"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "title-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "data-tabular": ["Inter"],
+                      "headline-lg": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-xl">
+<span class="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex gap-md">
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1" href="#">Alerts</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1" href="#">MFA Status</a>
+<a class="text-label-md font-label-md text-primary border-b-2 border-primary pb-1" href="#">Modules</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative flex items-center bg-surface-container-high px-sm py-1 rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="T-Code Search (e.g. KM24)" type="text"/>
+</div>
+<button class="material-symbols-outlined p-xs text-on-surface-variant hover:bg-surface-container-high transition-colors">notifications</button>
+<button class="material-symbols-outlined p-xs text-on-surface-variant hover:bg-surface-container-high transition-colors">security</button>
+<button class="material-symbols-outlined p-xs text-on-surface-variant hover:bg-surface-container-high transition-colors">apps</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" data-alt="Close-up professional portrait of a warehouse logistics manager wearing a navy blue company polo shirt, smiling slightly, with a blurred high-tech distribution center background. The lighting is crisp and natural, following a professional corporate photography style with cool blue and neutral grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhXyT5Ezo1_4DE8fDHXwAXU2PQbfpETqqbnLhWqg5-5L222krH67YRlhBUNtlgtQQjzw7bBp0iUxuan4CZppLyHE5whJdltEjF1S_tgQ5nnKbCzVKq0IOe3Nd_YkGzNTS3z93dgA1TQBa35Y7if8L9HnojwrMZg6qjucbQ3gFh8_a-zhlBiztJJ7eKN_Fs2wslpX0WZUEetQUo8l47BlTFc6HNevFBlj8hbjyjqBXui8LpKATlH7CT0KwgN4n-d5kVhQ1APELES5Y"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
+<div class="p-md flex items-center gap-sm">
+<div class="bg-primary-container text-on-primary-container p-xs rounded-lg">
+<span class="material-symbols-outlined">warehouse</span>
+</div>
+<div>
+<div class="text-title-md font-title-md font-bold">KAMLOG ERP</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Operational Control</div>
+</div>
+</div>
+<nav class="mt-md flex-1 overflow-y-auto custom-scrollbar">
+<div class="px-md mb-xs text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Logistics Modules</div>
+<a class="flex items-center gap-sm px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-sm px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-sm px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Parc</span>
+</a>
+<a class="flex items-center gap-sm px-md py-3 text-km-red font-bold border-l-4 border-km-red bg-surface-container-highest transition-all" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="font-label-md text-label-md">Magasin</span>
+</a>
+<a class="flex items-center gap-sm px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-label-md text-label-md">Audit</span>
+</a>
+</nav>
+<div class="p-md border-t border-outline-variant">
+<a class="flex items-center gap-sm px-md py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Stage -->
+<main class="ml-60 pt-16 p-lg max-w-max-width mx-auto">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-xxs text-label-sm font-label-sm text-on-surface-variant mb-md">
+<span>K-Magasin</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span>Operations</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-km-red font-bold">KM24 Reception</span>
+</div>
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface flex items-center gap-sm">
+                    Warehouse Reception
+                    <span class="bg-km-red/10 text-km-red px-sm py-xxs rounded-full text-label-sm font-label-sm border border-km-red/20">KM24 Interface</span>
+</h1>
+<p class="text-body-md text-on-surface-variant mt-xxs">Scan and register incoming goods into Magasin zone A-04.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs px-md py-2 border border-outline-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                    Print Manifest
+                </button>
+<button class="flex items-center gap-xs px-md py-2 border border-outline-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">help</span>
+                    Support
+                </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Main Form Card (Large) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="bg-surface-container-high px-lg py-md border-b border-outline-variant flex justify-between items-center">
+<span class="font-title-md text-title-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-km-red">barcode_scanner</span>
+                        Entry Form
+                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">System Time: 14:23:45</span>
+</div>
+<form class="p-lg" id="receptionForm">
+<div class="grid grid-cols-2 gap-xl">
+<!-- Left Column -->
+<div class="space-y-lg">
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Container Number</label>
+<div class="relative">
+<input class="w-full border-outline-variant focus:border-km-red focus:ring-km-red rounded-lg text-body-md py-sm pl-md" placeholder="MSCU-902341-2" type="text"/>
+<span class="absolute right-md top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">qr_code</span>
+</div>
+</div>
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Declaration Ref</label>
+<input class="w-full border-outline-variant focus:border-km-red focus:ring-km-red rounded-lg text-body-md py-sm pl-md" placeholder="DEC-MAG-2026-883" type="text"/>
+</div>
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Article Selection</label>
+<div class="space-y-xs">
+<select class="w-full border-outline-variant focus:border-km-red focus:ring-km-red rounded-lg text-body-md py-sm" onchange="updateArticleCode(this.value)">
+<option value="">Select an Article...</option>
+<option value="ELECTRONICS">Consumer Electronics (B-99)</option>
+<option value="SPAREPARTS">Mechanical Spare Parts (M-42)</option>
+<option value="PHARMA">Pharmaceutical Goods (P-12)</option>
+<option value="FOOD">Perishable Food Items (F-01)</option>
+</select>
+<div class="flex items-center gap-xs bg-surface-container-low p-xs rounded-lg border border-outline-variant/30">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Internal Code:</span>
+<span class="font-data-tabular text-data-tabular font-bold text-km-red tracking-widest" id="articleCodeDisplay">--- ----</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div class="space-y-lg">
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Quantity</label>
+<input class="w-full border-outline-variant focus:border-km-red focus:ring-km-red rounded-lg text-body-md py-sm" placeholder="0.00" type="number"/>
+</div>
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Unit</label>
+<select class="w-full border-outline-variant focus:border-km-red focus:ring-km-red rounded-lg text-body-md py-sm">
+<option>Pallet (PLT)</option>
+<option>Kilogram (KG)</option>
+<option>Crate (CRT)</option>
+<option>Metric Ton (MT)</option>
+</select>
+</div>
+</div>
+<div class="space-y-xxs">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase">Stock Status</label>
+<div class="flex gap-md">
+<label class="flex-1 flex items-center justify-center gap-xs p-md border-2 border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-all active-status-radio peer-checked:border-primary">
+<input checked="" class="hidden peer" name="status" type="radio" value="normal"/>
+<span class="material-symbols-outlined text-green-600">check_circle</span>
+<span class="font-label-md text-label-md">Normal</span>
+</label>
+<label class="flex-1 flex items-center justify-center gap-xs p-md border-2 border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-all">
+<input class="hidden peer" name="status" type="radio" value="damaged"/>
+<span class="material-symbols-outlined text-km-red">warning</span>
+<span class="font-label-md text-label-md">Damaged</span>
+</label>
+</div>
+</div>
+<div class="pt-lg">
+<button class="w-full bg-km-red text-on-primary py-lg rounded-xl font-headline-sm text-headline-sm hover:opacity-90 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-md" onclick="generateOT()" type="button">
+<span class="material-symbols-outlined">task_alt</span>
+                                    Validate &amp; Create OT
+                                </button>
+</div>
+</div>
+</div>
+</form>
+</div>
+<!-- Stats & Context Side Pane -->
+<div class="col-span-12 lg:col-span-4 space-y-lg">
+<!-- Status Dashboard -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<h3 class="text-title-md font-title-md font-bold mb-md">Daily Throughput</h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="p-md bg-surface-container-low rounded-lg border border-outline-variant/30">
+<div class="text-label-sm font-label-sm text-on-surface-variant">Pending OT</div>
+<div class="text-headline-md font-headline-md font-black text-km-red">24</div>
+</div>
+<div class="p-md bg-surface-container-low rounded-lg border border-outline-variant/30">
+<div class="text-label-sm font-label-sm text-on-surface-variant">Confirmed</div>
+<div class="text-headline-md font-headline-md font-black text-on-surface">142</div>
+</div>
+</div>
+<div class="mt-lg">
+<div class="flex justify-between text-label-sm font-label-sm mb-xs">
+<span>Warehouse Capacity</span>
+<span class="font-bold">84%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-km-red h-full" style="width: 84%"></div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm flex flex-col h-[320px]">
+<div class="px-md py-sm bg-surface-container-high border-b border-outline-variant font-title-md text-title-md font-bold">Recent Receipts</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<table class="w-full text-left">
+<thead class="sticky top-0 bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-md py-xxs text-label-sm font-label-sm text-on-surface-variant">OT#</th>
+<th class="px-md py-xxs text-label-sm font-label-sm text-on-surface-variant">Article</th>
+<th class="px-md py-xxs text-label-sm font-label-sm text-on-surface-variant text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-xs font-data-tabular text-data-tabular">OT-99231</td>
+<td class="px-md py-xs text-body-sm">Electronics</td>
+<td class="px-md py-xs text-right"><span class="bg-green-100 text-green-700 px-xs py-[2px] rounded text-label-sm">OK</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-xs font-data-tabular text-data-tabular">OT-99230</td>
+<td class="px-md py-xs text-body-sm">Spare Parts</td>
+<td class="px-md py-xs text-right"><span class="bg-red-100 text-red-700 px-xs py-[2px] rounded text-label-sm">DMG</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-xs font-data-tabular text-data-tabular">OT-99229</td>
+<td class="px-md py-xs text-body-sm">Pharma</td>
+<td class="px-md py-xs text-right"><span class="bg-green-100 text-green-700 px-xs py-[2px] rounded text-label-sm">OK</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-xs font-data-tabular text-data-tabular">OT-99228</td>
+<td class="px-md py-xs text-body-sm">Food</td>
+<td class="px-md py-xs text-right"><span class="bg-green-100 text-green-700 px-xs py-[2px] rounded text-label-sm">OK</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Contextual Help Section (Graphic) -->
+<section class="mt-lg grid grid-cols-3 gap-lg">
+<div class="col-span-3 lg:col-span-1 h-48 bg-surface-container-highest rounded-xl border border-outline-variant overflow-hidden relative">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+
+</div>
+<div class="relative z-10 p-lg h-full flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-km-red text-headline-sm">qr_code_scanner</span>
+<h4 class="text-title-md font-title-md mt-xs font-bold">Auto-Validation</h4>
+</div>
+<p class="text-body-sm text-on-surface-variant">System checks declaration integrity in real-time with K-Finance servers.</p>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 rounded-xl border border-outline-variant overflow-hidden bg-surface-container-highest relative h-48">
+<img alt="Warehouse Floor Plan" class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-700" data-alt="A detailed, technical 3D isometric architectural floor plan of a modern industrial warehouse. The layout shows clearly marked zones A, B, and C with racking systems, loading docks, and automated forklifts. The visual style is high-precision CAD rendering with a corporate color palette of soft greys, primary blues, and bright red accents for active zones. The scene is brightly lit with even, professional architectural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA62SIH9_E-pAMHchQFYopPi0bP218yI_6jh7mE14lzfr9fwM5jKjtHPKdY9xgxlBWNfSS2BdY4LHMg97X1GgDj82qHXbekqj4t-BGYq5gKgNEIpDyTMRTrGcGg7u9Y2-UFaPPT_NAkd1LFNdgCxj6QjG1RM0zoLYjblz3kmtwnhL48hiTg7Fyou8N2lLi_5KbOeelP0H1PfYL3vQPxgywmytipn4hY2Y-ooF-4OFkmDo8uHWlhpHyuy3pYqzYeiFZmbuDU-GNEdc8"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-highest via-transparent to-transparent p-lg flex flex-col justify-center">
+<h4 class="text-title-lg font-title-lg font-black text-km-red">Live Magasin Zone B-9</h4>
+<p class="text-body-md text-on-surface-variant max-w-sm">Active unloading zone for MSCU carriers. Ensure all safety protocols are followed before initiating scan.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Success Modal (Hidden by default) -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-on-background/40 backdrop-blur-sm" id="successModal">
+<div class="bg-surface-container-lowest p-xl rounded-xl border border-outline-variant shadow-2xl max-w-md w-full text-center">
+<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-lg">
+<span class="material-symbols-outlined text-green-600 text-[48px]">check_circle</span>
+</div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Reception Validated</h2>
+<p class="text-body-md text-on-surface-variant mt-xs">Order of Transfer (OT) has been successfully generated.</p>
+<div class="mt-xl p-md bg-surface-container-low rounded-lg border border-outline-variant/30 font-data-tabular text-headline-md font-black text-km-red" id="generatedOTDisplay">
+                OT-2026-XXXXX
+            </div>
+<div class="mt-xl flex flex-col gap-sm">
+<button class="w-full bg-on-surface text-surface py-md rounded-lg font-label-md text-label-md" onclick="closeModal()">Proceed to Next Scan</button>
+<button class="w-full py-md rounded-lg font-label-md text-label-md border border-outline-variant" onclick="closeModal()">Print OT Document</button>
+</div>
+</div>
+</div>
+<script>
+        function updateArticleCode(val) {
+            const codeMap = {
+                'ELECTRONICS': '772-9904',
+                'SPAREPARTS': '112-4200',
+                'PHARMA': '551-1288',
+                'FOOD': '883-0144'
+            };
+            const display = document.getElementById('articleCodeDisplay');
+            display.innerText = codeMap[val] || '--- ----';
+        }
+
+        function generateOT() {
+            const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+            const otNumber = `OT-2026-${randomSuffix}`;
+            document.getElementById('generatedOTDisplay').innerText = otNumber;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('receptionForm').reset();
+            document.getElementById('articleCodeDisplay').innerText = '--- ----';
+        }
+
+        // Radio button visual interaction
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('input[name="status"]').forEach(r => {
+                    r.parentElement.classList.remove('border-km-red', 'bg-surface-container-highest');
+                    r.parentElement.classList.add('border-outline-variant');
+                });
+                if (this.checked) {
+                    this.parentElement.classList.remove('border-outline-variant');
+                    this.parentElement.classList.add('border-km-red', 'bg-surface-container-highest');
+                }
+            });
+        });
+    </script>
+</body></html>

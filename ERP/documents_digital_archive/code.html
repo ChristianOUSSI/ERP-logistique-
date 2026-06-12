@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG ERP - Documents &amp; Archiving</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#727785",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-container": "#00714d",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-background": "#151c27",
+                        "surface-container": "#e7eefe",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#2a313d",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-primary-fixed": "#001a42",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6cf8bb",
+                        "secondary": "#006c49",
+                        "on-surface": "#151c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c6d6",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "tertiary": "#825100",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#6ffbbe",
+                        "primary-container": "#2170e4",
+                        "tertiary-fixed": "#ffddb8",
+                        "surface-tint": "#005ac2",
+                        "primary": "#0058be",
+                        "surface-variant": "#dce2f3",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary-fixed-variant": "#005236",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f0f3ff",
+                        "tertiary-fixed-dim": "#ffb95f"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        gutter: "1rem",
+                        xs: "0.5rem",
+                        "max-width": "1600px",
+                        md: "1rem",
+                        "margin-desktop": "1.5rem",
+                        xxs: "0.25rem",
+                        sm: "0.75rem",
+                        lg: "1.5rem",
+                        xl: "2rem"
+                    },
+                    fontFamily: {
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+                        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "title-lg": ["18px", { lineHeight: "24px", fontWeight: "500" }],
+                        "label-sm": ["11px", { lineHeight: "16px", fontWeight: "600" }],
+                        "data-tabular": ["13px", { lineHeight: "16px", fontWeight: "400" }],
+                        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+                        "headline-lg": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "title-md": ["16px", { lineHeight: "24px", fontWeight: "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col p-md z-50">
+<div class="flex items-center gap-sm mb-lg">
+<div class="w-8 h-8 bg-primary rounded-DEFAULT flex items-center justify-center text-on-primary font-bold">K</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md py-sm px-md rounded-DEFAULT mb-lg transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+            Nouvelle Opération
+        </button>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Tableau de bord
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                Transport
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Finances
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+                Parc Automobile
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-primary dark:text-primary-fixed bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold transition-colors active:scale-95 duration-150 relative" href="#">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-primary rounded-r-full"></div>
+<span class="material-symbols-outlined">folder</span>
+                Documents
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Paramètres
+            </a>
+</nav>
+<div class="mt-auto pt-sm border-t border-outline-variant dark:border-outline space-y-xs">
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Déconnexion
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[260px] flex flex-col h-full bg-background overflow-hidden">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface dark:bg-on-background border-b border-outline-variant dark:border-outline flex justify-between items-center h-[64px] px-gutter">
+<div class="flex items-center gap-lg h-full">
+<span class="font-title-sm text-title-sm text-on-surface dark:text-on-primary-container font-black">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex h-full items-center gap-md">
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all h-full flex items-center px-xs" href="#">Articles</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all h-full flex items-center px-xs" href="#">Clients</a>
+<a class="font-body-base text-body-base text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all h-full flex items-center px-xs" href="#">Stocks</a>
+<a class="font-body-base text-body-base text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 h-full flex items-center px-xs" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded-DEFAULT">
+<input class="pl-sm pr-lg py-xs text-body-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT focus:outline-none w-48" placeholder="Rechercher T-Code" type="text"/>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+</div>
+<div class="flex items-center gap-xs ml-sm border-l border-outline-variant pl-sm">
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">verified_user</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-gutter lg:p-margin-desktop">
+<div class="max-w-max-width mx-auto space-y-md">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-sm mb-lg">
+<div>
+<div class="flex items-center gap-xxs text-label-sm font-label-sm text-on-surface-variant mb-xxs">
+<span>Accueil</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Système</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary">Archivage Documents</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Documents &amp; Archivage</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xxs">Consultez, recherchez et téléchargez les documents générés par le système.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-xs px-sm py-xs bg-surface-container-lowest border border-outline-variant text-on-surface font-label-md text-label-md rounded-DEFAULT hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filtres Avancés
+                        </button>
+<button class="flex items-center gap-xs px-sm py-xs bg-primary text-on-primary font-label-md text-label-md rounded-DEFAULT hover:bg-primary-fixed-dim transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export ZIP
+                        </button>
+</div>
+</div>
+<!-- Search & Filters -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-sm">
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xxs">Recherche Globale</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-xl pr-sm py-xs border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" placeholder="N° Document, Référence, Client..." type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xxs">Module Source</label>
+<select class="w-full px-sm py-xs border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm bg-surface-container-lowest">
+<option>Tous les modules</option>
+<option>Finances (Factures)</option>
+<option>Transport (Manifestes)</option>
+<option>Opérations (OT Reports)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xxs">Période</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">calendar_today</span>
+<input class="w-full pl-xl pr-sm py-xs border border-outline-variant rounded-DEFAULT focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm cursor-pointer" placeholder="Ce mois-ci" readonly="" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Document Categories -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-lg">
+<!-- Category Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm flex flex-col hover:border-primary transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-sm bg-surface-container-low rounded-lg text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant px-xs py-xxs rounded-sm">1,245 Doc</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-xxs">Factures &amp; Reçus</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-auto">Dernier ajout: Aujourd'hui, 10:42</p>
+</div>
+<!-- Category Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm flex flex-col hover:border-primary transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-sm bg-surface-container-low rounded-lg text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant px-xs py-xxs rounded-sm">842 Doc</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-xxs">Manifestes Navires</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-auto">Dernier ajout: Hier, 14:15</p>
+</div>
+<!-- Category Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm flex flex-col hover:border-primary transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-sm">
+<div class="p-sm bg-surface-container-low rounded-lg text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant px-xs py-xxs rounded-sm">3,109 Doc</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-xxs">Ordres de Transit (OT)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-auto">Dernier ajout: Aujourd'hui, 09:30</p>
+</div>
+</div>
+<!-- Document List Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden flex flex-col">
+<div class="p-sm border-b border-outline-variant bg-surface-container flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">Documents Récents</h3>
+<div class="flex gap-xs">
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">view_list</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">grid_view</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold w-10">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold">Type</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold">Référence</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold">Date de Génération</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold">Module</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold">Taille</th>
+<th class="p-sm font-label-md text-label-md text-on-surface-variant font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="p-sm"><input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="p-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-error" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+<span class="font-medium">INV-2023-1042</span>
+</div>
+</td>
+<td class="p-sm text-on-surface-variant">Facture Client - MAERSK</td>
+<td class="p-sm">24 Oct 2023, 10:42</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-xs py-xxs rounded-sm bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+                                            Finances
+                                        </span>
+</td>
+<td class="p-sm text-on-surface-variant">1.2 MB</td>
+<td class="p-sm text-right">
+<div class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">download</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">share</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-[#F9FAFB] border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="p-sm"><input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="p-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-error" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+<span class="font-medium">OT-2023-8831</span>
+</div>
+</td>
+<td class="p-sm text-on-surface-variant">Rapport Ordre de Transit - MSC ALINA</td>
+<td class="p-sm">24 Oct 2023, 09:30</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-xs py-xxs rounded-sm bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+                                            Opérations
+                                        </span>
+</td>
+<td class="p-sm text-on-surface-variant">3.4 MB</td>
+<td class="p-sm text-right">
+<div class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">download</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">share</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="p-sm"><input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="p-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-error" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+<span class="font-medium">MAN-2023-092</span>
+</div>
+</td>
+<td class="p-sm text-on-surface-variant">Manifeste Déchargement - CMA CGM</td>
+<td class="p-sm">23 Oct 2023, 14:15</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-xs py-xxs rounded-sm bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+                                            Transport
+                                        </span>
+</td>
+<td class="p-sm text-on-surface-variant">8.1 MB</td>
+<td class="p-sm text-right">
+<div class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">download</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">share</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-[#F9FAFB] border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="p-sm"><input class="rounded-sm border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="p-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-error" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+<span class="font-medium">INV-2023-1041</span>
+</div>
+</td>
+<td class="p-sm text-on-surface-variant">Facture Douane - Import X</td>
+<td class="p-sm">23 Oct 2023, 11:05</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-xs py-xxs rounded-sm bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+                                            Finances
+                                        </span>
+</td>
+<td class="p-sm text-on-surface-variant">0.8 MB</td>
+<td class="p-sm text-right">
+<div class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">download</span></button>
+<button class="p-xxs text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">share</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-sm border-t border-outline-variant bg-surface-container flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Affichage de 1 à 4 sur 5,196 documents</span>
+<div class="flex items-center gap-xs">
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-high rounded-sm disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="font-body-sm text-body-sm text-on-surface px-xs">Page 1 de 130</span>
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-high rounded-sm">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

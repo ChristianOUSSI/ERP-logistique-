@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Audit Trail & Operation Trace | KAMLOG EM-ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#d3daea",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#825100",
+                    "secondary-fixed-dim": "#4edea3",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#00714d",
+                    "on-primary-fixed": "#001a42",
+                    "inverse-primary": "#adc6ff",
+                    "surface-container": "#e7eefe",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#a36700",
+                    "secondary": "#006c49",
+                    "on-secondary-fixed": "#002113",
+                    "primary-fixed": "#d8e2ff",
+                    "on-background": "#151c27",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-tertiary-fixed": "#2a1700",
+                    "primary-fixed-dim": "#adc6ff",
+                    "outline": "#727785",
+                    "surface-container-highest": "#dce2f3",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#424754",
+                    "inverse-surface": "#2a313d",
+                    "on-primary-container": "#fefcff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "primary": "#6B7280", /* Overridden per user request: Gray theme */
+                    "primary-container": "#4B5563",
+                    "on-tertiary-container": "#fffbff",
+                    "surface": "#f9f9ff",
+                    "surface-bright": "#f9f9ff",
+                    "background": "#f9f9ff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c2c6d6",
+                    "surface-variant": "#dce2f3",
+                    "surface-tint": "#6B7280",
+                    "on-surface": "#151c27",
+                    "surface-container-high": "#e2e8f8",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#653e00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "md": "1rem",
+                    "lg": "1.5rem",
+                    "margin-desktop": "1.5rem",
+                    "max-width": "1600px",
+                    "sm": "0.75rem",
+                    "xs": "0.5rem",
+                    "gutter": "1rem",
+                    "xl": "2rem",
+                    "xxs": "0.25rem"
+            },
+            "fontFamily": {
+                    "title-lg": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"], "body-md": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Inter"], "body-lg": ["Inter"], "label-sm": ["Inter"], "data-tabular": ["Inter"], "headline-lg": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .zebra-stripe:nth-child(even) { background-color: #F9FAFB; }
+        .t-code-focus:focus-within {
+            box-shadow: 0 0 0 2px #6B7280;
+            border-color: #6B7280;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md overflow-hidden">
+<!-- TopNavBar Implementation -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+<div class="h-8 w-px bg-outline-variant mx-xs"></div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">Alerts</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">MFA Status</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">Modules</a>
+</nav>
+</div>
+<!-- T-Code Search Bar - Critical Requirement -->
+<div class="flex-1 max-w-md mx-xl hidden md:block">
+<div class="relative t-code-focus group transition-all duration-200 bg-white border border-outline-variant rounded p-1 flex items-center">
+<span class="material-symbols-outlined text-outline px-xs" style="font-size: 20px;">terminal</span>
+<input class="w-full border-none focus:ring-0 text-body-sm font-data-tabular bg-transparent" placeholder="Enter T-Code (e.g. KM24)" type="text" value="KM24"/>
+<span class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1">ACTIVE</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors" data-icon="security">security</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors" data-icon="apps">apps</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a system administrator in a high-tech corporate office environment. The subject is a middle-aged man with a friendly yet focused expression, wearing a crisp gray suit. The background is softly blurred, showing ambient lighting from multiple computer monitors and industrial-style architectural details in a modern logistics center." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2CFriw6FjN_IS0g8HuJsJN6IrruZOflxB_C3r5_z6uXM6qrnJ1xNSeGecI4kRKeJm6gVF3wVA9Eg3NgvT89hIppO9y9PLlZ7CJ22xMG1H_1v4Ksx5hzRb63FjMZKJp89ioZPtXI4_6t_eZyv0RT1w0MVDcDL4yncbYRVVGh3nq-EwiYJB-51otCBj78p1FNleatpsjKh68FX03VUGYLkr2Cw7TaKraejqGrz-MvEwKu9F7yTt-9737BrwU_ayXVd8guhcIz4yGcA"/>
+</div>
+</header>
+<!-- SideNavBar Implementation -->
+<aside class="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
+<div class="px-md py-lg">
+<div class="flex flex-col gap-xxs">
+<span class="text-headline-sm font-headline-sm font-black text-primary">KAMLOG ERP</span>
+<span class="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</span>
+</div>
+</div>
+<div class="flex-1 px-xs flex flex-col gap-1">
+<div class="px-md py-xs text-label-sm font-label-sm text-outline uppercase tracking-wider">Main Modules</div>
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="text-label-md font-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-label-md font-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">Parc</span>
+</a>
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="text-label-md font-label-md">Magasin</span>
+</a>
+<!-- Active State: Audit -->
+<a class="flex items-center gap-md px-md py-2.5 text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="text-label-md font-label-md">Audit</span>
+</a>
+</div>
+<div class="mt-auto px-xs flex flex-col gap-1">
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-60 pt-16 h-screen overflow-y-auto bg-surface-container-low">
+<div class="max-w-[1600px] mx-auto p-lg">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-xs text-label-sm font-label-sm text-outline mb-xs">
+<a class="hover:text-primary" href="#">System Control</a>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Audit Log</a>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-on-surface font-semibold">OT Trace</span>
+</nav>
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-lg">
+<div class="flex flex-col gap-1">
+<h1 class="text-headline-md font-headline-md text-on-surface">Audit Trail & Operation Trace</h1>
+<p class="text-body-sm text-on-surface-variant max-w-2xl">Real-time logging of system transactions and operational movements across the KAMLOG terminal ecosystem. Traceability maintained for 90 days.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-xs px-md py-2 border border-outline text-label-md font-label-md rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter View
+                    </button>
+<button class="flex items-center gap-xs px-md py-2 bg-primary text-white text-label-md font-label-md rounded hover:bg-primary-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export Log
+                    </button>
+</div>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md mb-lg">
+<div class="bg-white p-md border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Total Traces (24h)</span>
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div class="text-headline-sm font-headline-sm">12,842</div>
+<div class="text-[11px] text-secondary mt-1 flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +4.2% from yesterday
+                    </div>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Security Alerts</span>
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+<div class="text-headline-sm font-headline-sm">03</div>
+<div class="text-[11px] text-on-surface-variant mt-1 opacity-70">Requires Audit Review</div>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Active Modules</span>
+<span class="material-symbols-outlined text-primary">dashboard_customize</span>
+</div>
+<div class="text-headline-sm font-headline-sm">12 Modules</div>
+<div class="text-[11px] text-on-surface-variant mt-1 opacity-70">Cross-terminal integration</div>
+</div>
+<div class="bg-white p-md border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Avg Response Time</span>
+<span class="material-symbols-outlined text-primary">speed</span>
+</div>
+<div class="text-headline-sm font-headline-sm">42ms</div>
+<div class="text-[11px] text-secondary mt-1 flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> System Optimal
+                    </div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-white border border-outline-variant rounded shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header/Toolbar -->
+<div class="p-md bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-lg">
+<h2 class="text-title-md font-title-md flex items-center gap-xs">
+<span class="material-symbols-outlined">list_alt</span>
+                            Operation Logs
+                        </h2>
+<div class="flex items-center gap-xs bg-white border border-outline-variant rounded px-2 py-1">
+<span class="material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="border-none focus:ring-0 text-body-sm w-48 p-0" placeholder="Search OT Number..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="text-label-md font-label-md text-on-surface-variant">Showing 1-15 of 2,450 results</span>
+<div class="flex border border-outline-variant rounded overflow-hidden">
+<button class="p-1 hover:bg-surface-container-high border-r border-outline-variant bg-white"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 hover:bg-surface-container-high bg-white"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Actual Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase tracking-tight">
+<th class="px-md py-3 font-semibold">OT Number</th>
+<th class="px-md py-3 font-semibold">Action</th>
+<th class="px-md py-3 font-semibold">Module</th>
+<th class="px-md py-3 font-semibold">User</th>
+<th class="px-md py-3 font-semibold">Timestamp</th>
+<th class="px-md py-3 font-semibold text-right">Operations</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-data-tabular">
+<!-- Row 1 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors group">
+<td class="px-md py-3 font-bold text-primary">843291054</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">add_task</span>
+                                        CREATE_FREIGHT_MANIFEST
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#EF4444]">K-MAGASIN</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-surface-dim flex items-center justify-center text-[10px] font-bold">JD</div>
+<span>John Doe (ID: 4022)</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:22:15.004</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="px-md py-3 font-bold text-primary">921105382</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+                                        UPDATE_INVENTORY_QTY
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E0E7FF] text-[#4338CA]">K-PARC</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-surface-dim flex items-center justify-center text-[10px] font-bold">AS</div>
+<span>Aminata S. (ID: 3911)</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:20:58.912</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="px-md py-3 font-bold text-primary">310029584</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-tertiary">currency_exchange</span>
+                                        POST_LEDGER_ENTRY
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#DCFCE7] text-[#15803D]">K-FINANCE</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-surface-dim flex items-center justify-center text-[10px] font-bold">SY</div>
+<span>System Auto (ID: 0001)</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:18:22.441</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="px-md py-3 font-bold text-primary">119482756</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_shipping</span>
+                                        TRUCK_GATE_EXIT
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF9C3] text-[#854D0E]">K-TRANSPORT</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-surface-dim flex items-center justify-center text-[10px] font-bold">MK</div>
+<span>M. Koné (ID: 5521)</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:15:10.012</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="px-md py-3 font-bold text-primary">772819405</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">visibility</span>
+                                        AUDIT_LOG_READ
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#374151]">K-AUDIT</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">AD</div>
+<span>Admin Level 3</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:12:01.883</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="zebra-stripe border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="px-md py-3 font-bold text-primary">551029384</td>
+<td class="px-md py-3">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-error">delete_forever</span>
+                                        PURGE_STALE_CACHE
+                                    </span>
+</td>
+<td class="px-md py-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#374151]">SYSTEM</span>
+</td>
+<td class="px-md py-3">
+<div class="flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-surface-dim flex items-center justify-center text-[10px] font-bold">RB</div>
+<span>Root (ID: 0000)</span>
+</div>
+</td>
+<td class="px-md py-3 text-on-surface-variant">2023-11-24 14:10:44.221</td>
+<td class="px-md py-3 text-right">
+<button class="px-3 py-1 bg-white border border-error text-error text-label-sm font-label-sm rounded hover:bg-error hover:text-white transition-all shadow-sm">Cancel</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Pagination -->
+<div class="p-md bg-white border-t border-outline-variant flex justify-between items-center">
+<div class="flex gap-2">
+<button class="px-3 py-1 border border-outline-variant rounded text-label-md font-label-md hover:bg-surface-container-high">Previous</button>
+<button class="px-3 py-1 bg-primary text-white rounded text-label-md font-label-md">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded text-label-md font-label-md hover:bg-surface-container-high">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded text-label-md font-label-md hover:bg-surface-container-high">3</button>
+<span class="px-2 self-center">...</span>
+<button class="px-3 py-1 border border-outline-variant rounded text-label-md font-label-md hover:bg-surface-container-high">164</button>
+<button class="px-3 py-1 border border-outline-variant rounded text-label-md font-label-md hover:bg-surface-container-high">Next</button>
+</div>
+<div class="flex items-center gap-md">
+<span class="text-label-md font-label-md text-on-surface-variant">Rows per page:</span>
+<select class="border border-outline-variant rounded text-label-md font-label-md py-1 pr-8">
+<option>15</option>
+<option>50</option>
+<option>100</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Contextual Information Card -->
+<div class="mt-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-surface-container-highest p-lg rounded-xl border border-outline-variant">
+<h3 class="text-title-md font-title-md mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">terminal</span>
+                        T-Code Shortcuts (KM Trace)
+                    </h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex justify-between items-center p-xs bg-white rounded border border-outline-variant">
+<span class="font-data-tabular font-bold text-primary">KM24</span>
+<span class="text-label-sm font-label-sm text-outline">Trace OT</span>
+</div>
+<div class="flex justify-between items-center p-xs bg-white rounded border border-outline-variant">
+<span class="font-data-tabular font-bold text-primary">KM25</span>
+<span class="text-label-sm font-label-sm text-outline">Cancel OT</span>
+</div>
+<div class="flex justify-between items-center p-xs bg-white rounded border border-outline-variant">
+<span class="font-data-tabular font-bold text-primary">KA01</span>
+<span class="text-label-sm font-label-sm text-outline">Audit Config</span>
+</div>
+<div class="flex justify-between items-center p-xs bg-white rounded border border-outline-variant">
+<span class="font-data-tabular font-bold text-primary">KA99</span>
+<span class="text-label-sm font-label-sm text-outline">System Logs</span>
+</div>
+</div>
+<p class="mt-md text-label-sm font-label-sm text-on-surface-variant italic">Note: All KM series commands require Level 2 clearance or higher.</p>
+</div>
+<div class="relative rounded-xl overflow-hidden min-h-[160px] border border-outline-variant">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A wide panoramic shot of a hyper-modern shipping terminal control room at night. Large glowing blue screens display complex logistical data and world maps. The lighting is dominated by cool grays and technical blues, creating a high-stakes professional atmosphere. In the foreground, a sleek workstation is visible with industrial control panels, emphasizing the system precision of the KAMLOG ERP interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB75oDITk8Pz9FEbzvqd7dgS6G2gJ7KlmmzWGDUdMJOcpvIDdSkmZe07-9X9HEnkp8LCE-PcycebmPskx3JUoEHuDr_B_-5duZ3eC8zoerGlpp0MteQQQIFvuBDeGqIIMxgS0euNFtuRB1Sx7lhTG_gKGK7A37Qq7-NGo1mSHtEsl5uol3T-280JR6S26oZuk1DQn3lXR8CPIfRSwoVXkJ831NHNHmFFac-yqQyYMX1U5O24vM2-cEvGzzlkYewFvR3PLbzyPWd_5M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-lg">
+<h4 class="text-white font-bold text-title-md">Global Infrastructure</h4>
+<p class="text-white/80 text-body-sm">Monitoring 14 terminals across West Africa.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction for T-Code selection -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rows = document.querySelectorAll('.zebra-stripe');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.querySelector('.material-symbols-outlined').style.transform = 'scale(1.2)';
+                    row.querySelector('.material-symbols-outlined').style.transition = 'transform 0.2s ease';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.querySelector('.material-symbols-outlined').style.transform = 'scale(1)';
+                });
+            });
+
+            // Simulate T-Code feedback
+            const tcodeInput = document.querySelector('input[placeholder*="T-Code"]');
+            tcodeInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    const code = e.target.value.toUpperCase();
+                    if(code === 'KM24') {
+                        alert('Reloading Audit Trace context...');
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

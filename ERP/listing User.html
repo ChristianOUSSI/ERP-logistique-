@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP | Gestion des Utilisateurs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001a42",
+                        "surface": "#f9f9ff",
+                        "secondary-container": "#6cf8bb",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-bright": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-variant": "#dce2f3",
+                        "background": "#f9f9ff",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#e7eefe",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c2c6d6",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-surface-variant": "#424754",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container-low": "#f0f3ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-container": "#00714d",
+                        "on-primary-container": "#fefcff",
+                        "on-error": "#ffffff",
+                        "secondary": "#006c49",
+                        "surface-dim": "#d3daea",
+                        "inverse-primary": "#adc6ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2a313d",
+                        "primary": "#0058be",
+                        "primary-container": "#2170e4",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-tint": "#005ac2",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#151c27",
+                        "outline": "#727785",
+                        "on-surface": "#151c27",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f3",
+                        "primary-fixed": "#d8e2ff",
+                        "tertiary": "#825100"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "0.75rem",
+                        "md": "1rem",
+                        "max-width": "1600px",
+                        "gutter": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "xxs": "0.25rem",
+                        "xs": "0.5rem",
+                        "margin-desktop": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+        .drawer-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface antialiased overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant flex flex-col p-4 z-50">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Port Operations</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Tableau de bord</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Finances</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+<span class="font-label-md text-label-md">Parc Automobile</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-primary bg-secondary-container font-bold rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Paramètres</span>
+</a>
+</nav>
+<button class="mb-6 w-full py-2.5 px-4 bg-primary text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span class="font-label-md text-label-md">Nouvelle Opération</span>
+</button>
+<div class="border-t border-outline-variant pt-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-label-md text-label-md">Déconnexion</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Stage -->
+<main class="ml-[260px] h-screen flex flex-col relative overflow-hidden">
+<!-- Top Navbar -->
+<header class="sticky top-0 w-full h-[64px] bg-surface border-b border-outline-variant px-gutter flex justify-between items-center z-40">
+<div class="flex items-center gap-4">
+<div class="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</div>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<nav class="hidden md:flex gap-6">
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Articles</a>
+<a class="font-body-base text-body-base text-primary border-b-2 border-primary pb-1" href="#">Utilisateurs</a>
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-[18px]">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-body-sm font-body-sm w-48 transition-all focus:w-64" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-all">verified_user</button>
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
+<img alt="User profile with MFA status" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a mature corporate administrator with a confident expression, wearing a sharp navy blue suit and a clean white shirt. The background is a brightly lit, high-end office interior with subtle architectural glass elements. The lighting is soft and flattering, emphasizing a crisp, modern light-mode ERP aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtmnCuQbcdMIqvAGREH1NAFzz30DaKDxS741I7Lnb5w_cHuyEu2AvIvDGngjt5XVgNfc6GXy68z4XuKdZdCwBWzGSaNxFXCGG9comOD9PoG87VceEia1O4DsBI9_LYcRVVdusF6DTA6IKLycOFsI1TZHViKAiigo4dtx1lhh7fjbc92i8RtUs5BbZuYGzEDfcL9qqlCYdu06i_dvHBRGPXh2D82F4ribePsppPZONQRc6NTLQJOIeJSSRTvGnlTrDZ2leGhuykoQ"/>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm leading-none">M. Admin</span>
+<span class="text-[10px] text-primary font-bold uppercase">Root Access</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- User Management Content -->
+<section class="flex-1 p-6 overflow-hidden flex flex-col gap-6">
+<div class="flex justify-between items-end">
+<div>
+<nav class="flex gap-2 text-[11px] font-medium text-outline mb-1">
+<a class="hover:text-primary transition-all" href="#">Administration</a>
+<span>/</span>
+<span class="text-on-surface">Gestion des Utilisateurs</span>
+</nav>
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">Utilisateurs du Système</h2>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant text-primary font-medium rounded-lg flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+<span class="font-label-md text-label-md">Filtres Avancés</span>
+</button>
+<button class="px-4 py-2 bg-primary text-on-primary font-bold rounded-lg flex items-center gap-2 shadow-sm hover:shadow-md transition-all">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span class="font-label-md text-label-md">Nouvel Utilisateur</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Summary -->
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline">Utilisateurs Totaux</p>
+<p class="text-headline-sm font-headline-sm font-bold">1,284</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline">Utilisateurs Actifs</p>
+<p class="text-headline-sm font-headline-sm font-bold">1,102</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">lock_reset</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline">En attente MFA</p>
+<p class="text-headline-sm font-headline-sm font-bold">42</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center text-error">
+<span class="material-symbols-outlined">person_off</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline">Inactifs</p>
+<p class="text-headline-sm font-headline-sm font-bold">140</p>
+</div>
+</div>
+</div>
+<!-- Main Table Container -->
+<div class="flex-1 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="overflow-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-low z-10 border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider w-12">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider">Utilisateur</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider">Département</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider">Rôle ERP</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider">Statut</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider">Dernière Connexion</th>
+<th class="px-6 py-4 font-label-md text-label-md text-outline uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- User Row 1 -->
+<tr class="hover:bg-primary-fixed/30 cursor-pointer group transition-all" onclick="toggleDrawer(true, 'Jean Dupont', 'Directeur Logistique', 'Dispatcher')">
+<td class="px-6 py-3.5"><input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">JD</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">Jean Dupont</div>
+<div class="text-[11px] text-outline">jean.dupont@kamlog.cm</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Logistique Portuaire</td>
+<td class="px-6 py-3.5">
+<span class="px-2 py-0.5 bg-on-primary-fixed/5 text-on-primary-fixed text-[11px] font-bold rounded border border-on-primary-fixed/10">DISPATCHER</span>
+</td>
+<td class="px-6 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-secondary-container/20 text-secondary text-[11px] font-bold rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> ACTIF
+                                    </span>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Aujourd'hui, 09:42</td>
+<td class="px-6 py-3.5 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">edit</button>
+</td>
+</tr>
+<!-- User Row 2 -->
+<tr class="hover:bg-primary-fixed/30 cursor-pointer group transition-all" onclick="toggleDrawer(true, 'Marie Claire', 'Finance &amp; Contrôle', 'Finance')">
+<td class="px-6 py-3.5"><input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-tertiary/10 flex items-center justify-center font-bold text-tertiary text-xs">MC</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">Marie Claire</div>
+<div class="text-[11px] text-outline">m.claire@kamlog.cm</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Finance &amp; Facturation</td>
+<td class="px-6 py-3.5">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-fixed-dim text-[11px] font-bold rounded border border-tertiary/10">FINANCE</span>
+</td>
+<td class="px-6 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-tertiary-container/10 text-tertiary text-[11px] font-bold rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> PENDING MFA
+                                    </span>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Hier, 14:15</td>
+<td class="px-6 py-3.5 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">edit</button>
+</td>
+</tr>
+<!-- User Row 3 -->
+<tr class="hover:bg-primary-fixed/30 cursor-pointer group transition-all" onclick="toggleDrawer(true, 'Ahmed Traoré', 'Maintenance Parc', 'Fleet Manager')">
+<td class="px-6 py-3.5"><input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center font-bold text-secondary text-xs">AT</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">Ahmed Traoré</div>
+<div class="text-[11px] text-outline">ahmed.t@kamlog.cm</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Maintenance Véhicules</td>
+<td class="px-6 py-3.5">
+<span class="px-2 py-0.5 bg-secondary-fixed/20 text-on-secondary-fixed-variant text-[11px] font-bold rounded border border-secondary/10">FLEET MANAGER</span>
+</td>
+<td class="px-6 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-secondary-container/20 text-secondary text-[11px] font-bold rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> ACTIF
+                                    </span>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">12 Oct. 2023, 11:00</td>
+<td class="px-6 py-3.5 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">edit</button>
+</td>
+</tr>
+<!-- User Row 4 -->
+<tr class="hover:bg-primary-fixed/30 cursor-pointer group transition-all" onclick="toggleDrawer(true, 'Sophie Ngassa', 'Admin IT', 'SysAdmin')">
+<td class="px-6 py-3.5"><input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-6 py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-error/10 flex items-center justify-center font-bold text-error text-xs">SN</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">Sophie Ngassa</div>
+<div class="text-[11px] text-outline">s.ngassa@kamlog.cm</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">Systèmes Information</td>
+<td class="px-6 py-3.5">
+<span class="px-2 py-0.5 bg-error-container text-on-error-container text-[11px] font-bold rounded border border-error/10">SYSADMIN</span>
+</td>
+<td class="px-6 py-3.5">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-error-container text-error text-[11px] font-bold rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> INACTIF
+                                    </span>
+</td>
+<td class="px-6 py-3.5 text-body-sm font-body-sm text-on-surface-variant">02 Oct. 2023, 16:30</td>
+<td class="px-6 py-3.5 text-right">
+<button class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">edit</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface border-t border-outline-variant flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-outline">Affichage de 1-10 sur 1,284 utilisateurs</span>
+<div class="flex gap-1">
+<button class="p-1.5 border border-outline-variant rounded hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded font-bold text-xs">1</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs">2</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs">3</button>
+<span class="px-2 py-1.5 text-outline">...</span>
+<button class="px-3 py-1.5 border border-outline-variant rounded hover:bg-surface-container-high transition-colors text-xs">129</button>
+<button class="p-1.5 border border-outline-variant rounded hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side Permission Panel (Drawer) -->
+<div class="fixed inset-0 bg-on-background/40 z-[60] hidden opacity-0 transition-opacity duration-300 pointer-events-none" id="userDrawerOverlay" onclick="toggleDrawer(false)"></div>
+<aside class="fixed right-0 top-0 h-full w-[420px] bg-surface shadow-2xl z-[70] transform translate-x-full drawer-transition flex flex-col border-l border-outline-variant" id="userDrawer">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface font-bold">Édition Utilisateur</h3>
+<p class="text-body-sm font-body-sm text-outline" id="drawerUserName">Chargement...</p>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant" onclick="toggleDrawer(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<!-- User Profile Intro -->
+<div class="flex items-center gap-4 bg-primary-fixed/20 p-4 rounded-xl">
+<div class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center text-xl font-bold" id="drawerAvatar">JD</div>
+<div>
+<div class="text-xs text-primary font-black uppercase tracking-wider mb-1">Détails Profil</div>
+<div class="font-body-lg text-body-lg text-on-surface font-bold" id="drawerFullInfo">Jean Dupont</div>
+<div class="text-body-sm text-on-surface-variant" id="drawerDeptInfo">Logistique Portuaire</div>
+</div>
+</div>
+<!-- Module Permissions Toggle -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-widest">Accès aux Modules</h4>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold">HÉRITÉ DU RÔLE</span>
+</div>
+<div class="space-y-2">
+<!-- Module K-Transport -->
+<div class="p-4 border border-outline-variant rounded-xl bg-surface-container-lowest hover:border-primary transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">K-Transport</p>
+<p class="text-[11px] text-outline">Gestion des flux et flottes</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Module K-Magasin -->
+<div class="p-4 border border-outline-variant rounded-xl bg-surface-container-lowest hover:border-primary transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">K-Magasin</p>
+<p class="text-[11px] text-outline">Stocks &amp; Entreposage</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Module K-Finance -->
+<div class="p-4 border border-outline-variant rounded-xl bg-surface-container-lowest hover:border-primary transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-tertiary/10 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">K-Finance</p>
+<p class="text-[11px] text-outline">Facturation &amp; Reporting</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- T-Code Access List -->
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-widest">Autorisations T-Code</h4>
+<div class="bg-surface-container-low rounded-xl p-4 space-y-3">
+<div class="flex items-center justify-between text-body-sm font-medium">
+<code class="px-2 py-1 bg-surface-container-highest rounded text-primary font-mono text-xs">TR_DISP_01</code>
+<span class="text-on-surface-variant">Attribution Camion</span>
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-medium">
+<code class="px-2 py-1 bg-surface-container-highest rounded text-primary font-mono text-xs">TR_EDIT_04</code>
+<span class="text-on-surface-variant">Modification Trajet</span>
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-medium opacity-40">
+<code class="px-2 py-1 bg-surface-container-highest rounded text-primary font-mono text-xs">ADM_SYS_01</code>
+<span class="text-on-surface-variant">Configuration Racine</span>
+<span class="material-symbols-outlined text-outline text-sm">cancel</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant bg-surface flex gap-3">
+<button class="flex-1 py-2.5 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all" onclick="toggleDrawer(false)">Annuler</button>
+<button class="flex-1 py-2.5 px-4 bg-primary text-on-primary font-bold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all" onclick="toggleDrawer(false)">Enregistrer</button>
+</div>
+</aside>
+</main>
+<script>
+        function toggleDrawer(isOpen, name = '', dept = '', role = '') {
+            const drawer = document.getElementById('userDrawer');
+            const overlay = document.getElementById('userDrawerOverlay');
+            
+            if (isOpen) {
+                document.getElementById('drawerUserName').textContent = name;
+                document.getElementById('drawerFullInfo').textContent = name;
+                document.getElementById('drawerDeptInfo').textContent = `${dept} • ${role}`;
+                document.getElementById('drawerAvatar').textContent = name.split(' ').map(n => n[0]).join('');
+                
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                overlay.classList.add('pointer-events-auto');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                overlay.classList.remove('pointer-events-auto');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        // Add visual flair - micro interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.querySelector('td:last-child button').classList.add('scale-110');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.querySelector('td:last-child button').classList.remove('scale-110');
+            });
+        });
+    </script>
+</body></html>
