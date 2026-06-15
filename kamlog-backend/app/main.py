@@ -8,9 +8,11 @@ from slowapi.errors import RateLimitExceeded
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
+from app.utils.error_handler import setup_error_handlers
 
 
 @asynccontextmanager
@@ -40,6 +42,9 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Setup error handlers
+setup_error_handlers(app)
+
 # CORS  autoriser le frontend Next.js
 app.add_middleware(
     CORSMiddleware,
@@ -60,6 +65,10 @@ app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
 app.include_router(magasin.router, tags=["K-Magasin"])
 app.include_router(gateway.router, tags=["Gateway"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
+app.include_router(goods_declaration.router, tags=["Goods Declaration"])
+app.include_router(removal_slip.router, tags=["Removal Slip"])
+app.include_router(reception_mag3.router, tags=["Reception Mag3"])
+app.include_router(master_data.router, tags=["Master Data"])
 
 
 @app.get('/api/health')

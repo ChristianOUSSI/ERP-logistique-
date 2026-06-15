@@ -49,6 +49,25 @@ from app.models.gateway import (
     FacturePaiement,
     MissionFacture,
 )
+from app.models.goods_declaration import (
+    GoodsDeclaration,
+    LigneGoodsDeclaration,
+    StatutGoodsDeclaration,
+)
+from app.models.removal_slip import (
+    RemovalSlip,
+    StatutRemovalSlip,
+)
+from app.models.reception_mag3 import (
+    ReceptionMag3,
+    StatutReceptionMag3,
+)
+from app.models.suppliers import (
+    Supplier,
+    SupplierProfile,
+    StatutSupplier,
+    CategorieSupplier,
+)
 
 __all__ = [
     "Base",
@@ -94,4 +113,15 @@ __all__ = [
     "ReceptionStock",
     "FacturePaiement",
     "MissionFacture",
+    "GoodsDeclaration",
+    "LigneGoodsDeclaration",
+    "StatutGoodsDeclaration",
+    "RemovalSlip",
+    "StatutRemovalSlip",
+    "ReceptionMag3",
+    "StatutReceptionMag3",
+    "Supplier",
+    "SupplierProfile",
+    "StatutSupplier",
+    "CategorieSupplier",
 ]
