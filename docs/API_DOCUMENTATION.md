@@ -2907,6 +2907,282 @@ All endpoints may return the following error responses:
 
 ---
 
+## New Modules (Added 15 Juin 2026)
+
+### Goods Declaration Module
+
+#### List All Goods Declarations
+
+**Endpoint**: `GET /api/transport/goods-declarations`
+
+**Description**: List all goods declarations with pagination.
+
+**Permissions**: `transport:read`
+
+**Query Parameters**:
+- `skip` (int, default: 0): Number of records to skip
+- `limit` (int, default: 100): Maximum number of records to return
+- `statut` (string, optional): Filter by status
+
+**Response** (200 OK):
+```json
+[
+  {
+    "id": 1,
+    "numero_declaration": "DEC-2026-001",
+    "article_id": 1,
+    "quantite": 100,
+    "unite": "KG",
+    "poids": 1000.0,
+    "valeur": 50000.0,
+    "devise": "XAF",
+    "incoterm": "FOB",
+    "port_depart": "Douala",
+    "port_arrivee": "Paris",
+    "date_declaration": "2026-06-15T00:00:00Z",
+    "statut": "VALIDEE",
+    "declaration_douaniere": "DCL-2026-001",
+    "cree_par": "admin",
+    "date_creation": "2026-06-15T00:00:00Z",
+    "date_modification": "2026-06-15T00:00:00Z"
+  }
+]
+```
+
+#### Create Goods Declaration
+
+**Endpoint**: `POST /api/transport/goods-declarations`
+
+**Description**: Create a new goods declaration.
+
+**Permissions**: `transport:create`
+
+**Rate Limit**: 10 requests per minute
+
+**Request Body**:
+```json
+{
+  "numero_declaration": "DEC-2026-001",
+  "article_id": 1,
+  "quantite": 100,
+  "unite": "KG",
+  "poids": 1000.0,
+  "valeur": 50000.0,
+  "devise": "XAF",
+  "incoterm": "FOB",
+  "port_depart": "Douala",
+  "port_arrivee": "Paris",
+  "date_declaration": "2026-06-15T00:00:00Z",
+  "statut": "BROUILLON",
+  "declaration_douaniere": "DCL-2026-001"
+}
+```
+
+#### Get Goods Declaration by ID
+
+**Endpoint**: `GET /api/transport/goods-declarations/{declaration_id}`
+
+**Description**: Get a specific goods declaration by ID.
+
+**Permissions**: `transport:read`
+
+#### Update Goods Declaration
+
+**Endpoint**: `PUT /api/transport/goods-declarations/{declaration_id}`
+
+**Description**: Update a goods declaration.
+
+**Permissions**: `transport:update`
+
+**Rate Limit**: 20 requests per minute
+
+#### Delete Goods Declaration
+
+**Endpoint**: `DELETE /api/transport/goods-declarations/{declaration_id}`
+
+**Description**: Delete a goods declaration.
+
+**Permissions**: `transport:delete`
+
+**Rate Limit**: 10 requests per minute
+
+#### Add Line to Goods Declaration
+
+**Endpoint**: `POST /api/transport/goods-declarations/{declaration_id}/lignes`
+
+**Description**: Add a line to a goods declaration.
+
+**Permissions**: `transport:create`
+
+**Rate Limit**: 10 requests per minute
+
+---
+
+### Removal Slip Module
+
+#### List All Removal Slips
+
+**Endpoint**: `GET /api/magasin/removal-slips`
+
+**Description**: List all removal slips with pagination.
+
+**Permissions**: `magasin:read`
+
+**Query Parameters**:
+- `skip` (int, default: 0): Number of records to skip
+- `limit` (int, default: 100): Maximum number of records to return
+- `statut` (string, optional): Filter by status
+- `magasin_source` (string, optional): Filter by source warehouse
+- `magasin_destination` (string, optional): Filter by destination warehouse
+
+#### Create Removal Slip
+
+**Endpoint**: `POST /api/magasin/removal-slips`
+
+**Description**: Create a new removal slip.
+
+**Permissions**: `magasin:create`
+
+**Rate Limit**: 10 requests per minute
+
+#### Authorize Removal Slip
+
+**Endpoint**: `POST /api/magasin/removal-slips/{slip_id}/autoriser`
+
+**Description**: Authorize a removal slip.
+
+**Permissions**: `magasin:authorize`
+
+**Rate Limit**: 10 requests per minute
+
+#### Get Workflow Status
+
+**Endpoint**: `GET /api/magasin/removal-slips/{slip_id}/workflow-status`
+
+**Description**: Get the workflow status for a removal slip.
+
+**Permissions**: `magasin:read`
+
+#### Create Removal Slip with Workflow
+
+**Endpoint**: `POST /api/magasin/removal-slips/{slip_id}/workflow-create`
+
+**Description**: Create a removal slip with complete workflow.
+
+**Permissions**: `magasin:create`
+
+**Rate Limit**: 10 requests per minute
+
+---
+
+### Reception Mag3 Module
+
+#### List All Receptions Mag3
+
+**Endpoint**: `GET /api/magasin/receptions-mag3`
+
+**Description**: List all Mag3 receptions with pagination.
+
+**Permissions**: `magasin:read`
+
+**Query Parameters**:
+- `skip` (int, default: 0): Number of records to skip
+- `limit` (int, default: 100): Maximum number of records to return
+- `statut` (string, optional): Filter by status
+- `magasin_source` (string, optional): Filter by source warehouse
+- `magasin_destination` (string, optional): Filter by destination warehouse
+
+#### Create Reception from Slip
+
+**Endpoint**: `POST /api/magasin/receptions-mag3/from-slip/{slip_id}`
+
+**Description**: Create a Mag3 reception from a removal slip.
+
+**Permissions**: `magasin:create`
+
+**Rate Limit**: 10 requests per minute
+
+#### Validate Reception with Workflow
+
+**Endpoint**: `POST /api/magasin/receptions-mag3/{reception_id}/workflow-validate`
+
+**Description**: Validate a reception with complete workflow (stock update).
+
+**Permissions**: `magasin:validate`
+
+**Rate Limit**: 10 requests per minute
+
+#### Get Pending Workflows
+
+**Endpoint**: `GET /api/magasin/receptions-mag3/pending-workflows`
+
+**Description**: Get all pending workflows.
+
+**Permissions**: `magasin:read`
+
+---
+
+### Master Data Module
+
+#### List All Suppliers
+
+**Endpoint**: `GET /api/master-data/suppliers`
+
+**Description**: List all suppliers with pagination.
+
+**Permissions**: `master-data:read`
+
+**Query Parameters**:
+- `skip` (int, default: 0): Number of records to skip
+- `limit` (int, default: 100): Maximum number of records to return
+- `statut` (string, optional): Filter by status
+- `categorie` (string, optional): Filter by category
+
+#### Create Supplier
+
+**Endpoint**: `POST /api/master-data/suppliers`
+
+**Description**: Create a new supplier.
+
+**Permissions**: `master-data:create`
+
+**Rate Limit**: 10 requests per minute
+
+#### Create Supplier Profile
+
+**Endpoint**: `POST /api/master-data/suppliers/{supplier_id}/profiles`
+
+**Description**: Create a supplier profile.
+
+**Permissions**: `master-data:create`
+
+**Rate Limit**: 10 requests per minute
+
+#### List All Articles
+
+**Endpoint**: `GET /api/master-data/articles`
+
+**Description**: List all articles with pagination.
+
+**Permissions**: `master-data:read`
+
+**Query Parameters**:
+- `skip` (int, default: 0): Number of records to skip
+- `limit` (int, default: 100): Maximum number of records to return
+- `search` (string, optional): Search in article name or code
+
+#### Create Article
+
+**Endpoint**: `POST /api/master-data/articles`
+
+**Description**: Create a new article.
+
+**Permissions**: `article:create`
+
+**Rate Limit**: 10 requests per minute
+
+---
+
 ## Rate Limiting
 
 Some endpoints have rate limiting applied:

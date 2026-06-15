@@ -297,6 +297,123 @@ kamlog-erp/
 - Utilisation d'Alembic pour les migrations
 - Versioning automatique des schémas
 - Rollback possible
+- Migrations créées pour les nouveaux modèles (15 Juin 2026):
+  - `add_gateway_tables.py` - Tables passerelles
+  - `add_new_models.py` - Nouveaux modèles (goods_declarations, removal_slips, receptions_mag3, suppliers)
+
+---
+
+## 🔄 Services Métier (Updated 15 Juin 2026)
+
+### Services Existants (8 fichiers)
+- `base_service.py` - Service de base
+- `magasin_service.py` - Service Magasin (MagasinService, ClientMagasinService, ArticleService, etc.)
+- `tiers_service.py` - Service Tiers
+- `transport_service.py` - Service Transport
+- `finance_service.py` - Service Finance
+- `parc_service.py` - Service Parc
+- `gateway_service.py` - Service Passerelles
+- `goods_declaration_service.py` - Service Déclarations de Marchandises
+- `removal_slip_service.py` - Service Bons d'Enlèvement
+- `reception_mag3_service.py` - Service Réceptions Mag3
+- `suppliers_service.py` - Service Fournisseurs
+
+### Nouveaux Services (3 fichiers - Added 15 Juin 2026)
+
+#### mag3_workflow_service.py
+Service pour les workflows Mag3 (bon d'enlèvement → réception)
+
+**Fonctionnalités:**
+- Création de bon d'enlèvement avec notification
+- Autorisation de bon d'enlèvement
+- Création de réception à partir de bon d'enlèvement
+- Validation de réception avec mise à jour de stock
+- Mise à jour automatique du statut du bon d'enlèvement
+- Suivi du statut du workflow
+- Récupération des workflows en attente
+
+**Endpoints:**
+- `GET /api/magasin/removal-slips/{slip_id}/workflow-status`
+- `POST /api/magasin/removal-slips/{slip_id}/workflow-create`
+- `POST /api/magasin/receptions-mag3/from-slip/{slip_id}`
+- `POST /api/magasin/receptions-mag3/{reception_id}/workflow-validate`
+- `GET /api/magasin/receptions-mag3/pending-workflows`
+
+#### notification_service.py
+Service pour la gestion des notifications
+
+**Types de notifications:**
+- AUTORISATION_BON_ENLEVEMENT - Demande d'autorisation
+- BON_ENLEVEMENT_AUTORISE - Bon autorisé
+- RECEPTION_CREEE - Réception créée
+- RECEPTION_VALIDEE - Réception validée
+- STOCK_MIS_A_JOUR - Stock mis à jour
+- ERREUR_WORKFLOW - Erreur workflow
+
+**Priorités:**
+- BASSE - Notifications d'information
+- NORMALE - Notifications standard
+- HAUTE - Notifications importantes
+- CRITIQUE - Notifications critiques
+
+**Fonctions:**
+- `notify_bon_enlevement_authorisation()` - Notifier les responsables
+- `notify_bon_enlevement_authorized()` - Notifier le demandeur
+- `notify_reception_created()` - Notifier les magasiniers
+- `notify_reception_validated()` - Notifier le demandeur
+- `notify_stock_updated()` - Notifier les responsables du stock
+- `notify_workflow_error()` - Notifier les responsables d'erreurs
+
+#### validators.py
+Service pour la validation des données
+
+**Validateurs:**
+- `Validator` - Validateur de données générales
+- `BusinessValidator` - Validateur de règles métier
+
+**Fonctions de validation:**
+- `validate_email()` - Validation email
+- `validate_phone()` - Validation téléphone
+- `validate_niu()` - Validation NIU
+- `validate_code()` - Validation code
+- `validate_positive_number()` - Validation nombre positif
+- `validate_percentage()` - Validation pourcentage
+- `validate_date_range()` - Validation plage de dates
+- `validate_required_fields()` - Validation champs requis
+- `validate_supplier_data()` - Validation données fournisseur
+- `validate_goods_declaration_data()` - Validation déclaration marchandises
+- `validate_removal_slip_data()` - Validation bon d'enlèvement
+- `validate_reception_mag3_data()` - Validation réception Mag3
+
+---
+
+## 🛡️ Gestion des Erreurs (Added 15 Juin 2026)
+
+### error_handler.py
+Système de gestion d'erreurs centralisé
+
+**Types d'erreurs:**
+- `AppException` - Exception de base
+- `NotFoundException` - Ressource non trouvée
+- `BadRequestException` - Requête invalide
+- `UnauthorizedException` - Accès non autorisé
+- `ForbiddenException` - Accès interdit
+- `ConflictException` - Conflit de données
+- `ValidationException` - Erreur de validation
+- `BusinessLogicException` - Erreur de logique métier
+
+**Handlers configurés:**
+- Handler pour exceptions d'application
+- Handler pour exceptions HTTP
+- Handler pour erreurs de validation
+- Handler pour erreurs d'intégrité de base de données
+- Handler pour erreurs SQLAlchemy générales
+- Handler pour exceptions génériques
+
+**Intégration:**
+- Configuré dans `main.py` via `setup_error_handlers(app)`
+- Logging automatique des erreurs avec contexte
+- Réponses JSON structurées avec codes d'erreur
 
 ### Indexes
 - Indexes sur les champs de recherche (nom, raison_sociale)

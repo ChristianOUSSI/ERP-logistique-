@@ -166,7 +166,7 @@ certbot --nginx -d kamlog-erp.cm
 certbot renew --dry-run
 ```
 
-### Étape 7: Application des migrations
+### Étape 7: Application des migrations (Updated 15 Juin 2026)
 
 ```bash
 # Entrer dans le conteneur API
@@ -183,6 +183,38 @@ exit
 ```
 
 **Note**: Si vous rencontrez des erreurs de migration, assurez-vous que les modèles sont correctement importés dans `app/models/__init__.py`.
+
+**Nouvelles migrations (15 Juin 2026):**
+- `add_gateway_tables.py` - Tables passerelles pour interconnexions modules
+- `add_new_models.py` - Nouveaux modèles (goods_declarations, removal_slips, receptions_mag3, suppliers)
+
+**Vérification des migrations:**
+```bash
+# Vérifier le statut des migrations
+alembic current
+
+# Vérifier l'historique des migrations
+alembic history
+
+# Rollback si nécessaire
+alembic downgrade -1
+```
+
+**Configuration PostgreSQL pour les nouveaux modèles:**
+Les migrations créent automatiquement les tables suivantes:
+- `goods_declarations` - Déclarations de marchandises
+- `goods_declaration_lines` - Lignes de déclaration
+- `removal_slips` - Bons d'enlèvement Mag3
+- `receptions_mag3` - Réceptions Mag3
+- `suppliers` - Fournisseurs
+- `supplier_profiles` - Profils fournisseurs
+
+**Types enum créés:**
+- `statutdeclaration` - Statuts des déclarations (BROUILLON, SOUMISE, VALIDEE, EN_COURS, COMPLETEE, ANNULEE)
+- `statutremovalslip` - Statuts des bons d'enlèvement (EN_ATTENTE, AUTORISE, EN_TRANSIT, LIVRE, ANNULE)
+- `statutreceptionmag3` - Statuts des réceptions (EN_ATTENTE, EN_COURS, COMPLETEE, ANNULEE)
+- `statutfournisseur` - Statuts des fournisseurs (ACTIF, INACTIF, BLOQUE)
+- `categoriefournisseur` - Catégories de fournisseurs (LOGISTIQUE, IMPORT_EXPORT, SERVICES, MATERIEL)
 
 ### Étape 8: Configuration MFA (Multi-Factor Authentication)
 
