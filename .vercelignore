@@ -1,0 +1,18 @@
+# Backend files
+kamlog-backend/
+docker-compose.yml
+setup.ps1
+setup.sh
+scripts/
+
+# Documentation (optional - remove if you want docs deployed)
+docs/
+ERP/
+
+# Git
+.git/
+.github/
+
+# Other
+*.md
+!README.md
