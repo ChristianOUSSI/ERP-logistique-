@@ -15,10 +15,11 @@ from app.schemas.finance import (
 from app.utils.audit import AuditService
 from app.utils.logger import get_logger
 from app.utils.cache import cache_service, invalidate_cache_pattern
+from app.config import settings
 
 logger = get_logger(__name__)
 
-TVA_CAMEROUN = Decimal('0.1925')   # 19.25%  JAMAIS float
+TVA_CAMEROUN = Decimal(str(settings.TVA_RATE))
 
 
 class FactureService:

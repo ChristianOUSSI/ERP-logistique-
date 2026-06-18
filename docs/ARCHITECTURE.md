@@ -557,9 +557,11 @@ Système de gestion d'erreurs centralisé
 
 - **README.md**: Guide de démarrage rapide
 - **DEPLOYMENT.md**: Guide de déploiement
-- **TROUBLESHOOTING.md**: Guide de dépannage
-- **CRITIQUE_ET_AMÉLIORATIONS.md**: Audit technique et améliorations
+- **ANALYSE_COMPLETE_ERP.md**: Audit technique et recommandations
 - **ARCHITECTURE.md**: Ce document
+- **API_DOCUMENTATION.md**: Référence des endpoints
+- **CAHIER_DES_CHARGES_V2.md**: Spécifications métier
+- **DOCUMENT_TRANSACTIONS.md**: Logique des flux de données
 
 ---
 

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP - Custom Report Builder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "inverse-surface": "#2a313d",
+                        "outline-variant": "#c2c6d6",
+                        "surface-container-highest": "#dce2f3",
+                        "surface-variant": "#dce2f3",
+                        "on-secondary-container": "#00714d",
+                        "surface": "#f9f9ff",
+                        "on-secondary-fixed": "#002113",
+                        "primary-container": "#2170e4",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-tertiary-container": "#fffbff",
+                        "background": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001a42",
+                        "secondary-container": "#6cf8bb",
+                        "primary": "#0058be",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e2e8f8",
+                        "on-surface": "#151c27",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "outline": "#727785",
+                        "tertiary": "#825100",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-primary-container": "#fefcff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#e7eefe",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-background": "#151c27",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-tint": "#005ac2",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "secondary": "#006c49",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-dim": "#d3daea",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-on-surface": "#ebf1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "md": "1rem",
+                        "xl": "2rem",
+                        "lg": "1.5rem",
+                        "max-width": "1600px",
+                        "xs": "0.5rem",
+                        "margin-desktop": "1.5rem",
+                        "xxs": "0.25rem",
+                        "sm": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "data-tabular": ["13px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbar for High Density tables */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c2c6d6;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #727785;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-50">
+<div class="mb-xl flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">corporate_fare</span>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold leading-tight">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
+</div>
+</div>
+<button class="bg-primary text-on-primary w-full py-sm px-md rounded hover:bg-primary-fixed-variant transition-colors flex items-center justify-center gap-xs mb-lg active:scale-95 duration-150 shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="font-label-md text-label-md">Nouvelle Opération</span>
+</button>
+<ul class="flex-1 flex flex-col gap-xs">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md uppercase">Tableau de bord</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md uppercase">Transport</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md uppercase">Finances</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+<span class="font-label-md text-label-md uppercase">Parc Automobile</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md uppercase">Paramètres</span>
+</a>
+</li>
+</ul>
+<ul class="mt-auto flex flex-col gap-xs pt-md border-t border-outline-variant">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md uppercase">Support</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md uppercase">Déconnexion</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col ml-[260px] w-[calc(100%-260px)] h-full">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-on-background sticky top-0 w-full z-40 border-b border-outline-variant dark:border-outline flex justify-between items-center h-[64px] px-gutter">
+<div class="flex items-center gap-lg h-full">
+<span class="font-title-md text-title-md text-on-surface dark:text-on-primary-container font-black">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex h-full ml-md">
+<ul class="flex items-center gap-md h-full">
+<li class="h-full flex items-center">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-xs" href="#">Articles</a>
+</li>
+<li class="h-full flex items-center">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-xs" href="#">Clients</a>
+</li>
+<li class="h-full flex items-center">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-xs" href="#">Stocks</a>
+</li>
+<li class="h-full flex items-center">
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed h-full flex items-center px-xs font-medium" href="#">Rapports</a>
+</li>
+</ul>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-lg pr-sm py-xs bg-surface-container-highest border-none rounded text-body-sm focus:ring-2 focus:ring-primary w-48 transition-all" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<button class="p-xs hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-md">notifications</span>
+</button>
+<button class="p-xs hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-md">verified_user</span>
+</button>
+<button class="p-xs hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-md">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 p-md flex flex-col gap-md overflow-hidden bg-surface-container-low relative">
+<!-- Breadcrumbs & Header -->
+<div class="flex justify-between items-end flex-shrink-0">
+<div>
+<div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-xxs">
+<span>Rapports</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-medium">Custom Report Builder</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Data Explorer</h2>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs px-sm py-xs border border-outline-variant bg-surface-container-lowest rounded text-body-sm font-medium hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        Recent Reports
+                    </button>
+</div>
+</div>
+<!-- Builder Layout (3 Panes) -->
+<div class="flex-1 flex gap-md min-h-0">
+<!-- Pane 1: Configuration Sidebar -->
+<div class="w-[280px] bg-surface-container-lowest border border-outline-variant rounded flex flex-col flex-shrink-0 shadow-sm relative z-10 overflow-hidden">
+<div class="p-sm border-b border-outline-variant bg-surface flex items-center justify-between">
+<h3 class="font-title-md text-title-md">Configuration</h3>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">tune</span>
+</div>
+<div class="flex-1 overflow-y-auto p-sm flex flex-col gap-lg">
+<!-- Step 1 -->
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm">1</div>
+<h4 class="font-body-sm text-body-sm font-semibold">Select Module</h4>
+</div>
+<select class="w-full bg-surface-container-highest border-none rounded text-body-sm p-xs focus:ring-2 focus:ring-primary cursor-pointer">
+<option>Transport Operations</option>
+<option>Magasin Inventory</option>
+<option>Finance Ledgers</option>
+<option>Parc Fleet Status</option>
+</select>
+</div>
+<!-- Step 2 -->
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm">2</div>
+<h4 class="font-body-sm text-body-sm font-semibold">Fields &amp; Data</h4>
+</div>
+<div class="relative mb-xs">
+<span class="material-symbols-outlined absolute left-xs top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+<input class="w-full pl-lg pr-xs py-1 bg-surface border border-outline-variant rounded text-body-sm focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Filter columns..." type="text"/>
+</div>
+<div class="border border-outline-variant rounded bg-surface h-48 overflow-y-auto p-xs flex flex-col gap-1">
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">OT Number (Primary)</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Creation Date</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Client ID</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Total Amount</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input checked="" class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Status</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Driver Name</span>
+</label>
+<label class="flex items-center gap-xs p-1 hover:bg-surface-container-high rounded cursor-pointer">
+<input class="rounded-sm border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+<span class="font-data-tabular text-data-tabular">Vehicle Reg</span>
+</label>
+</div>
+</div>
+<!-- Step 3 -->
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm">3</div>
+<h4 class="font-body-sm text-body-sm font-semibold">Filters</h4>
+</div>
+<div class="flex flex-col gap-xs">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Date Range</label>
+<div class="flex gap-xs">
+<input class="w-full bg-surface-container-highest border-none rounded text-body-sm p-1.5 focus:ring-2 focus:ring-primary" type="date" value="2023-10-01"/>
+<input class="w-full bg-surface-container-highest border-none rounded text-body-sm p-1.5 focus:ring-2 focus:ring-primary" type="date" value="2023-10-31"/>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Status (Multi)</label>
+<div class="bg-surface-container-highest rounded p-1.5 flex flex-wrap gap-1 min-h-[36px] items-center">
+<span class="bg-surface border border-outline-variant text-xs px-1.5 py-0.5 rounded flex items-center gap-1">
+                                            Completed <button class="material-symbols-outlined text-[12px] hover:text-error">close</button>
+</span>
+<span class="bg-surface border border-outline-variant text-xs px-1.5 py-0.5 rounded flex items-center gap-1">
+                                            In Transit <button class="material-symbols-outlined text-[12px] hover:text-error">close</button>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pane 2: Live Preview Stage -->
+<div class="flex-1 bg-surface-container-lowest border border-outline-variant rounded shadow-sm flex flex-col min-w-0">
+<!-- Preview Toolbar -->
+<div class="p-sm border-b border-outline-variant bg-surface flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">table_chart</span>
+<h3 class="font-title-md text-title-md font-semibold">Data Preview</h3>
+<span class="bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ml-xs tracking-wider">Live Sample</span>
+</div>
+<div class="flex gap-xs">
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded transition-colors" title="Refresh Data">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+<div class="w-px h-5 bg-outline-variant mx-1 self-center"></div>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded transition-colors" title="Density">
+<span class="material-symbols-outlined text-[18px]">density_small</span>
+</button>
+<button class="p-1 text-on-surface-variant hover:bg-surface-container-high rounded transition-colors" title="Filter">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- High Density Table Container -->
+<div class="flex-1 overflow-auto bg-surface-container-lowest">
+<table class="w-full text-left border-collapse whitespace-nowrap">
+<thead class="sticky top-0 bg-surface-container-low border-b border-outline-variant shadow-sm z-10">
+<tr>
+<th class="py-2 px-3 font-label-md text-label-md text-on-surface-variant font-semibold cursor-pointer hover:bg-surface-container-highest select-none group">
+<div class="flex items-center gap-1">
+                                            OT Number
+                                            <span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100">arrow_downward</span>
+</div>
+</th>
+<th class="py-2 px-3 font-label-md text-label-md text-on-surface-variant font-semibold cursor-pointer hover:bg-surface-container-highest select-none group">
+<div class="flex items-center gap-1">
+                                            Date
+                                        </div>
+</th>
+<th class="py-2 px-3 font-label-md text-label-md text-on-surface-variant font-semibold cursor-pointer hover:bg-surface-container-highest select-none group">
+<div class="flex items-center gap-1">
+                                            Client ID
+                                        </div>
+</th>
+<th class="py-2 px-3 font-label-md text-label-md text-on-surface-variant font-semibold cursor-pointer hover:bg-surface-container-highest select-none group text-right">
+<div class="flex items-center justify-end gap-1">
+                                            Total Amount
+                                        </div>
+</th>
+<th class="py-2 px-3 font-label-md text-label-md text-on-surface-variant font-semibold cursor-pointer hover:bg-surface-container-highest select-none group">
+<div class="flex items-center gap-1">
+                                            Status
+                                        </div>
+</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-high transition-colors group">
+<td class="py-1.5 px-3 text-primary font-medium">TR-2023-8841</td>
+<td class="py-1.5 px-3 text-on-surface-variant">2023-10-24 08:15</td>
+<td class="py-1.5 px-3">C-99201 (Maersk)</td>
+<td class="py-1.5 px-3 text-right">€ 4,500.00</td>
+<td class="py-1.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] text-[11px] font-bold uppercase tracking-wider">Completed</span>
+</td>
+</tr>
+<!-- Row 2 (Zebra) -->
+<tr class="border-b border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group">
+<td class="py-1.5 px-3 text-primary font-medium">TR-2023-8842</td>
+<td class="py-1.5 px-3 text-on-surface-variant">2023-10-24 09:30</td>
+<td class="py-1.5 px-3">C-44120 (CMA CGM)</td>
+<td class="py-1.5 px-3 text-right">€ 1,250.00</td>
+<td class="py-1.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#eff6ff] text-[#2563eb] border border-[#bfdbfe] text-[11px] font-bold uppercase tracking-wider">In Transit</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-high transition-colors group">
+<td class="py-1.5 px-3 text-primary font-medium">TR-2023-8843</td>
+<td class="py-1.5 px-3 text-on-surface-variant">2023-10-24 10:05</td>
+<td class="py-1.5 px-3">C-11094 (MSC)</td>
+<td class="py-1.5 px-3 text-right">€ 8,900.00</td>
+<td class="py-1.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#fef2f2] text-[#dc2626] border border-[#fecaca] text-[11px] font-bold uppercase tracking-wider">Delayed</span>
+</td>
+</tr>
+<!-- Row 4 (Zebra) -->
+<tr class="border-b border-outline-variant bg-surface hover:bg-surface-container-high transition-colors group">
+<td class="py-1.5 px-3 text-primary font-medium">TR-2023-8844</td>
+<td class="py-1.5 px-3 text-on-surface-variant">2023-10-24 11:20</td>
+<td class="py-1.5 px-3">C-99201 (Maersk)</td>
+<td class="py-1.5 px-3 text-right">€ 3,100.00</td>
+<td class="py-1.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#eff6ff] text-[#2563eb] border border-[#bfdbfe] text-[11px] font-bold uppercase tracking-wider">In Transit</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-high transition-colors group">
+<td class="py-1.5 px-3 text-primary font-medium">TR-2023-8845</td>
+<td class="py-1.5 px-3 text-on-surface-variant">2023-10-24 13:45</td>
+<td class="py-1.5 px-3">C-88321 (Hapag-Lloyd)</td>
+<td class="py-1.5 px-3 text-right">€ 5,600.00</td>
+<td class="py-1.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] text-[11px] font-bold uppercase tracking-wider">Completed</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination pseudo -->
+<div class="border-t border-outline-variant bg-surface p-1.5 flex justify-between items-center text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Showing sample 5 of 1,240 records</span>
+<div class="text-[12px] flex items-center gap-1">
+                            Data latency: <span class="text-[#059669] font-medium flex items-center"><span class="w-1.5 h-1.5 bg-[#059669] rounded-full mr-1 animate-pulse"></span>Live</span>
+</div>
+</div>
+</div>
+<!-- Pane 3: Output & Export -->
+<div class="w-[260px] bg-surface-container-lowest border border-outline-variant rounded flex flex-col flex-shrink-0 shadow-sm relative z-10">
+<div class="p-sm border-b border-outline-variant bg-surface flex items-center justify-between">
+<h3 class="font-title-md text-title-md">Output Settings</h3>
+</div>
+<div class="p-sm flex flex-col gap-lg">
+<!-- Step 4 -->
+<div>
+<div class="flex items-center gap-xs mb-sm">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm">4</div>
+<h4 class="font-body-sm text-body-sm font-semibold">Visualizations</h4>
+</div>
+<div class="grid grid-cols-3 gap-xs">
+<button class="aspect-square flex flex-col items-center justify-center gap-1 border-2 border-primary bg-primary/5 rounded text-primary transition-colors hover:bg-primary/10">
+<span class="material-symbols-outlined">table</span>
+<span class="text-[10px] font-semibold uppercase">Table</span>
+</button>
+<button class="aspect-square flex flex-col items-center justify-center gap-1 border border-outline-variant bg-surface rounded text-on-surface-variant transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[10px] font-semibold uppercase">Bar</span>
+</button>
+<button class="aspect-square flex flex-col items-center justify-center gap-1 border border-outline-variant bg-surface rounded text-on-surface-variant transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined">pie_chart</span>
+<span class="text-[10px] font-semibold uppercase">Pie</span>
+</button>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<div>
+<h4 class="font-body-sm text-body-sm font-semibold mb-sm">Export Format</h4>
+<div class="flex flex-col gap-xs">
+<label class="flex items-center gap-sm p-1.5 border border-outline-variant rounded bg-surface hover:bg-surface-container-high cursor-pointer transition-colors">
+<input checked="" class="text-primary focus:ring-primary w-3.5 h-3.5 border-outline-variant" name="export" type="radio"/>
+<span class="material-symbols-outlined text-[18px] text-[#107c41]">description</span>
+<span class="font-body-sm text-body-sm font-medium">Excel (.xlsx)</span>
+</label>
+<label class="flex items-center gap-sm p-1.5 border border-outline-variant rounded hover:bg-surface-container-high cursor-pointer transition-colors">
+<input class="text-primary focus:ring-primary w-3.5 h-3.5 border-outline-variant" name="export" type="radio"/>
+<span class="material-symbols-outlined text-[18px] text-[#b30b00]">picture_as_pdf</span>
+<span class="font-body-sm text-body-sm font-medium">PDF Document</span>
+</label>
+<label class="flex items-center gap-sm p-1.5 border border-outline-variant rounded hover:bg-surface-container-high cursor-pointer transition-colors">
+<input class="text-primary focus:ring-primary w-3.5 h-3.5 border-outline-variant" name="export" type="radio"/>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">data_object</span>
+<span class="font-body-sm text-body-sm font-medium">JSON Data</span>
+</label>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<div class="flex items-center justify-between p-xs bg-surface-container-highest rounded border border-outline-variant">
+<div>
+<span class="font-body-sm text-body-sm font-semibold block">Schedule Report</span>
+<span class="text-[11px] text-on-surface-variant block">Run automatically</span>
+</div>
+<!-- Toggle Switch -->
+<button aria-checked="false" class="bg-outline-variant relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" role="switch" type="button">
+<span aria-hidden="true" class="translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar (Bottom) -->
+<div class="mt-auto pt-md border-t border-outline-variant flex justify-between items-center bg-surface-container-low flex-shrink-0">
+<div class="text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                    Estimated generation time: ~4 seconds based on current dataset.
+                </div>
+<div class="flex gap-md">
+<button class="px-lg py-sm border border-outline-variant bg-surface-container-lowest text-on-surface rounded font-title-sm text-title-sm font-medium hover:bg-surface-container-high transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Save Template
+                    </button>
+<button class="px-xl py-sm bg-primary text-on-primary rounded font-title-sm text-title-sm font-bold hover:bg-primary-fixed-variant transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+                        Generate Full Report
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

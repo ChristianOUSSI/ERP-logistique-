@@ -2,6 +2,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
+from decimal import Decimal
 from app.models.removal_slip import RemovalSlip, StatutRemovalSlip
 from app.models.reception_mag3 import ReceptionMag3, StatutReceptionMag3
 from app.services.removal_slip_service import RemovalSlipService
@@ -127,7 +128,7 @@ class Mag3WorkflowService:
             raise ValueError(f"La réception doit être en attente pour être validée. Statut actuel: {reception.statut}")
         
         # Vérifier que les quantités sont cohérentes
-        if reception.quantite_recue <= 0:
+        if reception.quantite_recue <= Decimal('0'):
             raise ValueError("La quantité reçue doit être supérieure à 0")
         
         validated_reception = ReceptionMag3Service.validate_reception_mag3(db, reception_id, received_by)

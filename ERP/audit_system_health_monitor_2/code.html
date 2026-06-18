@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG ERP - Audit: System Health &amp; Logs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#727785",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-container": "#00714d",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-background": "#151c27",
+                        "surface-container": "#e7eefe",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#2a313d",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-primary-fixed": "#001a42",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6cf8bb",
+                        "secondary": "#006c49",
+                        "on-surface": "#151c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c6d6",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "tertiary": "#825100",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#6ffbbe",
+                        "primary-container": "#2170e4",
+                        "tertiary-fixed": "#ffddb8",
+                        "surface-tint": "#005ac2",
+                        "primary": "#0058be",
+                        "surface-variant": "#dce2f3",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary-fixed-variant": "#005236",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f0f3ff",
+                        "tertiary-fixed-dim": "#ffb95f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "xs": "0.5rem",
+                        "max-width": "1600px",
+                        "md": "1rem",
+                        "margin-desktop": "1.5rem",
+                        "xxs": "0.25rem",
+                        "sm": "0.75rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "data-tabular": ["13px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md antialiased overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
+<div class="p-4 border-b border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold">K</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold leading-none">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Port Operations</p>
+</div>
+</div>
+<div class="p-4">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded shadow-sm hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+                Nouvelle Opération
+            </button>
+</div>
+<nav class="flex-1 overflow-y-auto py-2">
+<ul class="space-y-1 px-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                        Tableau de bord
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                        Transport
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+                        Finances
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+                        Parc Automobile
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-primary dark:text-primary-fixed bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold font-label-caps text-label-caps active:scale-95 duration-150 border-l-4 border-primary" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Paramètres
+                    </a>
+</li>
+</ul>
+</nav>
+<div class="mt-auto border-t border-outline-variant p-2">
+<ul class="space-y-1 px-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded text-secondary dark:text-secondary-fixed-dim font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+                        Déconnexion
+                    </a>
+</li>
+</ul>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col ml-[260px] h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-on-background sticky top-0 w-full z-40 border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center h-[64px] px-gutter shrink-0">
+<div class="flex items-center gap-6">
+<span class="font-title-sm text-title-sm text-on-surface dark:text-on-primary-container font-black tracking-tight">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base text-body-base hover:text-primary dark:hover:text-primary-fixed-dim transition-all" href="#">Articles</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base text-body-base hover:text-primary dark:hover:text-primary-fixed-dim transition-all" href="#">Clients</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base text-body-base hover:text-primary dark:hover:text-primary-fixed-dim transition-all" href="#">Stocks</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-base text-body-base hover:text-primary dark:hover:text-primary-fixed-dim transition-all" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-8 pr-3 py-1.5 bg-surface-container-high border-none rounded text-sm w-48 focus:outline-none focus:ring-0" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">verified_user</span></button>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User profile with MFA status" class="w-full h-full object-cover" data-alt="A professional headshot of a mature male executive in a corporate setting. The lighting is crisp and even, highlighting sharp facial features against a neutral blurred office background. The overall aesthetic is serious, modern, and trustworthy, suitable for an enterprise logistics platform avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4--7_rZnGGoLPxpKVnjqiSJpMF8GSCrCFqxLYUDGrflUJO_wW-aekPWYpM5VKV-ij1FCS-yHv4hZ1sPkBX-QlVpraRxHS5bXE3EugqIV_IjQnRGyjv--vZtC9UNMLPq0fxe5NCVEWuL4Ch7iLF5UKqW33XWEbrORrol7Byn1DodrjCmP_H6sXS1Ggq2H_5KAWX9GojRBR3VdpR9YA7XDHUDuKx7R_IO_cCP8ci79ily8Pb1gOvl_cggg_eheon_wPDMlV_HPLhcg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Stage -->
+<main class="flex-1 overflow-y-auto p-gutter bg-surface-container-low flex flex-col gap-gutter max-w-max-width mx-auto w-full">
+<!-- Breadcrumbs & Header -->
+<div class="mb-2">
+<div class="flex items-center text-label-sm font-label-sm text-outline mb-2">
+<span>Paramètres</span>
+<span class="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
+<span>Système</span>
+<span class="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
+<span class="text-primary font-semibold">Audit: Santé &amp; Logs</span>
+</div>
+<div class="flex justify-between items-end">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">System Health Audit</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant rounded bg-surface text-body-sm font-body-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span> Exporter
+                        </button>
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded text-body-sm font-body-sm shadow-sm hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">refresh</span> Actualiser
+                        </button>
+</div>
+</div>
+</div>
+<!-- Bento Grid Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- CPU Usage -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface">CPU Allocation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Core T-1 Logistics Node</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">memory</span>
+</div>
+<div class="flex items-end gap-2 mb-2">
+<span class="font-headline-lg text-headline-lg leading-none">68%</span>
+<span class="text-secondary text-label-sm font-label-sm bg-secondary-container px-1.5 py-0.5 rounded flex items-center"><span class="material-symbols-outlined text-[12px]">arrow_downward</span> 2.4%</span>
+</div>
+<!-- Faux Bar Chart -->
+<div class="flex items-end gap-1 h-12 mt-4 opacity-80">
+<div class="w-full bg-surface-container-highest rounded-t h-[40%]"></div>
+<div class="w-full bg-surface-container-highest rounded-t h-[55%]"></div>
+<div class="w-full bg-surface-container-highest rounded-t h-[60%]"></div>
+<div class="w-full bg-surface-container-highest rounded-t h-[45%]"></div>
+<div class="w-full bg-surface-container-highest rounded-t h-[70%]"></div>
+<div class="w-full bg-surface-container-highest rounded-t h-[85%]"></div>
+<div class="w-full bg-tertiary rounded-t h-[68%]"></div>
+</div>
+</div>
+<!-- Memory Usage -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface">Memory Utilization</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active JVM Heap</p>
+</div>
+<span class="material-symbols-outlined text-primary">data_usage</span>
+</div>
+<div class="flex items-end gap-2 mb-4">
+<span class="font-headline-lg text-headline-lg leading-none">24.2 <span class="text-title-md font-title-md text-outline">GB</span></span>
+<span class="text-error text-label-sm font-label-sm bg-error-container px-1.5 py-0.5 rounded flex items-center"><span class="material-symbols-outlined text-[12px]">arrow_upward</span> 12%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[78%]"></div>
+</div>
+<div class="flex justify-between mt-2 text-label-sm font-label-sm text-outline">
+<span>Used: 78%</span>
+<span>Total: 32 GB</span>
+</div>
+</div>
+<!-- DB Connection Pool -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm border-l-4 border-l-error">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface">DB Connection Pool</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">PostgreSQL - KAMLOG_MAIN</p>
+</div>
+<span class="material-symbols-outlined text-error">database</span>
+</div>
+<div class="flex items-end gap-2 mb-2">
+<span class="font-headline-lg text-headline-lg leading-none text-error">195/200</span>
+</div>
+<div class="mt-4 grid grid-cols-2 gap-2">
+<div class="bg-surface-container p-2 rounded border border-outline-variant">
+<span class="block text-label-sm font-label-sm text-outline uppercase">Active</span>
+<span class="font-title-lg text-title-lg">182</span>
+</div>
+<div class="bg-error-container p-2 rounded border border-error/20">
+<span class="block text-label-sm font-label-sm text-on-error-container uppercase">Idle</span>
+<span class="font-title-lg text-title-lg text-on-error-container">13</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Logs Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">list_alt</span>
+                        Critical Event Stream
+                    </h3>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[16px]">filter_list</span>
+<select class="pl-8 pr-6 py-1 bg-surface-container border border-outline-variant rounded text-body-sm font-body-sm focus:outline-none appearance-none cursor-pointer">
+<option>Severity: ERROR</option>
+<option>Severity: ALL</option>
+</select>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high font-label-md text-label-md text-on-surface-variant sticky top-0">
+<tr>
+<th class="py-2 px-4 border-b border-outline-variant font-medium w-32">Timestamp</th>
+<th class="py-2 px-4 border-b border-outline-variant font-medium w-24">Level</th>
+<th class="py-2 px-4 border-b border-outline-variant font-medium w-48">Service</th>
+<th class="py-2 px-4 border-b border-outline-variant font-medium">Message</th>
+<th class="py-2 px-4 border-b border-outline-variant font-medium w-48">Correlation ID</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 text-outline">14:02:11.405</td>
+<td class="py-3 px-4">
+<span class="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
+</td>
+<td class="py-3 px-4 text-on-surface-variant">KAMLOG-Finance-Svc</td>
+<td class="py-3 px-4 font-medium">Connection timeout to payment gateway (Retry 3/3)</td>
+<td class="py-3 px-4 text-outline text-[11px] font-mono">req-7b8a-4c2d-9f1e</td>
+</tr>
+<tr class="border-b border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 text-outline">14:01:55.120</td>
+<td class="py-3 px-4">
+<span class="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
+</td>
+<td class="py-3 px-4 text-on-surface-variant">KAMLOG-Auth-Svc</td>
+<td class="py-3 px-4 font-medium">Invalid LDAP credentials supplied for user_id: 8442</td>
+<td class="py-3 px-4 text-outline text-[11px] font-mono">req-11a2-9b4f-00c1</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 text-outline">13:58:44.901</td>
+<td class="py-3 px-4">
+<span class="bg-tertiary-fixed-dim text-on-tertiary-fixed-variant px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Warn</span>
+</td>
+<td class="py-3 px-4 text-on-surface-variant">Postgres-DB-Master</td>
+<td class="py-3 px-4">Connection pool approaching max capacity (95%)</td>
+<td class="py-3 px-4 text-outline text-[11px] font-mono">sys-db-pool-mon</td>
+</tr>
+<tr class="border-b border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4 text-outline">13:45:10.002</td>
+<td class="py-3 px-4">
+<span class="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
+</td>
+<td class="py-3 px-4 text-on-surface-variant">KAMLOG-Logistics-Svc</td>
+<td class="py-3 px-4 font-medium">Failed to parse manifest XML from T-Code: MNF-209</td>
+<td class="py-3 px-4 text-outline text-[11px] font-mono">req-88c1-2d3e-4a5b</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

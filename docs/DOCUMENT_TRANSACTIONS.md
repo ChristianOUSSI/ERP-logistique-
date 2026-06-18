@@ -851,4 +851,4 @@ Ce document décrit toutes les transactions du système KAMLOG EM-ERP. Il sert d
 
 **Document Version**: 1.0  
 **Date de mise à jour**: 15 Juin 2026  
-**Auteur**: Cascade AI Assistant
+**Auteur**: Code Axis Digital Cameroun

@@ -82,7 +82,7 @@ Pour chaque interface, comparer la page Next.js avec le fichier HTML original da
 
 ### 8. Create Account
 - **HTML**: `create_account_kamlog_erp/code.html`
-- **Next.js**: `src/app/(app)/auth/register/page.tsx`
+- **Next.js**: `src/app/(auth)/create-account/page.tsx`
 - **Vérifier**:
   - [ ] Formulaire d'inscription
   - [ ] Validation des champs
@@ -626,6 +626,22 @@ Pour chaque interface, comparer la page Next.js avec le fichier HTML original da
   - [ ] Recherche
   - [ ] Modal de création/modification
   - [ ] Actions CRUD
+
+### 67. Enregistrement Nouveau Chauffeur
+- **Next.js**: `src/app/(app)/transport/drivers/new/page.tsx`
+- **Vérifier**:
+  - [ ] Formulaire d'enregistrement (Nom, Permis, Téléphone)
+  - [ ] Couleur orange (Transport)
+  - [ ] Icône `person_add`
+  - [ ] Boutons Enregistrer/Annuler
+
+### 68. Analytics Financier
+- **Next.js**: `src/app/(app)/finance/analytics/page.tsx`
+- **Vérifier**:
+  - [ ] Cartes KPI (Facturé, Encaissements, Encours)
+  - [ ] Couleur violette (Finance)
+  - [ ] Bouton d'export de rapport
+  - [ ] Présence du placeholder de graphique
 
 ---
 

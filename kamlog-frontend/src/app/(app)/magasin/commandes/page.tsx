@@ -49,6 +49,8 @@ export default function CommandesPage() {
       header: 'Statut',
       cell: (row: Commande) => {
         const statusConfig = {
+          [StatutCommande.BROUILLON]: { color: 'bg-gray-100 text-gray-800', icon: Clock },
+          [StatutCommande.EN_COURS]: { color: 'bg-blue-100 text-blue-800', icon: Clock },
           [StatutCommande.EN_ATTENTE]: { color: 'bg-gray-100 text-gray-800', icon: Clock },
           [StatutCommande.VERROUILLEE]: { color: 'bg-yellow-100 text-yellow-800', icon: Lock },
           [StatutCommande.PAYEE]: { color: 'bg-blue-100 text-blue-800', icon: CheckCircle },
@@ -72,9 +74,9 @@ export default function CommandesPage() {
       header: 'Verrou',
       cell: (row: Commande) => (
         row.est_verrouille ? (
-          <Lock className="h-5 w-5 text-yellow-500" title="En attente de paiement" />
+          <Lock className="h-5 w-5 text-yellow-500" />
         ) : (
-          <Unlock className="h-5 w-5 text-green-500" title="Paiement validé" />
+          <Unlock className="h-5 w-5 text-green-500" />
         )
       )
     },
@@ -178,7 +180,7 @@ export default function CommandesPage() {
   )
 
   return (
-    <ModuleLayout moduleName="magasin">
+    <ModuleLayout module="magasin">
       <div className="container mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -283,6 +285,8 @@ function CommandeForm({
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState<CommandeCreate>({
+    numero_commande: initialData?.numero_commande || '',
+    date_commande: initialData?.date_commande ? new Date(initialData.date_commande).toISOString().split('T')[0] : '',
     client_id: initialData?.client_id || 0,
     date_livraison_souhaitee: initialData?.date_livraison_souhaitee ? new Date(initialData.date_livraison_souhaitee).toISOString().split('T')[0] : '',
     statut: initialData?.statut || StatutCommande.EN_ATTENTE,
@@ -292,8 +296,6 @@ function CommandeForm({
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
       quantite_demandee: l.quantite_demandee,
-      quantite_livree: l.quantite_livree,
-      unite_mesure: l.unite_mesure,
       prix_unitaire: l.prix_unitaire
     })) || []
   })
@@ -303,7 +305,7 @@ function CommandeForm({
     quantite_demandee: 0,
     quantite_livree: 0,
     unite_mesure: UniteMesure.UDB,
-    prix_unitaire: undefined
+    prix_unitaire: 0
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -312,17 +314,17 @@ function CommandeForm({
   }
 
   const addLigne = () => {
-    if (newLigne.article_id && newLigne.quantite_demandee > 0) {
+    if (newLigne.article_id && (newLigne.quantite_demandee || 0) > 0) {
       setFormData({
         ...formData,
-        lignes: [...formData.lignes, { ...newLigne }]
+        lignes: [...(formData.lignes || []), { ...newLigne }]
       })
       setNewLigne({
         article_id: 0,
         quantite_demandee: 0,
         quantite_livree: 0,
         unite_mesure: UniteMesure.UDB,
-        prix_unitaire: undefined
+        prix_unitaire: 0
       })
     }
   }
@@ -330,7 +332,7 @@ function CommandeForm({
   const removeLigne = (index: number) => {
     setFormData({
       ...formData,
-      lignes: formData.lignes.filter((_, i) => i !== index)
+      lignes: (formData.lignes || []).filter((_, i) => i !== index)
     })
   }
 
@@ -343,7 +345,7 @@ function CommandeForm({
             Client *
           </label>
           <Select
-            value={formData.client_id.toString()}
+            value={(formData.client_id || 0).toString()}
             onValueChange={(value) => setFormData({ ...formData, client_id: parseInt(value) })}
           >
             <SelectTrigger>
@@ -444,7 +446,7 @@ function CommandeForm({
                 type="number"
                 step="0.01"
                 value={newLigne.prix_unitaire || ''}
-                onChange={(e) => setNewLigne({ ...newLigne, prix_unitaire: e.target.value ? parseFloat(e.target.value) : undefined })}
+                onChange={(e) => setNewLigne({ ...newLigne, prix_unitaire: e.target.value ? parseFloat(e.target.value) : 0 })}
               />
             </div>
             <div className="flex items-end">
@@ -456,9 +458,9 @@ function CommandeForm({
           </div>
         </div>
 
-        {formData.lignes.length > 0 && (
+        {(formData.lignes || []).length > 0 && (
           <div className="space-y-2">
-            {formData.lignes.map((ligne, index) => (
+            {(formData.lignes || []).map((ligne, index) => (
               <div key={index} className="flex items-center justify-between rounded border bg-white p-2">
                 <div className="text-sm">
                   <span className="font-medium">Article #{ligne.article_id}</span>
@@ -489,7 +491,7 @@ function CommandeForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Annuler
         </Button>
-        <Button type="submit" disabled={formData.lignes.length === 0}>
+        <Button type="submit" disabled={(formData.lignes || []).length === 0}>
           Enregistrer
         </Button>
       </div>

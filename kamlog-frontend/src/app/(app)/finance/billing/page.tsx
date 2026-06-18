@@ -1,17 +1,33 @@
-// src/app/(app)/finance/billing/page.tsx - K-Finance Billing Invoicing ERP Design
+// src/app/(app)/finance/billing/page.tsx - K-Finance Billing Invoicing - Fidèle 100% au HTML original
 'use client'
-
-import { 
-  Dashboard, LocalShipping, Payments, MinorCrash, Settings,
-  HelpOutline, Logout, Add, Search, Download, ReceiptLong,
-  PendingActions, CheckCircle, Warning, TrendingUp, CalendarToday,
-  FilterAlt, ChevronLeft, ChevronRight, ChevronRight as ChevronRightIcon,
-  Notifications, VerifiedUser, AccountCircle
-} from 'lucide-react'
 
 export default function KFinanceBillingInvoicing() {
   return (
-    <div className="bg-surface-container-low text-on-surface font-body-md h-screen flex overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+    <>
+      <style jsx global>{`
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
+        }
+        .material-symbols-outlined.fill {
+          font-variation-settings: 'FILL 1';
+        }
+        /* Custom Scrollbar for High-Density UI */
+        ::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #f0f3ff;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #c2c6d6;
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #727785;
+        }
+      `}</style>
+      <div className="bg-surface-container-low text-on-surface font-body-md h-screen flex overflow-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
       {/* SideNavBar */}
       <nav className="hidden md:flex bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex-col p-stack-md z-50">
         {/* Brand Header */}
@@ -26,25 +42,25 @@ export default function KFinanceBillingInvoicing() {
         {/* Main Navigation */}
         <div className="flex-1 overflow-y-auto py-md flex flex-col gap-xxs">
           <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <Dashboard size={20} />
+            <span className="material-symbols-outlined">dashboard</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Tableau de bord</span>
           </a>
           <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <LocalShipping size={20} />
+            <span className="material-symbols-outlined">local_shipping</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Transport</span>
           </a>
           {/* Active State: Finances */}
           <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="#">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r"></div>
-            <Payments size={20} />
+            <span className="material-symbols-outlined fill text-primary">payments</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px]">Finances</span>
           </a>
           <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <MinorCrash size={20} />
+            <span className="material-symbols-outlined">minor_crash</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Parc Automobile</span>
           </a>
           <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <Settings size={20} />
+            <span className="material-symbols-outlined">settings</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Paramètres</span>
           </a>
         </div>
@@ -52,16 +68,16 @@ export default function KFinanceBillingInvoicing() {
         {/* CTA & Footer */}
         <div className="p-md border-t border-outline-variant flex flex-col gap-sm">
           <button className="w-full bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md py-sm rounded transition-colors flex items-center justify-center gap-xs shadow-sm">
-            <Add size={18} />
+            <span className="material-symbols-outlined">add</span>
             Nouvelle Opération
           </button>
           <div className="flex flex-col gap-xxs mt-sm">
             <a className="flex items-center gap-sm px-md py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
-              <HelpOutline size={18} />
+              <span className="material-symbols-outlined text-[18px]">help_outline</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider text-[10px] font-semibold">Support</span>
             </a>
             <a className="flex items-center gap-sm px-md py-xs rounded text-error hover:bg-error-container transition-colors" href="#">
-              <Logout size={18} />
+              <span className="material-symbols-outlined text-[18px]">logout</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider text-[10px] font-semibold">Déconnexion</span>
             </a>
           </div>
@@ -85,22 +101,18 @@ export default function KFinanceBillingInvoicing() {
           <div className="flex items-center gap-md">
             {/* T-Code Search */}
             <div className="relative focus-within:ring-2 focus-within:ring-primary rounded">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-outline" size={18} />
-              <input 
-                className="pl-8 pr-3 py-1.5 bg-surface-container border border-outline-variant rounded text-body-md text-on-surface placeholder:text-outline focus:outline-none w-48 transition-all" 
-                placeholder="Rechercher T-Code" 
-                type="text"
-              />
+              <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+              <input className="pl-8 pr-3 py-1.5 bg-surface-container border border-outline-variant rounded text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none w-48 transition-all" placeholder="Rechercher T-Code" type="text"/>
             </div>
             <div className="flex items-center gap-xs text-on-surface-variant border-l border-outline-variant pl-md">
               <button className="p-1.5 rounded-full hover:bg-surface-container-high transition-colors">
-                <Notifications size={20} />
+                <span className="material-symbols-outlined">notifications</span>
               </button>
               <button className="p-1.5 rounded-full hover:bg-surface-container-high transition-colors">
-                <VerifiedUser size={20} />
+                <span className="material-symbols-outlined">verified_user</span>
               </button>
               <button className="p-1.5 rounded-full hover:bg-surface-container-high transition-colors">
-                <div className="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center text-xs font-bold text-primary">JD</div>
+                <span className="material-symbols-outlined">account_circle</span>
               </button>
             </div>
           </div>
@@ -112,7 +124,7 @@ export default function KFinanceBillingInvoicing() {
           <div className="flex flex-col gap-xs">
             <div className="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
               <a className="hover:text-primary transition-colors" href="#">K-Finance</a>
-              <ChevronRightIcon size={14} />
+              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
               <span className="text-on-surface">Facturation</span>
             </div>
             <div className="flex justify-between items-end">
@@ -122,11 +134,11 @@ export default function KFinanceBillingInvoicing() {
               </div>
               <div className="flex gap-sm">
                 <button className="flex items-center gap-xs px-4 py-2 border border-outline-variant bg-surface hover:bg-surface-container text-on-surface font-title-md text-title-md rounded transition-colors shadow-sm">
-                  <Download size={18} />
+                  <span className="material-symbols-outlined text-[18px]">download</span>
                   Exporter
                 </button>
                 <button className="flex items-center gap-xs px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md rounded transition-colors shadow-sm">
-                  <ReceiptLong size={18} />
+                  <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                   Créer Facture
                 </button>
               </div>
@@ -140,7 +152,7 @@ export default function KFinanceBillingInvoicing() {
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-xl"></div>
               <div className="flex justify-between items-center z-10">
                 <span className="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant text-[11px] font-semibold">Total En Attente</span>
-                <PendingActions className="text-tertiary-fixed-dim bg-tertiary-fixed/20 p-1.5 rounded" size={20} />
+                <span className="material-symbols-outlined text-tertiary-fixed-dim bg-tertiary-fixed/20 p-1.5 rounded text-[20px]">pending_actions</span>
               </div>
               <div className="z-10">
                 <span className="font-headline-lg text-headline-lg text-on-surface">45.2M</span>
@@ -154,14 +166,14 @@ export default function KFinanceBillingInvoicing() {
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-secondary/5 rounded-full blur-xl"></div>
               <div className="flex justify-between items-center z-10">
                 <span className="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant text-[11px] font-semibold">Encaissé (Ce Mois)</span>
-                <CheckCircle className="text-secondary bg-secondary/10 p-1.5 rounded" size={20} />
+                <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 rounded text-[20px]">check_circle</span>
               </div>
               <div className="z-10">
                 <span className="font-headline-lg text-headline-lg text-on-surface">128.5M</span>
                 <span className="font-body-sm text-body-sm text-on-surface-variant ml-1">FCFA</span>
               </div>
               <div className="text-label-sm font-label-sm text-secondary flex items-center gap-1 z-10">
-                <TrendingUp size={14} /> +12% vs. mois pr.
+                <span className="material-symbols-outlined text-[14px]">trending_up</span> +12% vs. mois pr.
               </div>
             </div>
 
@@ -170,7 +182,7 @@ export default function KFinanceBillingInvoicing() {
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-error/5 rounded-full blur-xl"></div>
               <div className="flex justify-between items-center z-10">
                 <span className="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant text-[11px] font-semibold">Échues / Impayés</span>
-                <Warning className="text-error bg-error/10 p-1.5 rounded" size={20} />
+                <span className="material-symbols-outlined text-error bg-error/10 p-1.5 rounded text-[20px]">warning</span>
               </div>
               <div className="z-10">
                 <span className="font-headline-lg text-headline-lg text-error">8.9M</span>
@@ -188,24 +200,20 @@ export default function KFinanceBillingInvoicing() {
             <div className="p-md border-b border-outline-variant flex flex-wrap items-center justify-between gap-md bg-surface-container-lowest">
               {/* Search */}
               <div className="relative w-full max-w-xs focus-within:ring-2 focus-within:ring-primary rounded">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline" size={20} />
-                <input 
-                  className="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded text-body-md text-on-surface placeholder:text-outline focus:outline-none transition-all" 
-                  placeholder="Rechercher par ID, Client..." 
-                  type="text"
-                />
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+                <input className="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none transition-all" placeholder="Rechercher par ID, Client..." type="text"/>
               </div>
               {/* Filters */}
               <div className="flex gap-sm">
-                <button className="flex items-center gap-xs px-3 py-1.5 border border-outline-variant bg-surface hover:bg-surface-container rounded text-body-sm text-on-surface transition-colors">
-                  <CalendarToday size={16} />
+                <button className="flex items-center gap-xs px-3 py-1.5 border border-outline-variant bg-surface hover:bg-surface-container rounded text-body-sm font-title-md text-on-surface transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">calendar_today</span>
                   Date: Les 30 derniers jours
-                  <ChevronRightIcon size={16} />
+                  <span className="material-symbols-outlined text-[16px]">arrow_drop_down</span>
                 </button>
-                <button className="flex items-center gap-xs px-3 py-1.5 border border-outline-variant bg-surface hover:bg-surface-container rounded text-body-sm text-on-surface transition-colors">
-                  <FilterAlt size={16} />
+                <button className="flex items-center gap-xs px-3 py-1.5 border border-outline-variant bg-surface hover:bg-surface-container rounded text-body-sm font-title-md text-on-surface transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">filter_alt</span>
                   Statut: Tous
-                  <ChevronRightIcon size={16} />
+                  <span className="material-symbols-outlined text-[16px]">arrow_drop_down</span>
                 </button>
               </div>
             </div>
@@ -246,7 +254,7 @@ export default function KFinanceBillingInvoicing() {
                     </td>
                     <td className="py-2 px-md text-right">
                       <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                        <FilterAlt size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -269,7 +277,7 @@ export default function KFinanceBillingInvoicing() {
                     </td>
                     <td className="py-2 px-md text-right">
                       <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                        <FilterAlt size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -292,7 +300,7 @@ export default function KFinanceBillingInvoicing() {
                     </td>
                     <td className="py-2 px-md text-right">
                       <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                        <FilterAlt size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -315,7 +323,7 @@ export default function KFinanceBillingInvoicing() {
                     </td>
                     <td className="py-2 px-md text-right">
                       <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                        <FilterAlt size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -328,13 +336,13 @@ export default function KFinanceBillingInvoicing() {
               <div>Affichage 1-4 de 42 résultats</div>
               <div className="flex gap-1">
                 <button className="p-1 border border-outline-variant rounded hover:bg-surface-container disabled:opacity-50" disabled>
-                  <ChevronLeft size={16} />
+                  <span className="material-symbols-outlined text-[16px]">chevron_left</span>
                 </button>
                 <button className="px-3 py-1 border border-outline-variant rounded bg-primary text-on-primary">1</button>
                 <button className="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container">2</button>
                 <button className="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container">3</button>
                 <button className="p-1 border border-outline-variant rounded hover:bg-surface-container">
-                  <ChevronRight size={16} />
+                  <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                 </button>
               </div>
             </div>
@@ -342,5 +350,6 @@ export default function KFinanceBillingInvoicing() {
         </main>
       </div>
     </div>
+    </>
   )
 }

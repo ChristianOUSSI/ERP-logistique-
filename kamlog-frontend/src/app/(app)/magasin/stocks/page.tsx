@@ -50,7 +50,7 @@ export default function StocksPage() {
       header: 'Quantité disponible',
       cell: (row: Stock) => (
         <div className="font-medium">
-          {row.quantite_disponible.toLocaleString()} {row.article?.unite_mesure}
+          {(row.quantite_disponible || 0).toLocaleString()} {row.article?.unite_mesure}
         </div>
       )
     },
@@ -59,7 +59,7 @@ export default function StocksPage() {
       header: 'Quantité UDB',
       cell: (row: Stock) => (
         <div className="text-gray-600">
-          {row.quantite_udb.toLocaleString()} UDB
+          {(row.quantite_udb || 0).toLocaleString()} UDB
         </div>
       )
     },
@@ -99,7 +99,7 @@ export default function StocksPage() {
   }
 
   return (
-    <ModuleLayout moduleName="magasin">
+    <ModuleLayout module="magasin">
       <div className="container mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>

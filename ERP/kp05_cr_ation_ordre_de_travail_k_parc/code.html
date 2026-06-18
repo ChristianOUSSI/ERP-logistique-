@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Création Ordre de Travail - K-Parc</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-surface": "#151c27",
+                    "primary": "#0058be",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#424754",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-variant": "#dce2f3",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#005ac2",
+                    "on-background": "#151c27",
+                    "on-secondary-container": "#00714d",
+                    "on-secondary-fixed": "#002113",
+                    "primary-fixed": "#d8e2ff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#a36700",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#005236",
+                    "inverse-surface": "#2a313d",
+                    "outline-variant": "#c2c6d6",
+                    "secondary": "#006c49",
+                    "tertiary": "#825100",
+                    "surface-container-highest": "#dce2f3",
+                    "inverse-primary": "#adc6ff",
+                    "surface-container-high": "#e2e8f8",
+                    "secondary-fixed": "#6ffbbe",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-primary-container": "#fefcff",
+                    "surface-dim": "#d3daea",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "outline": "#727785",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary-fixed-variant": "#004395",
+                    "secondary-container": "#6cf8bb",
+                    "primary-container": "#2170e4",
+                    "on-error-container": "#93000a",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-container-low": "#f0f3ff",
+                    "surface-container": "#e7eefe",
+                    "background": "#f9f9ff",
+                    "on-tertiary-fixed": "#2a1700"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "max-width": "1600px",
+                    "xl": "2rem",
+                    "gutter": "1rem",
+                    "sm": "0.75rem",
+                    "xxs": "0.25rem",
+                    "margin-desktop": "1.5rem",
+                    "lg": "1.5rem",
+                    "md": "1rem",
+                    "xs": "0.5rem"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "title-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "data-tabular": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .k-parc-accent { color: #00714d; } /* Using on-secondary-container as the teal accent for K-Parc */
+        .k-parc-bg-accent { background-color: #00714d; }
+        .k-parc-border-accent { border-color: #00714d; }
+        .k-parc-ring-accent { --tw-ring-color: #00714d; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 w-[240px] flex-shrink-0 bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant dark:border-outline">
+<div class="p-4 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary text-on-primary flex items-center justify-center font-bold font-title-lg">
+                    PA
+                </div>
+<div>
+<h1 class="font-title-lg text-title-lg font-bold text-on-surface dark:text-inverse-on-surface">Port Ops</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
+</div>
+</div>
+</div>
+<div class="p-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant" style="font-size: 18px;">search</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow" placeholder="T-Code Search" type="text"/>
+</div>
+</div>
+<ul class="flex-1 overflow-y-auto py-2">
+<li>
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">local_shipping</span>
+                    Transport
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">inventory_2</span>
+                    Magasin
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">payments</span>
+                    Finance
+                </a>
+</li>
+<li>
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md transition-all duration-200 ease-in-out text-primary dark:text-primary-fixed bg-surface-container-highest dark:bg-surface-variant border-l-4 border-primary dark:border-primary-fixed font-bold" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">local_parking</span>
+                    Parc
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">fact_check</span>
+                    Audit
+                </a>
+</li>
+</ul>
+<div class="border-t border-outline-variant dark:border-outline py-2">
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">support_agent</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant dark:text-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface hover:bg-surface-container dark:hover:bg-surface-container-high transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+                Log out
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-[240px] flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar (Contextual for Main Area) -->
+<header class="h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex items-center justify-between px-margin-desktop w-full flex-shrink-0">
+<div class="flex items-center gap-4">
+<div class="flex items-center text-sm text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">K-Parc</span>
+<span class="material-symbols-outlined mx-1" style="font-size: 16px;">chevron_right</span>
+<span class="hover:text-primary cursor-pointer">Ordres de Travail</span>
+<span class="material-symbols-outlined mx-1" style="font-size: 16px;">chevron_right</span>
+<span class="font-medium text-on-surface">Création (OT-8492)</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<!-- Placeholder for profile image -->
+<div class="w-full h-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs"> JD </div>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-margin-desktop">
+<div class="max-w-5xl mx-auto space-y-6">
+<!-- Page Header -->
+<div class="flex items-end justify-between border-b border-outline-variant pb-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Création Ordre de Travail</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Générez une nouvelle intervention de maintenance pour la flotte de véhicules.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-outline-variant rounded bg-surface text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                            Annuler
+                        </button>
+<button class="px-4 py-2 rounded k-parc-bg-accent text-white font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                            Enregistrer l'OT
+                        </button>
+</div>
+</div>
+<!-- Form Layout (Bento-style grid) -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Left Column: Primary Details -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Section: Informations Générales -->
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+<h3 class="font-title-md text-title-md text-on-surface mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined k-parc-accent" style="font-size: 20px;">info</span>
+                                Informations Générales
+                            </h3>
+<div class="grid grid-cols-2 gap-5">
+<div class="col-span-2 sm:col-span-1 space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Véhicule / Équipement <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none">
+<option disabled="" selected="" value="">Sélectionner un véhicule...</option>
+<option value="TRK-001">TRK-001 - Chariot Élévateur (Hyster 3T)</option>
+<option value="TRK-045">TRK-045 - Tracteur Terminal (Kalmar)</option>
+<option value="VHL-102">VHL-102 - Camionnette Service (Renault Master)</option>
+<option value="CRN-005">CRN-005 - Grue Mobile (Liebherr)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style="font-size: 18px;">arrow_drop_down</span>
+</div>
+</div>
+<div class="col-span-2 sm:col-span-1 space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Type d'Intervention <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none">
+<option selected="" value="curative">Maintenance Curative (Panne)</option>
+<option value="preventive">Maintenance Préventive</option>
+<option value="inspection">Inspection Réglementaire</option>
+<option value="pneumatique">Remplacement Pneumatiques</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style="font-size: 18px;">arrow_drop_down</span>
+</div>
+</div>
+<div class="col-span-2 space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Description du Problème <span class="text-error">*</span></label>
+<textarea class="w-full p-3 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent resize-y" placeholder="Décrivez en détail le symptôme ou le travail à effectuer..." rows="4"></textarea>
+</div>
+</div>
+</div>
+<!-- Section: Pièces de Rechange (Checklist) -->
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+<div class="flex items-center justify-between mb-4 border-b border-outline-variant pb-2">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined k-parc-accent" style="font-size: 20px;">build</span>
+                                    Pièces de Rechange (Magasin)
+                                </h3>
+<button class="text-sm font-medium k-parc-accent hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                                    Ajouter Ligne
+                                </button>
+</div>
+<div class="space-y-3">
+<!-- Row 1 -->
+<div class="flex items-center gap-3 bg-surface-container-low p-2 rounded border border-outline-variant">
+<input checked="" class="w-4 h-4 rounded border-outline k-parc-accent focus:ring-0 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<input class="w-full bg-transparent border-none text-sm p-1 focus:ring-0 focus:outline-none text-on-surface" type="text" value="Filtre à Huile (Réf: FLT-8839)"/>
+</div>
+<div class="w-24">
+<input class="w-full p-1 bg-surface border border-outline-variant rounded text-sm text-center focus:outline-none focus:ring-1 k-parc-ring-accent focus:border-transparent" min="1" type="number" value="1"/>
+</div>
+<button class="p-1 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+</button>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center gap-3 bg-surface-container-low p-2 rounded border border-outline-variant">
+<input class="w-4 h-4 rounded border-outline k-parc-accent focus:ring-0 cursor-pointer" type="checkbox"/>
+<div class="flex-1">
+<input class="w-full bg-transparent border-none text-sm p-1 focus:ring-0 focus:outline-none text-on-surface placeholder:text-on-surface-variant" placeholder="Rechercher une pièce par Réf ou Nom..." type="text"/>
+</div>
+<div class="w-24">
+<input class="w-full p-1 bg-surface border border-outline-variant rounded text-sm text-center focus:outline-none focus:ring-1 k-parc-ring-accent focus:border-transparent text-on-surface-variant" disabled="" min="1" type="number" value="1"/>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-3 italic text-xs">Note : Les pièces cochées généreront automatiquement une demande de sortie au module K-Magasin.</p>
+</div>
+</div>
+<!-- Right Column: Planning & Assignment -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Status & Priority Card -->
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+<h3 class="font-title-md text-title-md text-on-surface mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined k-parc-accent" style="font-size: 20px;">flag</span>
+                                Planification
+                            </h3>
+<div class="space-y-5">
+<!-- Priority -->
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant block">Niveau de Priorité</label>
+<div class="flex flex-col gap-2">
+<label class="flex items-center p-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors group">
+<input class="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="low"/>
+<span class="ml-2 text-sm text-on-surface flex-1">Basse</span>
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span>
+</label>
+<label class="flex items-center p-2 border border-outline-variant rounded cursor-pointer bg-surface-container-highest group">
+<input checked="" class="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="medium"/>
+<span class="ml-2 text-sm font-medium text-on-surface flex-1">Moyenne</span>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+</label>
+<label class="flex items-center p-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors group">
+<input class="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="high"/>
+<span class="ml-2 text-sm text-on-surface flex-1">Haute</span>
+<span class="w-2 h-2 rounded-full bg-[#f97316]"></span> <!-- Specific urgent orange -->
+</label>
+<label class="flex items-center p-2 border border-error-container rounded cursor-pointer hover:bg-error-container/20 transition-colors group">
+<input class="w-4 h-4 text-error border-error focus:ring-0" name="priority" type="radio" value="critical"/>
+<span class="ml-2 text-sm font-medium text-error flex-1">Critique (Immobilisation)</span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</label>
+</div>
+</div>
+<!-- Assignment -->
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant block">Mécanicien Assigné</label>
+<div class="relative">
+<select class="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none">
+<option disabled="" value="">À assigner plus tard</option>
+<option selected="" value="MEC-01">Marc Dupont (Équipe Matin)</option>
+<option value="MEC-02">Jean Leblanc (Spécialiste Hydraulique)</option>
+<option value="MEC-03">Équipe Externe (Sous-traitant)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style="font-size: 18px;">arrow_drop_down</span>
+</div>
+</div>
+<!-- Duration -->
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant block">Durée Estimée (Heures)</label>
+<div class="flex items-center border border-outline-variant rounded bg-surface-container-lowest overflow-hidden focus-within:ring-2 k-parc-ring-accent focus-within:border-transparent">
+<span class="material-symbols-outlined text-outline pl-3" style="font-size: 18px;">schedule</span>
+<input class="w-full p-2 border-none bg-transparent text-sm focus:ring-0 focus:outline-none" min="0.5" step="0.5" type="number" value="2.5"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

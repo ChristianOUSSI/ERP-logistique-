@@ -1,15 +1,33 @@
-// src/app/(app)/parc/overview/page.tsx - K-Parc Fleet Management Overview ERP Design - Fidèle au HTML original
+// src/app/(app)/parc/overview/page.tsx - K-Parc Fleet Management Overview - Fidèle 100% au HTML original
 'use client'
 
 export default function KParcFleetManagementOverview() {
   return (
-    <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased">
+    <>
+      <style jsx global>{`
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
+        }
+        .icon-filled {
+          font-variation-settings: 'FILL 1';
+        }
+        @layer utilities {
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        }
+      `}</style>
+      <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased">
       {/* SideNavBar */}
       <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm z-50 flex flex-col p-md">
         {/* Brand / Header */}
         <div className="flex items-center gap-sm mb-xl px-xs">
           <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-on-primary-container text-[20px]">directions_boat</span>
+            <span className="material-symbols-outlined text-on-primary-container icon-filled text-[20px]">directions_boat</span>
           </div>
           <div>
             <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
@@ -40,7 +58,7 @@ export default function KParcFleetManagementOverview() {
           {/* ACTIVE TAB: Parc Automobile */}
           <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-primary bg-secondary-container font-bold relative overflow-hidden group" href="#">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-            <span className="material-symbols-outlined text-primary text-[20px]">minor_crash</span>
+            <span className="material-symbols-outlined text-primary icon-filled text-[20px]">minor_crash</span>
             <span className="flex-1">Parc Automobile</span>
           </a>
           <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group mt-auto" href="#">
@@ -103,19 +121,19 @@ export default function KParcFleetManagementOverview() {
           {/* Icon Actions */}
           <div className="flex items-center gap-sm">
             <button className="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px]">payments</span>
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
             </button>
             <button className="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px]">settings</span>
+              <span className="material-symbols-outlined text-[20px]">verified_user</span>
             </button>
             <button className="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant">
-              <div className="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center text-xs font-bold text-primary">JD</div>
+              <span className="material-symbols-outlined text-[20px]">account_circle</span>
             </button>
           </div>
 
           {/* Profile */}
           <div className="w-10 h-10 rounded-full bg-primary-container border-2 border-surface overflow-hidden shrink-0 cursor-pointer">
-            <div className="w-full h-full bg-primary flex items-center justify-center text-white text-xs font-bold">JD</div>
+            <img alt="User profile with MFA status" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp_dOAPhd-3cthLhUZW4zVDw7ldWURQZH8NOEYg1OQndfNmd_yrNJUZEByvdnYzL6WjpKHdwBlKI5ZIxKCHqC4eCVHt80_BgoUBpjNNK07cg16WV-bFfDUryIjKpBCSRguFrzPHeiVgKlfDa03tuAe895fo1MWT5GX3jZLfPB-kQjoUnqhqJ-f-XyLU_sWAYRjxh4KHkaZY10NSrGCVM-Nu7AM4qzSPBm80ai4evNyCeeF9xaSVWkvMyBq4nKKyXwQ5Klm8C5QHkE"/>
           </div>
         </div>
       </header>
@@ -126,20 +144,20 @@ export default function KParcFleetManagementOverview() {
         <div className="mb-md">
           <nav className="flex items-center gap-xs text-sm text-on-surface-variant mb-xs">
             <a className="hover:text-primary transition-colors font-label-md" href="#">KAMLOG ERP</a>
-            <ChevronRight size={16} />
+            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
             <a className="hover:text-primary transition-colors font-label-md" href="#">Parc Automobile</a>
-            <ChevronRight size={16} />
+            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
             <span className="text-on-surface font-label-md font-medium">Tableau de Bord</span>
           </nav>
           <div className="flex justify-between items-end">
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Gestion de Flotte</h2>
             <div className="flex gap-sm">
               <button className="px-md py-sm bg-surface rounded-lg border border-outline-variant flex items-center gap-xs hover:bg-surface-container transition-colors text-sm font-medium text-on-surface-variant">
-                <Download size={16} />
+                <span className="material-symbols-outlined text-sm">download</span>
                 Exporter
               </button>
               <button className="px-md py-sm bg-primary text-on-primary rounded-lg flex items-center gap-xs hover:bg-primary-container transition-colors text-sm font-medium">
-                <Add size={16} />
+                <span className="material-symbols-outlined text-sm">add</span>
                 Nouveau Véhicule
               </button>
             </div>
@@ -153,12 +171,12 @@ export default function KParcFleetManagementOverview() {
             {/* Total Vehicles */}
             <div className="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden">
               <div className="absolute top-0 right-0 p-sm opacity-10">
-                <LocalShipping size={48} />
+                <span className="material-symbols-outlined text-6xl icon-filled">local_shipping</span>
               </div>
               <div className="flex items-center justify-between mb-sm relative z-10">
                 <span className="font-title-sm text-on-surface-variant">Total Flotte</span>
                 <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
-                  <Dataset className="text-primary" size={16} />
+                  <span className="material-symbols-outlined text-primary text-sm">dataset</span>
                 </div>
               </div>
               <div className="relative z-10">
@@ -173,13 +191,13 @@ export default function KParcFleetManagementOverview() {
               <div className="flex items-center justify-between mb-sm relative z-10">
                 <span className="font-title-sm text-on-surface-variant">En Mission</span>
                 <div className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
-                  <Route className="text-secondary" size={16} />
+                  <span className="material-symbols-outlined text-secondary text-sm">route</span>
                 </div>
               </div>
               <div className="relative z-10 flex items-end gap-sm">
                 <span className="font-headline-lg text-on-surface">89</span>
                 <span className="text-sm text-secondary font-medium mb-1 bg-secondary/10 px-xs py-0.5 rounded flex items-center gap-0.5">
-                  <CheckCircle size={14} /> 12%
+                  <span className="material-symbols-outlined text-[14px]">trending_up</span> 12%
                 </span>
               </div>
             </div>
@@ -190,7 +208,7 @@ export default function KParcFleetManagementOverview() {
               <div className="flex items-center justify-between mb-sm relative z-10">
                 <span className="font-title-sm text-on-surface-variant">En Maintenance</span>
                 <div className="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center">
-                  <Build className="text-tertiary" size={16} />
+                  <span className="material-symbols-outlined text-tertiary text-sm">build</span>
                 </div>
               </div>
               <div className="relative z-10">
@@ -205,7 +223,7 @@ export default function KParcFleetManagementOverview() {
               <div className="flex items-center justify-between mb-sm relative z-10">
                 <span className="font-title-sm text-on-surface-variant">Disponibles (Parc)</span>
                 <div className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
-                  <LocalParking className="text-on-surface-variant" size={16} />
+                  <span className="material-symbols-outlined text-on-surface-variant text-sm">local_parking</span>
                 </div>
               </div>
               <div className="relative z-10 flex items-end gap-sm">
@@ -218,15 +236,15 @@ export default function KParcFleetManagementOverview() {
           <div className="col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm h-[500px] flex flex-col overflow-hidden relative">
             <div className="px-md py-sm border-b border-outline-variant flex justify-between items-center bg-surface-bright z-10">
               <h3 className="font-title-md text-on-surface flex items-center gap-sm">
-                <Map className="text-primary" size={16} />
+                <span className="material-symbols-outlined text-primary text-sm">map</span>
                 Localisation en Temps Réel
               </h3>
               <div className="flex gap-xs">
                 <button className="p-xs bg-surface-container rounded hover:bg-surface-variant transition-colors text-on-surface-variant">
-                  <FilterAlt size={16} />
+                  <span className="material-symbols-outlined text-sm">filter_alt</span>
                 </button>
                 <button className="p-xs bg-surface-container rounded hover:bg-surface-variant transition-colors text-on-surface-variant">
-                  <ZoomInMap size={16} />
+                  <span className="material-symbols-outlined text-sm">zoom_in_map</span>
                 </button>
               </div>
             </div>
@@ -235,13 +253,13 @@ export default function KParcFleetManagementOverview() {
             <div className="flex-1 bg-surface-variant relative overflow-hidden">
               {/* Abstract representation of a map since we can't load real maps directly without iframe/api */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,0,0,0.4) 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
-              <div className="absolute inset-0 w-full h-full bg-surface-variant opacity-30"></div>
+              <img className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqbRuY_T3lGcs6DvJeJTfabLYXyxRu7FwfSA8uQN1g2VLuQerPWlHtfgx99YfoE3aaXLtd_oAHH2j_4VntpibT1zwBPliXOncFdgOCtdntMFFueUN8zWwvp-yVUZop9SQEUeHHCW9o9Vl91Kgc4ZAtg3CFvN567ssv3JUgrmDvujmFn1w8y_dl78iwUEhTpbouAjud0K08lF3MU-K9sjFRXVPLWdFsIvG35WERDyaC1914u6cvKLku-0rXhvlvSvRCE0lINMzw82I"/>
 
               {/* Map Markers */}
               <div className="absolute top-[30%] left-[40%] flex flex-col items-center group cursor-pointer">
                 <div className="bg-secondary text-on-secondary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-8492 (En route)</div>
                 <div className="w-6 h-6 bg-secondary rounded-full border-2 border-surface flex items-center justify-center shadow-sm relative">
-                  <LocalShipping size={12} />
+                  <span className="material-symbols-outlined text-[12px] text-on-secondary icon-filled">local_shipping</span>
                   <div className="absolute inset-0 bg-secondary rounded-full animate-ping opacity-30"></div>
                 </div>
               </div>
@@ -249,25 +267,25 @@ export default function KParcFleetManagementOverview() {
               <div className="absolute top-[60%] left-[20%] flex flex-col items-center group cursor-pointer">
                 <div className="bg-tertiary text-on-tertiary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-1102 (Panne)</div>
                 <div className="w-6 h-6 bg-tertiary rounded-full border-2 border-surface flex items-center justify-center shadow-sm">
-                  <Warning size={12} />
+                  <span className="material-symbols-outlined text-[12px] text-on-tertiary icon-filled">warning</span>
                 </div>
               </div>
 
               <div className="absolute top-[45%] left-[70%] flex flex-col items-center group cursor-pointer">
                 <div className="bg-secondary text-on-secondary px-xs py-0.5 rounded text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm">T-9931 (Déchargement)</div>
                 <div className="w-6 h-6 bg-secondary rounded-full border-2 border-surface flex items-center justify-center shadow-sm">
-                  <LocalShipping size={12} />
+                  <span className="material-symbols-outlined text-[12px] text-on-secondary icon-filled">local_shipping</span>
                 </div>
               </div>
 
               {/* Map Controls overlay */}
               <div className="absolute bottom-md right-md flex flex-col gap-xs bg-surface-container-lowest p-xs rounded-lg shadow-sm border border-outline-variant">
                 <button className="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-on-surface-variant">
-                  <Add size={16} />
+                  <span className="material-symbols-outlined text-sm">add</span>
                 </button>
                 <div className="h-px bg-outline-variant w-full"></div>
                 <button className="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-on-surface-variant">
-                  <ChevronRight size={16} />
+                  <span className="material-symbols-outlined text-sm">remove</span>
                 </button>
               </div>
             </div>
@@ -278,12 +296,12 @@ export default function KParcFleetManagementOverview() {
             {/* Critical Alerts */}
             <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-md flex-1">
               <h3 className="font-title-md text-on-surface flex items-center gap-sm mb-md pb-xs border-b border-outline-variant">
-                <Error className="text-error" size={16} />
+                <span className="material-symbols-outlined text-error text-sm icon-filled">error</span>
                 Alertes Critiques
               </h3>
               <ul className="flex flex-col gap-sm">
                 <li className="bg-error-container/20 border border-error-container p-sm rounded-lg flex items-start gap-sm">
-                  <OilBarrel className="text-error" size={18} />
+                  <span className="material-symbols-outlined text-error text-[18px] mt-0.5">oil_barrel</span>
                   <div>
                     <h4 className="font-label-md text-on-surface">T-1102 - Niveau d'huile critique</h4>
                     <p className="text-[11px] text-on-surface-variant mt-0.5">Immobilisé Z.I. Nord. Équipe prévenue.</p>
@@ -291,7 +309,7 @@ export default function KParcFleetManagementOverview() {
                   </div>
                 </li>
                 <li className="bg-tertiary-container/10 border border-tertiary-container/30 p-sm rounded-lg flex items-start gap-sm">
-                  <TireRepair className="text-tertiary" size={18} />
+                  <span className="material-symbols-outlined text-tertiary text-[18px] mt-0.5">tire_repair</span>
                   <div>
                     <h4 className="font-label-md text-on-surface">T-8492 - Pression Pneu Anormale</h4>
                     <p className="text-[11px] text-on-surface-variant mt-0.5">Essieu arrière gauche. En route.</p>
@@ -305,7 +323,7 @@ export default function KParcFleetManagementOverview() {
             <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-md flex-1">
               <div className="flex justify-between items-center mb-md pb-xs border-b border-outline-variant">
                 <h3 className="font-title-md text-on-surface flex items-center gap-sm">
-                  <Badge className="text-primary" size={16} />
+                  <span className="material-symbols-outlined text-primary text-sm">badge</span>
                   Chauffeurs Actifs
                 </h3>
                 <a className="text-[12px] text-primary hover:underline" href="#">Voir tout</a>
@@ -313,23 +331,27 @@ export default function KParcFleetManagementOverview() {
               <div className="flex flex-col gap-xs">
                 <div className="flex items-center justify-between p-xs hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">
                   <div className="flex items-center gap-sm">
-                    <div className="w-8 h-8 rounded-full bg-surface-container overflow-hidden flex items-center justify-center text-xs font-bold text-primary">MD</div>
+                    <div className="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+                      <img alt="Profile of driver M. Diop" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNL0ocdT4GPQhqST2tit3ivGyRaeVlffvGsJouG4ijkZQhwbk-VfYEOH1HvCOtu3UNJu7b-nPmr-kpvMu7jGEkteKkrT8tHRYLTR15Mhf9edNnmgv1Jwx709QzWJXKjdKZktFG1REQ1l6nDGFZiAsOuiFd9ckaPjioHLhLyekmhijWddyNazmAmPho9p-gLfya-wu9AB7SfVIcUS2MU3TA7wsuzReA_Z4TgXqv40fis8BmWddQ7U_Hpbib4UtuQ1fcQuZ6xbXa8Xg"/>
+                    </div>
                     <div>
                       <h4 className="font-label-md text-on-surface">Moussa Diop</h4>
                       <p className="text-[11px] text-on-surface-variant">T-8492 • En mission</p>
                     </div>
                   </div>
-                  <CheckCircle className="text-secondary" size={16} />
+                  <span className="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
                 </div>
                 <div className="flex items-center justify-between p-xs hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">
                   <div className="flex items-center gap-sm">
-                    <div className="w-8 h-8 rounded-full bg-surface-container overflow-hidden flex items-center justify-center text-xs font-bold text-primary">AS</div>
+                    <div className="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+                      <img alt="Profile of driver A. Sy" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIxmEXX_F8Icfhvi9gGkGdfxzVy7pbm3Rh5TimVs099SHB9f0lb9nhiYriisCIwGN0hwA5ZQgpH-SiU6KBlBIV91_nsci8ZPaltFfD28fxKGrbYw02JmMXjpi_pPAUiSLVlefyapbLxpoevL-H-XXjVsUwF-GpEkJlCxRhBemWCOpoGHBXuWYSaQ7W1pwi_JIB9EDTjkPzkDiQauYypB3A9x3N0iqegQbZJVvUSZTwEqh7lue-LrSPYUVlOfjtXEnCaoBaH1t0ktY"/>
+                    </div>
                     <div>
                       <h4 className="font-label-md text-on-surface">Abdoulaye Sy</h4>
                       <p className="text-[11px] text-on-surface-variant">T-9931 • Sur site</p>
                     </div>
                   </div>
-                  <CheckCircle className="text-secondary" size={16} />
+                  <span className="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
                 </div>
               </div>
             </div>
@@ -339,12 +361,12 @@ export default function KParcFleetManagementOverview() {
           <div className="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
             <div className="px-md py-sm border-b border-outline-variant bg-surface flex justify-between items-center">
               <h3 className="font-title-md text-on-surface flex items-center gap-sm">
-                <ViewList className="text-primary" size={16} />
+                <span className="material-symbols-outlined text-primary text-sm">view_list</span>
                 Registre des Véhicules
               </h3>
               <div className="flex items-center gap-sm">
                 <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-outline" size={16} />
+                  <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
                   <input 
                     className="pl-8 pr-3 py-1 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:border-primary w-48 text-[12px]" 
                     placeholder="Filtrer par ID, Statut..." 
@@ -352,7 +374,7 @@ export default function KParcFleetManagementOverview() {
                   />
                 </div>
                 <button className="p-1 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors">
-                  <FilterList size={16} />
+                  <span className="material-symbols-outlined text-[16px]">filter_list</span>
                 </button>
               </div>
             </div>
@@ -390,12 +412,14 @@ export default function KParcFleetManagementOverview() {
                       </div>
                     </td>
                     <td className="py-3 px-4 flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-surface-container overflow-hidden flex items-center justify-center text-xs font-bold text-primary">MD</div>
+                      <div className="w-5 h-5 rounded-full bg-surface-container overflow-hidden">
+                        <img alt="Avatar driver" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lgz6EtCKgcuAdIGXT4yCkNNQaL40cuv6YcHic9LWbaO7fcCzsBsS7nh1Ap2dcPP20BbeO4V2U2LmwK7TyNevt5jPpZnA-VcPv0R5mWb0Ix20a_k_VydTxtlS2VWyKXZ6HtSg35dym1sLPj112B4xEJzxNT263ybKjgJHlj_8V4r-GTjwbviaoFw1hoS3XCDwQce_8iiVHtjWuzuezfBfu1JgU8ZfXK1DH3cI6MvAdcXToew0TYbt9c2FEAsfdkSJ6hvekfJQQog"/>
+                      </div>
                       Moussa Diop
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button className="text-on-surface-variant hover:text-primary transition-colors">
-                        <MoreVert size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -421,7 +445,7 @@ export default function KParcFleetManagementOverview() {
                     <td className="py-3 px-4 text-on-surface-variant text-[12px] italic">Non assigné</td>
                     <td className="py-3 px-4 text-right">
                       <button className="text-on-surface-variant hover:text-primary transition-colors">
-                        <MoreVert size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -445,12 +469,14 @@ export default function KParcFleetManagementOverview() {
                       </div>
                     </td>
                     <td className="py-3 px-4 flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-surface-container overflow-hidden flex items-center justify-center text-xs font-bold text-primary">AS</div>
+                      <div className="w-5 h-5 rounded-full bg-surface-container overflow-hidden">
+                        <img alt="Avatar driver" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBICek52V-OUz5_S2b1u5IPb5VOXzhA3FNCbk80z7lu0sht5y_mgPKNe2nt88yflHPvz-Z-mzCduTlDnSztXQG7s9WjELtFqEo9UsICcoaZKb9sbc_4S-siN-eWG9EpcN74TrXYMlls3ItgickrGIvHRnZvWxXeRfwyAfzJ5WPSFUX2GJ4_vOxqbn6Cn7rKYv37IwoumCIyLUbGSSdlNfgJTWE3uTohvgxRg4oF_JGEP-_Db4PDT7m1J2ETQwmTSy6dnI5dDONOSgI"/>
+                      </div>
                       Abdoulaye Sy
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button className="text-on-surface-variant hover:text-primary transition-colors">
-                        <MoreVert size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -476,7 +502,7 @@ export default function KParcFleetManagementOverview() {
                     <td className="py-3 px-4 text-on-surface-variant text-[12px] italic">Parc Central</td>
                     <td className="py-3 px-4 text-right">
                       <button className="text-on-surface-variant hover:text-primary transition-colors">
-                        <MoreVert size={18} />
+                        <span className="material-symbols-outlined text-[18px]">more_vert</span>
                       </button>
                     </td>
                   </tr>
@@ -488,10 +514,10 @@ export default function KParcFleetManagementOverview() {
               <span className="text-[12px] text-on-surface-variant">Affichage 1-4 sur 142 véhicules</span>
               <div className="flex gap-1">
                 <button className="p-1 rounded border border-outline-variant text-outline disabled:opacity-50">
-                  <ChevronLeft size={16} />
+                  <span className="material-symbols-outlined text-[16px]">chevron_left</span>
                 </button>
                 <button className="p-1 rounded border border-outline-variant text-on-surface hover:bg-surface-container">
-                  <ChevronRight size={16} />
+                  <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                 </button>
               </div>
             </div>
@@ -499,5 +525,6 @@ export default function KParcFleetManagementOverview() {
         </div>
       </main>
     </div>
+    </>
   )
 }

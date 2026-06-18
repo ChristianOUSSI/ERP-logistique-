@@ -1,10 +1,12 @@
 {
-  "buildCommand": "cd kamlog-frontend && npm run build",
-  "outputDirectory": "kamlog-frontend/.next",
-  "installCommand": "cd kamlog-frontend && npm install",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@api-url"
-  }
+  "rootDirectory": "kamlog-frontend",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://votre-api-vps-contabo.cm/api/:path*"
+    }
+  ]
 }

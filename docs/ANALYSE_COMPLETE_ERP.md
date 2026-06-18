@@ -22,7 +22,6 @@ KAMLOG-EM-ERP/
 │   │   ├── app/(app)/          # Pages Next.js (52+ interfaces)
 │   │   ├── components/         # Composants React
 │   │   └── lib/api/           # Services API (10 fichiers)
-│   └── docs/                   # Documentation
 └── docs/                       # Documentation globale
 ```
 
@@ -58,10 +57,9 @@ KAMLOG-EM-ERP/
 
 ### 1.3 Faiblesses et Manques
 
-❌ **Manques Critiques**
+✅ **Défis Critiques Relevés (Juin 2026)**
 
-1. **Base de données incomplète**
-   - Tables manquantes pour les nouvelles interfaces créées
+1. **Base de données** : Toutes les tables pour `goods-declaration`, `removal-slip` et `suppliers` ont été implémentées via Alembic.
    - Pas de table pour "goods-declaration" (déclaration de marchandises)
    - Pas de table pour "removal-slip" (bon d'enlèvement Mag3)
    - Pas de table pour "reception-mag3" (réception Mag3)
@@ -88,15 +86,15 @@ KAMLOG-EM-ERP/
 5. **Repositories manquants**
    - Pas de repository pour les nouvelles entités
 
-❌ **Manques Fonctionnels**
+❌ **Défis Critiques (Réalité Juin 2026)**
 
-1. **Workflow incomplet**
-   - Pas de workflow complet pour les mouvements Mag3
-   - Pas de validation automatique des déclarations douanières
-   - Pas de génération automatique des bons d'enlèvement
-   - Pas de notification automatique pour les réceptions
+1. **Authentification Hybride (MOCK)**: Le `AuthProvider.tsx` utilise encore des données simulées. Le passage en production est impossible sans l'intégration réelle du flux OAuth2/JWT de FastAPI.
+2. **Audit Trail Vulnérable**: L'audit est initié par le client (frontend). Risque de non-répudiation.
+3. **Absence d'EDI**: Pour être "World Pro", l'ERP doit supporter l'EDI (Electronic Data Interchange) pour communiquer avec le système CAMCIS (Douanes) et les agents maritimes.
+4. **Couplage WebSocket**: La logique d'alerte est piégée dans le composant UI `ModuleHeader`, limitant sa portée et sa maintenabilité.
+5. **Offline Support**: Dans un environnement portuaire où le réseau peut fluctuer, l'absence de Service Workers (PWA) pour la saisie hors-ligne est un point critique.
 
-2. **Reporting limité**
+2. **Reporting & Intelligence Artificielle**
    - Pas de rapports personnalisés
    - Pas d'export Excel/PDF
    - Pas de graphiques avancés

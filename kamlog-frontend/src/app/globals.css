@@ -125,9 +125,9 @@
 
   /* ── Badges Statuts Missions ─────────────────────────────── */
   .badge-planifie {
-    background-color: #eef2ff;
-    color: #4338ca;
-    border: 1px solid #c7d2fe;
+    background-color: color-mix(in srgb, var(--color-statut-planifie), transparent 90%);
+    color: var(--color-statut-planifie);
+    border: 1px solid color-mix(in srgb, var(--color-statut-planifie), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -135,9 +135,9 @@
   }
 
   .badge-en-route {
-    background-color: #ecfeff;
-    color: #0e7490;
-    border: 1px solid #a5f3fc;
+    background-color: color-mix(in srgb, var(--color-statut-en-route), transparent 90%);
+    color: var(--color-statut-en-route);
+    border: 1px solid color-mix(in srgb, var(--color-statut-en-route), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -145,9 +145,9 @@
   }
 
   .badge-livre {
-    background-color: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background-color: color-mix(in srgb, var(--color-statut-livre), transparent 90%);
+    color: var(--color-statut-livre);
+    border: 1px solid color-mix(in srgb, var(--color-statut-livre), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -155,9 +155,9 @@
   }
 
   .badge-cloture {
-    background-color: #f9fafb;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background-color: color-mix(in srgb, var(--color-statut-cloture), transparent 90%);
+    color: var(--color-statut-cloture);
+    border: 1px solid color-mix(in srgb, var(--color-statut-cloture), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -166,9 +166,9 @@
 
   /* ── Badges Rôles RBAC ───────────────────────────────────── */
   .badge-role-admin {
-    background-color: #fef2f2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: color-mix(in srgb, var(--color-kamlog-danger), transparent 90%);
+    color: var(--color-kamlog-danger);
+    border: 1px solid color-mix(in srgb, var(--color-kamlog-danger), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -176,9 +176,9 @@
   }
 
   .badge-role-dispatcher {
-    background-color: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background-color: color-mix(in srgb, var(--color-kamlog-primary), transparent 90%);
+    color: var(--color-kamlog-primary);
+    border: 1px solid color-mix(in srgb, var(--color-kamlog-primary), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -186,9 +186,9 @@
   }
 
   .badge-role-finance {
-    background-color: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background-color: color-mix(in srgb, var(--color-kamlog-success), transparent 90%);
+    color: var(--color-kamlog-success);
+    border: 1px solid color-mix(in srgb, var(--color-kamlog-success), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -196,9 +196,9 @@
   }
 
   .badge-role-douane {
-    background-color: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
+    background-color: color-mix(in srgb, var(--color-kamlog-warning), transparent 90%);
+    color: var(--color-kamlog-warning);
+    border: 1px solid color-mix(in srgb, var(--color-kamlog-warning), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -206,9 +206,9 @@
   }
 
   .badge-role-gate {
-    background-color: #f9fafb;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background-color: color-mix(in srgb, var(--color-muted-foreground), transparent 90%);
+    color: var(--color-muted-foreground);
+    border: 1px solid color-mix(in srgb, var(--color-muted-foreground), transparent 80%);
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -368,5 +368,22 @@
   ::selection {
     background-color: #bfdbfe;
     color: #1e3a8a;
+  }
+
+  /* Material Symbols integration */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .fill-icon {
+    font-variation-settings: 'FILL' 1;
   }
 }

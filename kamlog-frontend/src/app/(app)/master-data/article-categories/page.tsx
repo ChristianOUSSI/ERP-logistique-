@@ -3,6 +3,14 @@
 import { useState } from 'react'
 import { MaterialSymbol } from '@/components/MaterialSymbol'
 
+interface Category {
+  id: number
+  code: string
+  description: string
+  parent: string | null
+  niveau: number
+}
+
 export default function ArticleCategoriesPage() {
   const [categories, setCategories] = useState([
     { id: 1, code: 'ALIM', description: 'Alimentation', parent: null, niveau: 1 },
@@ -16,7 +24,7 @@ export default function ArticleCategoriesPage() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [editingCategory, setEditingCategory] = useState(null)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
 
   const filteredCategories = categories.filter(category =>
     category.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,18 +36,18 @@ export default function ArticleCategoriesPage() {
     setShowModal(true)
   }
 
-  const handleEdit = (category) => {
+  const handleEdit = (category: Category) => {
     setEditingCategory(category)
     setShowModal(true)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie?')) {
       setCategories(categories.filter(c => c.id !== id))
     }
   }
 
-  const getNiveauLabel = (niveau) => {
+  const getNiveauLabel = (niveau: number) => {
     switch (niveau) {
       case 1: return 'Catégorie principale'
       case 2: return 'Sous-catégorie'

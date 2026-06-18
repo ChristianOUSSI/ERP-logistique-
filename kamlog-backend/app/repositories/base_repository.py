@@ -16,14 +16,16 @@ class BaseRepository(Generic[ModelType]):
     Cette classe abstrait l'accès aux données et facilite les tests.
     """
     
-    def __init__(self, model: Type[ModelType]):
+    def __init__(self, model: Type[ModelType], agency_id: Optional[int] = None):
         """
         Initialise le repository avec le modèle SQLAlchemy.
         
         Args:
             model: Classe du modèle SQLAlchemy
+            agency_id: ID de l'agence pour le filtrage automatique
         """
         self.model = model
+        self.agency_id = agency_id
     
     def get(self, db: Session, id: int) -> Optional[ModelType]:
         """
@@ -36,7 +38,13 @@ class BaseRepository(Generic[ModelType]):
         Returns:
             L'entité trouvée ou None
         """
-        return db.query(self.model).filter(self.model.id == id).first()
+        query = db.query(self.model).filter(self.model.id == id, self.model.deleted_at == None)
+        
+        # Filtrage automatique par agence si spécifié
+        if self.agency_id and hasattr(self.model, "agency_id"):
+            query = query.filter(self.model.agency_id == self.agency_id)
+            
+        return query.first()
     
     def get_all(
         self, 
@@ -55,7 +63,12 @@ class BaseRepository(Generic[ModelType]):
         Returns:
             Liste des entités
         """
-        return db.query(self.model).offset(skip).limit(limit).all()
+        query = db.query(self.model).filter(self.model.deleted_at == None)
+        
+        if self.agency_id and hasattr(self.model, "agency_id"):
+            query = query.filter(self.model.agency_id == self.agency_id)
+            
+        return query.offset(skip).limit(limit).all()
     
     def get_active(
         self, 

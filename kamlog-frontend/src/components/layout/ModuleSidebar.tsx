@@ -1,106 +1,256 @@
-// src/components/layout/ModuleSidebar.tsx - Sidebar colorée par module
 'use client';
 
-import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { getModuleColor, getModuleIcon, getModuleName, MODULE_NAMES, MODULE_ICONS } from '@/config/moduleColors';
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useModuleTheme } from '../../hooks/useModuleTheme';
+import { useSettings } from './SettingsProvider';
 
-interface ModuleSidebarProps {
-  currentModule: string;
-}
+export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc';
 
 interface NavItem {
-  id: string;
-  name: string;
+  labelKey: string;
+  href: string;
   icon: string;
-  path: string;
-  module: string;
+  badge?: string;
 }
 
-export function ModuleSidebar({ currentModule }: ModuleSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+interface ModuleSidebarProps {
+  module: ModuleType;
+  isCollapsed?: boolean;
+  onToggle?: () => void;
+}
+
+const SIDEBAR_I18N: Record<string, Record<string, string>> = {
+  fr: {
+    users: 'Utilisateurs',
+    roles: 'Rôles & Permissions',
+    health: 'Santé Système',
+    audit: 'Traces d\'Audit',
+    security: 'Configuration MFA',
+    tiers: 'Tiers (Général)',
+    clients: 'Clients',
+    suppliers: 'Fournisseurs',
+    articles: 'Articles',
+    incoterms: 'Incoterms',
+    units: 'Unités de Mesure',
+    fleet: 'Contrôle Flotte',
+    dispatch: 'Planification',
+    goods: 'Décl. Marchandises',
+    drivers: 'Nouveau Chauffeur',
+    fuel: 'Gestion Carburant',
+    map: 'Cartographie',
+    overview: 'Tableau de Bord',
+    analytics: 'Analytique & Cashflow',
+    billing: 'Facturation Client',
+    reconciliation: 'Rapprochement Bancaire',
+    gateway: 'Passerelle Monitor',
+    transactions: 'Saisie Transaction',
+    stock: 'Stock Mag3',
+    removal: 'Bons d\'Enlèvement',
+    reception: 'Réceptions Mag3',
+    inventory: 'Inventaire Physique',
+    manual: 'Mouvement Manuel',
+    workshop: 'Atelier (Workshop)',
+    orders: 'Ordres de Travail',
+    gate_in: 'Gate In',
+    gate_out: 'Gate Out',
+    settings: 'Paramètres Module',
+    logout: 'Déconnexion'
+  },
+  en: {
+    users: 'User Management',
+    roles: 'Roles & Permissions',
+    health: 'System Health',
+    audit: 'Audit Trails',
+    security: 'MFA Configuration',
+    tiers: 'Partners (General)',
+    clients: 'Customers',
+    suppliers: 'Suppliers',
+    articles: 'Materials/Items',
+    incoterms: 'Incoterms',
+    units: 'Units of Measure',
+    fleet: 'Fleet Control',
+    dispatch: 'Dispatching',
+    goods: 'Goods Declaration',
+    drivers: 'New Driver',
+    fuel: 'Fuel Management',
+    map: 'Mapping/GIS',
+    overview: 'Executive Overview',
+    analytics: 'Analytics & Cashflow',
+    billing: 'Customer Billing',
+    reconciliation: 'Bank Reconciliation',
+    gateway: 'Gateway Monitor',
+    transactions: 'Transaction Entry',
+    stock: 'Mag3 Stock',
+    removal: 'Removal Slips',
+    reception: 'Mag3 Receptions',
+    inventory: 'Physical Inventory',
+    manual: 'Manual Movement',
+    workshop: 'Maintenance Shop',
+    orders: 'Work Orders',
+    gate_in: 'Gate In',
+    gate_out: 'Gate Out',
+    settings: 'Module Settings',
+    logout: 'Sign Out'
+  }
+};
+
+const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
+  admin: [
+    { labelKey: 'users', href: '/admin/user-management/listing', icon: 'group' },
+    { labelKey: 'roles', href: '/admin/configuration-des-roles-rbac', icon: 'verified_user' },
+    { labelKey: 'health', href: '/admin/audit/system-health', icon: 'monitoring' },
+    { labelKey: 'audit', href: '/admin/audit/operation-trace', icon: 'history' },
+    { labelKey: 'security', href: '/admin/security/mfa', icon: 'enhanced_encryption' },
+  ],
+  'master-data': [
+    { labelKey: 'tiers', href: '/master-data/tiers', icon: 'hub' },
+    { labelKey: 'clients', href: '/master-data/clients/create', icon: 'person_add' },
+    { labelKey: 'suppliers', href: '/master-data/suppliers/create', icon: 'conveyor_belt' },
+    { labelKey: 'articles', href: '/master-data/article-creation', icon: 'inventory_2' },
+    { labelKey: 'incoterms', href: '/master-data/incoterms', icon: 'gavel' },
+    { labelKey: 'units', href: '/master-data/units', icon: 'straighten' },
+  ],
+  transport: [
+    { labelKey: 'fleet', href: '/transport/control', icon: 'local_shipping' },
+    { labelKey: 'dispatch', href: '/transport/dispatch', icon: 'route' },
+    { labelKey: 'goods', href: '/transport/goods-declaration', icon: 'description' },
+    { labelKey: 'drivers', href: '/transport/drivers/new', icon: 'person_add' },
+    { labelKey: 'fuel', href: '/transport/fuel/ticket', icon: 'gas_meter' },
+    { labelKey: 'map', href: '/transport/map', icon: 'map' },
+  ],
+  finance: [
+    { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },
+    { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' },
+    { labelKey: 'billing', href: '/finance/billing', icon: 'receipt_long' },
+    { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
+    { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },
+    { labelKey: 'transactions', href: '/finance/saisie-transaction-bancaire', icon: 'add_card' },
+  ],
+  magasin: [
+    { labelKey: 'overview', href: '/magasin/dashboard', icon: 'dashboard' },
+    { labelKey: 'stock', href: '/magasin/stock-management', icon: 'inventory' },
+    { labelKey: 'removal', href: '/magasin/removal-slip', icon: 'assignment_return', badge: 'Mag3' },
+    { labelKey: 'reception', href: '/magasin/reception-mag3', icon: 'download_done', badge: 'Mag3' },
+    { labelKey: 'inventory', href: '/magasin/inventaire', icon: 'checklist' },
+    { labelKey: 'manual', href: '/magasin/mouvement-de-stock-manuel', icon: 'sync_alt' },
+  ],
+  parc: [
+    { labelKey: 'overview', href: '/parc/overview', icon: 'directions_car' },
+    { labelKey: 'gate_in', href: '/parc/gate-in', icon: 'login' },
+    { labelKey: 'gate_out', href: '/parc/gate-out', icon: 'logout' },
+    { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
+    { labelKey: 'orders', href: '/parc/creation-ordre-de-travail', icon: 'handyman' },
+  ],
+};
+
+export default function ModuleSidebar({ module, isCollapsed = false, onToggle }: ModuleSidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const theme = getModuleColor(currentModule);
+  const items = NAVIGATION_CONFIG[module];
+  const { theme } = useModuleTheme(module); // Use the hook to get theme
+  const { language } = useSettings();
 
-  const navItems: NavItem[] = [
-    { id: 'auth', name: MODULE_NAMES.auth, icon: MODULE_ICONS.auth, path: '/auth', module: 'auth' },
-    { id: 'tiers', name: MODULE_NAMES.tiers, icon: MODULE_ICONS.tiers, path: '/tiers', module: 'tiers' },
-    { id: 'transport', name: MODULE_NAMES.transport, icon: MODULE_ICONS.transport, path: '/transport', module: 'transport' },
-    { id: 'finance', name: MODULE_NAMES.finance, icon: MODULE_ICONS.finance, path: '/finance', module: 'finance' },
-    { id: 'magasin', name: MODULE_NAMES.magasin, icon: MODULE_ICONS.magasin, path: '/magasin', module: 'magasin' },
-    { id: 'parc', name: MODULE_NAMES.parc, icon: MODULE_ICONS.parc, path: '/parc', module: 'parc' },
-    { id: 'documents', name: MODULE_NAMES.documents, icon: MODULE_ICONS.documents, path: '/documents', module: 'documents' },
-    { id: 'alerts', name: MODULE_NAMES.alerts, icon: MODULE_ICONS.alerts, path: '/alerts', module: 'alerts' },
-  ];
-
-  const handleNavigate = (path: string) => {
-    router.push(path);
-  };
+  const t = (key: string) => SIDEBAR_I18N[language][key] || key;
 
   return (
     <aside
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
-      style={{
-        backgroundColor: theme.primary,
-      }}
+      className="layout-sidebar flex flex-col transition-all duration-300 overflow-hidden"
+      style={{ width: 'var(--sidebar-width)' } as React.CSSProperties}
     >
-      <div className="h-full flex flex-col">
-        {/* Toggle button */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-4 text-white hover:bg-white/10 transition"
-          style={{ color: theme.text }}
-        >
-          <svg
-            className={`h-6 w-6 transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* Navigation items */}
-        <nav className="flex-1 px-2 space-y-2 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.path);
-            const itemTheme = getModuleColor(item.module);
-            
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavigate(item.path)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-white shadow-lg transform scale-105'
-                    : 'hover:bg-white/20'
-                }`}
-                style={{
-                  backgroundColor: isActive ? 'white' : undefined,
-                  color: isActive ? itemTheme.primary : 'white',
-                }}
-              >
-                <span className="text-2xl">{item.icon}</span>
-                {!isCollapsed && (
-                  <span className="font-medium">{item.name}</span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-white/20">
+      {/* Brand Logo Area */}
+      <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className={`w-8 h-8 rounded-lg ${theme.sidebar.brandIconBg} ${theme.sidebar.brandIconText} flex items-center justify-center`}>
+            <span 
+              className="material-symbols-outlined text-white transition-all duration-300"
+              style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
+            >
+              {module === 'magasin' ? 'warehouse' : module === 'transport' ? 'conversion_path' : 'rocket_launch'}
+            </span>
+          </div>
           {!isCollapsed && (
-            <p className="text-xs text-white/70 text-center">
-              KAMLOG EM-ERP v1.0
-            </p>
+            <span className="font-bold text-white tracking-tight uppercase text-sm truncate">
+              {module}
+            </span>
           )}
         </div>
+        
+        <button 
+          onClick={onToggle}
+          className="p-1 hover:bg-slate-800 rounded-md text-slate-400 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[20px]">
+            {isCollapsed ? 'menu' : 'menu_open'}
+          </span>
+        </button>
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        {items.map((item) => {
+          const isActive = pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`
+                group flex items-center justify-between px-3 py-2.5 rounded-r-lg transition-all duration-200 border-l-4
+                ${isActive 
+                  ? `${theme.sidebar.activeAccent} ${theme.sidebar.activeBgSubtle}` 
+                  : `text-slate-400 border-transparent ${theme.sidebar.hoverBg} hover:text-slate-200`}
+              `}
+              title={isCollapsed ? t(item.labelKey) : ''}
+            >
+              <div className="flex items-center gap-3">
+                <span 
+                  className="material-symbols-outlined transition-all duration-300"
+                  style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
+                >
+                  {item.icon}
+                </span>
+                {!isCollapsed && (
+                  <span className="text-[13px] font-medium">
+                    {t(item.labelKey)}
+                  </span>
+                )}
+              </div>
+              
+              {!isCollapsed && item.badge && (
+                <span className={`
+                  text-[10px] px-1.5 py-0.5 rounded font-bold uppercase flex-shrink-0
+                  ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-500'}
+                `}>
+                  {item.badge}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Bottom Profile / Settings */}
+      <div className="p-4 border-t border-slate-800">
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors"
+        >
+          <span 
+            className="material-symbols-outlined flex-shrink-0 transition-all duration-300"
+            style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
+          >settings</span>
+          {!isCollapsed && <span className="text-xs">{t('settings')}</span>}
+        </Link>
+        <Link
+          href="/logout"
+          className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-red-400 transition-colors"
+        >
+          <span 
+            className="material-symbols-outlined flex-shrink-0 transition-all duration-300"
+            style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
+          >logout</span>
+          {!isCollapsed && <span className="text-xs">{t('logout')}</span>}
+        </Link>
       </div>
     </aside>
   );

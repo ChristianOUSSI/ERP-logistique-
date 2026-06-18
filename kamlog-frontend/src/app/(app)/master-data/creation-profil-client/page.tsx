@@ -1,8 +1,8 @@
-import AppLayout from '@/components/layout/AppLayout';
+import { ModuleLayout } from '@/components/layout/ModuleLayout';
 
 export default function CreationProfilClientPage() {
   return (
-    <AppLayout>
+    <ModuleLayout module="master-data">
       <div className="space-y-6">
         <div>
           <h1 className="text-headline-lg text-headline-lg text-on-surface">
@@ -18,6 +18,6 @@ export default function CreationProfilClientPage() {
           </p>
         </div>
       </div>
-    </AppLayout>
+    </ModuleLayout>
   );
 }

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Search, Edit, Trash2, Package, Scale, Box } from 'lucide-react'
 import { DataTable } from '@/components/shared/DataTable'
 import { Article, ArticleCreate, ArticleUpdate, UniteMesure } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
@@ -22,7 +21,7 @@ export default function ArticlesPage() {
     {
       key: 'code_article',
       header: 'Code Article',
-      cell: (row: Article) => <span className="font-mono font-medium text-blue-600">{row.code_article}</span>
+      cell: (row: Article) => <span className="font-mono font-medium text-kamlog-success">{row.code_article}</span>
     },
     {
       key: 'nom',
@@ -50,13 +49,13 @@ export default function ArticlesPage() {
         <div className="space-y-1 text-sm">
           {row.poids_unitaire && (
             <div className="flex items-center gap-2">
-              <Scale className="h-3 w-3" />
+              <span className="material-symbols-outlined text-[16px]">scale</span>
               <span>{row.poids_unitaire} kg/unité</span>
             </div>
           )}
           {row.volume_unitaire && (
             <div className="flex items-center gap-2">
-              <Box className="h-3 w-3" />
+              <span className="material-symbols-outlined text-[16px]">package_2</span>
               <span>{row.volume_unitaire} m³/unité</span>
             </div>
           )}
@@ -68,7 +67,7 @@ export default function ArticlesPage() {
       header: 'Statut',
       cell: (row: Article) => (
         <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-          row.est_actif ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          row.est_actif ? 'bg-kamlog-success/10 text-kamlog-success' : 'bg-kamlog-danger/10 text-kamlog-danger'
         }`}>
           {row.est_actif ? 'Actif' : 'Inactif'}
         </span>
@@ -84,14 +83,14 @@ export default function ArticlesPage() {
             variant="ghost"
             onClick={() => handleEdit(row)}
           >
-            <Edit className="h-4 w-4" />
+            <span className="material-symbols-outlined text-[18px]">edit</span>
           </Button>
           <Button
             size="sm"
             variant="ghost"
             onClick={() => handleDelete(row.id)}
           >
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <span className="material-symbols-outlined text-[18px] text-red-500">delete</span>
           </Button>
         </div>
       )
@@ -124,19 +123,22 @@ export default function ArticlesPage() {
   )
 
   return (
-    <ModuleLayout moduleName="magasin">
+    <ModuleLayout module="master-data">
       <div className="container mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Codes Article</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Codes Article</h1>
             <p className="text-gray-600 mt-1">Gestion des codes d'article (génération automatique)</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="w-32 h-20">
               <PortIllustration className="w-full h-full" />
             </div>
-            <Button onClick={() => setShowCreateModal(true)}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button 
+              onClick={() => setShowCreateModal(true)}
+              className="bg-kamlog-success hover:bg-kamlog-success/90 text-white"
+            >
+              <span className="material-symbols-outlined mr-2">add</span>
               Nouvel Article
             </Button>
           </div>
@@ -144,7 +146,7 @@ export default function ArticlesPage() {
 
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
             <Input
               placeholder="Rechercher par code ou nom..."
               value={searchQuery}
@@ -228,17 +230,17 @@ function ArticleForm({
   onSubmit: (data: ArticleCreate | ArticleUpdate) => void
   onCancel: () => void
 }) {
-  const [formData, setFormData] = useState(
-    initialData || {
+  const [formData, setFormData] = useState<ArticleCreate>(() => {
+    return (initialData as any) || {
       code_article: '',
       nom: '',
       description: '',
-      unite_mesure: UniteMesure.UDB,
+      unite_mesure: UniteMesure.UDB, // Utilisation de l'Enum pour le type-safety
       poids_unitaire: undefined,
       volume_unitaire: undefined,
       est_actif: true
-    }
-  )
+    };
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -287,18 +289,18 @@ function ArticleForm({
         <label className="mb-1 block text-sm font-medium">Unité de mesure *</label>
         <Select
           value={formData.unite_mesure}
-          onValueChange={(value) => setFormData({ ...formData, unite_mesure: value as UniteMesure })}
+          onValueChange={(value: UniteMesure) => setFormData({ ...formData, unite_mesure: value })}
         >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={UniteMesure.UDB}>UDB (Unité de base)</SelectItem>
-            <SelectItem value={UniteMesure.KG}>Kilogramme (KG)</SelectItem>
-            <SelectItem value={UniteMesure.TONNE}>Tonne</SelectItem>
-            <SelectItem value={UniteMesure.M3}>Mètre cube (M³)</SelectItem>
-            <SelectItem value={UniteMesure.M2}>Mètre carré (M²)</SelectItem>
-            <SelectItem value={UniteMesure.UNITE}>Unité</SelectItem>
+            <SelectItem value="UDB">UDB (Unité de base)</SelectItem>
+            <SelectItem value="KG">Kilogramme (KG)</SelectItem>
+            <SelectItem value="TONNE">Tonne</SelectItem>
+            <SelectItem value="M3">Mètre cube (M³)</SelectItem>
+            <SelectItem value="M2">Mètre carré (M²)</SelectItem>
+            <SelectItem value="UNITE">Unité</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -310,7 +312,7 @@ function ArticleForm({
             type="number"
             step="0.01"
             value={formData.poids_unitaire || ''}
-            onChange={(e) => setFormData({ ...formData, poids_unitaire: e.target.value ? parseFloat(e.target.value) : undefined })}
+            onChange={(e) => setFormData({ ...formData, poids_unitaire: e.target.value ? parseFloat(e.target.value) : undefined as any })}
           />
         </div>
         <div>
@@ -319,7 +321,7 @@ function ArticleForm({
             type="number"
             step="0.01"
             value={formData.volume_unitaire || ''}
-            onChange={(e) => setFormData({ ...formData, volume_unitaire: e.target.value ? parseFloat(e.target.value) : undefined })}
+            onChange={(e) => setFormData({ ...formData, volume_unitaire: e.target.value ? parseFloat(e.target.value) : (undefined as any) })}
           />
         </div>
       </div>

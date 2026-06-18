@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG ERP - Création Profil Client</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e7eefe",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#006c49",
+                    "primary": "#0058be",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-error-container": "#93000a",
+                    "on-background": "#151c27",
+                    "on-secondary-fixed": "#002113",
+                    "surface-container-highest": "#dce2f3",
+                    "secondary-fixed": "#6ffbbe",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface-variant": "#424754",
+                    "surface-container-high": "#e2e8f8",
+                    "tertiary-container": "#a36700",
+                    "tertiary": "#825100",
+                    "secondary-fixed-dim": "#4edea3",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2a313d",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb8",
+                    "outline": "#727785",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-variant": "#dce2f3",
+                    "outline-variant": "#c2c6d6",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#2170e4",
+                    "surface-container-low": "#f0f3ff",
+                    "surface": "#f9f9ff",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-surface": "#151c27",
+                    "on-primary-container": "#fefcff",
+                    "inverse-primary": "#adc6ff",
+                    "background": "#f9f9ff",
+                    "surface-dim": "#d3daea",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-tint": "#005ac2",
+                    "on-primary-fixed": "#001a42",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#00714d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxs": "0.25rem",
+                    "gutter": "1rem",
+                    "md": "1rem",
+                    "max-width": "1600px",
+                    "lg": "1.5rem",
+                    "xs": "0.5rem",
+                    "sm": "0.75rem",
+                    "margin-desktop": "1.5rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "data-tabular": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f3ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* Form specifics for high density */
+        .kamlog-input {
+            @apply w-full h-8 px-2 font-body-sm text-body-sm border border-outline-variant rounded-DEFAULT bg-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors;
+        }
+        .kamlog-label {
+            @apply block font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider;
+        }
+        .kamlog-section-title {
+            @apply font-title-md text-title-md text-on-surface flex items-center gap-2 mb-4 pb-2 border-b border-outline-variant;
+        }
+        
+        /* Master Data Green accent */
+        .accent-master-data { @apply text-secondary; }
+        .bg-master-data-light { @apply bg-secondary-container text-on-secondary-container; }
+    </style>
+</head>
+<body class="text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
+<div class="mb-8">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-bold text-xl shadow-sm">K</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-fixed-variant text-on-primary font-title-md text-title-md py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 mb-6 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            Nouvelle Opération
+        </button>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                        Tableau de bord
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                        Transport
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">payments</span>
+                        Finances
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">minor_crash</span>
+                        Parc Automobile
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors font-body-md text-body-md border-l-4 border-secondary" href="#">
+<span class="material-symbols-outlined text-secondary">database</span>
+                        Master Data
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Paramètres
+                    </a>
+</li>
+</ul>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+                        Déconnexion
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-[260px] flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter shrink-0">
+<div class="flex items-center gap-6">
+<span class="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex gap-1 h-full items-end">
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base px-3 py-4 border-b-2 border-transparent" href="#">Articles</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base px-3 py-4" href="#">Clients</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base px-3 py-4 border-b-2 border-transparent" href="#">Stocks</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base px-3 py-4 border-b-2 border-transparent" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Global Search / T-Code -->
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded-md">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="w-64 h-9 pl-9 pr-3 bg-surface-container-lowest border border-outline-variant rounded-md font-body-sm text-body-sm focus:outline-none" placeholder="Rechercher T-Code" type="text"/>
+<div class="absolute right-1 top-1/2 -translate-y-1/2 bg-surface-container px-1.5 rounded text-xs text-on-surface-variant font-medium border border-outline-variant">⌘K</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center ml-2 border border-outline-variant cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter bg-surface-container-low">
+<div class="max-w-[1200px] mx-auto">
+<!-- Breadcrumbs & Header Context -->
+<div class="mb-4">
+<div class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant mb-2">
+<span class="material-symbols-outlined text-[14px]">database</span>
+<span>Master Data</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Clients</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-secondary font-medium">Création Profil</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-secondary-container rounded flex items-center justify-center text-secondary border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">domain_add</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Nouveau Client Corporate</h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-surface-container-high px-2 py-0.5 rounded text-xs font-mono text-on-surface-variant border border-outline-variant">T-Code: KC34</span>
+<span class="bg-master-data-light px-2 py-0.5 rounded text-xs font-medium border border-secondary/30">Mode Brouillon</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface text-on-surface border border-outline-variant rounded hover:bg-surface-container transition-colors font-title-sm text-title-sm flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">close</span>
+                                Annuler
+                            </button>
+<button class="px-4 py-2 bg-secondary text-on-secondary rounded hover:bg-on-secondary-fixed-variant transition-colors font-title-sm text-title-sm flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                Enregistrer Profil
+                            </button>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Forms -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Primary Data (8 cols) -->
+<div class="col-span-12 xl:col-span-8 space-y-gutter">
+<!-- Identification Section -->
+<div class="bg-surface border border-outline-variant rounded-lg p-md shadow-sm">
+<h3 class="kamlog-section-title">
+<span class="material-symbols-outlined text-[20px] accent-master-data">badge</span>
+                                Identification Légale
+                            </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2">
+<label class="kamlog-label">Raison Sociale / Nom de l'entreprise *</label>
+<input class="kamlog-input" placeholder="Ex: BOLLORÉ TRANSPORT &amp; LOGISTICS CAMEROUN SA" type="text"/>
+</div>
+<div>
+<label class="kamlog-label">Sigle / Acronyme</label>
+<input class="kamlog-input" placeholder="Ex: BTL" type="text"/>
+</div>
+<div>
+<label class="kamlog-label">Type d'entité *</label>
+<select class="kamlog-input">
+<option value="">Sélectionner...</option>
+<option value="sa">Société Anonyme (SA)</option>
+<option value="sarl">Société à Responsabilité Limitée (SARL)</option>
+<option value="succursale">Succursale</option>
+<option value="autre">Autre</option>
+</select>
+</div>
+<div class="col-span-2 mt-2">
+<div class="flex gap-4 p-3 bg-surface-container-lowest border border-outline-variant rounded bg-yellow-50">
+<div class="flex-1">
+<label class="kamlog-label text-tertiary-container">Numéro d'Identifiant Unique (NIU) *</label>
+<div class="relative">
+<input class="kamlog-input border-tertiary-container/30 focus:border-tertiary-container focus:ring-tertiary-container font-mono" placeholder="M000000000000X" type="text"/>
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-outline font-mono">Format CM</span>
+</div>
+</div>
+<div class="flex-1">
+<label class="kamlog-label">Registre du Commerce (RCCM) *</label>
+<input class="kamlog-input font-mono" placeholder="RC/DLA/20.../B/..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Address Section -->
+<div class="bg-surface border border-outline-variant rounded-lg p-md shadow-sm">
+<h3 class="kamlog-section-title">
+<span class="material-symbols-outlined text-[20px] accent-master-data">location_on</span>
+                                Localisation &amp; Coordonnées (Cameroun)
+                            </h3>
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-8">
+<label class="kamlog-label">Siège Social / Adresse Physique *</label>
+<input class="kamlog-input" placeholder="Boulevard de la République, Akwa..." type="text"/>
+</div>
+<div class="col-span-4">
+<label class="kamlog-label">Boîte Postale (BP)</label>
+<input class="kamlog-input" placeholder="BP 4080" type="text"/>
+</div>
+<div class="col-span-6">
+<label class="kamlog-label">Ville *</label>
+<select class="kamlog-input">
+<option selected="" value="douala">Douala</option>
+<option value="yaounde">Yaoundé</option>
+<option value="kribi">Kribi</option>
+<option value="bafoussam">Bafoussam</option>
+<option value="garoua">Garoua</option>
+</select>
+</div>
+<div class="col-span-6">
+<label class="kamlog-label">Région *</label>
+<select class="kamlog-input bg-surface-container-lowest" disabled="">
+<option selected="" value="littoral">Littoral</option>
+</select>
+</div>
+<div class="col-span-6">
+<label class="kamlog-label">Téléphone Standard *</label>
+<div class="flex">
+<span class="inline-flex items-center px-3 border border-r-0 border-outline-variant bg-surface-container-lowest text-on-surface-variant text-sm rounded-l-DEFAULT">+237</span>
+<input class="kamlog-input rounded-l-none" placeholder="233 XX XX XX" type="text"/>
+</div>
+</div>
+<div class="col-span-6">
+<label class="kamlog-label">Email Principal Entreprise *</label>
+<input class="kamlog-input" placeholder="contact@entreprise.cm" type="email"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Commercial & Settings (4 cols) -->
+<div class="col-span-12 xl:col-span-4 space-y-gutter">
+<!-- Commercial Parameters -->
+<div class="bg-surface border border-outline-variant rounded-lg p-md shadow-sm">
+<h3 class="kamlog-section-title">
+<span class="material-symbols-outlined text-[20px] accent-master-data">account_balance_wallet</span>
+                                Paramètres Financiers
+                            </h3>
+<div class="space-y-4">
+<div>
+<label class="kamlog-label">Conditions de Paiement *</label>
+<select class="kamlog-input">
+<option value="">Sélectionner...</option>
+<option value="comptant">Comptant (À la commande)</option>
+<option value="15j">15 Jours fin de mois</option>
+<option value="30j">30 Jours nets</option>
+<option value="45j">45 Jours nets</option>
+</select>
+</div>
+<div>
+<label class="kamlog-label">Devise de Facturation *</label>
+<select class="kamlog-input">
+<option selected="" value="xaf">XAF (Franc CFA CEMAC)</option>
+<option value="eur">EUR (Euro)</option>
+<option value="usd">USD (Dollar US)</option>
+</select>
+</div>
+<div class="pt-2 border-t border-outline-variant mt-2">
+<label class="kamlog-label text-error">Limite de Crédit Autorisée (XAF)</label>
+<div class="relative">
+<span class="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant font-mono">FCFA</span>
+<input class="kamlog-input pl-12 text-right font-mono font-medium text-error focus:ring-error focus:border-error" placeholder="0" type="text" value="0"/>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-1 leading-tight">Nécessite une approbation du DAF si &gt; 1M XAF.</p>
+</div>
+</div>
+</div>
+<!-- Key Contacts Mini-Table -->
+<div class="bg-surface border border-outline-variant rounded-lg p-md shadow-sm flex flex-col">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-outline-variant">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] accent-master-data">contacts</span>
+                                    Contacts Principaux
+                                </h3>
+<button class="text-secondary hover:bg-secondary-container p-1 rounded transition-colors" title="Ajouter un contact">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</button>
+</div>
+<div class="border border-outline-variant rounded overflow-hidden">
+<table class="w-full text-left text-sm">
+<thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase font-medium border-b border-outline-variant">
+<tr>
+<th class="px-2 py-1.5 w-1/3">Rôle</th>
+<th class="px-2 py-1.5">Nom &amp; Contact</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="bg-white">
+<td class="px-2 py-2 text-xs font-medium text-on-surface">Dir. Général</td>
+<td class="px-2 py-2">
+<input class="w-full text-xs p-1 border border-outline-variant rounded" placeholder="Nom..." type="text"/>
+</td>
+</tr>
+<tr class="bg-surface-container-lowest">
+<td class="px-2 py-2 text-xs font-medium text-on-surface">Resp. Logistique</td>
+<td class="px-2 py-2">
+<input class="w-full text-xs p-1 border border-outline-variant rounded" placeholder="Nom..." type="text"/>
+</td>
+</tr>
+<tr class="bg-white">
+<td class="px-2 py-2 text-xs font-medium text-on-surface">Comptabilité</td>
+<td class="px-2 py-2">
+<input class="w-full text-xs p-1 border border-outline-variant rounded" placeholder="Nom..." type="text"/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

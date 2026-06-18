@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saisie Ticket Carburant - K-Transport</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-surface": "#151c27",
+                        "primary": "#0058be",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#424754",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#005ac2",
+                        "on-background": "#151c27",
+                        "on-secondary-container": "#00714d",
+                        "on-secondary-fixed": "#002113",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-container": "#a36700",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#005236",
+                        "inverse-surface": "#2a313d",
+                        "outline-variant": "#c2c6d6",
+                        "secondary": "#006c49",
+                        "tertiary": "#825100",
+                        "surface-container-highest": "#dce2f3",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary-fixed": "#6ffbbe",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#fefcff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#727785",
+                        "on-primary-fixed": "#001a42",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004395",
+                        "secondary-container": "#6cf8bb",
+                        "primary-container": "#2170e4",
+                        "on-error-container": "#93000a",
+                        "surface": "#f9f9ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "transport-accent": "#f97316", /* Custom Accent for Transport */
+                        "transport-accent-light": "#fed7aa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "max-width": "1600px",
+                        "xl": "2rem",
+                        "gutter": "1rem",
+                        "sm": "0.75rem",
+                        "xxs": "0.25rem",
+                        "margin-desktop": "1.5rem",
+                        "lg": "1.5rem",
+                        "md": "1rem",
+                        "xs": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-tabular": ["13px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant dark:border-outline w-[240px] h-screen flex-shrink-0 flex flex-col z-40 fixed left-0 top-0 transition-all duration-200 ease-in-out hidden md:flex">
+<!-- Header -->
+<div class="p-lg border-b border-outline-variant flex items-center gap-sm">
+<div class="w-10 h-10 bg-transport-accent rounded flex items-center justify-center text-on-error font-title-lg font-bold">PA</div>
+<div>
+<h1 class="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
+</div>
+</div>
+<!-- T-Code Search -->
+<div class="p-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface rounded border border-outline-variant text-body-sm font-body-sm focus:outline-none focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" placeholder="T-Code Search" type="text"/>
+</div>
+</div>
+<!-- Main Nav -->
+<ul class="flex-1 py-sm">
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-transport-accent bg-surface-container-highest border-l-4 border-transport-accent font-bold font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined icon-fill">local_shipping</span>
+                    Transport
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                    Magasin
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">payments</span>
+                    Finance
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">local_parking</span>
+                    Parc
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+                    Audit
+                </a>
+</li>
+</ul>
+<!-- Footer Nav -->
+<ul class="border-t border-outline-variant py-sm">
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">support_agent</span>
+                    Support
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-lg py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container" href="#">
+<span class="material-symbols-outlined">logout</span>
+                    Log out
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[240px] flex flex-col min-h-screen">
+<!-- TopNavBar (Simplified for deep linking context) -->
+<header class="bg-surface h-16 border-b border-outline-variant flex items-center justify-between px-margin-desktop w-full mx-auto">
+<div class="flex items-center gap-sm text-on-surface-variant font-label-md text-label-md">
+<a class="hover:text-primary transition-colors" href="#">Transport</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Opérations</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-on-surface font-bold">Saisie Ticket Carburant</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd0RGFdOgK86gkkc_yA-0pmtg7UfB_cBJFXgfySVDP67sNmIpf6KvRYjz3vFuUIWR-LqgldQdm4DiIeAcpGDPcnrisGZF3wEV7v2DN04zo1rzJcoXME8dHrt9fCy7a2ityJu73k4CCp5aYK9kagrjZ-hg2WFVdewkcjf6aeVlfzzeXNtNL7m1c3J2jznBnjHBmj1tsbF-93k_OMsNkCIA1j2u91ArMbL-rsDS8TWsBdIPqQlezb5u5YvP3th1PvcRbIzbyMDoZfbo"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 p-margin-desktop bg-surface-container-low max-w-max-width mx-auto w-full grid grid-cols-1 xl:grid-cols-12 gap-lg">
+<!-- Left Column: Form (8 cols) -->
+<div class="xl:col-span-8 flex flex-col gap-md">
+<div class="bg-surface rounded-xl border border-outline-variant overflow-hidden">
+<div class="p-md border-b border-outline-variant bg-surface-bright">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Détails de l'avitaillement</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Saisissez les informations du ticket de caisse ou bon de livraison.</p>
+</div>
+<form class="p-lg grid grid-cols-1 md:grid-cols-2 gap-x-lg gap-y-md">
+<!-- Vehicle Selection -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Véhicule (Immatriculation / Parc ID)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">directions_car</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" placeholder="Ex: TRK-123-CD" type="text" value="TRK-902-AB"/>
+</div>
+</div>
+<!-- Driver Selection -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Conducteur</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+<select class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded font-body-md text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors appearance-none">
+<option>Jean Dupont (CH-042)</option>
+<option>Marie Martin (CH-089)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+<!-- Date & Time -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Date &amp; Heure du ticket</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">calendar_today</span>
+<input class="w-full pl-10 pr-2 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" type="date" value="2023-10-24"/>
+</div>
+<div class="relative w-24">
+<input class="w-full px-2 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" type="time" value="08:45"/>
+</div>
+</div>
+</div>
+<!-- Odometer -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Kilométrage (Compteur)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">speed</span>
+<input class="w-full pl-10 pr-12 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors text-right" type="number" value="145203"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md">km</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-right">Dernier relevé: 144,850 km</p>
+</div>
+<!-- Divider -->
+<div class="col-span-1 md:col-span-2 border-t border-outline-variant my-xs"></div>
+<!-- Fuel Type -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Type de Carburant</label>
+<div class="flex gap-md">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="text-transport-accent focus:ring-transport-accent" name="fuel_type" type="radio"/>
+<span class="font-body-md text-body-md">Diesel (Gazole)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-transport-accent focus:ring-transport-accent" name="fuel_type" type="radio"/>
+<span class="font-body-md text-body-md">AdBlue</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-transport-accent focus:ring-transport-accent" name="fuel_type" type="radio"/>
+<span class="font-body-md text-body-md">Essence (SP95/98)</span>
+</label>
+</div>
+</div>
+<!-- Volume -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Volume</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">local_gas_station</span>
+<input class="w-full pl-10 pr-12 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors text-right" id="volume_input" step="0.01" type="number" value="450.00"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md">L</span>
+</div>
+</div>
+<!-- Unit Price -->
+<div class="col-span-1">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Prix Unitaire (TTC)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">euro</span>
+<input class="w-full pl-10 pr-12 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors text-right" id="price_input" step="0.001" type="number" value="1.854"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md">€/L</span>
+</div>
+</div>
+<!-- Total (Calculated) -->
+<div class="col-span-1 md:col-span-2 bg-surface-container rounded p-md flex items-center justify-between border border-outline-variant">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block">Montant Total TTC</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Calcul automatique</span>
+</div>
+<div class="text-right">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface" id="total_amount">834.30 €</span>
+</div>
+</div>
+<!-- Divider -->
+<div class="col-span-1 md:col-span-2 border-t border-outline-variant my-xs"></div>
+<!-- Scan/Upload -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-xs">Justificatif (Scan du ticket)</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-lg flex flex-col items-center justify-center bg-surface hover:bg-surface-container-low transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-transport-accent mb-2">document_scanner</span>
+<p class="font-title-md text-title-md text-on-surface">Glissez-déposez le scan ici</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">ou cliquez pour parcourir (PDF, JPG, PNG)</p>
+</div>
+</div>
+</form>
+<!-- Action Bar -->
+<div class="p-md border-t border-outline-variant bg-surface-bright flex justify-end gap-md items-center">
+<button class="px-4 py-2 rounded font-label-md text-label-md text-on-surface hover:bg-surface-container transition-colors">Annuler</button>
+<button class="px-4 py-2 rounded bg-transport-accent text-on-error font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">save</span>
+                            Enregistrer le ticket
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Context/Summary (4 cols) -->
+<div class="xl:col-span-4 flex flex-col gap-md">
+<!-- Vehicle Info Card -->
+<div class="bg-surface rounded-xl border border-outline-variant p-md">
+<div class="flex items-center gap-3 mb-md pb-md border-b border-outline-variant">
+<div class="w-12 h-12 bg-transport-accent-light rounded flex items-center justify-center text-transport-accent">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">TRK-902-AB</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tracteur Renault T480</p>
+</div>
+</div>
+<h4 class="font-label-sm text-label-sm text-on-surface uppercase mb-sm">Indicateurs de consommation</h4>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Moy. 30 derniers jours</span>
+<span class="font-data-tabular text-body-sm font-medium text-on-surface">32.4 L/100km</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Objectif Flotte</span>
+<span class="font-data-tabular text-body-sm font-medium text-on-surface">31.0 L/100km</span>
+</div>
+<!-- Status Bar -->
+<div class="mt-xs">
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden flex">
+<div class="bg-transport-accent h-full w-[85%]"></div>
+</div>
+<div class="flex justify-between mt-1">
+<span class="font-label-sm text-[10px] text-transport-accent">Surconsommation légère (+4.5%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Tickets List -->
+<div class="bg-surface rounded-xl border border-outline-variant overflow-hidden">
+<div class="p-md border-b border-outline-variant bg-surface-bright flex justify-between items-center">
+<h3 class="font-title-md text-title-md font-medium text-on-surface">Derniers pleins</h3>
+<a class="font-label-sm text-label-sm text-transport-accent hover:underline" href="#">Voir historique</a>
+</div>
+<ul class="divide-y divide-outline-variant">
+<li class="p-sm hover:bg-surface-container-lowest transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface">20 Oct 2023 - Total Energies</span>
+<span class="font-data-tabular text-label-md font-medium">850.20 €</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
+<span>144,850 km</span>
+<span>460.0 L</span>
+</div>
+</li>
+<li class="p-sm hover:bg-surface-container-lowest transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface">15 Oct 2023 - AS24</span>
+<span class="font-data-tabular text-label-md font-medium">795.50 €</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
+<span>143,420 km</span>
+<span>430.5 L</span>
+</div>
+</li>
+<li class="p-sm hover:bg-surface-container-lowest transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="font-label-md text-label-md text-on-surface">10 Oct 2023 - Shell</span>
+<span class="font-data-tabular text-label-md font-medium">810.00 €</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
+<span>142,050 km</span>
+<span>445.0 L</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple calculation script for demonstration
+        const volInput = document.getElementById('volume_input');
+        const priceInput = document.getElementById('price_input');
+        const totalOutput = document.getElementById('total_amount');
+
+        function calcTotal() {
+            const vol = parseFloat(volInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = vol * price;
+            totalOutput.textContent = total.toFixed(2) + ' €';
+        }
+
+        volInput.addEventListener('input', calcTotal);
+        priceInput.addEventListener('input', calcTotal);
+    </script>
+</body></html>

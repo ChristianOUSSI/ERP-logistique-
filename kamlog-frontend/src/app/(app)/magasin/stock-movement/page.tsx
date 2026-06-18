@@ -2,10 +2,10 @@
 'use client'
 
 import { 
-  Dashboard, LocalShipping, Payments, MinorCrash, Settings,
-  HelpOutline, Logout, Add, Search, Download, ViewInAr,
-  QrCode2, FirstPage, LastPage, ChevronLeft, ChevronRight,
-  Notifications, VerifiedUser, AccountCircle
+  LayoutDashboard, Truck, CreditCard, AlertTriangle, Settings,
+  HelpCircle, LogOut, Plus, Search, Download, Box,
+  QrCode, ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight,
+  Bell, ShieldCheck, User
 } from 'lucide-react'
 
 export default function KMagasinStockMovementHistory() {
@@ -16,7 +16,7 @@ export default function KMagasinStockMovementHistory() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
-            <ViewInAr className="text-on-primary-container" size={20} />
+            <Box className="text-on-primary-container" size={20} />
           </div>
           <div>
             <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
@@ -26,7 +26,7 @@ export default function KMagasinStockMovementHistory() {
 
         {/* CTA */}
         <button className="w-full bg-primary text-on-primary font-title-md text-title-md py-2 px-4 rounded mb-6 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors">
-          <Add size={18} />
+          <Plus size={18} />
           Nouvelle Opération
         </button>
 
@@ -34,19 +34,19 @@ export default function KMagasinStockMovementHistory() {
         <nav className="flex-1 space-y-1">
           {/* Active Item */}
           <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="#">
-            <Dashboard size={20} />
+            <LayoutDashboard size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
           </a>
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <LocalShipping size={20} />
+            <Truck size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Transport</span>
           </a>
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <Payments size={20} />
+            <CreditCard size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Finances</span>
           </a>
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
-            <MinorCrash size={20} />
+            <AlertTriangle size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Parc Automobile</span>
           </a>
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
@@ -58,11 +58,11 @@ export default function KMagasinStockMovementHistory() {
         {/* Footer */}
         <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
-            <HelpOutline size={20} />
+            <HelpCircle size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Support</span>
           </a>
           <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
-            <Logout size={20} />
+            <LogOut size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Déconnexion</span>
           </a>
         </div>
@@ -95,10 +95,10 @@ export default function KMagasinStockMovementHistory() {
             {/* Trailing Actions */}
             <div className="flex items-center gap-2 text-on-surface-variant">
               <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
-                <Notifications size={20} />
+                <Bell size={20} />
               </button>
               <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
-                <VerifiedUser size={20} />
+                <ShieldCheck size={20} />
               </button>
               <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
                 <div className="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center text-xs font-bold text-primary">JD</div>
@@ -136,7 +136,7 @@ export default function KMagasinStockMovementHistory() {
                 Exporter
               </button>
               <button className="flex items-center gap-2 px-3 py-1.5 bg-error text-on-error rounded font-title-md text-title-md shadow-sm hover:opacity-90 transition-opacity">
-                <Add size={16} />
+                <Plus size={16} />
                 Mouvement Manuel
               </button>
             </div>
@@ -150,7 +150,7 @@ export default function KMagasinStockMovementHistory() {
             <div className="flex-1 min-w-[200px]">
               <label className="block font-label-md text-label-md text-on-surface-variant mb-1">Code Article / Description</label>
               <div className="relative">
-                <QrCode2 className="absolute left-2.5 top-1/2 -translate-y-1/2 text-outline" size={16} />
+                <QrCode className="absolute left-2.5 top-1/2 -translate-y-1/2 text-outline" size={16} />
                 <input 
                   className="w-full pl-8 pr-3 py-1.5 border border-outline-variant rounded bg-surface font-body-sm text-body-sm focus:border-error focus:ring-1 focus:ring-error transition-all outline-none" 
                   placeholder="Ex: ART-90210" 
@@ -278,7 +278,7 @@ export default function KMagasinStockMovementHistory() {
               <span className="font-body-sm text-body-sm text-on-surface-variant ml-2">Affichage de 1-4 sur 1,204 résultats</span>
               <div className="flex items-center gap-1">
                 <button className="p-1 text-on-surface-variant hover:bg-surface-container-high rounded disabled:opacity-50">
-                  <FirstPage size={16} />
+                  <ChevronsLeft size={16} />
                 </button>
                 <button className="p-1 text-on-surface-variant hover:bg-surface-container-high rounded disabled:opacity-50">
                   <ChevronLeft size={16} />
@@ -288,7 +288,7 @@ export default function KMagasinStockMovementHistory() {
                   <ChevronRight size={16} />
                 </button>
                 <button className="p-1 text-on-surface-variant hover:bg-surface-container-high rounded">
-                  <LastPage size={16} />
+                  <ChevronsRight size={16} />
                 </button>
               </div>
             </div>

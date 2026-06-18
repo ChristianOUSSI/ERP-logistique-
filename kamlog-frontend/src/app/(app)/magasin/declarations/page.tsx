@@ -57,7 +57,9 @@ export default function DeclarationsPage() {
       cell: (row: Declaration) => {
         const statusConfig = {
           [StatutDeclaration.BROUILLON]: { color: 'bg-yellow-100 text-yellow-800', icon: FileText },
+          [StatutDeclaration.SOUMISE]: { color: 'bg-blue-100 text-blue-800', icon: FileText },
           [StatutDeclaration.VALIDEE]: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
+          [StatutDeclaration.REJETEE]: { color: 'bg-red-100 text-red-800', icon: XCircle },
           [StatutDeclaration.ANNULEE]: { color: 'bg-red-100 text-red-800', icon: XCircle }
         }
         const config = statusConfig[row.statut]
@@ -144,7 +146,7 @@ export default function DeclarationsPage() {
   )
 
   return (
-    <ModuleLayout moduleName="magasin">
+    <ModuleLayout module="magasin">
       <div className="container mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -249,6 +251,8 @@ function DeclarationForm({
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState<DeclarationCreate>({
+    numero_bl: initialData?.numero_bl || '',
+    date_declaration: initialData?.date_declaration ? new Date(initialData.date_declaration).toISOString().split('T')[0] : '',
     client_id: initialData?.client_id || 0,
     date_arrivee_prevue: initialData?.date_arrivee_prevue ? new Date(initialData.date_arrivee_prevue).toISOString().split('T')[0] : '',
     statut: initialData?.statut || StatutDeclaration.BROUILLON,
@@ -256,8 +260,7 @@ function DeclarationForm({
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
       quantite_declaree: l.quantite_declaree,
-      unite_mesure: l.unite_mesure,
-      quantite_udb: l.quantite_udb
+      prix_unitaire: l.prix_unitaire
     })) || []
   })
 
@@ -274,10 +277,10 @@ function DeclarationForm({
   }
 
   const addLigne = () => {
-    if (newLigne.article_id && newLigne.quantite_declaree > 0) {
+    if (newLigne.article_id && (newLigne.quantite_declaree || 0) > 0) {
       setFormData({
         ...formData,
-        lignes: [...formData.lignes, { ...newLigne }]
+        lignes: [...(formData.lignes || []), { ...newLigne }]
       })
       setNewLigne({
         article_id: 0,
@@ -291,7 +294,7 @@ function DeclarationForm({
   const removeLigne = (index: number) => {
     setFormData({
       ...formData,
-      lignes: formData.lignes.filter((_, i) => i !== index)
+      lignes: (formData.lignes || []).filter((_, i) => i !== index)
     })
   }
 
@@ -301,7 +304,7 @@ function DeclarationForm({
         <div>
           <label className="mb-1 block text-sm font-medium">Client *</label>
           <Select
-            value={formData.client_id.toString()}
+            value={(formData.client_id || 0).toString()}
             onValueChange={(value) => setFormData({ ...formData, client_id: parseInt(value) })}
           >
             <SelectTrigger>
@@ -387,9 +390,9 @@ function DeclarationForm({
           </div>
         </div>
 
-        {formData.lignes.length > 0 && (
+        {(formData.lignes || []).length > 0 && (
           <div className="space-y-2">
-            {formData.lignes.map((ligne, index) => (
+            {(formData.lignes || []).map((ligne, index) => (
               <div key={index} className="flex items-center justify-between rounded border bg-white p-2">
                 <div className="text-sm">
                   <span className="font-medium">Article #{ligne.article_id}</span>
@@ -418,7 +421,7 @@ function DeclarationForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Annuler
         </Button>
-        <Button type="submit" disabled={formData.lignes.length === 0}>
+        <Button type="submit" disabled={(formData.lignes || []).length === 0}>
           Enregistrer
         </Button>
       </div>

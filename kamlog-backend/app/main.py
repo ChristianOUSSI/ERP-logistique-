@@ -8,11 +8,14 @@ from slowapi.errors import RateLimitExceeded
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
+from app import admin
 from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
 from app.utils.error_handler import setup_error_handlers
+from app.middleware.audit_middleware import AuditMiddleware
+from app.utils.idempotency import IdempotencyMiddleware
 
 
 @asynccontextmanager
@@ -45,6 +48,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Setup error handlers
 setup_error_handlers(app)
 
+# Middlewares de Sécurité et Audit (Niveau World Pro)
+app.add_middleware(AuditMiddleware)
+app.add_middleware(IdempotencyMiddleware, redis_url=settings.REDIS_URL)
+
 # CORS  autoriser le frontend Next.js
 app.add_middleware(
     CORSMiddleware,
@@ -62,13 +69,15 @@ app.include_router(finance.router, prefix="/api/finance", tags=["Finance"])
 app.include_router(parc.router, prefix="/api/parc", tags=["Parc"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
-app.include_router(magasin.router, tags=["K-Magasin"])
-app.include_router(gateway.router, tags=["Gateway"])
+app.include_router(magasin.router, prefix="/api/magasin", tags=["K-Magasin"])
+app.include_router(gateway.router, prefix="/api/gateway", tags=["Gateway"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
-app.include_router(goods_declaration.router, tags=["Goods Declaration"])
-app.include_router(removal_slip.router, tags=["Removal Slip"])
-app.include_router(reception_mag3.router, tags=["Reception Mag3"])
-app.include_router(master_data.router, tags=["Master Data"])
+app.include_router(goods_declaration.router, prefix="/api/transport/goods-declarations", tags=["Goods Declaration"])
+app.include_router(removal_slip.router, prefix="/api/magasin/removal-slips", tags=["Removal Slip"])
+app.include_router(reception_mag3.router, prefix="/api/magasin/receptions-mag3", tags=["Reception Mag3"])
+app.include_router(master_data.router, prefix="/api/master-data", tags=["Master Data"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies"])
 
 
 @app.get('/api/health')

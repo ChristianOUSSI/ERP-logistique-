@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     
+    # Business Logic
+    TVA_RATE: str = "0.1925" # 19.25%
+    CURRENCY: str = "XAF"
+
     # Database
     DB_NAME: str = "kamlog_erp"
     DB_USER: str = "kamlog"

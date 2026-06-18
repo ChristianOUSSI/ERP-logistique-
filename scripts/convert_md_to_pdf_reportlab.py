@@ -146,14 +146,19 @@ def parse_markdown(md_content):
     
     return flowables
 
-def convert_markdown_to_pdf(md_file, pdf_file):
+def convert_markdown_to_pdf(md_file, pdf_file, author=""):
     """Convert markdown file to PDF using reportlab."""
     # Read markdown file
     with open(md_file, 'r', encoding='utf-8') as f:
         md_content = f.read()
     
-    # Create PDF document
-    doc = SimpleDocTemplate(pdf_file, pagesize=letter)
+    # Create PDF document with author metadata
+    doc = SimpleDocTemplate(
+        pdf_file, 
+        pagesize=letter,
+        author=author,
+        title="KAMLOG EM-ERP Documentation"
+    )
     
     # Parse markdown and create flowables
     flowables = parse_markdown(md_content)
@@ -164,12 +169,21 @@ def convert_markdown_to_pdf(md_file, pdf_file):
     print(f"PDF created successfully: {pdf_file}")
 
 if __name__ == "__main__":
-    md_file = "docs/DOCUMENT_TRANSACTIONS.md"
-    pdf_file = "docs/DOCUMENT_TRANSACTIONS.pdf"
+    import sys
+    
+    # Default to transactions document if no arguments provided
+    if len(sys.argv) < 2:
+        md_file = "docs/DOCUMENT_TRANSACTIONS.md"
+        pdf_file = "docs/DOCUMENT_TRANSACTIONS.pdf"
+        author = ""
+    else:
+        md_file = sys.argv[1]
+        pdf_file = sys.argv[2] if len(sys.argv) > 2 else md_file.replace('.md', '.pdf')
+        author = sys.argv[3] if len(sys.argv) > 3 else ""
     
     # Get absolute paths
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     md_file = os.path.join(base_dir, md_file)
     pdf_file = os.path.join(base_dir, pdf_file)
     
-    convert_markdown_to_pdf(md_file, pdf_file)
+    convert_markdown_to_pdf(md_file, pdf_file, author)

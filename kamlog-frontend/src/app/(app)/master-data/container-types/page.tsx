@@ -3,6 +3,16 @@
 import { useState } from 'react'
 import { MaterialSymbol } from '@/components/MaterialSymbol'
 
+interface ContainerType {
+  id: number
+  code: string
+  description: string
+  longueur: number
+  largeur: number
+  hauteur: number
+  capacite: number
+}
+
 export default function ContainerTypesPage() {
   const [containerTypes, setContainerTypes] = useState([
     { id: 1, code: '20GP', description: "20' Standard", longueur: 6.06, largeur: 2.44, hauteur: 2.59, capacite: 33.1 },
@@ -14,7 +24,7 @@ export default function ContainerTypesPage() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [editingType, setEditingType] = useState(null)
+  const [editingType, setEditingType] = useState<ContainerType | null>(null)
 
   const filteredTypes = containerTypes.filter(type =>
     type.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,12 +36,12 @@ export default function ContainerTypesPage() {
     setShowModal(true)
   }
 
-  const handleEdit = (type) => {
+  const handleEdit = (type: ContainerType) => {
     setEditingType(type)
     setShowModal(true)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce type de conteneur?')) {
       setContainerTypes(containerTypes.filter(t => t.id !== id))
     }

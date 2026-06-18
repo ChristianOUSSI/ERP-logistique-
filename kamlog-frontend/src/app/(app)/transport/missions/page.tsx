@@ -42,7 +42,7 @@ export default function MissionsPage() {
   }
 
   return (
-    <ModuleLayout moduleName="transport">
+    <ModuleLayout module="transport">
       <div>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Missions de Transport</h2>

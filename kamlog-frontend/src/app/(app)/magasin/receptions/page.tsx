@@ -147,7 +147,7 @@ export default function ReceptionsPage() {
   )
 
   return (
-    <ModuleLayout moduleName="magasin">
+    <ModuleLayout module="magasin">
       <div className="container mx-auto p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -252,15 +252,15 @@ function ReceptionForm({
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState<ReceptionCreate>({
+    numero_reception: initialData?.numero_reception || '',
+    date_reception: initialData?.date_reception ? new Date(initialData.date_reception).toISOString().split('T')[0] : '',
     declaration_id: initialData?.declaration_id || 0,
     magasin_id: initialData?.magasin_id || 0,
     statut: initialData?.statut || StatutReception.EN_COURS,
     notes: initialData?.notes || '',
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
-      quantite_recue: l.quantite_recue,
-      unite_mesure: l.unite_mesure,
-      quantite_udb: l.quantite_udb
+      quantite_recue: l.quantite_recue
     })) || []
   })
 
@@ -280,7 +280,7 @@ function ReceptionForm({
     if (newLigne.article_id && newLigne.quantite_recue > 0) {
       setFormData({
         ...formData,
-        lignes: [...formData.lignes, { ...newLigne }]
+        lignes: [...(formData.lignes || []), { ...newLigne }]
       })
       setNewLigne({
         article_id: 0,
@@ -294,7 +294,7 @@ function ReceptionForm({
   const removeLigne = (index: number) => {
     setFormData({
       ...formData,
-      lignes: formData.lignes.filter((_, i) => i !== index)
+      lignes: (formData.lignes || []).filter((_, i) => i !== index)
     })
   }
 
@@ -304,7 +304,7 @@ function ReceptionForm({
         <div>
           <label className="mb-1 block text-sm font-medium">Déclaration *</label>
           <Select
-            value={formData.declaration_id.toString()}
+            value={(formData.declaration_id || 0).toString()}
             onValueChange={(value) => setFormData({ ...formData, declaration_id: parseInt(value) })}
           >
             <SelectTrigger>
@@ -319,7 +319,7 @@ function ReceptionForm({
         <div>
           <label className="mb-1 block text-sm font-medium">Magasin *</label>
           <Select
-            value={formData.magasin_id.toString()}
+            value={(formData.magasin_id || 0).toString()}
             onValueChange={(value) => setFormData({ ...formData, magasin_id: parseInt(value) })}
           >
             <SelectTrigger>
@@ -398,9 +398,9 @@ function ReceptionForm({
           </div>
         </div>
 
-        {formData.lignes.length > 0 && (
+        {(formData.lignes || []).length > 0 && (
           <div className="space-y-2">
-            {formData.lignes.map((ligne, index) => (
+            {(formData.lignes || []).map((ligne, index) => (
               <div key={index} className="flex items-center justify-between rounded border bg-white p-2">
                 <div className="text-sm">
                   <span className="font-medium">Article #{ligne.article_id}</span>
@@ -429,7 +429,7 @@ function ReceptionForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Annuler
         </Button>
-        <Button type="submit" disabled={formData.lignes.length === 0}>
+        <Button type="submit" disabled={(formData.lignes || []).length === 0}>
           Enregistrer
         </Button>
       </div>

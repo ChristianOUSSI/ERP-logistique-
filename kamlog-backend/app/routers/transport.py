@@ -18,7 +18,7 @@ from app.services.transport_service import (
     BandeLivraisonService, calculer_ecart_carburant
 )
 
-router = APIRouter()
+router = APIRouter(tags=["Transport"])
 
 
 # ─── Camions ─────────────────────────────────────────────

@@ -33,7 +33,10 @@ Le système KAMLOG EM-ERP permet de gérer:
 - **Stockage**: MinIO
 - **Authentification**: JWT avec MFA
 
-### 2.2 Modules Principaux
+### 2.2 Modules Avancés (Full Pro)
+8. **Predictive Maintenance**: Utilisation des données historiques pour prédire les pannes des véhicules du Parc.
+9. **Smart Warehousing**: Optimisation du placement des articles en magasin selon la fréquence de rotation (ABC Analysis).
+10. **Customs Gateway**: Interface directe avec les systèmes douaniers pour la validation des BL en temps réel.
 1. **Magasin**: Gestion des stocks, inventaires, réceptions
 2. **Transport**: Gestion des déclarations, conteneurs, carburant
 3. **Finance**: Facturation, transactions bancaires, réconciliation
@@ -551,4 +554,4 @@ Le système KAMLOG EM-ERP est une solution complète de gestion d'entreprise int
 
 **Document Version**: 2.0  
 **Date de mise à jour**: 15 Juin 2026  
-**Auteur**: Cascade AI Assistant
+**Auteur**: Code Axis Digital Cameroun
