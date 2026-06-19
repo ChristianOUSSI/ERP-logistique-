@@ -799,6 +799,11 @@ Le projet KAMLOG EM-ERP a une base solide avec une architecture moderne et des f
 
 ### 8.1 Manques Critiques - RÉSOLUS ✅
 
+> Note stricte World-Pro (truthfulness) : cette section utilise historiquement le label “RÉSOLUS ✅”. Pour un niveau **production world-pro**, ces points ne sont **pas** suffisants tant que les gaps listés dans `docs/WORLD_PRO_GAPS.md` (atomicité workflow Mag3, notifications persistées, RBAC unifié, Decimal sans float sur stock/audit, etc.) ne sont pas comblés.
+
+
+
+
 1. **Base de données incomplète** ✅
    - ✅ Table `goods_declarations` créée avec migration Alembic
    - ✅ Table `goods_declaration_lines` créée avec migration Alembic
