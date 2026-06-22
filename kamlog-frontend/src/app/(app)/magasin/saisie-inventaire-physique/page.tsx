@@ -175,28 +175,28 @@ export default function SaisieInventairePhysiquePage() {
             <span className="material-symbols-outlined text-sm">add</span> Nouvelle Opération
           </button>
           <nav className="flex-1 flex flex-col gap-2">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span> Tableau de bord
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span> Transport
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span> Finances
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold relative active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold relative active:scale-95 duration-150" href="/parc/overview">
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-error rounded-r"></div>
               <span className="material-symbols-outlined fill">minor_crash</span> Parc Automobile
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span> Paramètres
             </a>
           </nav>
           <div className="mt-auto flex flex-col gap-2 pt-4 border-t border-outline-variant">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span> Support
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span> Déconnexion
             </a>
           </div>

@@ -87,7 +87,7 @@
   <!-- Section texte -->
   <g transform="translate(200, 390)">
     <text x="0" y="0" font-size="15" font-weight="600" fill="white" text-anchor="middle">Système de Gestion Logistique Intégré</text>
-    <text x="0" y="16" font-size="11" font-weight="400" fill="#00B4D8" text-anchor="middle">Port Autonome de Douala — Cameroun</text>
+    <text x="0" y="16" font-size="11" font-weight="400" fill="#00B4D8" text-anchor="middle">Port Autonome de Douala  Cameroun</text>
   </g>
   
   <!-- Séparateur -->

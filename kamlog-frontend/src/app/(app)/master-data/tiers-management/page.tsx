@@ -43,23 +43,23 @@ export default function MasterDataTiersManagement() {
             </div>
             {/* Navigation Links */}
             <nav className="flex flex-col gap-1">
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="#">
+              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/transport/control">
                 <span className="material-symbols-outlined text-title-md">local_shipping</span>
                 <span className="text-label-md font-label-md">Transport</span>
               </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="#">
+              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/finance/overview">
                 <span className="material-symbols-outlined text-title-md">payments</span>
                 <span className="text-label-md font-label-md">Finance</span>
               </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="#">
+              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/parc/overview">
                 <span className="material-symbols-outlined text-title-md">inventory_2</span>
                 <span className="text-label-md font-label-md">Parc</span>
               </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="#">
+              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/magasin/dashboard">
                 <span className="material-symbols-outlined text-title-md">warehouse</span>
                 <span className="text-label-md font-label-md">Magasin</span>
               </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="#">
+              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="/audit/dashboard/health">
                 <span className="material-symbols-outlined text-title-md icon-fill">history_edu</span>
                 <span className="text-label-md font-label-md">Audit</span>
               </a>
@@ -72,11 +72,11 @@ export default function MasterDataTiersManagement() {
             </div>
           </div>
           <div className="mt-auto px-md flex flex-col gap-1">
-            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
               <span className="material-symbols-outlined text-title-md">settings</span>
               <span className="text-label-md font-label-md">Settings</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/login">
               <span className="material-symbols-outlined text-title-md">logout</span>
               <span className="text-label-md font-label-md">Logout</span>
             </a>

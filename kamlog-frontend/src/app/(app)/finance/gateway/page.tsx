@@ -57,7 +57,15 @@ export default function KFinanceGatewayMonitor() {
         {/* TopNavBar */}
         <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
           <div className="flex items-center gap-md">
-            <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+            <div className="flex items-center gap-2">
+              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
+                <option>🇨🇲 Agence de Douala (HQ)</option>
+                <option>🇨🇮 Agence d'Abidjan</option>
+                <option>🇨🇲 Agence de Kribi</option>
+                <option>🇸🇳 Agence de Dakar</option>
+              </select>
+            </div>
             <div className="hidden md:flex gap-md ml-xl items-center">
               <a className="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">Alerts</a>
               <a className="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">MFA Status</a>
@@ -102,33 +110,33 @@ export default function KFinanceGatewayMonitor() {
               </div>
             </div>
             <nav className="flex-1 space-y-1 px-xxs">
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/transport/control">
                 <span className="material-symbols-outlined">local_shipping</span>
                 <span>Transport</span>
               </a>
-              <a className="flex items-center gap-md px-md py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all text-label-md font-label-md scale-[0.99]" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all text-label-md font-label-md scale-[0.99]" href="/finance/overview">
                 <span className="material-symbols-outlined icon-filled">payments</span>
                 <span>Finance</span>
               </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/parc/overview">
                 <span className="material-symbols-outlined">inventory_2</span>
                 <span>Parc</span>
               </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/magasin/dashboard">
                 <span className="material-symbols-outlined">warehouse</span>
                 <span>Magasin</span>
               </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/audit/dashboard/health">
                 <span className="material-symbols-outlined">history_edu</span>
                 <span>Audit</span>
               </a>
             </nav>
             <div className="mt-auto px-xxs pt-4 border-t border-outline-variant">
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/settings/system/audit-health">
                 <span className="material-symbols-outlined">settings</span>
                 <span>Settings</span>
               </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/login">
                 <span className="material-symbols-outlined text-error">logout</span>
                 <span>Logout</span>
               </a>

@@ -34,23 +34,23 @@ export default function TransportFuelPage() {
           </div>
           {/* Navigation Tabs */}
           <nav className="flex-1 flex flex-col gap-xxs font-label-md text-label-md">
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               Tableau de bord
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 transport-active-border" href="#" style={{ color: '#F59E0B', backgroundColor: '#FEF3C7', borderLeftColor: '#F59E0B' }}>
+            <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 transport-active-border" href="/transport/control" style={{ color: '#F59E0B', backgroundColor: '#FEF3C7', borderLeftColor: '#F59E0B' }}>
               <span className="material-symbols-outlined" style={{ color: '#F59E0B' }}>local_shipping</span>
               Transport
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               Finances
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               Parc Automobile
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               Paramètres
             </a>
@@ -61,11 +61,11 @@ export default function TransportFuelPage() {
               Nouvelle Opération
             </button>
             <nav className="flex flex-col gap-xxs font-label-md text-label-md">
-              <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/support">
                 <span className="material-symbols-outlined">help_outline</span>
                 Support
               </a>
-              <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/login">
                 <span className="material-symbols-outlined">logout</span>
                 Déconnexion
               </a>

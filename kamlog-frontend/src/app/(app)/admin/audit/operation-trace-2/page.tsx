@@ -149,7 +149,15 @@ export default function OperationTrace2Page() {
       {/* TopNavBar */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
         <div className="flex items-center gap-md">
-          <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+          <div className="flex items-center gap-2">
+              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
+                <option>🇨🇲 Agence de Douala (HQ)</option>
+                <option>🇨🇮 Agence d'Abidjan</option>
+                <option>🇨🇲 Agence de Kribi</option>
+                <option>🇸🇳 Agence de Dakar</option>
+              </select>
+            </div>
           <div className="h-8 w-px bg-outline-variant mx-xs"></div>
           <nav className="hidden md:flex items-center gap-lg">
             <Link href="/alerts" className="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1">Alerts</Link>

@@ -47,34 +47,34 @@ export default function KMagasinStockMovementHistory() {
           </button>
           {/* Navigation */}
           <nav className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Transport</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Finances</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Parc Automobile</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Paramètres</span>
             </a>
           </nav>
           {/* Footer */}
           <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Support</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-md text-label-md uppercase tracking-wider">Déconnexion</span>
             </a>

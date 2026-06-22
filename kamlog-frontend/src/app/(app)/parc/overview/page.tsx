@@ -43,25 +43,25 @@ export default function KParcFleetManagementOverview() {
 
         {/* Navigation Links */}
         <nav className="flex-1 flex flex-col gap-xs overflow-y-auto scrollbar-hide">
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
             <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">dashboard</span>
             <span className="flex-1">Tableau de bord</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
             <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">local_shipping</span>
             <span className="flex-1">Transport</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
             <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">payments</span>
             <span className="flex-1">Finances</span>
           </a>
           {/* ACTIVE TAB: Parc Automobile */}
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-primary bg-secondary-container font-bold relative overflow-hidden group" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-primary bg-secondary-container font-bold relative overflow-hidden group" href="/parc/overview">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
             <span className="material-symbols-outlined text-primary icon-filled text-[20px]">minor_crash</span>
             <span className="flex-1">Parc Automobile</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group mt-auto" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group mt-auto" href="/settings/system/audit-health">
             <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">settings</span>
             <span className="flex-1">Paramètres</span>
           </a>
@@ -69,11 +69,11 @@ export default function KParcFleetManagementOverview() {
 
         {/* Footer Links */}
         <div className="mt-md pt-md border-t border-outline-variant flex flex-col gap-xs">
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/support">
             <span className="material-symbols-outlined text-[20px]">help_outline</span>
             <span>Support</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-error hover:bg-error-container transition-colors" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-error hover:bg-error-container transition-colors" href="/login">
             <span className="material-symbols-outlined text-[20px]">logout</span>
             <span>Déconnexion</span>
           </a>
@@ -145,7 +145,7 @@ export default function KParcFleetManagementOverview() {
           <nav className="flex items-center gap-xs text-sm text-on-surface-variant mb-xs">
             <a className="hover:text-primary transition-colors font-label-md" href="#">KAMLOG ERP</a>
             <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-            <a className="hover:text-primary transition-colors font-label-md" href="#">Parc Automobile</a>
+            <a className="hover:text-primary transition-colors font-label-md" href="/parc/overview">Parc Automobile</a>
             <span className="material-symbols-outlined text-[16px]">chevron_right</span>
             <span className="text-on-surface font-label-md font-medium">Tableau de Bord</span>
           </nav>

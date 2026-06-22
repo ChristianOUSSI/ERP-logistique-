@@ -296,6 +296,8 @@ function CommandeForm({
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
       quantite_demandee: l.quantite_demandee,
+      quantite_livree: l.quantite_livree || 0,
+      unite_mesure: l.unite_mesure || UniteMesure.UDB,
       prix_unitaire: l.prix_unitaire
     })) || []
   })

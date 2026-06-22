@@ -76,19 +76,19 @@ export default function TiersPage() {
           </button>
           {/* Navigation Tabs */}
           <div className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               Tableau de bord
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               Transport
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               Finances
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               Parc Automobile
             </a>
@@ -96,18 +96,18 @@ export default function TiersPage() {
               <span className="material-symbols-outlined" data-weight="fill">group</span>
               Tiers
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               Paramètres
             </a>
           </div>
           {/* Footer Tabs */}
           <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               Support
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/login">
               <span className="material-symbols-outlined">logout</span>
               Déconnexion
             </a>

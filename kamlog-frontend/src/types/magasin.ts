@@ -41,7 +41,9 @@ export enum StatutStock {
 
 export enum StatutDeclaration {
   BROUILLON = "BROUILLON",
+  SOUMISE = "SOUMISE",
   VALIDEE = "VALIDEE",
+  REJETEE = "REJETEE",
   ANNULEE = "ANNULEE"
 }
 
@@ -52,7 +54,8 @@ export enum StatutReception {
 }
 
 export enum StatutCommande {
-  BROUILLON = "BROUILLON", // Added to resolve type error
+  BROUILLON = "BROUILLON",
+  EN_COURS = "EN_COURS",
   EN_ATTENTE = "EN_ATTENTE",
   VERROUILLEE = "VERROUILLEE",
   PAYEE = "PAYEE",
@@ -286,6 +289,8 @@ export interface CommandeBase {
 }
 
 export interface CommandeCreate extends CommandeBase {
+  numero_commande: string;
+  date_commande: string;
   lignes: LigneCommandeCreate[];
 }
 

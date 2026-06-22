@@ -3,7 +3,7 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     serverActions: {
-    allowedOrigin: 'http://localhost:3000',
+      allowedOrigins: ['http://localhost:3000', 'localhost:3000'],
     },
   },
   images: {

@@ -35,33 +35,33 @@ export default function Permissions() {
             <span className="font-label-md text-label-md">Nouvelle Opération</span>
           </button>
           <nav className="flex-1 px-xs space-y-xxs">
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               <span className="font-label-caps text-label-caps">Tableau de bord</span>
             </a>
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="font-label-caps text-label-caps">Transport</span>
             </a>
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="font-label-caps text-label-caps">Finances</span>
             </a>
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               <span className="font-label-caps text-label-caps">Parc Automobile</span>
             </a>
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-primary bg-secondary-container font-bold transition-colors group" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-primary bg-secondary-container font-bold transition-colors group" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label-caps text-label-caps">Paramètres</span>
             </a>
           </nav>
           <div className="mt-auto p-[1.5rem] border-t border-outline-variant">
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-caps text-label-caps">Support</span>
             </a>
-            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-sm px-[1.5rem] py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-caps text-label-caps">Déconnexion</span>
             </a>

@@ -33,23 +33,23 @@ export default function KMagasinStockMovementHistory() {
         {/* Navigation */}
         <nav className="flex-1 space-y-1">
           {/* Active Item */}
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="/dashboard/global">
             <LayoutDashboard size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
             <Truck size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Transport</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
             <CreditCard size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Finances</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
             <AlertTriangle size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Parc Automobile</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
             <Settings size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Paramètres</span>
           </a>
@@ -57,11 +57,11 @@ export default function KMagasinStockMovementHistory() {
 
         {/* Footer */}
         <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
             <HelpCircle size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Support</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
             <LogOut size={20} />
             <span className="font-label-md text-label-md uppercase tracking-wider">Déconnexion</span>
           </a>

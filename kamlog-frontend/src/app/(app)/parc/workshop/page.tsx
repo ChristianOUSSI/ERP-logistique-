@@ -50,31 +50,31 @@ export default function ParcWorkshopPage() {
             <div className="font-label-caps text-label-caps text-on-surface-variant mb-xs px-sm uppercase text-[10px] tracking-wider font-semibold">Modules</div>
             <ul className="space-y-1">
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/dashboard/global">
                   <span className="material-symbols-outlined">dashboard</span>
                   <span className="font-title-md text-title-md">Tableau de bord</span>
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/transport/control">
                   <span className="material-symbols-outlined">local_shipping</span>
                   <span className="font-title-md text-title-md">Transport</span>
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/finance/overview">
                   <span className="material-symbols-outlined">payments</span>
                   <span className="font-title-md text-title-md">Finances</span>
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-primary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-primary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="/parc/overview">
                   <span className="material-symbols-outlined icon-filled">minor_crash</span>
                   <span className="font-title-md text-title-md">Parc Automobile</span>
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim mt-lg" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim mt-lg" href="/settings/system/audit-health">
                   <span className="material-symbols-outlined">settings</span>
                   <span className="font-title-md text-title-md">Paramètres</span>
                 </a>
@@ -83,11 +83,11 @@ export default function ParcWorkshopPage() {
           </div>
           {/* Footer Actions */}
           <div className="mt-auto pt-md border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md text-label-md" href="/support">
               <span className="material-symbols-outlined text-[18px]">help_outline</span>
               Support
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-error font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-error font-label-md text-label-md" href="/login">
               <span className="material-symbols-outlined text-[18px]">logout</span>
               Déconnexion
             </a>
@@ -311,7 +311,7 @@ export default function ParcWorkshopPage() {
                     </div>
                   </div>
                   <div className="p-xs border-t border-outline-variant bg-surface text-center">
-                    <a className="font-label-md text-label-md text-primary hover:underline" href="#">Ouvrir Module Magasin (K-Mag)</a>
+                    <a className="font-label-md text-label-md text-primary hover:underline" href="/magasin/dashboard">Ouvrir Module Magasin (K-Mag)</a>
                   </div>
                 </div>
               </div>

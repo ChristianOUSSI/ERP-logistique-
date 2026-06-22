@@ -58,7 +58,15 @@ export default function AuditTrailOperationTracePage() {
         {/* TopNavBar Implementation */}
         <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
           <div className="flex items-center gap-md">
-            <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+            <div className="flex items-center gap-2">
+              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
+                <option>🇨🇲 Agence de Douala (HQ)</option>
+                <option>🇨🇮 Agence d'Abidjan</option>
+                <option>🇨🇲 Agence de Kribi</option>
+                <option>🇸🇳 Agence de Dakar</option>
+              </select>
+            </div>
             <div className="h-8 w-px bg-outline-variant mx-xs"></div>
             <nav className="hidden md:flex items-center gap-lg">
               <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">Alerts</a>
@@ -92,34 +100,34 @@ export default function AuditTrailOperationTracePage() {
           </div>
           <div className="flex-1 px-xs flex flex-col gap-1">
             <div className="px-md py-xs text-label-sm font-label-sm text-outline uppercase tracking-wider">Main Modules</div>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="text-label-md font-label-md">Transport</span>
             </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="text-label-md font-label-md">Finance</span>
             </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
               <span className="material-symbols-outlined">inventory_2</span>
               <span className="text-label-md font-label-md">Parc</span>
             </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
               <span className="material-symbols-outlined">warehouse</span>
               <span className="text-label-md font-label-md">Magasin</span>
             </a>
             {/* Active State: Audit */}
-            <a className="flex items-center gap-md px-md py-2.5 text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="/audit/dashboard/health">
               <span className="material-symbols-outlined">history_edu</span>
               <span className="text-label-md font-label-md">Audit</span>
             </a>
           </div>
           <div className="mt-auto px-xs flex flex-col gap-1">
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="text-label-md font-label-md">Settings</span>
             </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="text-label-md font-label-md">Logout</span>
             </a>
@@ -133,7 +141,7 @@ export default function AuditTrailOperationTracePage() {
             <nav className="flex items-center gap-xs text-label-sm font-label-sm text-outline mb-xs">
               <a className="hover:text-primary" href="#">System Control</a>
               <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-              <a className="hover:text-primary" href="#">Audit Log</a>
+              <a className="hover:text-primary" href="/audit/dashboard/health">Audit Log</a>
               <span className="material-symbols-outlined text-[12px]">chevron_right</span>
               <span className="text-on-surface font-semibold">OT Trace</span>
             </nav>
@@ -153,6 +161,10 @@ export default function AuditTrailOperationTracePage() {
                   <span className="material-symbols-outlined text-[18px]">download</span>
                   Export Log
                 </button>
+                <div className="flex items-center gap-xs px-md py-2 bg-green-50 border border-green-200 text-green-800 text-label-md font-label-md rounded shadow-sm">
+                  <span className="material-symbols-outlined text-[18px] text-green-600">verified_user</span>
+                  Blockchain Ledger Active
+                </div>
               </div>
             </div>
 
@@ -226,6 +238,7 @@ export default function AuditTrailOperationTracePage() {
                     <tr className="bg-surface-container-low border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase tracking-tight">
                       <th className="px-md py-3 font-semibold">OT Number</th>
                       <th className="px-md py-3 font-semibold">Action</th>
+                      <th className="px-md py-3 font-semibold">On-Chain Hash</th>
                       <th className="px-md py-3 font-semibold">Module</th>
                       <th className="px-md py-3 font-semibold">User</th>
                       <th className="px-md py-3 font-semibold">Timestamp</th>
@@ -241,6 +254,9 @@ export default function AuditTrailOperationTracePage() {
                           <span className="material-symbols-outlined text-[16px] text-secondary">add_task</span>
                           CREATE_FREIGHT_MANIFEST
                         </span>
+                      </td>
+                      <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x7f4a...9b2c</span>
                       </td>
                       <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#EF4444]">K-MAGASIN</span>
@@ -266,6 +282,9 @@ export default function AuditTrailOperationTracePage() {
                         </span>
                       </td>
                       <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x1a2c...8f4e</span>
+                      </td>
+                      <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E0E7FF] text-[#4338CA]">K-PARC</span>
                       </td>
                       <td className="px-md py-3">
@@ -287,6 +306,9 @@ export default function AuditTrailOperationTracePage() {
                           <span className="material-symbols-outlined text-[16px] text-tertiary">currency_exchange</span>
                           POST_LEDGER_ENTRY
                         </span>
+                      </td>
+                      <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x9d4b...3a1f</span>
                       </td>
                       <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#DCFCE7] text-[#15803D]">K-FINANCE</span>
@@ -312,6 +334,9 @@ export default function AuditTrailOperationTracePage() {
                         </span>
                       </td>
                       <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x4b7f...2e9d</span>
+                      </td>
+                      <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF9C3] text-[#854D0E]">K-TRANSPORT</span>
                       </td>
                       <td className="px-md py-3">
@@ -335,6 +360,9 @@ export default function AuditTrailOperationTracePage() {
                         </span>
                       </td>
                       <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x2f11...7a4c</span>
+                      </td>
+                      <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#374151]">K-AUDIT</span>
                       </td>
                       <td className="px-md py-3">
@@ -356,6 +384,9 @@ export default function AuditTrailOperationTracePage() {
                           <span className="material-symbols-outlined text-[16px] text-error">delete_forever</span>
                           PURGE_STALE_CACHE
                         </span>
+                      </td>
+                      <td className="px-md py-3">
+                        <span className="font-mono text-xs text-outline bg-surface-container-high px-1 rounded border border-outline-variant">0x8e5d...1c2b</span>
                       </td>
                       <td className="px-md py-3">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#374151]">SYSTEM</span>

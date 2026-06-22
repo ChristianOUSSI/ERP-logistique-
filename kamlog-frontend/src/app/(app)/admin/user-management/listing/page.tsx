@@ -49,23 +49,23 @@ export default function UserListing() {
             </div>
           </div>
           <nav className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               <span className="font-label-md text-label-md">Tableau de bord</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="font-label-md text-label-md">Transport</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="font-label-md text-label-md">Finances</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 text-secondary transition-colors hover:bg-surface-container-high font-medium rounded-lg" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               <span className="font-label-md text-label-md">Parc Automobile</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 text-primary bg-secondary-container font-bold rounded-lg" href="#">
+            <a className="flex items-center gap-3 px-3 py-2.5 text-primary bg-secondary-container font-bold rounded-lg" href="/settings/system/audit-health">
               <span className="material-symbols-outlined icon-fill">settings</span>
               <span className="font-label-md text-label-md">Paramètres</span>
             </a>
@@ -75,11 +75,11 @@ export default function UserListing() {
             <span className="font-label-md text-label-md">Nouvelle Opération</span>
           </button>
           <div className="border-t border-outline-variant pt-4 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-md text-label-md">Support</span>
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-colors" href="/login">
               <span className="material-symbols-outlined text-error">logout</span>
               <span className="font-label-md text-label-md">Déconnexion</span>
             </a>

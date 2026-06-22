@@ -42,39 +42,39 @@ export default function MagasinAnalyticsPage() {
             Nouvelle Opération
           </button>
           <div className="flex-1 flex flex-col gap-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               <span className="font-label-caps text-label-caps">Tableau de bord</span>
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="font-label-caps text-label-caps">Transport</span>
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="font-label-caps text-label-caps">Finances</span>
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               <span className="font-label-caps text-label-caps">Parc Automobile</span>
             </a>
             {/* Active State mapping for K-Magasin */}
-            <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-secondary-container font-bold relative overflow-hidden group" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded text-primary bg-secondary-container font-bold relative overflow-hidden group" href="/magasin/dashboard">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-module-red"></div>
               <span className="material-symbols-outlined text-module-red">warehouse</span>
               <span className="font-label-caps text-label-caps text-module-red">K-Magasin (KM32)</span>
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label-caps text-label-caps">Paramètres</span>
             </a>
           </div>
           <div className="mt-auto border-t border-outline-variant pt-sm flex flex-col gap-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-caps text-label-caps">Support</span>
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-secondary" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-caps text-label-caps">Déconnexion</span>
             </a>

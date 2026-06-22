@@ -66,23 +66,23 @@ export default function KFinanceOverview() {
 
           {/* Navigation Links */}
           <nav className="flex-1 flex flex-col gap-1">
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               Tableau de bord
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               Transport
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-primary bg-finance-secondary-container font-bold" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-primary bg-finance-secondary-container font-bold" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               Finances
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               Parc Automobile
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               Paramètres
             </a>
@@ -90,11 +90,11 @@ export default function KFinanceOverview() {
 
           {/* Footer Links */}
           <div className="mt-auto flex flex-col gap-1 border-t border-finance-outline-variant pt-4">
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               Support
             </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors text-error" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors text-error" href="/login">
               <span className="material-symbols-outlined">logout</span>
               Déconnexion
             </a>

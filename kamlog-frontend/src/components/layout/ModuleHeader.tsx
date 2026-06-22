@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getModuleIcon, getModuleName } from '../../config/moduleColors';
 import { ModuleType } from './ModuleSidebar'; // Still needed for ModuleHeaderProps type
 import { useModuleTheme } from '../../hooks/useModuleTheme'; // Import the hook
-import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from '@/utils/tcodeLookup';
+import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from './tcodeLookup';
 import { useAuth } from './AuthProvider';
 import { useSettings, ThemePreference } from './SettingsProvider';
 import { toast } from 'sonner';

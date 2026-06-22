@@ -36,7 +36,7 @@ export default function UserManagementCreate() {
           </div>
           <nav className="flex-1 overflow-y-auto no-scrollbar">
             <div className="flex flex-col gap-xxs">
-              <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+              <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="/dashboard/global">
                 <span className="material-symbols-outlined">dashboard</span>
                 <span className="font-label-md text-label-md">Dashboard</span>
               </a>
@@ -52,18 +52,18 @@ export default function UserManagementCreate() {
                 <span className="material-symbols-outlined">inventory_2</span>
                 <span className="font-label-md text-label-md">Inventory</span>
               </a>
-              <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+              <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="/finance/overview">
                 <span className="material-symbols-outlined">payments</span>
                 <span className="font-label-md text-label-md">Finance</span>
               </a>
             </div>
           </nav>
           <div className="mt-auto border-t border-outline-variant p-sm flex flex-col gap-xxs">
-            <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+            <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="/support">
               <span className="material-symbols-outlined">contact_support</span>
               <span className="font-label-md text-label-md">Support</span>
             </a>
-            <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+            <a className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-md text-label-md">Logout</span>
             </a>

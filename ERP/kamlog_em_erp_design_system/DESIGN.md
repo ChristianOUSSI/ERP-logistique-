@@ -132,7 +132,7 @@ The design system employs a **Fixed-Fluid Hybrid Grid**.
 ## Elevation & Depth
 Elevation in this design system is used to separate the global navigation from the workspace and the workspace from temporary overlays (modals/drawers).
 
-- **Level 0 (Background):** `#F8FAFC` — The canvas.
+- **Level 0 (Background):** `#F8FAFC`  The canvas.
 - **Level 1 (Cards):** White background with a 1px border (`#E2E8F0`) and a subtle "Soft Shadow" (Y: 1px, Blur: 3px, Opacity: 0.05).
 - **Level 2 (Hover/Active):** Slightly deeper shadow to indicate interactivity.
 - **Level 3 (Modals/Popovers):** Higher elevation (Y: 10px, Blur: 20px, Opacity: 0.1) with a 40% backdrop blur (Glassmorphism) to keep the underlying context visible but non-distracting.

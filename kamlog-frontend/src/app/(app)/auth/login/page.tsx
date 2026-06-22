@@ -160,7 +160,7 @@ export default function Login() {
             <div className="flex gap-md">
               <a className="text-label-sm font-label-sm text-on-surface-variant hover:text-[#3B82F6]" href="#">Network Status</a>
               <a className="text-label-sm font-label-sm text-on-surface-variant hover:text-[#3B82F6]" href="#">Legal</a>
-              <a className="text-label-sm font-label-sm text-on-surface-variant hover:text-[#3B82F6]" href="#">Support</a>
+              <a className="text-label-sm font-label-sm text-on-surface-variant hover:text-[#3B82F6]" href="/support">Support</a>
             </div>
           </div>
         </main>

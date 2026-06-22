@@ -1,4 +1,4 @@
-// src/lib/api-client.ts — Client API TypeScript KAMLOG
+// src/lib/api-client.ts  Client API TypeScript KAMLOG
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
@@ -9,7 +9,7 @@ export const apiClient: AxiosInstance = axios.create({
   timeout: 15000,
 });
 
-// Intercepteur REQUEST — injecte le JWT
+// Intercepteur REQUEST  injecte le JWT
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('access_token');
@@ -21,7 +21,7 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Intercepteur RESPONSE — refresh auto si 401
+// Intercepteur RESPONSE  refresh auto si 401
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {

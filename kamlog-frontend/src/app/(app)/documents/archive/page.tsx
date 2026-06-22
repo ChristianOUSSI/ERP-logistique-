@@ -28,19 +28,19 @@ export default function DocumentsArchivePage() {
             Nouvelle Opération
           </button>
           <nav className="flex-1 space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               Tableau de bord
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               Transport
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               Finances
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               Parc Automobile
             </a>
@@ -49,17 +49,17 @@ export default function DocumentsArchivePage() {
               <span className="material-symbols-outlined">folder</span>
               Documents
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               Paramètres
             </a>
           </nav>
           <div className="mt-auto pt-sm border-t border-outline-variant space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               Support
             </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span>
               Déconnexion
             </a>

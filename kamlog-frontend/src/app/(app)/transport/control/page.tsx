@@ -21,31 +21,31 @@ export default function KTransportControl() {
 
         <ul className="flex-1 space-y-1">
           <li>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined text-[20px]">dashboard</span>
               <span className="font-body-base text-body-base">Tableau de bord</span>
             </a>
           </li>
           <li>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
               <span className="material-symbols-outlined text-[20px]">local_shipping</span>
               <span className="font-body-base text-body-base">Transport</span>
             </a>
           </li>
           <li>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined text-[20px]">payments</span>
               <span className="font-body-base text-body-base">Finances</span>
             </a>
           </li>
           <li>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
               <span className="material-symbols-outlined text-[20px]">minor_crash</span>
               <span className="font-body-base text-body-base">Parc Automobile</span>
             </a>
           </li>
           <li>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined text-[20px]">settings</span>
               <span className="font-body-base text-body-base">Paramètres</span>
             </a>
@@ -53,11 +53,11 @@ export default function KTransportControl() {
         </ul>
 
         <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-          <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="/support">
             <span className="material-symbols-outlined text-[20px]">help_outline</span>
             <span className="font-body-base text-body-base">Support</span>
           </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="#">
+          <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="/login">
             <span className="material-symbols-outlined text-[20px]">logout</span>
             <span className="font-body-base text-body-base">Déconnexion</span>
           </a>

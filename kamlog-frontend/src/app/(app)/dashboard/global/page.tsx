@@ -30,7 +30,15 @@ export default function GlobalDashboard() {
         {/* TopAppBar Shell */}
         <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
           <div className="flex items-center gap-xl">
-            <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+            <div className="flex items-center gap-2">
+              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
+                <option>🇨🇲 Agence de Douala (HQ)</option>
+                <option>🇨🇮 Agence d'Abidjan</option>
+                <option>🇨🇲 Agence de Kribi</option>
+                <option>🇸🇳 Agence de Dakar</option>
+              </select>
+            </div>
             <nav className="hidden md:flex items-center gap-md">
               <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">Alerts</a>
               <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">MFA Status</a>
@@ -64,33 +72,33 @@ export default function GlobalDashboard() {
             <p className="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</p>
           </div>
           <nav className="flex-1 px-xs space-y-xxs overflow-y-auto custom-scrollbar">
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="text-label-md font-label-md">Transport</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="text-label-md font-label-md">Finance</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
               <span className="material-symbols-outlined">inventory_2</span>
               <span className="text-label-md font-label-md">Parc</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
               <span className="material-symbols-outlined">warehouse</span>
               <span className="text-label-md font-label-md">Magasin</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/audit/dashboard/health">
               <span className="material-symbols-outlined">history_edu</span>
               <span className="text-label-md font-label-md">Audit</span>
             </a>
           </nav>
           <div className="px-xs pt-md border-t border-outline-variant space-y-xxs">
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="text-label-md font-label-md">Settings</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all text-error" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all text-error" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="text-label-md font-label-md">Logout</span>
             </a>

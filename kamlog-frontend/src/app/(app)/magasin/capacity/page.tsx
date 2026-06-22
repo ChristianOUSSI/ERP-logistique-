@@ -34,40 +34,40 @@ export default function MagasinCapacityPage() {
           </div>
           {/* Main Nav */}
           <div className="flex-1 overflow-y-auto px-xs space-y-xxs font-label-caps text-label-caps">
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               Tableau de bord
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               Transport
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               Finances
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
               <span className="material-symbols-outlined">minor_crash</span>
               Parc Automobile
             </a>
             {/* K-Magasin (Active, mapped from intent) */}
-            <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="/magasin/dashboard">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-km-red rounded-l"></div>
               <span className="material-symbols-outlined" style={{ color: '#EF4444' }}>warehouse</span>
               <span style={{ color: '#EF4444' }}>Magasin (KM)</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               Paramètres
             </a>
           </div>
           {/* Footer Nav */}
           <div className="mt-auto px-xs pb-md pt-sm border-t border-outline-variant space-y-xxs font-label-caps text-label-caps">
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               Support
             </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/login">
               <span className="material-symbols-outlined">logout</span>
               Déconnexion
             </a>

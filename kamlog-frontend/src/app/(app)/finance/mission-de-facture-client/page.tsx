@@ -106,13 +106,13 @@ export default function MissionDeFactureClientPage() {
           <div className="flex-1 overflow-y-auto py-2">
             <ul className="space-y-1 px-xs">
               <li>
-                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
                   <span className="material-symbols-outlined text-[20px]">dashboard</span>
                   Tableau de bord
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
                   <span className="material-symbols-outlined text-[20px]">local_shipping</span>
                   Transport
                 </a>
@@ -120,19 +120,19 @@ export default function MissionDeFactureClientPage() {
               {/* ACTIVE TAB: Finances */}
               <li className="relative">
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full k-finance-accent"></div>
-                <a className="flex items-center gap-3 px-sm py-2 ml-1 rounded-lg font-label-md text-label-md text-primary bg-secondary-container font-bold active:scale-95 duration-150 k-finance-text bg-purple-100" href="#">
+                <a className="flex items-center gap-3 px-sm py-2 ml-1 rounded-lg font-label-md text-label-md text-primary bg-secondary-container font-bold active:scale-95 duration-150 k-finance-text bg-purple-100" href="/finance/overview">
                   <span className="material-symbols-outlined text-[20px] fill">payments</span>
                   Finances
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
                   <span className="material-symbols-outlined text-[20px]">minor_crash</span>
                   Parc Automobile
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
                   <span className="material-symbols-outlined text-[20px]">settings</span>
                   Paramètres
                 </a>
@@ -167,13 +167,13 @@ export default function MissionDeFactureClientPage() {
             </button>
             <ul className="space-y-2">
               <li>
-                <a className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="/support">
                   <span className="material-symbols-outlined text-[18px]">help_outline</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-error hover:bg-error-container transition-colors" href="#">
+                <a className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-error hover:bg-error-container transition-colors" href="/login">
                   <span className="material-symbols-outlined text-[18px]">logout</span>
                   Déconnexion
                 </a>

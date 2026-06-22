@@ -69,23 +69,23 @@ export default function MouvementDeStockManuelPage() {
 
           {/* Navigation Links */}
           <div className="flex-1 flex flex-col gap-xxs px-xs">
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span>Transport</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg font-label-md text-label-md magasin-active font-bold border-l-4" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg font-label-md text-label-md magasin-active font-bold border-l-4" href="/magasin/dashboard">
               <span className="material-symbols-outlined fill">inventory_2</span>
               <span>Magasin</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span>Finance</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/parc/overview">
               <span className="material-symbols-outlined">local_parking</span>
               <span>Parc</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/audit/dashboard/health">
               <span className="material-symbols-outlined">fact_check</span>
               <span>Audit</span>
             </a>
@@ -93,11 +93,11 @@ export default function MouvementDeStockManuelPage() {
 
           {/* Footer Links */}
           <div className="border-t border-outline-variant p-xs flex flex-col gap-xxs mt-auto">
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/support">
               <span className="material-symbols-outlined">support_agent</span>
               <span>Support</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span>Log out</span>
             </a>
@@ -123,7 +123,7 @@ export default function MouvementDeStockManuelPage() {
             <nav className="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant mb-xs">
               <a className="hover:text-magasin-main transition-colors" href="#">Port Ops</a>
               <span className="material-symbols-outlined" style={{fontSize: '14px'}}>chevron_right</span>
-              <a className="hover:text-magasin-main transition-colors" href="#">Magasin</a>
+              <a className="hover:text-magasin-main transition-colors" href="/magasin/dashboard">Magasin</a>
               <span className="material-symbols-outlined" style={{fontSize: '14px'}}>chevron_right</span>
               <span className="text-on-surface">Mouvement de Stock Manuel</span>
             </nav>

@@ -106,31 +106,31 @@ export default function SaisieTransactionBancairePage() {
           <div className="flex-1 overflow-y-auto py-sm">
             <ul className="space-y-xxs">
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/transport/control">
                   <span className="material-symbols-outlined mr-sm text-[20px]">local_shipping</span>
                   Transport
                 </a>
               </li>
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/magasin/dashboard">
                   <span className="material-symbols-outlined mr-sm text-[20px]">inventory_2</span>
                   Magasin
                 </a>
               </li>
               <li>
-                <a className="flex items-center px-md py-sm text-primary bg-surface-container-highest border-l-4 border-primary font-bold font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-primary bg-surface-container-highest border-l-4 border-primary font-bold font-label-md text-label-md" href="/finance/overview">
                   <span className="material-symbols-outlined mr-sm text-[20px] fill">payments</span>
                   Finance
                 </a>
               </li>
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/parc/overview">
                   <span className="material-symbols-outlined mr-sm text-[20px]">local_parking</span>
                   Parc
                 </a>
               </li>
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/audit/dashboard/health">
                   <span className="material-symbols-outlined mr-sm text-[20px]">fact_check</span>
                   Audit
                 </a>
@@ -140,13 +140,13 @@ export default function SaisieTransactionBancairePage() {
           <div className="p-sm border-t border-outline-variant">
             <ul className="space-y-xxs">
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/support">
                   <span className="material-symbols-outlined mr-sm text-[20px]">support_agent</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+                <a className="flex items-center px-md py-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="/login">
                   <span className="material-symbols-outlined mr-sm text-[20px]">logout</span>
                   Log out
                 </a>

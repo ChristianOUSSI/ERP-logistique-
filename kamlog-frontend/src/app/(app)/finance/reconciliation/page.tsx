@@ -37,32 +37,32 @@ export default function BankReconciliationPage() {
           {/* Tabs */}
           <ul className="flex-1 overflow-y-auto px-xs space-y-1">
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
                 <span className="material-symbols-outlined text-[20px]">dashboard</span>
                 Tableau de bord
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
                 <span className="material-symbols-outlined text-[20px]">local_shipping</span>
                 Transport
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-primary bg-secondary-container font-bold border-l-4 border-module-finance hover:bg-surface-container-high transition-colors active:scale-95 duration-150 relative" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-primary bg-secondary-container font-bold border-l-4 border-module-finance hover:bg-surface-container-high transition-colors active:scale-95 duration-150 relative" href="/finance/overview">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-module-finance rounded-r-sm"></div>
                 <span className="material-symbols-outlined text-[20px] text-module-finance">payments</span>
                 <span className="text-module-finance">Finances</span>
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
                 <span className="material-symbols-outlined text-[20px]">minor_crash</span>
                 Parc Automobile
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
                 <span className="material-symbols-outlined text-[20px]">settings</span>
                 Paramètres
               </a>
@@ -72,13 +72,13 @@ export default function BankReconciliationPage() {
           <div className="mt-auto px-xs pb-4 pt-4 border-t border-outline-variant">
             <ul className="space-y-1">
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="/support">
                   <span className="material-symbols-outlined text-[18px]">help_outline</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="/login">
                   <span className="material-symbols-outlined text-[18px]">logout</span>
                   Déconnexion
                 </a>
@@ -136,7 +136,7 @@ export default function BankReconciliationPage() {
               <nav aria-label="Breadcrumb" className="flex text-on-surface-variant font-label-md text-label-md">
                 <ol className="inline-flex items-center space-x-1 md:space-x-2">
                   <li className="inline-flex items-center">
-                    <a className="hover:text-primary transition-colors" href="#">K-Finance</a>
+                    <a className="hover:text-primary transition-colors" href="/finance/overview">K-Finance</a>
                   </li>
                   <li>
                     <div className="flex items-center">

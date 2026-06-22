@@ -1,7 +1,19 @@
 // src/app/(app)/transport/map/page.tsx - K-Transport Terminal Map Control - Fidèle 100% au HTML original
 'use client'
+import React, { useState, useEffect } from 'react';
 
 export default function KTransportTerminalMapControl() {
+  const [truckPos, setTruckPos] = useState(10);
+  const [iotActive, setIotActive] = useState(true);
+
+  useEffect(() => {
+    if (!iotActive) return;
+    const interval = setInterval(() => {
+      setTruckPos((prev) => (prev + 0.5) % 100);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [iotActive]);
+
   return (
     <>
       <style jsx global>{`
@@ -46,31 +58,31 @@ export default function KTransportTerminalMapControl() {
           {/* Navigation Tabs */}
           <ul className="flex-1 flex flex-col gap-1">
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
                 <span className="material-symbols-outlined text-[20px]">dashboard</span>
                 Tableau de bord
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="/transport/control">
                 <span className="material-symbols-outlined text-[20px] icon-fill">local_shipping</span>
                 Transport
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
                 <span className="material-symbols-outlined text-[20px]">payments</span>
                 Finances
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
                 <span className="material-symbols-outlined text-[20px]">minor_crash</span>
                 Parc Automobile
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
                 <span className="material-symbols-outlined text-[20px]">settings</span>
                 Paramètres
               </a>
@@ -79,13 +91,13 @@ export default function KTransportTerminalMapControl() {
           {/* Footer Tabs */}
           <ul className="mt-auto flex flex-col gap-1 border-t border-outline-variant pt-4">
             <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/support">
                 <span className="material-symbols-outlined text-[18px]">help_outline</span>
                 Support
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors active:scale-95 duration-150" href="/login">
                 <span className="material-symbols-outlined text-[18px]">logout</span>
                 Déconnexion
               </a>
@@ -139,8 +151,12 @@ export default function KTransportTerminalMapControl() {
                 </div>
                 <div className="flex gap-2">
                   <button className="px-3 py-1.5 text-label-md font-label-md bg-surface-container border border-outline-variant rounded hover:bg-surface-variant transition-colors">Standard View</button>
-                  <button className="px-3 py-1.5 text-label-md font-label-md bg-tertiary text-on-tertiary rounded hover:bg-tertiary-container transition-colors flex items-center gap-1 shadow-sm">
-                    <span className="material-symbols-outlined text-[16px]">visibility</span> Focus Transport
+                  <button 
+                    onClick={() => setIotActive(!iotActive)}
+                    className={`px-3 py-1.5 text-label-md font-label-md rounded transition-colors flex items-center gap-1 shadow-sm ${iotActive ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container border border-outline-variant text-on-surface-variant'}`}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">{iotActive ? 'sensors' : 'sensors_off'}</span> 
+                    {iotActive ? 'Live IoT Feed' : 'IoT Paused'}
                   </button>
                 </div>
               </div>
@@ -193,12 +209,15 @@ export default function KTransportTerminalMapControl() {
                     </div>
                   </div>
                   {/* Transport Lane */}
-                  <div className="col-span-3 h-12 bg-surface-container border-y-2 border-dashed border-outline-variant flex items-center px-lg justify-between mt-auto">
-                    <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Main Transport Arterial</span>
+                  <div className="col-span-3 h-12 bg-surface-container border-y-2 border-dashed border-outline-variant flex items-center px-lg mt-auto relative overflow-hidden">
+                    <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest z-10 bg-surface-container/80 px-2 rounded">Main Transport Arterial</span>
                     {/* Moving truck */}
-                    <div className="flex items-center gap-1 text-tertiary">
+                    <div 
+                      className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
+                      style={{ left: `${truckPos}%` }}
+                    >
                       <span className="material-symbols-outlined">local_shipping</span>
-                      <span className="font-data-tabular text-data-tabular">Unit 402</span>
+                      <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">Unit 402</span>
                     </div>
                   </div>
                 </div>

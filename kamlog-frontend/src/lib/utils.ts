@@ -1,4 +1,4 @@
-// src/lib/utils.ts — Utilitaires Frontend KAMLOG
+// src/lib/utils.ts  Utilitaires Frontend KAMLOG
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

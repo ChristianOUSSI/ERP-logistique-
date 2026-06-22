@@ -1,7 +1,19 @@
 // src/app/(app)/transport/dispatch/page.tsx - K-Transport Dispatch Control - Fidèle 100% au HTML original
 'use client'
+import React, { useState } from 'react';
 
 export default function TransportDispatchPage() {
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [routesOptimized, setRoutesOptimized] = useState(false);
+
+  const handleOptimize = () => {
+    setIsOptimizing(true);
+    setTimeout(() => {
+      setIsOptimizing(false);
+      setRoutesOptimized(true);
+    }, 2000);
+  };
+
   return (
     <>
       <style jsx global>{`
@@ -18,7 +30,15 @@ export default function TransportDispatchPage() {
         {/* TopNavBar */}
         <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
           <div className="flex items-center gap-xl">
-            <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+            <div className="flex items-center gap-2">
+              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
+                <option>🇨🇲 Agence de Douala (HQ)</option>
+                <option>🇨🇮 Agence d'Abidjan</option>
+                <option>🇨🇲 Agence de Kribi</option>
+                <option>🇸🇳 Agence de Dakar</option>
+              </select>
+            </div>
             <nav className="hidden md:flex gap-md">
               <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 text-label-md font-label-md" href="#">Alerts</a>
               <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 text-label-md font-label-md" href="#">MFA Status</a>
@@ -46,23 +66,23 @@ export default function TransportDispatchPage() {
           </div>
           <nav className="flex-1 overflow-y-auto py-xs">
             {/* Active: Transport */}
-            <a className="flex items-center gap-md px-md py-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all duration-150 scale-[0.99]" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all duration-150 scale-[0.99]" href="/transport/control">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: 'FILL 1' }}>local_shipping</span>
               <span className="text-label-md font-label-md">Transport</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="text-label-md font-label-md">Finance</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
               <span className="material-symbols-outlined">inventory_2</span>
               <span className="text-label-md font-label-md">Parc</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
               <span className="material-symbols-outlined">warehouse</span>
               <span className="text-label-md font-label-md">Magasin</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/audit/dashboard/health">
               <span className="material-symbols-outlined">history_edu</span>
               <span className="text-label-md font-label-md">Audit</span>
             </a>
@@ -74,11 +94,11 @@ export default function TransportDispatchPage() {
             </button>
           </div>
           <div className="border-t border-outline-variant pt-xs">
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="text-label-md font-label-md">Settings</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high" href="#">
+            <a className="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="text-label-md font-label-md">Logout</span>
             </a>
@@ -141,7 +161,24 @@ export default function TransportDispatchPage() {
               {/* Table: Active Missions */}
               <div className="bg-white border border-outline-variant rounded shadow-sm overflow-hidden">
                 <div className="px-md py-sm bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
-                  <h2 className="text-title-md font-title-md text-on-background">Live Mission Log</h2>
+                  <h2 className="text-title-md font-title-md text-on-background flex items-center gap-2">
+                    Live Mission Log
+                    {!routesOptimized && !isOptimizing && (
+                      <button onClick={handleOptimize} className="ml-4 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 hover:bg-primary/20 transition-colors flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">route</span> Optimize Routes (AI)
+                      </button>
+                    )}
+                    {isOptimizing && (
+                      <span className="ml-4 text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1 animate-pulse">
+                        <span className="material-symbols-outlined text-[14px] animate-spin">sync</span> Calculating...
+                      </span>
+                    )}
+                    {routesOptimized && (
+                      <span className="ml-4 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-1 rounded border border-green-200 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">check_circle</span> Routes Optimized
+                      </span>
+                    )}
+                  </h2>
                   <div className="flex gap-xs">
                     <button className="material-symbols-outlined p-xxs text-on-surface-variant hover:bg-surface-container-highest rounded">filter_list</button>
                     <button className="material-symbols-outlined p-xxs text-on-surface-variant hover:bg-surface-container-highest rounded">download</button>
@@ -163,21 +200,27 @@ export default function TransportDispatchPage() {
                       <tr className="hover:bg-surface-container-lowest transition-colors h-12">
                         <td className="px-md py-xs font-data-tabular text-body-sm text-primary font-bold">#MSN-4921</td>
                         <td className="px-md py-xs text-body-sm">Jean-Pierre K.</td>
-                        <td className="px-md py-xs text-body-sm">Terminal A → Warehouse 4</td>
+                        <td className="px-md py-xs text-body-sm">
+                          Terminal A → Warehouse 4
+                          {routesOptimized && <div className="text-[10px] text-green-600 font-bold mt-0.5">-12% distance via N4</div>}
+                        </td>
                         <td className="px-md py-xs text-body-sm">TRK-009 (DAF)</td>
                         <td className="px-md py-xs">
                           <span className="inline-flex items-center px-xs py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">IN TRANSIT</span>
                         </td>
                         <td className="px-md py-xs min-w-[120px]">
                           <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full" style={{ width: '65%' }}></div>
+                            <div className="bg-primary h-full transition-all duration-1000" style={{ width: routesOptimized ? '70%' : '65%' }}></div>
                           </div>
                         </td>
                       </tr>
                       <tr className="bg-surface-container-lowest hover:bg-surface-container-highest transition-colors h-12">
                         <td className="px-md py-xs font-data-tabular text-body-sm text-primary font-bold">#MSN-4922</td>
                         <td className="px-md py-xs text-body-sm">Moussa D.</td>
-                        <td className="px-md py-xs text-body-sm">Main Gate → Quay 12</td>
+                        <td className="px-md py-xs text-body-sm">
+                          Main Gate → Quay 12
+                          {routesOptimized && <div className="text-[10px] text-green-600 font-bold mt-0.5">Eco-route activated</div>}
+                        </td>
                         <td className="px-md py-xs text-body-sm">TRK-042 (MAN)</td>
                         <td className="px-md py-xs">
                           <span className="inline-flex items-center px-xs py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700">LOADING</span>
@@ -191,14 +234,17 @@ export default function TransportDispatchPage() {
                       <tr className="hover:bg-surface-container-lowest transition-colors h-12">
                         <td className="px-md py-xs font-data-tabular text-body-sm text-primary font-bold">#MSN-4919</td>
                         <td className="px-md py-xs text-body-sm">Samuel E.</td>
-                        <td className="px-md py-xs text-body-sm">Zone C → Depot B</td>
+                        <td className="px-md py-xs text-body-sm">
+                          Zone C → Depot B
+                          {routesOptimized && <div className="text-[10px] text-green-600 font-bold mt-0.5">Avoiding congestion (+5 min)</div>}
+                        </td>
                         <td className="px-md py-xs text-body-sm">TRK-015 (Scania)</td>
                         <td className="px-md py-xs">
                           <span className="inline-flex items-center px-xs py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">IN TRANSIT</span>
                         </td>
                         <td className="px-md py-xs min-w-[120px]">
                           <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                            <div className="bg-primary h-full" style={{ width: '89%' }}></div>
+                            <div className="bg-primary h-full transition-all duration-1000" style={{ width: routesOptimized ? '95%' : '89%' }}></div>
                           </div>
                         </td>
                       </tr>
@@ -283,7 +329,12 @@ export default function TransportDispatchPage() {
                     </div>
                     <div>
                       <p className="text-[10px] opacity-70 uppercase">Fuel Index</p>
-                      <p className="text-title-md font-bold">0.82 <span className="text-[10px] font-normal">▼ 2%</span></p>
+                      <p className="text-title-md font-bold transition-colors duration-1000">
+                        {routesOptimized ? '0.94' : '0.82'} 
+                        <span className={`text-[10px] font-normal ml-2 ${routesOptimized ? 'text-green-300' : 'text-red-300'}`}>
+                          {routesOptimized ? '▲ 14%' : '▼ 2%'}
+                        </span>
+                      </p>
                     </div>
                   </div>
                 </div>

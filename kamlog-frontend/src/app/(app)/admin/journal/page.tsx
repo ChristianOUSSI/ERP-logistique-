@@ -54,33 +54,33 @@ export default function Journal() {
             </button>
           </div>
           <nav className="flex-1 space-y-xxs overflow-y-auto">
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
               <span className="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Tableau de bord</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
               <span className="material-symbols-outlined group-hover:scale-110 transition-transform">local_shipping</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Transport</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
               <span className="material-symbols-outlined group-hover:scale-110 transition-transform">payments</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Finances</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/parc/overview">
               <span className="material-symbols-outlined group-hover:scale-110 transition-transform">minor_crash</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Parc Automobile</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold shadow-sm transition-colors group" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold shadow-sm transition-colors group" href="/settings/system/audit-health">
               <span className="material-symbols-outlined group-hover:scale-110 transition-transform icon-fill">settings</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Paramètres</span>
             </a>
           </nav>
           <div className="mt-auto border-t border-outline-variant pt-md space-y-xxs">
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Support</span>
             </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider">Déconnexion</span>
             </a>

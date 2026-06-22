@@ -41,25 +41,25 @@ export default function KFinanceBillingInvoicing() {
 
         {/* Main Navigation */}
         <div className="flex-1 overflow-y-auto py-md flex flex-col gap-xxs">
-          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
             <span className="material-symbols-outlined">dashboard</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Tableau de bord</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
             <span className="material-symbols-outlined">local_shipping</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Transport</span>
           </a>
           {/* Active State: Finances */}
-          <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="/finance/overview">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r"></div>
             <span className="material-symbols-outlined fill text-primary">payments</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px]">Finances</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
             <span className="material-symbols-outlined">minor_crash</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Parc Automobile</span>
           </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+          <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label-caps text-label-caps uppercase tracking-wider text-[11px] font-semibold">Paramètres</span>
           </a>
@@ -72,11 +72,11 @@ export default function KFinanceBillingInvoicing() {
             Nouvelle Opération
           </button>
           <div className="flex flex-col gap-xxs mt-sm">
-            <a className="flex items-center gap-sm px-md py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined text-[18px]">help_outline</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider text-[10px] font-semibold">Support</span>
             </a>
-            <a className="flex items-center gap-sm px-md py-xs rounded text-error hover:bg-error-container transition-colors" href="#">
+            <a className="flex items-center gap-sm px-md py-xs rounded text-error hover:bg-error-container transition-colors" href="/login">
               <span className="material-symbols-outlined text-[18px]">logout</span>
               <span className="font-label-caps text-label-caps uppercase tracking-wider text-[10px] font-semibold">Déconnexion</span>
             </a>
@@ -123,7 +123,7 @@ export default function KFinanceBillingInvoicing() {
           {/* Page Header & Breadcrumbs */}
           <div className="flex flex-col gap-xs">
             <div className="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
-              <a className="hover:text-primary transition-colors" href="#">K-Finance</a>
+              <a className="hover:text-primary transition-colors" href="/finance/overview">K-Finance</a>
               <span className="material-symbols-outlined text-[14px]">chevron_right</span>
               <span className="text-on-surface">Facturation</span>
             </div>

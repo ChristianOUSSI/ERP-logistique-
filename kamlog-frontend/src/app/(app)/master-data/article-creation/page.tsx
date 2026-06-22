@@ -32,34 +32,34 @@ export default function MasterDataArticleCreation() {
           </button>
           {/* Main Navigation */}
           <div className="flex-1 overflow-y-auto space-y-1">
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
               <span className="material-symbols-outlined">dashboard</span>
               <span className="font-label-caps text-label-caps tracking-wide">Tableau de bord</span>
             </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
               <span className="material-symbols-outlined">local_shipping</span>
               <span className="font-label-caps text-label-caps tracking-wide">Transport</span>
             </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
               <span className="material-symbols-outlined">payments</span>
               <span className="font-label-caps text-label-caps tracking-wide">Finances</span>
             </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-primary bg-secondary-container font-bold border-l-4 border-primary" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-primary bg-secondary-container font-bold border-l-4 border-primary" href="/parc/overview">
               <span className="material-symbols-outlined icon-fill">minor_crash</span>
               <span className="font-label-caps text-label-caps tracking-wide">Parc Automobile</span>
             </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label-caps text-label-caps tracking-wide">Paramètres</span>
             </a>
           </div>
           {/* Footer Navigation */}
           <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
               <span className="font-label-md text-label-md">Support</span>
             </a>
-            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="#">
+            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label-md text-label-md">Déconnexion</span>
             </a>

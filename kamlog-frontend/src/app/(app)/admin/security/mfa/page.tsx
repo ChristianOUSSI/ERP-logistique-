@@ -25,31 +25,31 @@ export default function MfaConfigurationPage() {
           </button>
           <ul className="flex-1 flex flex-col gap-xs px-xs overflow-y-auto">
             <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
                 <span className="material-symbols-outlined">dashboard</span>
                 Tableau de bord
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
                 <span className="material-symbols-outlined">local_shipping</span>
                 Transport
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
                 <span className="material-symbols-outlined">payments</span>
                 Finances
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
                 <span className="material-symbols-outlined">minor_crash</span>
                 Parc Automobile
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-primary bg-secondary-container font-bold transition-colors active:scale-95 duration-150" href="#">
+              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-primary bg-secondary-container font-bold transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
                 <span className="material-symbols-outlined">settings</span>
                 Paramètres
               </a>
@@ -58,13 +58,13 @@ export default function MfaConfigurationPage() {
           <div className="mt-auto px-xs pb-md pt-md border-t border-outline-variant">
             <ul className="flex flex-col gap-xs">
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="/support">
                   <span className="material-symbols-outlined">help_outline</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="/login">
                   <span className="material-symbols-outlined">logout</span>
                   Déconnexion
                 </a>
@@ -106,7 +106,7 @@ export default function MfaConfigurationPage() {
             <div className="max-w-[1000px] mx-auto">
               {/* Breadcrumbs */}
               <nav className="flex text-label-md font-label-md text-on-surface-variant mb-md gap-xs items-center">
-                <a className="hover:text-primary transition-colors" href="#">Paramètres</a>
+                <a className="hover:text-primary transition-colors" href="/settings/system/audit-health">Paramètres</a>
                 <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                 <a className="hover:text-primary transition-colors" href="#">Sécurité</a>
                 <span className="material-symbols-outlined text-[16px]">chevron_right</span>

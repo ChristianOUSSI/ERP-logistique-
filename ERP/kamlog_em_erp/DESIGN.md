@@ -127,7 +127,7 @@ spacing:
 ---
 
 ## Brand & Style
-This design system is engineered for high-stakes port logistics, where operational speed and data accuracy are paramount. The brand personality is rooted in **Industrial Precision**—it is systematic, resilient, and highly efficient. It avoids unnecessary decoration in favor of utility, ensuring that users can navigate complex workflows without cognitive overload.
+This design system is engineered for high-stakes port logistics, where operational speed and data accuracy are paramount. The brand personality is rooted in **Industrial Precision**it is systematic, resilient, and highly efficient. It avoids unnecessary decoration in favor of utility, ensuring that users can navigate complex workflows without cognitive overload.
 
 The visual style is **Modern Corporate**, utilizing a flat design language with ample whitespace used strategically to separate dense data clusters. The interface prioritizes clear information hierarchy to support rapid decision-making in high-pressure environments like shipping terminals and warehouses. The emotional response is one of reliability and control; the UI acts as a calm, transparent window into the chaotic world of global logistics.
 

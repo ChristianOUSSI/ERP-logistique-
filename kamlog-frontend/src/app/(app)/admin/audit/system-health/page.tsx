@@ -29,31 +29,31 @@ export default function SystemHealthMonitorPage() {
           <nav className="flex-1 overflow-y-auto py-2">
             <ul className="space-y-1 px-2">
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
                   <span className="material-symbols-outlined">dashboard</span>
                   Tableau de bord
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
                   <span className="material-symbols-outlined">local_shipping</span>
                   Transport
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
                   <span className="material-symbols-outlined">payments</span>
                   Finances
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
                   <span className="material-symbols-outlined">minor_crash</span>
                   Parc Automobile
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold font-label-caps text-label-caps active:scale-95 duration-150 border-l-4 border-primary" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold font-label-caps text-label-caps active:scale-95 duration-150 border-l-4 border-primary" href="/settings/system/audit-health">
                   <span className="material-symbols-outlined">settings</span>
                   Paramètres
                 </a>
@@ -63,13 +63,13 @@ export default function SystemHealthMonitorPage() {
           <div className="mt-auto border-t border-outline-variant p-2">
             <ul className="space-y-1 px-2">
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="/support">
                   <span className="material-symbols-outlined">help_outline</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="#">
+                <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="/login">
                   <span className="material-symbols-outlined">logout</span>
                   Déconnexion
                 </a>

@@ -1,14 +1,11 @@
 // src/app/(auth)/forgot-password/page.tsx
+// Design: carte centrée sur fond ERP (identique au style login)
 'use client'
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { 
-  Mail, ArrowLeft, Send, 
-  Loader2, CheckCircle 
-} from 'lucide-react'
 import Link from 'next/link'
 import { apiClient } from '@/lib/api-client'
 
@@ -37,13 +34,13 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotFormData) => {
     setIsLoading(true)
     try {
-      await apiClient.post('/api/auth/forgot-password', { 
-        email: data.email 
+      await apiClient.post('/api/auth/forgot-password', {
+        email: data.email,
       })
       setSubmittedEmail(data.email)
       setIsSuccess(true)
     } catch {
-      // On affiche toujours le succès (sécurité  pas révéler si email existe)
+      // Toujours afficher le succès (ne pas révéler si l'email existe)
       setSubmittedEmail(data.email)
       setIsSuccess(true)
     } finally {
@@ -51,187 +48,168 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  // ── État Succès (2B) ────────────────────────────────────
-  if (isSuccess) {
-    return (
-      <div className="w-full text-center">
-
-        {/* Retour */}
-        <div className="text-left mb-8">
-          <Link 
-            href="/login"
-            className="inline-flex items-center gap-1 text-sm 
-                       text-[#06b6d4] hover:underline"
-          >
-            <ArrowLeft size={16} />
-            Retour à la connexion
-          </Link>
-        </div>
-
-        {/* Checkmark vert */}
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-green-100 
-                          flex items-center justify-center">
-            <CheckCircle size={48} className="text-green-500" />
-          </div>
-        </div>
-
-        <h1 className="text-[#1e293b] text-2xl font-bold mb-3">
-          Email envoyé !
-        </h1>
-        <p className="text-[#64748b] text-sm mb-2">
-          Un lien de réinitialisation a été envoyé à
-        </p>
-        <p className="text-[#1e293b] font-medium text-sm mb-6">
-          {submittedEmail}
-        </p>
-        <p className="text-muted-foreground text-xs">
-          Vérifiez aussi vos spams. Le lien expire dans 30 min.
-        </p>
-
-        {/* Bouton retour */}
-        <Link
-          href="/login"
-          className="mt-8 w-full h-11 rounded-lg border-2 
-                     border-[#06b6d4] text-[#06b6d4] font-medium 
-                     text-sm flex items-center justify-center
-                     hover:bg-[#06b6d4]/5 transition-colors"
-        >
-          Retour à la connexion
-        </Link>
-
-      </div>
-    )
-  }
-
-  // ── État Formulaire (2A) ────────────────────────────────
   return (
-    <div className="w-full">
-
-      {/* Retour */}
-      <div className="mb-8">
-        <Link 
-          href="/login"
-          className="inline-flex items-center gap-1 text-sm 
-                     text-[#06b6d4] hover:underline"
-        >
-          <ArrowLeft size={16} />
-          Retour à la connexion
-        </Link>
-      </div>
-
-      {/* Icône cadenas */}
-      <div className="flex justify-center mb-6">
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full bg-[#e0f7fa] 
-                          flex items-center justify-center shadow-lg">
-            {/* Cadenas avec ? */}
-            <svg viewBox="0 0 60 60" className="w-12 h-12">
-              <defs>
-                <linearGradient id="lockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#06b6d4"/>
-                  <stop offset="100%" stopColor="#0891b2"/>
-                </linearGradient>
-                <linearGradient id="lockBodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3"/>
-                  <stop offset="100%" stopColor="#0891b2" stopOpacity="0.5"/>
-                </linearGradient>
-                <filter id="lockShadow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodOpacity="0.3"/>
-                </filter>
-              </defs>
-              {/* Corps du cadenas avec effet 3D */}
-              <rect x="10" y="28" width="40" height="28" 
-                    rx="4" fill="url(#lockBodyGradient)" 
-                    stroke="url(#lockGradient)" strokeWidth="2.5" filter="url(#lockShadow)"/>
-              {/* Anneau du cadenas avec dégradé */}
-              <path d="M20 28 V20 A10 10 0 0 1 40 20 V28" 
-                    stroke="url(#lockGradient)" strokeWidth="3" 
-                    fill="none" strokeLinecap="round" filter="url(#lockShadow)"/>
-              {/* Point d'interrogation stylisé */}
-              <text x="30" y="47" textAnchor="middle" 
-                    fill="url(#lockGradient)" fontSize="16" fontWeight="bold"
-                    filter="url(#lockShadow)">
-                ?
-              </text>
-              {/* Reflet sur le corps du cadenas */}
-              <rect x="12" y="30" width="36" height="8" 
-                    fill="#06b6d4" opacity="0.15" rx="2"/>
-            </svg>
-          </div>
+    <div
+      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center overflow-y-auto relative py-12"
+      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+    >
+      {/* ── Background Layer ── */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-surface-container-low via-white to-surface-container-highest" />
+        <div className="absolute inset-0 logistics-overlay" />
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <img
+            className="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3F047r3gYJ87S3A35ak4dIOIGqHlksQbCPpUlVQ9vzeVWDfPBYIsS1-J0MTQ9hZvKJAmbrnAYlmm3-ppAXOhAndHlGzivtl9VPHTj8VML1Wbf7MIAshXa5PCgYR8-lLGVUBSlC9vdyEDdCz62_JQU91TuJVRfwE8oKBOJkHTLfyCcTYJhzzqwJoSOseWKiawHRC8myzlInZFL1fwnsC2PjL2ayMm-MVJ3iAiIHWL6f6uK8IZa0Wp1uebXZ6G0B5GfrtQB6X6Qkic"
+            alt="Terminal portuaire KAMLOG"
+          />
         </div>
       </div>
 
-      {/* Titre */}
-      <div className="text-center mb-8">
-        <h1 className="text-[#1e293b] text-2xl font-bold">
-          Mot de passe oublié ?
-        </h1>
-        <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
-          Entrez votre adresse email, nous vous enverrons 
-          un lien de réinitialisation.
-        </p>
-      </div>
+      {/* ── Main Content ── */}
+      <main className="relative z-10 w-full max-w-md px-md">
 
-      {/* Formulaire */}
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium 
-                            text-[#1e293b] mb-2">
-            Adresse email
-          </label>
-          <div className="relative">
-            <Mail 
-              size={18} 
-              className="absolute left-3 top-1/2 -translate-y-1/2 
-                         text-muted-foreground" 
-            />
-            <input
-              {...register('email')}
-              type="email"
-              placeholder="votre@kamlog.cm"
-              disabled={isLoading}
-              className={`
-                w-full h-11 pl-10 pr-4 rounded-lg border text-sm
-                text-[#1e293b] placeholder:text-[#cbd5e1]
-                outline-none transition-all duration-150
-                disabled:opacity-60
-                ${errors.email
-                  ? 'border-red-400 bg-red-50' 
-                  : 'border-[#e2e8f0] focus:border-[#06b6d4]'
-                }
-                focus:ring-2 focus:ring-[#06b6d4]/20
-              `}
-            />
+        {/* ── Header / Branding ── */}
+        <div className="text-center mb-xl">
+          <div className="inline-flex items-center justify-center p-xs bg-white rounded-lg shadow-sm border border-outline-variant mb-md">
+            <span
+              className="material-symbols-outlined text-auth-blue text-4xl"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              precision_manufacturing
+            </span>
           </div>
-          {errors.email && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.email.message}
-            </p>
-          )}
+          <h1 className="text-headline-sm font-headline-sm text-primary tracking-tight">
+            KAMLOG EM-ERP
+          </h1>
+          <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest mt-xxs">
+            Operational Control Systems
+          </p>
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full h-11 rounded-lg bg-[#06b6d4] 
-                     hover:bg-[#0891b2] text-white font-medium 
-                     text-sm flex items-center justify-center gap-2
-                     transition-colors disabled:opacity-70
-                     disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <Loader2 size={18} className="animate-spin" />
+        {/* ── Card ── */}
+        <div className="bg-white border border-outline-variant rounded-lg p-lg auth-card">
+
+          {isSuccess ? (
+            /* ── État succès ── */
+            <div className="text-center">
+              <div className="flex justify-center mb-lg">
+                <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-secondary text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    check_circle
+                  </span>
+                </div>
+              </div>
+
+              <h2 className="text-title-lg font-title-lg text-on-surface mb-xs">
+                Email envoyé !
+              </h2>
+              <p className="text-body-sm font-body-sm text-on-surface-variant mb-xxs">
+                Un lien de réinitialisation a été envoyé à
+              </p>
+              <p className="text-body-md font-title-md text-on-surface mb-lg">
+                {submittedEmail}
+              </p>
+
+              <div className="flex items-center gap-xs p-sm bg-surface-container rounded border border-outline-variant/30 mb-lg text-left">
+                <span className="material-symbols-outlined text-outline text-[18px] shrink-0">info</span>
+                <p className="text-label-sm font-label-sm text-on-surface-variant leading-tight">
+                  Vérifiez aussi vos spams. Le lien expire dans 30 minutes.
+                </p>
+              </div>
+
+              <Link
+                href="/login"
+                className="w-full py-sm px-md bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-xs shadow-md"
+              >
+                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+                <span>Retour à la connexion</span>
+              </Link>
+            </div>
           ) : (
+            /* ── État formulaire ── */
             <>
-              Envoyer le lien
-              <Send size={16} />
+              <div className="mb-lg">
+                <div className="flex justify-center mb-md">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      lock_reset
+                    </span>
+                  </div>
+                </div>
+                <h2 className="text-title-lg font-title-lg text-on-surface mb-xxs text-center">
+                  Mot de passe oublié ?
+                </h2>
+                <p className="text-body-sm font-body-sm text-on-surface-variant text-center">
+                  Entrez votre adresse email, nous vous enverrons un lien de réinitialisation.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-md" noValidate>
+                {/* Email Field */}
+                <div className="space-y-xs">
+                  <label className="text-label-md font-label-md text-on-surface-variant" htmlFor="email">
+                    Email institutionnel
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">
+                      alternate_email
+                    </span>
+                    <input
+                      {...register('email')}
+                      className="w-full pl-10 pr-md py-sm bg-surface rounded border border-outline-variant text-body-md focus-ring transition-all placeholder:text-outline"
+                      id="email"
+                      placeholder="user@kamlog.com"
+                      type="email"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-error text-label-sm mt-xxs">{errors.email.message}</p>
+                  )}
+                </div>
+
+                {/* Submit */}
+                <button
+                  className="w-full py-sm px-md bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-xs shadow-md disabled:opacity-70"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="material-symbols-outlined animate-spin">sync</span>
+                      <span>Envoi en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Envoyer le lien</span>
+                      <span className="material-symbols-outlined text-[20px]">send</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Retour */}
+              <div className="mt-lg pt-md border-t border-outline-variant text-center">
+                <Link
+                  href="/login"
+                  className="text-body-sm font-body-sm text-primary hover:underline inline-flex items-center gap-xxs"
+                >
+                  <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+                  Retour à la connexion
+                </Link>
+              </div>
             </>
           )}
-        </button>
+        </div>
 
-      </form>
+        {/* ── System Footer ── */}
+        <div className="mt-lg flex flex-col items-center gap-xs">
+          <p className="text-label-sm font-label-sm text-outline">
+            v4.8.2-stable | © 2026 KAMLOG LOGISTICS GROUP
+          </p>
+        </div>
+      </main>
     </div>
   )
 }

@@ -32,31 +32,31 @@ export default function AdminUserManagementRbac() {
           <div className="flex-1 overflow-y-auto">
             <ul className="space-y-xs">
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/dashboard/global">
                   <span className="material-symbols-outlined">dashboard</span>
                   Tableau de bord
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/transport/control">
                   <span className="material-symbols-outlined">local_shipping</span>
                   Transport
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/finance/overview">
                   <span className="material-symbols-outlined">payments</span>
                   Finances
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/parc/overview">
                   <span className="material-symbols-outlined">minor_crash</span>
                   Parc Automobile
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold font-label-md text-label-md active:scale-95 duration-150 relative" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold font-label-md text-label-md active:scale-95 duration-150 relative" href="/settings/system/audit-health">
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-2/3 bg-primary rounded-r-full"></div>
                   <span className="material-symbols-outlined" style={{ fontVariationSettings: 'FILL 1' }}>settings</span>
                   Paramètres
@@ -68,13 +68,13 @@ export default function AdminUserManagementRbac() {
           <div className="mt-auto pt-md border-t border-outline-variant">
             <ul className="space-y-xs">
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/support">
                   <span className="material-symbols-outlined">help_outline</span>
                   Support
                 </a>
               </li>
               <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="#">
+                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/login">
                   <span className="material-symbols-outlined">logout</span>
                   Déconnexion
                 </a>
@@ -127,7 +127,7 @@ export default function AdminUserManagementRbac() {
             <div className="mb-lg flex justify-between items-end">
               <div>
                 <div className="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant mb-xs uppercase tracking-wider">
-                  <a className="hover:text-primary transition-colors" href="#">Paramètres</a>
+                  <a className="hover:text-primary transition-colors" href="/settings/system/audit-health">Paramètres</a>
                   <span className="material-symbols-outlined text-[14px]">chevron_right</span>
                   <span className="text-primary">User Management</span>
                 </div>

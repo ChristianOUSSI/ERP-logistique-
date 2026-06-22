@@ -92,42 +92,42 @@ export default function CreationOrdreDeTravailPage() {
           </div>
           <ul className="flex-1 overflow-y-auto py-2">
             <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/transport/control">
                 <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_shipping</span>
                 Transport
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/magasin/dashboard">
                 <span className="material-symbols-outlined" style={{fontSize: '20px'}}>inventory_2</span>
                 Magasin
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/finance/overview">
                 <span className="material-symbols-outlined" style={{fontSize: '20px'}}>payments</span>
                 Finance
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md transition-all duration-200 ease-in-out text-primary bg-surface-container-highest border-l-4 border-primary font-bold" href="#">
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md transition-all duration-200 ease-in-out text-primary bg-surface-container-highest border-l-4 border-primary font-bold" href="/parc/overview">
                 <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_parking</span>
                 Parc
               </a>
             </li>
             <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/audit/dashboard/health">
                 <span className="material-symbols-outlined" style={{fontSize: '20px'}}>fact_check</span>
                 Audit
               </a>
             </li>
           </ul>
           <div className="border-t border-outline-variant py-2">
-            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/support">
               <span className="material-symbols-outlined" style={{fontSize: '20px'}}>support_agent</span>
               Support
             </a>
-            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="#">
+            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/login">
               <span className="material-symbols-outlined" style={{fontSize: '20px'}}>logout</span>
               Log out
             </a>
