@@ -1,6 +1,5 @@
 {
   "framework": "nextjs",
-  "rootDirectory": "kamlog-frontend",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "rewrites": [
