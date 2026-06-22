@@ -1,7 +1,7 @@
 # Architecture Technique - KAMLOG EM-ERP
 
-**Version**: 1.2  
-**Date**: Juin 2026 (Mis à jour le 10 Juin 2026)
+**Version**: 2.0 (Production Ready)
+**Date**: 21 Juin 2026
 
 ---
 
@@ -19,6 +19,7 @@ KAMLOG EM-ERP est une application ERP modulaire pour la gestion logistique portu
 - **File de tâches**: Celery 5
 - **Monitoring**: Prometheus + Grafana
 - **CI/CD**: GitHub Actions
+- **Tests**: Pytest, Playwright
 
 ---
 
@@ -37,6 +38,7 @@ L'application utilise un système de couleurs distinctes pour chaque module, fac
 🚗 K-Parc                                 : #06B6D4 (Cyan)
 📄 Documents                              : #6B7280 (Gris)
 🔔 Alertes                                : #F97316 (Orange foncé)
+🛒 Achats                                 : #14B8A6 (Sarcelle)
 ```
 
 ### Implémentation Frontend
@@ -557,11 +559,10 @@ Système de gestion d'erreurs centralisé
 
 - **README.md**: Guide de démarrage rapide
 - **DEPLOYMENT.md**: Guide de déploiement
-- **ANALYSE_COMPLETE_ERP.md**: Audit technique et recommandations
 - **ARCHITECTURE.md**: Ce document
 - **API_DOCUMENTATION.md**: Référence des endpoints
-- **CAHIER_DES_CHARGES_V2.md**: Spécifications métier
-- **DOCUMENT_TRANSACTIONS.md**: Logique des flux de données
+- **STATUT_GLOBAL_PROJET.md**: Statut global du projet
+- **TESTING_CHECKLIST.md**: Checklist de testing
 
 ---
 
@@ -622,12 +623,12 @@ Système de gestion d'erreurs centralisé
 
 ---
 
-**Document généré le**: Juin 2026  
-**Dernière mise à jour**: 10 Juin 2026 (Corrections Frontend appliquées)
+**Document généré le**: Juin 2026
+**Dernière mise à jour**: 21 Juin 2026
 
 ---
 
-## 📝 Note sur l'état actuel (10 Juin 2026)
+## 📝 Note sur l'état actuel (21 Juin 2026)
 
 **Vérification effectuée sur le code actuel:**
 
@@ -638,13 +639,12 @@ Système de gestion d'erreurs centralisé
 - MFA complet avec endpoints, service et intégration auth
 - CI/CD GitHub Actions avec tests, linting et build
 - Documentation API complète avec exemples
-- **NOUVEAU**: Frontend entièrement fonctionnel avec imports Radix UI corrigés
-- **NOUVEAU**: TailwindCSS v3 syntaxe correcte dans globals.css
-- **NOUVEAU**: Auth export corrigé avec getServerSession (NextAuth v4)
-- **NOUVEAU**: Composant Sonner recréé et opérationnel
-- **NOUVEAU**: Gitignore mis à jour pour accès aux fichiers lib
+- Frontend entièrement fonctionnel avec 67+ interfaces
+- Repository pattern implémenté sur tous les modules (11 repositories)
+- Workflows Mag3 complets avec notifications
+- Système de gestion d'erreurs centralisé
+- Système de validation des données
+- Interface de login compacte et optimisée
+- Documentation réduite à 6 documents essentiels
 
-⚠️ **Partiellement implémenté:**
-- Repository pattern: Seul `magasin_repository.py` existe. Les autres modules (tiers, parc, finance, transport) utilisent directement les modèles dans les services.
-
-**Recommandation:** Le projet est dans un excellent état pour la production. Le frontend est maintenant entièrement fonctionnel et toutes les erreurs de build ont été résolues. Le repository pattern pourrait être étendu aux autres modules pour une meilleure cohérence architecturale.
+**Recommandation:** Le projet est dans un état excellent pour la production. Toutes les fonctionnalités core sont implémentées, le frontend est entièrement fonctionnel, et l'architecture est cohérente avec le repository pattern appliqué à tous les modules.
