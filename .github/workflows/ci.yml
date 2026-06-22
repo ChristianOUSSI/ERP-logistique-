@@ -1,0 +1,129 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: kamlog
+          POSTGRES_PASSWORD: kamlog_secret
+          POSTGRES_DB: kamlog_erp_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      working-directory: ./kamlog-backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio httpx
+    
+    - name: Run tests
+      working-directory: ./kamlog-backend
+      env:
+        DATABASE_URL: postgresql+asyncpg://kamlog:kamlog_secret@localhost:5432/kamlog_erp_test
+        REDIS_URL: redis://localhost:6379/0
+        JWT_SECRET_KEY: test_secret_key_for_ci_cd_min_32_chars
+      run: |
+        pytest tests/ -v --cov=app --cov-report=xml --cov-report=html
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./kamlog-backend/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      working-directory: ./kamlog-backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff black mypy
+    
+    - name: Run ruff
+      working-directory: ./kamlog-backend
+      run: ruff check app/
+    
+    - name: Run black
+      working-directory: ./kamlog-backend
+      run: black --check app/
+    
+    - name: Run mypy
+      working-directory: ./kamlog-backend
+      run: mypy app/
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: kamlog-erp:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Ajoutez vos commandes de déploiement ici
+        # Ex: kubectl apply -f k8s/staging/

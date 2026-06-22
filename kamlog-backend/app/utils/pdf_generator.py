@@ -1,4 +1,4 @@
-# app/utils/pdf_generator.py — Génération PDF KAMLOG
+# app/utils/pdf_generator.py  Génération PDF KAMLOG
 from decimal import Decimal
 from datetime import datetime
 from typing import Optional
@@ -53,7 +53,7 @@ def generer_bl_pdf(mission: MissionTransport, tiers: Tiers) -> bytes:
     <body>
         <div class="header">
             <h1>BON DE LIVRAISON</h1>
-            <p>KAMLOG EM-ERP — Port de Douala</p>
+            <p>KAMLOG EM-ERP  Port de Douala</p>
             <p>Référence: {mission.reference}</p>
         </div>
 
@@ -113,7 +113,7 @@ def generer_bl_pdf(mission: MissionTransport, tiers: Tiers) -> bytes:
 
         <div class="footer">
             <p>Document généré automatiquement par KAMLOG EM-ERP</p>
-            <p>Port Autonome de Douala — Cameroun</p>
+            <p>Port Autonome de Douala  Cameroun</p>
             <p>Date d'émission: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
         </div>
     </body>
@@ -165,7 +165,7 @@ def generer_facture_pdf(facture: Facture, tiers: Tiers) -> bytes:
     <body>
         <div class="header">
             <h1>FACTURE</h1>
-            <p>KAMLOG EM-ERP — Port de Douala</p>
+            <p>KAMLOG EM-ERP  Port de Douala</p>
             <p>Numéro: {facture.numero_facture}</p>
         </div>
 
@@ -209,7 +209,7 @@ def generer_facture_pdf(facture: Facture, tiers: Tiers) -> bytes:
 
         <div class="footer">
             <p>Document généré automatiquement par KAMLOG EM-ERP</p>
-            <p>Port Autonome de Douala — Cameroun</p>
+            <p>Port Autonome de Douala  Cameroun</p>
             <p>Date d'émission: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
         </div>
     </body>

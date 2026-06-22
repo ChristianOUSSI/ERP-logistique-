@@ -1,4 +1,4 @@
-# app/schemas/parc.py — Schémas Parc
+# app/schemas/parc.py  Schémas Parc
 from pydantic import BaseModel, Field
 from datetime import datetime
 from app.models.parc import StatutEmplacement

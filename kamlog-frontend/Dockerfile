@@ -1,4 +1,4 @@
-# Dockerfile — KAMLOG Frontend Next.js
+# Dockerfile  KAMLOG Frontend Next.js
 FROM node:20-alpine AS base
 
 # Install dependencies only when needed

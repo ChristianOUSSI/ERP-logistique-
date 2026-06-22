@@ -1,4 +1,4 @@
-# app/models/finance.py — Modèles K-Finance
+# app/models/finance.py  Modèles K-Finance
 import enum
 from decimal import Decimal
 from sqlalchemy import String, Numeric, Text, ForeignKey, Index, DateTime

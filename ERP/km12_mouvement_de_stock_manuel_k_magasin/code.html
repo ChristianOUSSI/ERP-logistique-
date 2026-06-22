@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Magasin : Mouvement de Stock Manuel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-surface": "#151c27",
+                        "primary": "#0058be",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#424754",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#005ac2",
+                        "on-background": "#151c27",
+                        "on-secondary-container": "#00714d",
+                        "on-secondary-fixed": "#002113",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-container": "#a36700",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#005236",
+                        "inverse-surface": "#2a313d",
+                        "outline-variant": "#c2c6d6",
+                        "secondary": "#006c49",
+                        "tertiary": "#825100",
+                        "surface-container-highest": "#dce2f3",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary-fixed": "#6ffbbe",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#fefcff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#727785",
+                        "on-primary-fixed": "#001a42",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary-fixed-variant": "#004395",
+                        "secondary-container": "#6cf8bb",
+                        "primary-container": "#2170e4",
+                        "on-error-container": "#93000a",
+                        "surface": "#f9f9ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        // Magasin module specific accent colors as requested
+                        "magasin": {
+                            "main": "#ef4444", // Red-500
+                            "light": "#fca5a5", // Red-300
+                            "bg": "#fee2e2" // Red-100
+                        }
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "max-width": "1600px",
+                        "xl": "2rem",
+                        "gutter": "1rem",
+                        "sm": "0.75rem",
+                        "xxs": "0.25rem",
+                        "margin-desktop": "1.5rem",
+                        "lg": "1.5rem",
+                        "md": "1rem",
+                        "xs": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Magasin specific active state for side nav */
+        .magasin-active {
+            color: theme('colors.magasin.main');
+            background-color: theme('colors.magasin.bg');
+            border-left-color: theme('colors.magasin.main');
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
+<!-- TopNavBar (Mobile Only) -->
+<header class="md:hidden flex items-center justify-between px-margin-desktop w-full h-16 bg-surface border-b border-outline-variant fixed top-0 z-50">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-magasin-main">inventory_2</span>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">Magasin</h1>
+</div>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-high p-1 rounded transition-colors" data-icon="search">search</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-high p-1 rounded transition-colors" data-icon="menu">menu</span>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full flex-shrink-0 z-40 bg-surface-container-low border-r border-outline-variant w-[240px] transition-all duration-200 ease-in-out">
+<!-- Header -->
+<div class="p-lg border-b border-outline-variant mb-md flex items-center gap-md">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-title-lg font-bold">
+                PA
+            </div>
+<div>
+<div class="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Terminal A1</div>
+</div>
+</div>
+<!-- CTA -->
+<div class="px-md mb-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size: 16px;">search</span>
+<input class="w-full bg-surface-container border border-outline-variant rounded-DEFAULT py-xs pl-8 pr-2 font-label-md text-label-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-on-surface-variant" placeholder="T-Code Search" type="text"/>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-xxs px-xs">
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Transport</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs rounded-lg font-label-md text-label-md magasin-active font-bold border-l-4" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" data-weight="fill" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span>Magasin</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Finance</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="local_parking">local_parking</span>
+<span>Parc</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span>Audit</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="border-t border-outline-variant p-xs flex flex-col gap-xxs mt-auto">
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Log out</span>
+</a>
+</div>
+</nav>
+<!-- Contextual Pane (Sub-module Nav) -->
+<aside class="hidden xl:flex flex-col fixed left-[240px] top-0 h-full w-[200px] flex-shrink-0 z-30 bg-surface border-r border-outline-variant pt-lg px-md">
+<h2 class="font-title-md text-title-md font-bold text-on-surface mb-md">Magasin Ops</h2>
+<div class="flex flex-col gap-xs">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xxs mt-sm">Transactions</div>
+<a class="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MIGO - Réception</a>
+<a class="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MIRO - Facturation</a>
+<a class="font-body-sm text-body-sm text-magasin-main font-semibold bg-magasin-bg py-1 px-2 rounded border-l-2 border-magasin-main" href="#">MB1A - Mvt Stock</a>
+<a class="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MB52 - État Stock</a>
+</div>
+</aside>
+<!-- Main Content Stage -->
+<main class="flex-1 ml-0 md:ml-[240px] xl:ml-[440px] mt-16 md:mt-0 p-md md:p-lg lg:p-xl max-w-[1200px] w-full">
+<!-- Breadcrumbs & Header -->
+<div class="mb-lg">
+<nav class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant mb-xs">
+<a class="hover:text-magasin-main transition-colors" href="#">Port Ops</a>
+<span class="material-symbols-outlined" style="font-size: 14px;">chevron_right</span>
+<a class="hover:text-magasin-main transition-colors" href="#">Magasin</a>
+<span class="material-symbols-outlined" style="font-size: 14px;">chevron_right</span>
+<span class="text-on-surface">Mouvement de Stock Manuel</span>
+</nav>
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Ajustement Manuel</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Transaction T-Code: MB1A</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-xs border border-outline-variant rounded bg-surface hover:bg-surface-container transition-colors font-label-md text-label-md text-on-surface font-medium flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+                        Imprimer Code-Barres
+                    </button>
+</div>
+</div>
+</div>
+<!-- Form Container -->
+<div class="bg-surface rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+<!-- Context Header -->
+<div class="bg-surface-container-low px-lg py-md border-b border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-magasin-bg text-magasin-main flex items-center justify-center">
+<span class="material-symbols-outlined" data-weight="fill" style="font-size: 18px;">edit_document</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md font-medium text-on-surface">Détails du Mouvement</h2>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Veuillez renseigner les informations obligatoires (*)</div>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant font-data-tabular text-data-tabular rounded">Date: 24 Oct 2023</span>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant font-data-tabular text-data-tabular rounded">Opérateur: 1042A</span>
+</div>
+</div>
+<!-- Form Body -->
+<form class="p-lg flex flex-col gap-lg">
+<!-- Section 1: Article & Type -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md border-b border-outline-variant pb-lg">
+<!-- Article Selection -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface mb-xs font-medium">Code Article / Description <span class="text-magasin-main">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size: 18px;">qr_code_scanner</span>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT py-sm pl-10 pr-3 font-body-md text-body-md focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none transition-all" placeholder="Rechercher un article..." type="text" value="ART-99201 - Filtre Huile Lourd"/>
+</div>
+</div>
+<!-- Type de Mouvement -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-xs font-medium">Type de Mouvement <span class="text-magasin-main">*</span></label>
+<select class="w-full bg-surface border border-outline-variant rounded-DEFAULT py-sm px-3 font-body-md text-body-md focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none transition-all appearance-none cursor-pointer">
+<option value="">Sélectionner...</option>
+<option value="entry">Entrée (101)</option>
+<option value="exit">Sortie (201)</option>
+<option value="transfer">Transfert (301)</option>
+<option selected="" value="adjustment">Ajustement d'Inventaire (701)</option>
+</select>
+</div>
+</div>
+<!-- Section 2: Quantities & Locations -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-md">
+<!-- Quantity -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-xs font-medium">Quantité <span class="text-magasin-main">*</span></label>
+<div class="flex">
+<input class="w-full bg-surface border border-outline-variant border-r-0 rounded-l-DEFAULT py-sm px-3 font-data-tabular text-data-tabular focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none transition-all z-10" type="number" value="-2"/>
+<select class="bg-surface-container-low border border-outline-variant rounded-r-DEFAULT py-sm px-2 font-label-md text-label-md focus:border-magasin-main outline-none z-0 border-l-0 w-20">
+<option>UDB</option>
+<option selected="">PC</option>
+<option>KG</option>
+<option>PAL</option>
+</select>
+</div>
+</div>
+<!-- Emplacement Source -->
+<div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-md bg-surface-container-low p-md rounded border border-outline-variant">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Emplacement Source</label>
+<div class="flex gap-2">
+<input class="w-1/3 bg-surface border border-outline-variant rounded-DEFAULT py-sm px-2 font-data-tabular text-data-tabular focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none uppercase" placeholder="Zone" type="text" value="Z-A"/>
+<input class="w-2/3 bg-surface border border-outline-variant rounded-DEFAULT py-sm px-2 font-data-tabular text-data-tabular focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none uppercase" placeholder="Allée/Rack" type="text" value="R42-B12"/>
+</div>
+</div>
+<!-- Emplacement Destination (Disabled for Adjustment) -->
+<div class="opacity-50">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Emplacement Destination</label>
+<div class="flex gap-2">
+<input class="w-1/3 bg-surface-container border border-outline-variant rounded-DEFAULT py-sm px-2 font-data-tabular text-data-tabular cursor-not-allowed" disabled="" placeholder="Zone" type="text"/>
+<input class="w-2/3 bg-surface-container border border-outline-variant rounded-DEFAULT py-sm px-2 font-data-tabular text-data-tabular cursor-not-allowed" disabled="" placeholder="Allée/Rack" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Justification -->
+<div class="border-t border-outline-variant pt-lg">
+<label class="block font-label-md text-label-md text-on-surface mb-xs font-medium">Motif de l'Ajustement <span class="text-magasin-main">*</span></label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-DEFAULT py-sm px-3 font-body-md text-body-md focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none transition-all resize-none" placeholder="Ex: Écart constaté lors de l'inventaire tournant, pièce endommagée..." rows="3"></textarea>
+</div>
+<!-- Footer Actions -->
+<div class="flex justify-end gap-md pt-md mt-sm">
+<button class="px-xl py-sm border border-outline-variant rounded bg-surface hover:bg-surface-container transition-colors font-label-md text-label-md text-on-surface font-medium" type="button">
+                        Annuler
+                    </button>
+<button class="px-xl py-sm rounded bg-magasin-main hover:bg-red-600 transition-colors font-label-md text-label-md text-white font-medium shadow-sm flex items-center gap-xs" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                        Valider le Mouvement
+                    </button>
+</div>
+</form>
+</div>
+<!-- Recent Stock Table Info -->
+<div class="mt-lg">
+<h3 class="font-title-md text-title-md font-medium text-on-surface mb-sm">Situation du Stock (ART-99201)</h3>
+<div class="bg-surface rounded border border-outline-variant overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant font-label-sm text-label-sm text-on-surface-variant uppercase">
+<th class="py-sm px-md font-medium">Magasin</th>
+<th class="py-sm px-md font-medium">Zone</th>
+<th class="py-sm px-md font-medium">Rack</th>
+<th class="py-sm px-md font-medium text-right">Stock Actuel</th>
+<th class="py-sm px-md font-medium">Statut</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular text-on-surface">
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest">
+<td class="py-xs px-md">M-PRINCIPAL</td>
+<td class="py-xs px-md">Z-A</td>
+<td class="py-xs px-md">R42-B12</td>
+<td class="py-xs px-md text-right font-medium">45 PC</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-green-100 text-green-800">Disponible</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest">
+<td class="py-xs px-md">M-QUARANTAINE</td>
+<td class="py-xs px-md">Z-Q</td>
+<td class="py-xs px-md">Q01-A01</td>
+<td class="py-xs px-md text-right font-medium">2 PC</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-yellow-100 text-yellow-800">Bloqué CQ</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Création Facture Client - KAMLOG K-Finance</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e7eefe",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#006c49",
+                    "primary": "#0058be",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-error-container": "#93000a",
+                    "on-background": "#151c27",
+                    "on-secondary-fixed": "#002113",
+                    "surface-container-highest": "#dce2f3",
+                    "secondary-fixed": "#6ffbbe",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface-variant": "#424754",
+                    "surface-container-high": "#e2e8f8",
+                    "tertiary-container": "#a36700",
+                    "tertiary": "#825100",
+                    "secondary-fixed-dim": "#4edea3",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2a313d",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb8",
+                    "outline": "#727785",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-variant": "#dce2f3",
+                    "outline-variant": "#c2c6d6",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#2170e4",
+                    "surface-container-low": "#f0f3ff",
+                    "surface": "#f9f9ff",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-surface": "#151c27",
+                    "on-primary-container": "#fefcff",
+                    "inverse-primary": "#adc6ff",
+                    "background": "#f9f9ff",
+                    "surface-dim": "#d3daea",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-tint": "#005ac2",
+                    "on-primary-fixed": "#001a42",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#00714d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxs": "0.25rem",
+                    "gutter": "1rem",
+                    "md": "1rem",
+                    "max-width": "1600px",
+                    "lg": "1.5rem",
+                    "xs": "0.5rem",
+                    "sm": "0.75rem",
+                    "margin-desktop": "1.5rem",
+                    "xl": "2rem"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "data-tabular": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Module specific accent (K-Finance Violet) mapped to primary for this specific view */
+        .k-finance-accent { background-color: #8B5CF6; } /* Tailwind purple-500 equivalent for specific module touches if needed, though strictly we use primary */
+        .k-finance-text { color: #8B5CF6; }
+        .k-finance-border { border-color: #8B5CF6; }
+        
+        /* Using primary from theme as the main driver, but adding a subtle violet tint to surfaces to respect the prompt's context */
+        .bg-finance-surface { background-color: #faf5ff; } /* tailwind fuchsia-50 */
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
+<!-- JSON Component: SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col p-stack-md z-50">
+<!-- Header -->
+<div class="px-md py-lg mb-4 flex items-center gap-sm border-b border-surface-variant">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md font-bold k-finance-accent text-white">
+                K
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed font-bold leading-tight">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Port Operations</p>
+</div>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto py-2">
+<ul class="space-y-1 px-xs">
+<li>
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Tableau de bord
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+                        Transport
+                    </a>
+</li>
+<!-- ACTIVE TAB: Finances -->
+<li class="relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary dark:bg-primary-fixed rounded-r-full k-finance-accent"></div>
+<a class="flex items-center gap-3 px-sm py-2 ml-1 rounded-lg font-label-md text-label-md text-primary dark:text-primary-fixed bg-secondary-container dark:bg-on-secondary-fixed-variant font-bold active:scale-95 duration-150 k-finance-text bg-purple-100" href="#">
+<span class="material-symbols-outlined text-[20px] fill">payments</span>
+                        Finances
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">minor_crash</span>
+                        Parc Automobile
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-sm py-2 rounded-lg font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-secondary-fixed-variant transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                        Paramètres
+                    </a>
+</li>
+</ul>
+<!-- Contextual Pane (Sub-module) -->
+<div class="mt-8 px-md">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-3">T-Codes Finance</p>
+<div class="space-y-2">
+<button class="w-full flex items-center justify-between px-3 py-2 bg-surface-container-low rounded border border-outline-variant hover:border-primary transition-colors text-left group">
+<span class="font-data-tabular text-data-tabular text-on-surface group-hover:text-primary">F-01</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 bg-primary-container text-on-primary-container rounded border border-primary text-left k-finance-accent k-finance-border text-white">
+<span class="font-data-tabular text-data-tabular font-semibold">VF01</span>
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 bg-surface-container-low rounded border border-outline-variant hover:border-primary transition-colors text-left group">
+<span class="font-data-tabular text-data-tabular text-on-surface group-hover:text-primary">FBL5N</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer CTA & Links -->
+<div class="mt-auto px-md py-4 border-t border-surface-variant">
+<button class="w-full mb-4 py-2 px-4 bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex justify-center items-center gap-2 k-finance-accent">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                Nouvelle Opération
+            </button>
+<ul class="space-y-2">
+<li>
+<a class="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-error hover:bg-error-container transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+                        Déconnexion
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[260px] flex flex-col h-full bg-finance-surface">
+<!-- JSON Component: TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface dark:bg-on-background border-b border-outline-variant dark:border-outline flex justify-between items-center h-[64px] px-gutter">
+<!-- Left: Breadcrumbs & Context -->
+<div class="flex items-center gap-4">
+<div class="flex items-center text-sm text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer font-label-md text-label-md">K-Finance</span>
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="hover:text-primary cursor-pointer font-label-md text-label-md">Facturation</span>
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold k-finance-text">Création Facture Client (VF01)</span>
+</div>
+</div>
+<!-- Right: Search & Actions -->
+<div class="flex items-center gap-4">
+<!-- T-Code Search -->
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded-lg k-finance-border">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface w-48 focus:outline-none focus:border-primary k-finance-border" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<!-- Icon Actions -->
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">verified_user</span>
+</button>
+<!-- Profile -->
+<button class="ml-2 w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="User profile with MFA status" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2m3t74ULBJxvSrslZkQ6Y_0P8lKGAmW9nIpVm59EY2FlR-Uk9R2KqOrMJYLGhIWyCYrAn9DeR6ntDqND65I-BWYuiBa0GeUE1TdZgLR9WLDXWAzRPkh3IEPGEr2DVzw4F7j1H0RTDhTjeWP1bQMM9c_L7msvIhsm18xRIYQ_Bi9YFU640lqJwo-NK8uBc2neHrAQJwZsbWj5QxbOBhbqRXsnvVfi7kIXbFjb7z6fzFQQ_BvVI-zt1WDjiRSMphW1BE1HBuUYtaKo"/>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter relative">
+<div class="max-w-[1200px] mx-auto space-y-md pb-xl">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Nouvelle Facture</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Transaction: VF01 • Date comptable: 24 Oct 2023</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-4 py-2 bg-surface border border-outline-variant rounded font-title-md text-title-md text-on-surface hover:bg-surface-container-low transition-colors shadow-sm">
+                            Sauvegarder Brouillon
+                        </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded font-title-md text-title-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm flex items-center gap-2 k-finance-accent">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                            Comptabiliser
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Layout for Form -->
+<div class="grid grid-cols-12 gap-md">
+<!-- Top Left: Client Selection (En-tête) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm p-md relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary k-finance-accent"></div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">domain</span>
+                            Données Client
+                        </h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Code Client (Soldeur)</label>
+<div class="relative">
+<input class="w-full px-3 py-2 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary k-finance-border" type="text" value="C-49201"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</button>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Nom / Raison Sociale</label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded font-body-sm text-body-sm text-on-surface-variant cursor-not-allowed" readonly="" type="text" value="MAERSK LINE CAMEROUN SA"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">N° Contribuable</label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface-variant cursor-not-allowed" readonly="" type="text" value="M049300012344B"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Conditions de paiement</label>
+<select class="w-full px-3 py-2 bg-surface-bright border border-outline-variant rounded font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary k-finance-border">
+<option>Z030 - 30 Jours Net</option>
+<option>Z015 - 15 Jours Net</option>
+<option>Z000 - Comptant</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Top Right: Invoice Details -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm p-md">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">receipt_long</span>
+                            Détails Facture
+                        </h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center pb-2 border-b border-surface-variant">
+<span class="font-label-md text-label-md text-on-surface-variant">Type de document</span>
+<span class="font-body-sm text-body-sm font-semibold bg-surface-container px-2 py-1 rounded">F2 - Facture Standard</span>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Date de facturation</label>
+<input class="w-full px-3 py-1.5 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary k-finance-border" type="date" value="2023-10-24"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant">Devise</label>
+<select class="w-full px-3 py-1.5 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary k-finance-border">
+<option>XAF - Franc CFA</option>
+<option>EUR - Euro</option>
+<option>USD - US Dollar</option>
+</select>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Statut</span>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface px-2 py-1 rounded border border-outline-variant">Non Comptabilisée</span>
+</div>
+</div>
+</div>
+<!-- Middle: Passerelle / Lignes de commande -->
+<div class="col-span-12 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+<!-- Table Toolbar -->
+<div class="px-md py-sm bg-surface-container border-b border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-4">
+<h3 class="font-title-md text-title-md text-on-surface font-semibold">Lignes d'articles</h3>
+<button class="flex items-center gap-1 text-primary text-sm hover:underline font-label-md k-finance-text">
+<span class="material-symbols-outlined text-[16px]">cable</span>
+                                    Importer via Commande (VL02N)
+                                </button>
+</div>
+<div class="flex gap-2">
+<button class="p-1 rounded hover:bg-surface-variant text-on-surface-variant transition-colors" title="Ajouter une ligne">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-variant text-on-surface-variant transition-colors" title="Supprimer la sélection">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Dense Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-10 text-center"><input class="rounded border-outline-variant text-primary focus:ring-primary k-finance-accent" type="checkbox"/></th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-16">Pos</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase">Article / Prestation</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-24">Qte</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-20">UM</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Prix Unitaire</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-24">Code TVA</th>
+<th class="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Montant Net</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<tr class="border-b border-surface-variant hover:bg-surface-bright transition-colors">
+<td class="py-2 px-3 text-center"><input class="rounded border-outline-variant text-primary focus:ring-primary k-finance-accent" type="checkbox"/></td>
+<td class="py-2 px-3 text-on-surface-variant">0010</td>
+<td class="py-2 px-3">
+<div class="font-medium text-on-surface">Manutention TC 20' Plein</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Ref Commande: 450098221</div>
+</td>
+<td class="py-2 px-3"><input class="w-full px-2 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-right" type="number" value="12"/></td>
+<td class="py-2 px-3 text-on-surface-variant">UN</td>
+<td class="py-2 px-3 text-right"><input class="w-full px-2 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-right" type="text" value="45 000"/></td>
+<td class="py-2 px-3">
+<select class="w-full px-1 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-sm">
+<option selected="">V1 (19.25%)</option>
+<option>V0 (0%)</option>
+</select>
+</td>
+<td class="py-2 px-3 text-right font-medium">540 000</td>
+</tr>
+<tr class="border-b border-surface-variant bg-[#F9FAFB] hover:bg-surface-bright transition-colors">
+<td class="py-2 px-3 text-center"><input class="rounded border-outline-variant text-primary focus:ring-primary k-finance-accent" type="checkbox"/></td>
+<td class="py-2 px-3 text-on-surface-variant">0020</td>
+<td class="py-2 px-3">
+<div class="font-medium text-on-surface">Frais de magasinage (Jours 1-5)</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Lot: L-88392</div>
+</td>
+<td class="py-2 px-3"><input class="w-full px-2 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-right" type="number" value="5"/></td>
+<td class="py-2 px-3 text-on-surface-variant">JR</td>
+<td class="py-2 px-3 text-right"><input class="w-full px-2 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-right" type="text" value="12 500"/></td>
+<td class="py-2 px-3">
+<select class="w-full px-1 py-1 bg-transparent border border-transparent hover:border-outline-variant focus:bg-surface-bright focus:border-primary rounded text-sm">
+<option selected="">V1 (19.25%)</option>
+<option>V0 (0%)</option>
+</select>
+</td>
+<td class="py-2 px-3 text-right font-medium">62 500</td>
+</tr>
+<tr class="border-b border-surface-variant hover:bg-surface-bright transition-colors">
+<td class="py-2 px-3 text-center"><input class="rounded border-outline-variant text-primary focus:ring-primary k-finance-accent" type="checkbox"/></td>
+<td class="py-2 px-3 text-on-surface-variant">0030</td>
+<td class="py-2 px-3">
+<div class="font-medium text-on-surface text-on-surface-variant italic">Nouvelle ligne...</div>
+</td>
+<td class="py-2 px-3"></td>
+<td class="py-2 px-3"></td>
+<td class="py-2 px-3"></td>
+<td class="py-2 px-3"></td>
+<td class="py-2 px-3"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bottom Left: Notes & Conditions -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm p-md">
+<h3 class="font-title-md text-title-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit_note</span>
+                            Textes d'en-tête
+                        </h3>
+<textarea class="w-full h-32 px-3 py-2 bg-surface-bright border border-outline-variant rounded font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary k-finance-border resize-none" placeholder="Saisir les observations sur la facture..."></textarea>
+</div>
+<!-- Bottom Right: Synthèse Financière (Calculation) -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm p-md flex flex-col justify-between relative overflow-hidden">
+<!-- Atmospheric gradient representing K-Finance -->
+<div class="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<h3 class="font-title-md text-title-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">calculate</span>
+                            Synthèse Financière (XAF)
+                        </h3>
+<div class="space-y-2 font-data-tabular text-data-tabular">
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant">Total Brut HT</span>
+<span>602 500</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant">Remises (0%)</span>
+<span>0</span>
+</div>
+<div class="flex justify-between items-center py-1 border-t border-surface-variant mt-1 pt-2">
+<span class="font-medium text-on-surface">Base Imposable Net HT</span>
+<span class="font-medium text-on-surface">602 500</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant">TVA (V1 - 19.25%)</span>
+<span>115 981</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant">Centimes Additionnels (0%)</span>
+<span>0</span>
+</div>
+<div class="flex justify-between items-center py-3 border-t-2 border-primary mt-2 k-finance-border">
+<span class="font-headline-sm text-headline-sm text-primary font-bold k-finance-text">Montant Total TTC</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold k-finance-text">718 481</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

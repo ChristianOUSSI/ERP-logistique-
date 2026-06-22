@@ -1,4 +1,4 @@
-# app/schemas — Import tous les schémas
+# app/schemas  Import tous les schémas
 from app.schemas.auth import (
     UserBase,
     UserCreate,
@@ -50,6 +50,50 @@ from app.schemas.parc import (
     GateInRequest,
     GateOutRequest,
 )
+from app.schemas.shared import (
+    PasserelleBase,
+    PasserelleCreate,
+    PasserelleUpdate,
+    Passerelle,
+    TypePasserelle,
+    StatutPasserelle,
+    CommandeFactureDTO,
+    CommandeLivraisonDTO,
+    ReceptionStockDTO,
+    FacturePaiementDTO,
+    MissionFactureDTO,
+    BonLivraisonFactureDTO,
+)
+from app.schemas.goods_declaration import (
+    GoodsDeclarationBase,
+    GoodsDeclarationCreate,
+    GoodsDeclarationUpdate,
+    GoodsDeclarationResponse,
+    LigneGoodsDeclarationBase,
+    LigneGoodsDeclarationCreate,
+    LigneGoodsDeclarationResponse,
+)
+from app.schemas.removal_slip import (
+    RemovalSlipBase,
+    RemovalSlipCreate,
+    RemovalSlipUpdate,
+    RemovalSlipResponse,
+)
+from app.schemas.reception_mag3 import (
+    ReceptionMag3Base,
+    ReceptionMag3Create,
+    ReceptionMag3Update,
+    ReceptionMag3Response,
+)
+from app.schemas.suppliers import (
+    SupplierBase,
+    SupplierCreate,
+    SupplierUpdate,
+    SupplierResponse,
+    SupplierProfileBase,
+    SupplierProfileCreate,
+    SupplierProfileResponse,
+)
 
 __all__ = [
     "UserBase",
@@ -93,4 +137,38 @@ __all__ = [
     "StockPhysiqueParcResponse",
     "GateInRequest",
     "GateOutRequest",
+    "PasserelleBase",
+    "PasserelleCreate",
+    "PasserelleUpdate",
+    "Passerelle",
+    "TypePasserelle",
+    "StatutPasserelle",
+    "CommandeFactureDTO",
+    "CommandeLivraisonDTO",
+    "ReceptionStockDTO",
+    "FacturePaiementDTO",
+    "MissionFactureDTO",
+    "BonLivraisonFactureDTO",
+    "GoodsDeclarationBase",
+    "GoodsDeclarationCreate",
+    "GoodsDeclarationUpdate",
+    "GoodsDeclarationResponse",
+    "LigneGoodsDeclarationBase",
+    "LigneGoodsDeclarationCreate",
+    "LigneGoodsDeclarationResponse",
+    "RemovalSlipBase",
+    "RemovalSlipCreate",
+    "RemovalSlipUpdate",
+    "RemovalSlipResponse",
+    "ReceptionMag3Base",
+    "ReceptionMag3Create",
+    "ReceptionMag3Update",
+    "ReceptionMag3Response",
+    "SupplierBase",
+    "SupplierCreate",
+    "SupplierUpdate",
+    "SupplierResponse",
+    "SupplierProfileBase",
+    "SupplierProfileCreate",
+    "SupplierProfileResponse",
 ]

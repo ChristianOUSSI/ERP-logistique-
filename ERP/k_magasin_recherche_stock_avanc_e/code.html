@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG ERP - Advanced Stock Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#825100",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6cf8bb",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#00714d",
+                        "on-primary-fixed": "#001a42",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container": "#e7eefe",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#a36700",
+                        "secondary": "#006c49",
+                        "on-secondary-fixed": "#002113",
+                        "primary-fixed": "#d8e2ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-tertiary-fixed": "#2a1700",
+                        "primary-fixed-dim": "#adc6ff",
+                        "outline": "#727785",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#424754",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "primary": "#0058be",
+                        "primary-container": "#2170e4",
+                        "on-tertiary-container": "#fffbff",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c2c6d6",
+                        "surface-variant": "#dce2f3",
+                        "surface-tint": "#005ac2",
+                        "on-surface": "#151c27",
+                        "surface-container-high": "#e2e8f8",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "kmagasin-primary": "#EF4444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "lg": "1.5rem",
+                        "margin-desktop": "1.5rem",
+                        "max-width": "1600px",
+                        "sm": "0.75rem",
+                        "xs": "0.5rem",
+                        "gutter": "1rem",
+                        "xl": "2rem",
+                        "xxs": "0.25rem"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f3ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 10px; }
+        .active-module-indicator { border-left: 4px solid #EF4444; }
+        .table-zebra tr:nth-child(even) { background-color: #f9fafb; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+<div class="hidden md:flex gap-md ml-xl">
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors" href="#">Alerts</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors" href="#">MFA Status</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors border-b-2 border-primary text-primary pb-1" href="#">Modules</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-xs hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-xs hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsksUCxyqP1LKF8gR8z0jHiZ5M4opIAjW-0N5dHNSoLtqc3ezu0fL7HQXooof-dzh2wPOeOoDYH91JDtxkeuq6xAo9o_ynXvaX0mvs8EdSjVEekN2aEEc831Blw0_b-t2bVpdSitBdBJJ0D2H3tl3pBwOVpjRfyCgOk1yP5cC6Xc1oEnbX8kbjJT8ak2c6TmE_l88LQ_XWpV1GxIMDjfXe4yjm-c0JI-2uTscgt6cQTWkLwz9PmgVtmaiddOUiYgaAaqms0jPOsVs"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
+<div class="p-md border-b border-outline-variant flex items-center gap-sm">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-weight="fill">warehouse</span>
+</div>
+<div>
+<div class="text-title-md font-title-md font-bold text-primary">K-Magasin</div>
+<div class="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</div>
+</div>
+</div>
+<nav class="flex-1 py-md overflow-y-auto custom-scrollbar">
+<div class="px-md mb-xs">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-highest border-none text-label-md py-2 pl-8 pr-2 rounded focus:ring-1 focus:ring-primary" placeholder="T-Code Search" type="text"/>
+</div>
+</div>
+<div class="mt-md">
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-label-md font-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-md font-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">Parc</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-kmagasin-primary font-bold border-l-4 border-kmagasin-primary bg-surface-container-highest transition-all" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="text-label-md font-label-md">Magasin</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="text-label-md font-label-md">Audit</span>
+</a>
+</div>
+</nav>
+<div class="px-md pt-md border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-md py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md py-2 text-on-surface-variant hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-60 pt-16 min-h-screen">
+<div class="max-w-[1600px] mx-auto p-lg space-y-lg">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-xs text-label-sm font-label-sm text-on-surface-variant opacity-60">
+<span>Modules</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span>Magasin</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-kmagasin-primary font-bold">Advanced Stock Search</span>
+</div>
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h1 class="text-headline-md font-headline-md text-on-surface">Advanced Stock Search</h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Real-time inventory analysis across multiple warehouse nodes.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-xs px-md py-2 bg-white border border-outline-variant rounded hover:bg-surface-container-low transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+<span class="text-label-md font-label-md">Reset Filters</span>
+</button>
+<button class="flex items-center gap-xs px-md py-2 bg-kmagasin-primary text-white rounded hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Export PDF</span>
+</button>
+</div>
+</div>
+<!-- Filters Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md bg-white p-lg border border-outline-variant rounded shadow-sm">
+<!-- Multi-select Magasins -->
+<div class="space-y-xs">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase">Warehouses (Magasins)</label>
+<div class="flex flex-wrap gap-xs p-xs border border-outline-variant rounded min-h-[40px] items-center">
+<span class="bg-kmagasin-primary/10 text-kmagasin-primary text-label-md px-2 py-0.5 rounded flex items-center gap-1">MAG 3 <span class="material-symbols-outlined text-xs cursor-pointer">close</span></span>
+<span class="bg-kmagasin-primary/10 text-kmagasin-primary text-label-md px-2 py-0.5 rounded flex items-center gap-1">DNW1 <span class="material-symbols-outlined text-xs cursor-pointer">close</span></span>
+<span class="bg-kmagasin-primary/10 text-kmagasin-primary text-label-md px-2 py-0.5 rounded flex items-center gap-1">DNW2 <span class="material-symbols-outlined text-xs cursor-pointer">close</span></span>
+<input class="border-none focus:ring-0 text-label-md flex-1 min-w-[50px] p-0" placeholder="+ Add" type="text"/>
+</div>
+</div>
+<!-- Category -->
+<div class="space-y-xs">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase">Category</label>
+<select class="w-full border-outline-variant rounded text-label-md focus:ring-kmagasin-primary focus:border-kmagasin-primary">
+<option>All Categories</option>
+<option selected="">Alimentaire</option>
+<option>Electronique</option>
+<option>Construction</option>
+</select>
+</div>
+<!-- Status -->
+<div class="space-y-xs">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase">Status</label>
+<div class="flex items-center gap-xs">
+<label class="flex items-center gap-xs cursor-pointer">
+<input checked="" class="rounded text-kmagasin-primary focus:ring-kmagasin-primary border-outline-variant" type="checkbox"/>
+<span class="text-label-md font-label-md">Normal</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer">
+<input class="rounded text-kmagasin-primary focus:ring-kmagasin-primary border-outline-variant" type="checkbox"/>
+<span class="text-label-md font-label-md">Mouillé</span>
+</label>
+</div>
+</div>
+<!-- Date Range -->
+<div class="space-y-xs">
+<label class="text-label-sm font-label-sm text-on-surface-variant uppercase">Last Movement Period</label>
+<div class="grid grid-cols-2 gap-xs">
+<input class="w-full border-outline-variant rounded text-label-md focus:ring-kmagasin-primary" type="date"/>
+<input class="w-full border-outline-variant rounded text-label-md focus:ring-kmagasin-primary" type="date"/>
+</div>
+</div>
+</div>
+<!-- Results Section -->
+<div class="bg-white border border-outline-variant rounded shadow-sm overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-kmagasin-primary">inventory</span>
+<span class="text-title-md font-title-md">Inventory Result Set</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-label-sm px-2 py-0.5 rounded">128 Items Found</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex border border-outline-variant rounded overflow-hidden">
+<button class="p-1.5 bg-surface-container-high border-r border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">view_list</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left table-zebra">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-label-sm font-label-sm text-on-surface-variant uppercase">
+<th class="px-md py-3 font-semibold">Article Code</th>
+<th class="px-md py-3 font-semibold">Name</th>
+<th class="px-md py-3 font-semibold text-right">Qty (Units)</th>
+<th class="px-md py-3 font-semibold">Warehouse</th>
+<th class="px-md py-3 font-semibold">Status</th>
+<th class="px-md py-3 font-semibold text-center">Last Updated</th>
+<th class="px-md py-3 font-semibold text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="text-body-sm">
+<tr>
+<td class="px-md py-3 font-data-tabular">ART-20993-A</td>
+<td class="px-md py-3 font-medium">Farine de Froment T55 - 25kg</td>
+<td class="px-md py-3 text-right font-data-tabular font-bold">1,420</td>
+<td class="px-md py-3">MAG 3 / Zone B</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">NORMAL</span>
+</td>
+<td class="px-md py-3 text-center text-on-surface-variant">2023-10-27 14:30</td>
+<td class="px-md py-3 text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr>
+<td class="px-md py-3 font-data-tabular text-kmagasin-primary">ART-88210-X</td>
+<td class="px-md py-3 font-medium">Huile Végétale Raffinée - 5L</td>
+<td class="px-md py-3 text-right font-data-tabular font-bold">450</td>
+<td class="px-md py-3">DNW1 / Section 04</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-kmagasin-primary">MOUILLÉ</span>
+</td>
+<td class="px-md py-3 text-center text-on-surface-variant">2023-10-27 09:12</td>
+<td class="px-md py-3 text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr>
+<td class="px-md py-3 font-data-tabular">ART-55112-C</td>
+<td class="px-md py-3 font-medium">Sucre Semoule Industriel</td>
+<td class="px-md py-3 text-right font-data-tabular font-bold">2,100</td>
+<td class="px-md py-3">MAG 3 / Zone A</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">NORMAL</span>
+</td>
+<td class="px-md py-3 text-center text-on-surface-variant">2023-10-26 16:45</td>
+<td class="px-md py-3 text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr>
+<td class="px-md py-3 font-data-tabular">ART-12344-B</td>
+<td class="px-md py-3 font-medium">Sel Raffiné Extra-Fin</td>
+<td class="px-md py-3 text-right font-data-tabular font-bold">980</td>
+<td class="px-md py-3">DNW2 / Hall B</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700">DAMAGED</span>
+</td>
+<td class="px-md py-3 text-center text-on-surface-variant">2023-10-25 11:20</td>
+<td class="px-md py-3 text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr>
+<td class="px-md py-3 font-data-tabular">ART-77621-M</td>
+<td class="px-md py-3 font-medium">Lait Entier en Poudre - 25kg</td>
+<td class="px-md py-3 text-right font-data-tabular font-bold">5,400</td>
+<td class="px-md py-3">MAG 3 / Zone C</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700">NORMAL</span>
+</td>
+<td class="px-md py-3 text-center text-on-surface-variant">2023-10-27 15:55</td>
+<td class="px-md py-3 text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-md bg-surface-container-low border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="text-label-md font-label-md text-on-surface-variant">Showing 1 to 5 of 128 results</div>
+<div class="flex items-center gap-xs">
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-white disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-kmagasin-primary text-white rounded font-bold text-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-white font-bold text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-white font-bold text-label-md">3</button>
+<button class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-white">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Analytics Preview (Bento Section) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="col-span-1 md:col-span-1 bg-white border border-outline-variant rounded p-lg flex flex-col justify-between relative overflow-hidden group">
+<div class="z-10">
+<div class="text-label-sm font-label-sm text-on-surface-variant uppercase mb-xs">Warehouse Capacity</div>
+<div class="text-headline-sm font-headline-sm text-kmagasin-primary">82.4% Full</div>
+<div class="mt-md w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-kmagasin-primary h-full w-[82.4%]"></div>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[80px]">warehouse</span>
+</div>
+</div>
+<div class="col-span-1 md:col-span-1 bg-white border border-outline-variant rounded p-lg flex flex-col justify-between relative overflow-hidden group">
+<div class="z-10">
+<div class="text-label-sm font-label-sm text-on-surface-variant uppercase mb-xs">Alert Status</div>
+<div class="text-headline-sm font-headline-sm text-orange-600">3 Critical Flags</div>
+<p class="text-body-sm text-on-surface-variant mt-xs">Humidity spikes detected in Zone B.</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[80px]">warning</span>
+</div>
+</div>
+<div class="col-span-1 md:col-span-1 bg-kmagasin-primary text-white border border-kmagasin-primary rounded p-lg flex flex-col justify-between relative overflow-hidden group">
+<div class="z-10">
+<div class="text-label-sm font-label-sm text-white/70 uppercase mb-xs">Quick Search T-Code</div>
+<div class="text-headline-sm font-headline-sm">STK-SCAN</div>
+<button class="mt-md px-md py-2 bg-white text-kmagasin-primary rounded text-label-md font-bold hover:bg-surface-container-low transition-colors">Start Handheld Scan</button>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-20 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[80px]">barcode_scanner</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Identity -->
+<footer class="ml-60 p-lg text-center text-label-md font-label-md text-on-surface-variant opacity-50">
+        © 2023 KAMLOG ENTERPRISE LOGISTICS. Module: K-MAGASIN V4.2.1
+    </footer>
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                console.log('Filter updated:', e.target.checked);
+            });
+        });
+
+        // T-Code Search Focus effect
+        const searchInput = document.querySelector('input[placeholder="T-Code Search"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-1', 'ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-1', 'ring-primary');
+        });
+    </script>
+</body></html>

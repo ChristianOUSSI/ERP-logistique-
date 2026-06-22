@@ -1,8 +1,10 @@
-# app/schemas/finance.py — Schémas Finance
+# app/schemas/finance.py  Schémas Finance
 from pydantic import BaseModel, Field
 from decimal import Decimal
 from datetime import datetime
+from typing import Optional, List
 from app.models.finance import StatutFacture
+
 
 
 class FactureBase(BaseModel):
@@ -57,24 +59,41 @@ class EncaissementResponse(EncaissementBase):
         from_attributes = True
 
 
+class LigneTarifaireBase(BaseModel):
+    description: str
+    unite: str
+    prix_unitaire: Decimal = Field(..., gt=0)
+    devise: str = "XAF"
+
+class LigneTarifaireCreate(LigneTarifaireBase):
+    pass
+
+class LigneTarifaireResponse(LigneTarifaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 class GrilleTarifaireBase(BaseModel):
-    code_tarif: str = Field(..., max_length=20)
-    tiers_id: int | None
-    service: str = Field(..., max_length=50)
-    type_marchandise: str = Field(..., max_length=50)
-    tarif_unitaire_xaf: Decimal = Field(..., ge=0)
-    unite: str = Field(..., max_length=20)
+    code: str = Field(..., max_length=50)
+    nom: str = Field(..., max_length=200)
+    service: Optional[str] = None
+    groupe_client: Optional[str] = "Tous"
     date_debut_validite: datetime
     date_fin_validite: datetime
+    est_actif: bool = True
 
 
 class GrilleTarifaireCreate(GrilleTarifaireBase):
-    pass
+    lignes: List[LigneTarifaireCreate] = []
 
 
 class GrilleTarifaireResponse(GrilleTarifaireBase):
     id: int
-    created_at: datetime
+    cree_par: Optional[str] = None
+    date_creation: datetime
+    date_modification: Optional[datetime] = None
+    lignes: List[LigneTarifaireResponse] = []
 
     class Config:
         from_attributes = True
@@ -87,3 +106,45 @@ class EncoursResponse(BaseModel):
     taux_occupation: float | None
     alerte: bool
     bloque: bool
+
+
+class BankStatementEntry(BaseModel):
+    """Schéma pour une ligne de relevé bancaire importée."""
+    date: datetime
+    description: str
+    amount: Decimal
+
+
+class ReconciliationMatchResponse(BaseModel):
+    """Schéma pour un résultat de rapprochement."""
+    bank_entry: BankStatementEntry
+    erp_match: Optional[EncaissementResponse] = None
+    confidence: float
+
+    class Config:
+        from_attributes = True
+
+
+class AvoirBase(BaseModel):
+    """Schéma de base pour un avoir."""
+    numero_avoir: str = Field(..., max_length=50)
+    facture_origine_id: Optional[int] = None
+    tiers_id: int
+    montant_xaf: Decimal = Field(..., gt=0)
+    motif: str = Field(..., max_length=500)
+
+
+class AvoirCreate(AvoirBase):
+    """Schéma pour la création d'un avoir."""
+    pass
+
+
+class AvoirResponse(AvoirBase):
+    """Schéma pour la réponse d'un avoir."""
+    id: int
+    date_emission: datetime
+    est_utilise: bool
+    cree_par: Optional[str] = None
+
+    class Config:
+        from_attributes = True

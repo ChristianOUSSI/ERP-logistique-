@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Parc | Fleet Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daea",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#825100",
+                      "secondary-fixed-dim": "#4edea3",
+                      "secondary-container": "#6cf8bb",
+                      "tertiary-fixed": "#ffddb8",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#00714d",
+                      "on-primary-fixed": "#001a42",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container": "#e7eefe",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#06B6D4",
+                      "on-secondary-fixed": "#002113",
+                      "primary-fixed": "#d8e2ff",
+                      "on-background": "#151c27",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#2a1700",
+                      "primary-fixed-dim": "#adc6ff",
+                      "outline": "#727785",
+                      "surface-container-highest": "#dce2f3",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#424754",
+                      "inverse-surface": "#2a313d",
+                      "on-primary-container": "#fefcff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary": "#0058be",
+                      "primary-container": "#2170e4",
+                      "on-tertiary-container": "#fffbff",
+                      "surface": "#f9f9ff",
+                      "surface-bright": "#f9f9ff",
+                      "background": "#f9f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c2c6d6",
+                      "surface-variant": "#dce2f3",
+                      "surface-tint": "#005ac2",
+                      "on-surface": "#151c27",
+                      "surface-container-high": "#e2e8f8",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#653e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "1rem",
+                      "lg": "1.5rem",
+                      "margin-desktop": "1.5rem",
+                      "max-width": "1600px",
+                      "sm": "0.75rem",
+                      "xs": "0.5rem",
+                      "gutter": "1rem",
+                      "xl": "2rem",
+                      "xxs": "0.25rem"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "title-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "data-tabular": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 2px; }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+<div class="h-6 w-px bg-outline-variant mx-xs"></div>
+<nav class="hidden md:flex gap-md">
+<a class="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 rounded-sm text-label-md font-label-md" href="#">Alerts</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 rounded-sm text-label-md font-label-md" href="#">MFA Status</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold text-label-md font-label-md" href="#">Modules</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-high rounded px-xs py-1 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="T-Code Search" type="text"/>
+</div>
+<div class="flex gap-sm">
+<button class="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant" data-icon="security">security</button>
+<button class="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant" data-icon="apps">apps</button>
+</div>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDYfUyIcT0UHXOlH0CO-7Di6pFMLnASFEekBzRkh9Mfxl_dUJ6gEjweb8tS1FaQ_rL4ym_-zHsmzZGa1RJ1eVj0wxTPJ9vehyr3mOWCA41D-eFMDc3B66jqmBO3dKR_PWk-CkI8S0sl5jL7YFpVvzMOjRTzi535wndDK8s_oa986ICEXmlD-MFCTkP9MR3RAs4nmU_a33umNRkBUg476Kytw_ZfoU4HHlNzxJMt_PWty7XOMvSy0OOoqdR0VYr3JxE7peuk7nkmtM"/>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
+<div class="px-md py-lg">
+<div class="flex items-center gap-sm mb-lg">
+<div class="w-10 h-10 bg-secondary rounded flex items-center justify-center text-on-secondary">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<div class="text-title-md font-title-md font-bold text-primary">KAMLOG ERP</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Operational Control</div>
+</div>
+</div>
+<nav class="flex flex-col gap-xs">
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="text-label-md font-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-label-md font-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all scale-[0.99]" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-md font-label-md">Parc</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="text-label-md font-label-md">Magasin</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="text-label-md font-label-md">Audit</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto px-md space-y-xs">
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Stage -->
+<main class="ml-60 pt-16 min-h-screen">
+<div class="p-lg max-w-[1600px] mx-auto space-y-lg">
+<!-- Breadcrumbs & Title -->
+<div class="flex flex-col gap-xxs">
+<nav class="flex items-center gap-xs text-label-sm font-label-sm text-on-surface-variant">
+<a class="hover:text-primary" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Fleet Management</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">K-Parc Hub</span>
+</nav>
+<div class="flex justify-between items-end">
+<h1 class="text-headline-md font-headline-md text-on-surface">K-Parc: Fleet Intelligence</h1>
+<div class="flex gap-xs">
+<button class="bg-primary text-on-primary px-md py-xs rounded text-label-md font-label-md flex items-center gap-xs hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                            Register Vehicle
+                        </button>
+</div>
+</div>
+</div>
+<!-- CRITICAL ALERT BANNER -->
+<div class="bg-error-container border border-error p-md rounded-lg flex items-center gap-md relative overflow-hidden group">
+<div class="absolute inset-0 shimmer opacity-10"></div>
+<div class="w-12 h-12 bg-error rounded-full flex items-center justify-center text-on-error shrink-0 animate-pulse">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="flex-1">
+<h2 class="text-on-error-container font-bold text-title-md">Fuel Siphoning Detected</h2>
+<p class="text-on-error-container text-body-sm opacity-90">Anomalous fuel drop detected on Vehicle <strong>K-FLT-8821</strong> (Volvo FH16) at Warehouse Section C. Timestamp: 14:32:01. Security protocol initiated.</p>
+</div>
+<div class="flex gap-sm">
+<button class="bg-error text-on-error px-md py-xs rounded-lg text-label-md font-label-md hover:bg-opacity-80 transition-all">Dispatch Response</button>
+<button class="border border-error text-error px-md py-xs rounded-lg text-label-md font-label-md hover:bg-error hover:text-on-error transition-all">Dismiss</button>
+</div>
+</div>
+<!-- Fleet Overview Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- Vehicle Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:border-secondary transition-all group flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-tighter">Container Hauler</span>
+<h3 class="text-title-md font-bold text-on-surface">K-FLT-4402</h3>
+</div>
+<span class="bg-secondary/10 text-secondary text-label-sm px-xs py-0.5 rounded font-bold">In Transit</span>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex justify-between items-end">
+<span class="text-body-sm text-on-surface-variant">Fuel Level</span>
+<span class="text-title-md font-bold text-secondary">78%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[78%]"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-surface-container-low p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Odometer</span>
+<span class="font-data-tabular text-body-md font-bold">124,502 km</span>
+</div>
+<div class="bg-surface-container-low p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Maint.</span>
+<span class="text-body-md font-bold text-on-surface">12d left</span>
+</div>
+</div>
+</div>
+<!-- Vehicle Card 2 - Alert State -->
+<div class="bg-surface-container-lowest border-2 border-error/50 p-md rounded-xl shadow-lg relative flex flex-col justify-between">
+<div class="absolute top-2 right-2 flex gap-1">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</div>
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-tighter">Heavy Duty Cab</span>
+<h3 class="text-title-md font-bold text-on-surface">K-FLT-8821</h3>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex justify-between items-end">
+<span class="text-body-sm text-error font-bold">Critical Alert</span>
+<span class="text-title-md font-bold text-error">12%</span>
+</div>
+<div class="h-1.5 w-full bg-error-container rounded-full overflow-hidden">
+<div class="h-full bg-error w-[12%]"></div>
+</div>
+<span class="text-label-sm text-error italic">Fuel loss detected!</span>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-error-container/20 p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Odometer</span>
+<span class="font-data-tabular text-body-md font-bold">89,231 km</span>
+</div>
+<div class="bg-error-container/20 p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Status</span>
+<span class="text-body-md font-bold text-error">Locked</span>
+</div>
+</div>
+</div>
+<!-- Vehicle Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:border-secondary transition-all group flex flex-col justify-between">
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-tighter">Cargo Sprinter</span>
+<h3 class="text-title-md font-bold text-on-surface">K-FLT-3390</h3>
+</div>
+<span class="bg-primary-container/10 text-primary text-label-sm px-xs py-0.5 rounded font-bold">Loading</span>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex justify-between items-end">
+<span class="text-body-sm text-on-surface-variant">Fuel Level</span>
+<span class="text-title-md font-bold text-secondary">92%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[92%]"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-surface-container-low p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Odometer</span>
+<span class="font-data-tabular text-body-md font-bold">45,110 km</span>
+</div>
+<div class="bg-surface-container-low p-xs rounded">
+<span class="text-label-sm text-on-surface-variant block">Maint.</span>
+<span class="text-body-md font-bold text-on-surface">5,000 km</span>
+</div>
+</div>
+</div>
+<!-- Live Map/Location View -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden relative min-h-[180px]">
+<div class="absolute inset-0 bg-surface-container-highest">
+<div class="w-full h-full opacity-40 grayscale" data-location="Port de Marseille-Fos" style=""></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full bg-white/80 backdrop-blur-md p-xs flex justify-between items-center border-t border-outline-variant">
+<span class="text-label-sm font-bold text-on-surface">Active Terminal 4</span>
+<span class="text-label-sm text-secondary">12 Vehicles Active</span>
+</div>
+</div>
+</div>
+<!-- Data Tables Section -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+<!-- Consumption Logs Table -->
+<div class="xl:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col overflow-hidden">
+<div class="px-md py-sm border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="text-title-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary" data-icon="local_gas_station">local_gas_station</span>
+                            Fuel Consumption Logs
+                        </h3>
+<div class="flex gap-xs">
+<button class="material-symbols-outlined text-[18px] p-1 hover:bg-surface-container-highest rounded">filter_list</button>
+<button class="material-symbols-outlined text-[18px] p-1 hover:bg-surface-container-highest rounded">download</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Vehicle ID</th>
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Date/Time</th>
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Amount (L)</th>
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Operator</th>
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Efficiency</th>
+<th class="text-left py-xs px-md text-label-sm font-label-sm text-on-surface-variant uppercase">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-xs px-md font-bold text-body-sm">K-FLT-4402</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">2023-10-24 11:45</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">342.50 L</td>
+<td class="py-xs px-md text-body-sm">Jean Dupont</td>
+<td class="py-xs px-md text-body-sm">
+<span class="text-secondary font-bold">Optimal</span>
+</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center gap-xs px-xs py-0.5 rounded-full bg-secondary/10 text-secondary text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Verified
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-low/30">
+<td class="py-xs px-md font-bold text-body-sm">K-FLT-8821</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">2023-10-24 10:12</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">115.00 L</td>
+<td class="py-xs px-md text-body-sm">Marc Leroy</td>
+<td class="py-xs px-md text-body-sm">
+<span class="text-error font-bold">-14.2%</span>
+</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center gap-xs px-xs py-0.5 rounded-full bg-error/10 text-error text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Flagged
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-xs px-md font-bold text-body-sm">K-FLT-3390</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">2023-10-24 09:55</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">520.12 L</td>
+<td class="py-xs px-md text-body-sm">Sarra S.</td>
+<td class="py-xs px-md text-body-sm">
+<span class="text-on-surface-variant font-bold">Standard</span>
+</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center gap-xs px-xs py-0.5 rounded-full bg-secondary/10 text-secondary text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Verified
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-low/30">
+<td class="py-xs px-md font-bold text-body-sm">K-FLT-2210</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">2023-10-24 08:30</td>
+<td class="py-xs px-md font-data-tabular text-body-sm">280.40 L</td>
+<td class="py-xs px-md text-body-sm">Jean Dupont</td>
+<td class="py-xs px-md text-body-sm">
+<span class="text-secondary font-bold">Optimal</span>
+</td>
+<td class="py-xs px-md">
+<span class="inline-flex items-center gap-xs px-xs py-0.5 rounded-full bg-secondary/10 text-secondary text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Verified
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Repair History Sidebar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col overflow-hidden">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="text-title-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="build">build</span>
+                            Repair History
+                        </h3>
+<a class="text-primary text-label-sm hover:underline" href="#">View All</a>
+</div>
+<div class="p-md space-y-md custom-scrollbar overflow-y-auto max-h-[400px]">
+<!-- History Item 1 -->
+<div class="flex gap-md group">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[18px]">engineering</span>
+</div>
+<div class="w-0.5 h-full bg-outline-variant group-last:hidden"></div>
+</div>
+<div class="pb-md">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-bold">K-FLT-4402</span>
+<span class="text-label-sm text-on-surface-variant">Oct 20</span>
+</div>
+<p class="text-body-sm font-bold">Brake Pad Replacement</p>
+<p class="text-body-sm text-on-surface-variant italic">Routine maintenance. All units replaced.</p>
+<div class="mt-xs flex items-center gap-xs">
+<span class="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€1,240.00</span>
+<span class="text-secondary material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="flex gap-md group">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-error-container/20 flex items-center justify-center text-error border border-error/20">
+<span class="material-symbols-outlined text-[18px]">no_crash</span>
+</div>
+<div class="w-0.5 h-full bg-outline-variant group-last:hidden"></div>
+</div>
+<div class="pb-md">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-bold">K-FLT-1102</span>
+<span class="text-label-sm text-on-surface-variant">Oct 18</span>
+</div>
+<p class="text-body-sm font-bold">Hydraulic Leakage Repair</p>
+<p class="text-body-sm text-on-surface-variant italic">Emergency repair at Dock A.</p>
+<div class="mt-xs flex items-center gap-xs">
+<span class="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€3,800.00</span>
+<span class="text-secondary material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<!-- History Item 3 -->
+<div class="flex gap-md group">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[18px]">settings_suggest</span>
+</div>
+<div class="w-0.5 h-full bg-outline-variant group-last:hidden"></div>
+</div>
+<div class="pb-md">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-bold">K-FLT-9900</span>
+<span class="text-label-sm text-on-surface-variant">Oct 15</span>
+</div>
+<p class="text-body-sm font-bold">Software Calibration</p>
+<p class="text-body-sm text-on-surface-variant italic">System-wide OTA update.</p>
+<div class="mt-xs flex items-center gap-xs">
+<span class="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€0.00</span>
+<span class="text-secondary material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dashboard Analytics Bottom -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface-container-highest/30 p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[32px]">speed</span>
+</div>
+<div>
+<span class="block text-label-sm text-on-surface-variant">Fleet Availability</span>
+<span class="text-title-lg font-black">94.2%</span>
+<span class="text-label-sm text-secondary font-bold">↑ 2.1% from last month</span>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[32px]">euro_symbol</span>
+</div>
+<div>
+<span class="block text-label-sm text-on-surface-variant">Avg. Cost per km</span>
+<span class="text-title-lg font-black">€0.84</span>
+<span class="text-label-sm text-error font-bold">↑ €0.05 from last month</span>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-md rounded-lg flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[32px]">co2</span>
+</div>
+<div>
+<span class="block text-label-sm text-on-surface-variant">Carbon Footprint</span>
+<span class="text-title-lg font-black">1.2 tCO2e</span>
+<span class="text-label-sm text-secondary font-bold">↓ 8% from last month</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action for Quick Report -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-secondary text-on-secondary rounded-full shadow-xl hover:scale-110 transition-transform flex items-center justify-center group z-50">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">add_chart</span>
+<span class="absolute right-full mr-md bg-secondary text-on-secondary px-md py-xs rounded text-label-md font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Quick Report</span>
+</button>
+<script>
+        // Micro-interactions for the cards
+        document.querySelectorAll('.hover\\:border-secondary').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.boxShadow = '0 10px 25px -5px rgba(6, 182, 212, 0.1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.boxShadow = 'none';
+            });
+        });
+
+        // Simple alert dismissal logic
+        const alertDismissBtn = document.querySelector('.border-error');
+        if(alertDismissBtn) {
+            alertDismissBtn.addEventListener('click', function() {
+                this.closest('.bg-error-container').style.transition = 'all 0.3s ease';
+                this.closest('.bg-error-container').style.opacity = '0';
+                this.closest('.bg-error-container').style.transform = 'translateY(-20px)';
+                setTimeout(() => this.closest('.bg-error-container').remove(), 300);
+            });
+        }
+    </script>
+</body></html>

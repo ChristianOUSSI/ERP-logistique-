@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP - Saved Templates</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#002113",
+                    "primary-fixed-dim": "#adc6ff",
+                    "tertiary-container": "#a36700",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-surface": "#151c27",
+                    "inverse-primary": "#adc6ff",
+                    "primary": "#0058be",
+                    "on-surface-variant": "#424754",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-background": "#151c27",
+                    "outline-variant": "#c2c6d6",
+                    "surface-dim": "#d3daea",
+                    "surface-variant": "#dce2f3",
+                    "inverse-surface": "#2a313d",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-secondary-fixed-variant": "#005236",
+                    "tertiary": "#825100",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-error": "#ffffff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-tertiary-container": "#fffbff",
+                    "background": "#f9f9ff",
+                    "on-primary-container": "#fefcff",
+                    "primary-fixed": "#d8e2ff",
+                    "outline": "#727785",
+                    "surface-container-highest": "#dce2f3",
+                    "primary-container": "#2170e4",
+                    "on-secondary-container": "#00714d",
+                    "surface-tint": "#005ac2",
+                    "secondary": "#006c49",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#001a42",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-container": "#6cf8bb",
+                    "surface-container": "#e7eefe",
+                    "error-container": "#ffdad6",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e2e8f8",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb8",
+                    "surface": "#f9f9ff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-bright": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "1rem",
+                    "max-width": "1600px",
+                    "md": "1rem",
+                    "xl": "2rem",
+                    "sm": "0.75rem",
+                    "xxs": "0.25rem",
+                    "lg": "1.5rem",
+                    "xs": "0.5rem",
+                    "margin-desktop": "1.5rem"
+            },
+            "fontFamily": {
+                    "title-md": ["Inter", "sans-serif"],
+                    "title-lg": ["Inter", "sans-serif"],
+                    "body-sm": ["Inter", "sans-serif"],
+                    "data-tabular": ["Inter", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "headline-sm": ["Inter", "sans-serif"],
+                    "headline-md": ["Inter", "sans-serif"],
+                    "headline-lg": ["Inter", "sans-serif"],
+                    "label-md": ["Inter", "sans-serif"],
+                    "label-sm": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"]
+            },
+            "fontSize": {
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-container-low min-h-screen text-on-surface overflow-x-hidden">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-4 z-50">
+<div class="mb-8 px-4 mt-2">
+<div class="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-1">Port Operations</div>
+</div>
+<button class="mb-6 flex items-center justify-center gap-2 w-full bg-primary text-on-primary py-2.5 px-4 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            Nouvelle Opération
+        </button>
+<div class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">dashboard</span>
+                Tableau de bord
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">local_shipping</span>
+                Transport
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">payments</span>
+                Finances
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">minor_crash</span>
+                Parc Automobile
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">settings</span>
+                Paramètres
+            </a>
+</div>
+<div class="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+                Déconnexion
+            </a>
+</div>
+</nav>
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter ml-[260px] w-[calc(100%-260px)] shadow-sm">
+<div class="flex items-center gap-8 h-full">
+<div class="font-title-sm text-title-sm text-on-surface font-black hidden md:block">KAMLOG EM-ERP</div>
+<nav class="flex gap-6 h-full items-end">
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px]" href="#">Articles</a>
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px]" href="#">Clients</a>
+<a class="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px]" href="#">Stocks</a>
+<a class="font-body-base text-body-base text-primary border-b-2 border-primary pb-[16px] font-medium" href="#">Rapports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative focus-within:ring-2 focus-within:ring-primary rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-lg font-body-sm text-body-sm focus:outline-none w-48 text-on-surface placeholder-on-surface-variant" placeholder="Rechercher T-Code" type="text"/>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant border-l border-outline-variant pl-4">
+<button class="p-1 hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-1 hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined">verified_user</span></button>
+<button class="p-1 hover:bg-surface-container rounded-full transition-colors"><span class="material-symbols-outlined text-[28px] text-primary">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<div class="ml-[260px] p-gutter min-h-[calc(100vh-64px)] flex gap-gutter items-start max-w-[1600px]">
+<!-- Center Stage: Templates Library -->
+<main class="flex-1 flex flex-col gap-6">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-outline mb-1">
+<a class="hover:text-primary transition-colors" href="#">Rapports</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface">Bibliothèque</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Saved Templates</h1>
+</div>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">note_add</span>
+                    Create New Template
+                </button>
+</div>
+<!-- Filter & Search Bar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 border border-outline-variant rounded bg-surface focus:outline-none focus:ring-1 focus:ring-primary font-body-sm text-body-sm placeholder-on-surface-variant" placeholder="Search templates..." type="text"/>
+</div>
+<div class="h-6 w-px bg-outline-variant"></div>
+<select class="border border-outline-variant rounded py-1.5 px-3 bg-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary text-on-surface-variant appearance-none min-w-[140px]">
+<option>Module: All</option>
+<option>Transport</option>
+<option>Magasin</option>
+<option>Finance</option>
+<option>Parc</option>
+</select>
+<select class="border border-outline-variant rounded py-1.5 px-3 bg-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary text-on-surface-variant appearance-none min-w-[140px]">
+<option>Owner: Me</option>
+<option>Owner: System</option>
+<option>Owner: Shared</option>
+</select>
+<select class="border border-outline-variant rounded py-1.5 px-3 bg-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary text-on-surface-variant appearance-none min-w-[140px]">
+<option>Sort: Last Used</option>
+<option>Sort: A-Z</option>
+<option>Sort: Newest</option>
+</select>
+</div>
+<div class="flex items-center gap-2 pl-4 border-l border-outline-variant">
+<button class="p-1.5 text-primary bg-surface-container rounded hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">grid_view</span></button>
+<button class="p-1.5 text-outline hover:bg-surface-container rounded transition-colors"><span class="material-symbols-outlined text-[20px]">view_list</span></button>
+</div>
+</div>
+<!-- Templates Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Card 1: Transport -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="flex justify-between items-start">
+<div class="inline-flex items-center gap-1.5 bg-tertiary-fixed text-on-tertiary-fixed-variant px-2 py-0.5 rounded font-label-sm text-label-sm uppercase">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                            Transport
+                        </div>
+<button class="text-outline hover:text-on-surface transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Monthly Fuel Consumption</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 h-9">Aggregates all fuel tickets across the fleet, calculating efficiency per 100km and variance against budget.</p>
+</div>
+<div class="grid grid-cols-2 gap-y-2 mt-auto pt-4 border-t border-surface-container-highest font-data-tabular text-data-tabular">
+<div class="text-outline">Last Run: <span class="text-on-surface">2 hrs ago</span></div>
+<div class="text-outline">Freq: <span class="text-on-surface">Weekly</span></div>
+<div class="text-outline">Owner: <span class="text-on-surface">System</span></div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 bg-surface-container text-primary py-2 rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Run Now
+                        </button>
+<button class="px-3 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Magasin -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="flex justify-between items-start">
+<div class="inline-flex items-center gap-1.5 bg-error-container text-on-error-container px-2 py-0.5 rounded font-label-sm text-label-sm uppercase">
+<span class="material-symbols-outlined text-[14px]">warehouse</span>
+                            Magasin
+                        </div>
+<button class="text-outline hover:text-on-surface transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Weekly Stock Variance</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 h-9">Highlights discrepancies between physical counts and system records for high-value SKU categories.</p>
+</div>
+<div class="grid grid-cols-2 gap-y-2 mt-auto pt-4 border-t border-surface-container-highest font-data-tabular text-data-tabular">
+<div class="text-outline">Last Run: <span class="text-on-surface">Yesterday</span></div>
+<div class="text-outline">Freq: <span class="text-on-surface">Daily</span></div>
+<div class="text-outline">Owner: <span class="text-on-surface">Me</span></div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 bg-surface-container text-primary py-2 rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Run Now
+                        </button>
+<button class="px-3 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Finance -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="flex justify-between items-start">
+<div class="inline-flex items-center gap-1.5 bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-label-sm text-label-sm uppercase">
+<span class="material-symbols-outlined text-[14px]">payments</span>
+                            Finance
+                        </div>
+<button class="text-outline hover:text-on-surface transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Port Fees Reconciliation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 h-9">Matches incoming invoice data from port authority against internal docking schedules to identify overcharges.</p>
+</div>
+<div class="grid grid-cols-2 gap-y-2 mt-auto pt-4 border-t border-surface-container-highest font-data-tabular text-data-tabular">
+<div class="text-outline">Last Run: <span class="text-on-surface">12 Oct 2023</span></div>
+<div class="text-outline">Freq: <span class="text-on-surface">Monthly</span></div>
+<div class="text-outline">Owner: <span class="text-on-surface">Finance Dept</span></div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 bg-surface-container text-primary py-2 rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Run Now
+                        </button>
+<button class="px-3 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Card 4: Parc -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="flex justify-between items-start">
+<div class="inline-flex items-center gap-1.5 bg-primary-fixed text-on-primary-fixed-variant px-2 py-0.5 rounded font-label-sm text-label-sm uppercase">
+<span class="material-symbols-outlined text-[14px]">minor_crash</span>
+                            Parc
+                        </div>
+<button class="text-outline hover:text-on-surface transition-colors opacity-0 group-hover:opacity-100"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Vehicle Maintenance Log</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 h-9">Upcoming maintenance schedules and historical service records filtered by terminal zone.</p>
+</div>
+<div class="grid grid-cols-2 gap-y-2 mt-auto pt-4 border-t border-surface-container-highest font-data-tabular text-data-tabular">
+<div class="text-outline">Last Run: <span class="text-on-surface">Just now</span></div>
+<div class="text-outline">Freq: <span class="text-on-surface">Ad-hoc</span></div>
+<div class="text-outline">Owner: <span class="text-on-surface">Me</span></div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 bg-surface-container text-primary py-2 rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Run Now
+                        </button>
+<button class="px-3 border border-outline-variant rounded text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Rail: Contextual Pane -->
+<aside class="w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hidden xl:flex flex-col gap-4 sticky top-[80px]">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2 border-b border-surface-container-highest pb-3">
+<span class="material-symbols-outlined text-outline text-[20px]">history</span>
+                Recently Used
+            </h2>
+<div class="flex flex-col gap-2">
+<a class="group flex items-start gap-3 p-2 rounded hover:bg-surface-container transition-colors" href="#">
+<div class="mt-1 bg-tertiary-fixed text-on-tertiary-fixed-variant p-1 rounded">
+<span class="material-symbols-outlined text-[16px] block">local_shipping</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Daily Dispatch Sheet</div>
+<div class="font-data-tabular text-data-tabular text-outline mt-0.5">Ran 15 mins ago</div>
+</div>
+</a>
+<a class="group flex items-start gap-3 p-2 rounded hover:bg-surface-container transition-colors" href="#">
+<div class="mt-1 bg-error-container text-on-error-container p-1 rounded">
+<span class="material-symbols-outlined text-[16px] block">warehouse</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Critical Low Stock Alerts</div>
+<div class="font-data-tabular text-data-tabular text-outline mt-0.5">Ran 2 hours ago</div>
+</div>
+</a>
+<a class="group flex items-start gap-3 p-2 rounded hover:bg-surface-container transition-colors" href="#">
+<div class="mt-1 bg-primary-fixed text-on-primary-fixed-variant p-1 rounded">
+<span class="material-symbols-outlined text-[16px] block">minor_crash</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Driver Timesheets</div>
+<div class="font-data-tabular text-data-tabular text-outline mt-0.5">Ran yesterday</div>
+</div>
+</a>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container-highest">
+<div class="bg-surface-container rounded-lg p-3 border border-outline-variant border-dashed flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-outline">tune</span>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Need a specific layout?</div>
+<button class="text-primary font-label-md text-label-md hover:underline">Build Custom Report</button>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

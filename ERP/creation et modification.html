@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Management | KAMLOG EM-ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e7eefe",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#6ffbbe",
+                    "surface-tint": "#005ac2",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e2e8f8",
+                    "primary-fixed": "#d8e2ff",
+                    "outline-variant": "#c2c6d6",
+                    "inverse-primary": "#adc6ff",
+                    "on-background": "#151c27",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#00714d",
+                    "surface-dim": "#d3daea",
+                    "on-primary-fixed-variant": "#004395",
+                    "tertiary-container": "#a36700",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "surface": "#f9f9ff",
+                    "primary": "#0058be",
+                    "primary-container": "#2170e4",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "tertiary-fixed": "#ffddb8",
+                    "secondary-container": "#6cf8bb",
+                    "background": "#f9f9ff",
+                    "inverse-surface": "#2a313d",
+                    "surface-container-low": "#f0f3ff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#727785",
+                    "surface-container-highest": "#dce2f3",
+                    "on-surface-variant": "#424754",
+                    "on-primary-fixed": "#001a42",
+                    "surface-variant": "#dce2f3",
+                    "on-secondary-fixed": "#002113",
+                    "tertiary": "#825100",
+                    "on-surface": "#151c27",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "secondary": "#006c49"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "1.5rem",
+                    "xl": "2rem",
+                    "xs": "0.5rem",
+                    "xxs": "0.25rem",
+                    "lg": "1.5rem",
+                    "gutter": "1rem",
+                    "max-width": "1600px",
+                    "sm": "0.75rem",
+                    "md": "1rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "data-tabular": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface selection:bg-primary-fixed-dim">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-60 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest flex flex-col border-r border-outline-variant dark:border-outline z-50">
+<div class="px-lg py-xl">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">KAMLOG ERP</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Suite</p>
+</div>
+<nav class="flex-1 overflow-y-auto no-scrollbar">
+<div class="flex flex-col gap-xxs">
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer text-primary dark:text-primary-fixed-dim font-bold border-l-4 border-primary bg-surface-container-high dark:bg-surface-container-highest transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">User Management</span>
+</a>
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-md text-label-md">Logistics</span>
+</a>
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+</div>
+</nav>
+<div class="mt-auto border-t border-outline-variant p-sm flex flex-col gap-xxs">
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-60 flex flex-col min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="w-full h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline z-40 sticky top-0">
+<div class="flex items-center justify-between px-margin-desktop w-full max-w-max-width mx-auto h-full">
+<div class="flex items-center gap-lg">
+<span class="text-headline-sm font-headline-sm text-primary">KAMLOG EM-ERP</span>
+<div class="hidden md:flex bg-surface-container-low rounded-lg px-sm py-xs items-center gap-sm border border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="T-Code Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs hover:bg-surface-container-highest transition-colors rounded-full cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-xs hover:bg-surface-container-highest transition-colors rounded-full cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help">help</span>
+</button>
+<button class="p-xs hover:bg-surface-container-highest transition-colors rounded-full cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline ml-sm">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate IT administrator in a modern office environment. The subject is wearing a crisp white shirt, looking directly at the camera with a confident and helpful expression. The background is a soft-focus office with clean blue and white tones, reflecting an industrial precision and reliability aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuFOyoGmtBAU67siF5vTrMPPDwhsprQVary-BlFLWwVLWD3e1BTNFOedOtK1AsLwVZV7Dfbkbmfr1pUe00hvh_2pwBinu7Wk6Lm424kFFJBpBgM4wk9lCqTKKKRgoDbvn7TSBsnNDk8wgYCrD9fND29KVaCins1kq9WsnGnnSfk4g-QpyqN0ScNq242UXJKFklYz3hhutsSvknyp7V_aSNoy8rc7NgcarVsKhPN184VYR1r-z9PdkF3szMzQEMFZTec0nOonFUvQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-desktop w-full max-w-max-width mx-auto">
+<!-- Breadcrumbs -->
+<nav class="mb-lg">
+<ol class="flex items-center gap-xxs text-label-md font-label-md text-on-surface-variant">
+<li><a class="hover:text-primary" href="#">Admin</a></li>
+<li><span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span></li>
+<li><a class="hover:text-primary" href="#">User Management</a></li>
+<li><span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span></li>
+<li class="text-primary font-bold">New User</li>
+</ol>
+</nav>
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">Create New User</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Configure profile, security, and access duration for the employee.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-lg py-sm bg-surface border border-outline text-on-surface font-label-md text-label-md rounded hover:bg-surface-container-high transition-all">Cancel</button>
+<button class="px-lg py-sm bg-primary text-on-primary font-label-md text-label-md rounded hover:bg-primary-container transition-all flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                        Save User
+                    </button>
+</div>
+</div>
+<!-- Split Layout Form -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: General & Security -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- General Information Card -->
+<section class="bg-white border border-outline-variant p-lg rounded-lg shadow-sm">
+<div class="flex items-center gap-sm mb-lg border-b border-surface-container-highest pb-sm">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+<h3 class="font-title-md text-title-md font-bold">General Information</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">First Name</label>
+<input class="border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low" placeholder="e.g. Jean" type="text"/>
+</div>
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">Last Name</label>
+<input class="border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low" placeholder="e.g. Dupont" type="text"/>
+</div>
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">Email Address</label>
+<input class="border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low" placeholder="j.dupont@kamlog.com" type="email"/>
+</div>
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">Department</label>
+<select class="border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low">
+<option value="">Select Department</option>
+<option value="logistics">K-Logistics</option>
+<option value="finance">K-Finance</option>
+<option value="magasin">K-Magasin</option>
+<option value="it">IT Administration</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Security Settings Card -->
+<section class="bg-white border border-outline-variant p-lg rounded-lg shadow-sm">
+<div class="flex items-center gap-sm mb-lg border-b border-surface-container-highest pb-sm">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+<h3 class="font-title-md text-title-md font-bold">Security Settings</h3>
+</div>
+<div class="space-y-lg">
+<div>
+<div class="flex justify-between items-center mb-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Password Strength</label>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Compliant</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-4/5 h-full bg-secondary"></div>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-xs">Passwords must contain at least 12 characters, including special symbols.</p>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-lg border border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="vibration">vibration</span>
+<div>
+<p class="font-title-md text-title-md font-bold">Multi-Factor Authentication (MFA)</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Require mobile app verification for every login.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Access & Summary -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Access Duration Card -->
+<section class="bg-white border border-outline-variant p-lg rounded-lg shadow-sm">
+<div class="flex items-center gap-sm mb-lg border-b border-surface-container-highest pb-sm">
+<span class="material-symbols-outlined text-primary" data-icon="event_available">event_available</span>
+<h3 class="font-title-md text-title-md font-bold">Access Duration</h3>
+</div>
+<div class="space-y-lg">
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">Start Date</label>
+<div class="relative">
+<input class="w-full border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low" type="date"/>
+</div>
+</div>
+<div class="flex flex-col gap-xxs">
+<label class="font-label-md text-label-md text-on-surface-variant">End Date (Optional)</label>
+<div class="relative">
+<input class="w-full border border-outline-variant rounded p-sm focus:ring-2 focus:ring-primary focus:border-transparent bg-surface-container-low" type="date"/>
+</div>
+<p class="text-label-sm font-label-sm text-outline">Account will automatically deactivate on this date.</p>
+</div>
+</div>
+</section>
+<!-- Profile Preview/Quick Info -->
+<section class="bg-primary text-on-primary p-lg rounded-lg shadow-md relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="shield_person">shield_person</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-title-md text-title-md font-bold mb-md">System Policy Notice</h3>
+<p class="font-body-sm text-body-sm mb-lg opacity-90">Creating a new user requires administrator validation. All access logs are recorded for compliance with international port security standards.</p>
+<div class="bg-white/10 p-sm rounded border border-white/20">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="info">info</span>
+<span class="font-label-sm text-label-sm">Role will be assigned after profile creation.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento-style Helper Cards -->
+<div class="grid grid-cols-2 gap-sm">
+<div class="bg-surface-container-high p-sm rounded border border-outline-variant flex flex-col gap-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="help_center">help_center</span>
+<span class="font-label-sm text-label-sm font-bold">Policy Guide</span>
+</div>
+<div class="bg-surface-container-high p-sm rounded border border-outline-variant flex flex-col gap-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm font-bold">Audit Logs</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Help Section -->
+<div class="mt-xl grid grid-cols-1 md:grid-cols-3 gap-lg border-t border-outline-variant pt-lg">
+<div class="flex items-start gap-md">
+<div class="bg-surface-container p-xs rounded-full">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold">Role-Based Access</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Access levels are inherited from department settings automatically.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="bg-surface-container p-xs rounded-full">
+<span class="material-symbols-outlined text-primary" data-icon="sync">sync</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold">Directory Sync</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Profile data syncs with corporate AD every 4 hours.</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="bg-surface-container p-xs rounded-full">
+<span class="material-symbols-outlined text-primary" data-icon="gpp_good">gpp_good</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold">Secure Provisioning</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Encrypted credential delivery via secure company portal.</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Subtle input focus animation
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.closest('div').classList.add('scale-[1.01]');
+                });
+                input.addEventListener('blur', () => {
+                    input.closest('div').classList.remove('scale-[1.01]');
+                });
+            });
+
+            // T-Code Search active state
+            const tCodeSearch = document.querySelector('input[placeholder="T-Code Search..."]');
+            tCodeSearch.addEventListener('focus', () => {
+                tCodeSearch.parentElement.classList.add('border-primary', 'shadow-md');
+            });
+            tCodeSearch.addEventListener('blur', () => {
+                tCodeSearch.parentElement.classList.remove('border-primary', 'shadow-md');
+            });
+        });
+    </script>
+</body></html>

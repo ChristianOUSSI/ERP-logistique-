@@ -1,0 +1,366 @@
+'use client'
+
+import { useState } from 'react'
+
+interface SparePart {
+  checked: boolean
+  name: string
+  quantity: number
+}
+
+export default function CreationOrdreDeTravailPage() {
+  const [vehicle, setVehicle] = useState('')
+  const [interventionType, setInterventionType] = useState('curative')
+  const [description, setDescription] = useState('')
+  const [priority, setPriority] = useState('medium')
+  const [mechanic, setMechanic] = useState('MEC-01')
+  const [duration, setDuration] = useState('2.5')
+  const [spareParts, setSpareParts] = useState<SparePart[]>([
+    { checked: true, name: 'Filtre à Huile (Réf: FLT-8839)', quantity: 1 },
+    { checked: false, name: '', quantity: 1 }
+  ])
+
+  const handleSparePartCheck = (index: number) => {
+    const newParts = [...spareParts]
+    newParts[index].checked = !newParts[index].checked
+    setSpareParts(newParts)
+  }
+
+  const handleSparePartNameChange = (index: number, value: string) => {
+    const newParts = [...spareParts]
+    newParts[index].name = value
+    setSpareParts(newParts)
+  }
+
+  const handleSparePartQuantityChange = (index: number, value: number) => {
+    const newParts = [...spareParts]
+    newParts[index].quantity = value
+    setSpareParts(newParts)
+  }
+
+  const handleAddSparePart = () => {
+    setSpareParts([...spareParts, { checked: false, name: '', quantity: 1 }])
+  }
+
+  const handleRemoveSparePart = (index: number) => {
+    const newParts = spareParts.filter((_, i) => i !== index)
+    setSpareParts(newParts)
+  }
+
+  const handleSubmit = () => {
+    console.log({
+      vehicle,
+      interventionType,
+      description,
+      priority,
+      mechanic,
+      duration,
+      spareParts
+    })
+  }
+
+  return (
+    <>
+      <style jsx global>{`
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
+        }
+        .k-parc-accent { color: #00714d; }
+        .k-parc-bg-accent { background-color: #00714d; }
+        .k-parc-border-accent { border-color: #00714d; }
+        .k-parc-ring-accent { --tw-ring-color: #00714d; }
+      `}</style>
+      <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
+        {/* SideNavBar */}
+        <nav className="fixed left-0 top-0 h-full flex flex-col z-40 w-[240px] flex-shrink-0 bg-surface-container-low border-r border-outline-variant">
+          <div className="p-4 border-b border-outline-variant">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded bg-primary text-on-primary flex items-center justify-center font-bold font-title-lg">
+                PA
+              </div>
+              <div>
+                <h1 className="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</h1>
+                <p className="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant" style={{fontSize: '18px'}}>search</span>
+              <input className="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow" placeholder="T-Code Search" type="text"/>
+            </div>
+          </div>
+          <ul className="flex-1 overflow-y-auto py-2">
+            <li>
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/transport/control">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_shipping</span>
+                Transport
+              </a>
+            </li>
+            <li>
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/magasin/dashboard">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>inventory_2</span>
+                Magasin
+              </a>
+            </li>
+            <li>
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/finance/overview">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>payments</span>
+                Finance
+              </a>
+            </li>
+            <li>
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md transition-all duration-200 ease-in-out text-primary bg-surface-container-highest border-l-4 border-primary font-bold" href="/parc/overview">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_parking</span>
+                Parc
+              </a>
+            </li>
+            <li>
+              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/audit/dashboard/health">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>fact_check</span>
+                Audit
+              </a>
+            </li>
+          </ul>
+          <div className="border-t border-outline-variant py-2">
+            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/support">
+              <span className="material-symbols-outlined" style={{fontSize: '20px'}}>support_agent</span>
+              Support
+            </a>
+            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/login">
+              <span className="material-symbols-outlined" style={{fontSize: '20px'}}>logout</span>
+              Log out
+            </a>
+          </div>
+        </nav>
+
+        {/* Main Content Area */}
+        <main className="ml-[240px] flex-1 flex flex-col h-screen overflow-hidden">
+          {/* TopNavBar (Contextual for Main Area) */}
+          <header className="h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-margin-desktop w-full flex-shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center text-sm text-on-surface-variant">
+                <span className="hover:text-primary cursor-pointer">K-Parc</span>
+                <span className="material-symbols-outlined mx-1" style={{fontSize: '16px'}}>chevron_right</span>
+                <span className="hover:text-primary cursor-pointer">Ordres de Travail</span>
+                <span className="material-symbols-outlined mx-1" style={{fontSize: '16px'}}>chevron_right</span>
+                <span className="font-medium text-on-surface">Création (OT-8492)</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>notifications</span>
+              </button>
+              <div className="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+                <div className="w-full h-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs"> JD </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Canvas */}
+          <div className="flex-1 overflow-y-auto p-margin-desktop">
+            <div className="max-w-5xl mx-auto space-y-6">
+              {/* Page Header */}
+              <div className="flex items-end justify-between border-b border-outline-variant pb-4">
+                <div>
+                  <h2 className="font-headline-lg text-headline-lg text-on-surface">Création Ordre de Travail</h2>
+                  <p className="font-body-md text-body-md text-on-surface-variant mt-1">Générez une nouvelle intervention de maintenance pour la flotte de véhicules.</p>
+                </div>
+                <div className="flex gap-3">
+                  <button className="px-4 py-2 border border-outline-variant rounded bg-surface text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                    Annuler
+                  </button>
+                  <button onClick={handleSubmit} className="px-4 py-2 rounded k-parc-bg-accent text-white font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-2">
+                    <span className="material-symbols-outlined" style={{fontSize: '18px'}}>save</span>
+                    Enregistrer l'OT
+                  </button>
+                </div>
+              </div>
+
+              {/* Form Layout (Bento-style grid) */}
+              <div className="grid grid-cols-12 gap-6">
+                {/* Left Column: Primary Details */}
+                <div className="col-span-12 lg:col-span-8 space-y-6">
+                  {/* Section: Informations Générales */}
+                  <div className="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+                    <h3 className="font-title-md text-title-md text-on-surface mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+                      <span className="material-symbols-outlined k-parc-accent" style={{fontSize: '20px'}}>info</span>
+                      Informations Générales
+                    </h3>
+                    <div className="grid grid-cols-2 gap-5">
+                      <div className="col-span-2 sm:col-span-1 space-y-1">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant">Véhicule / Équipement <span className="text-error">*</span></label>
+                        <div className="relative">
+                          <select 
+                            className="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none"
+                            value={vehicle}
+                            onChange={(e) => setVehicle(e.target.value)}
+                          >
+                            <option disabled selected value="">Sélectionner un véhicule...</option>
+                            <option value="TRK-001">TRK-001 - Chariot Élévateur (Hyster 3T)</option>
+                            <option value="TRK-045">TRK-045 - Tracteur Terminal (Kalmar)</option>
+                            <option value="VHL-102">VHL-102 - Camionnette Service (Renault Master)</option>
+                            <option value="CRN-005">CRN-005 - Grue Mobile (Liebherr)</option>
+                          </select>
+                          <span className="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style={{fontSize: '18px'}}>arrow_drop_down</span>
+                        </div>
+                      </div>
+                      <div className="col-span-2 sm:col-span-1 space-y-1">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant">Type d'Intervention <span className="text-error">*</span></label>
+                        <div className="relative">
+                          <select 
+                            className="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none"
+                            value={interventionType}
+                            onChange={(e) => setInterventionType(e.target.value)}
+                          >
+                            <option value="curative">Maintenance Curative (Panne)</option>
+                            <option value="preventive">Maintenance Préventive</option>
+                            <option value="inspection">Inspection Réglementaire</option>
+                            <option value="pneumatique">Remplacement Pneumatiques</option>
+                          </select>
+                          <span className="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style={{fontSize: '18px'}}>arrow_drop_down</span>
+                        </div>
+                      </div>
+                      <div className="col-span-2 space-y-1">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant">Description du Problème <span className="text-error">*</span></label>
+                        <textarea 
+                          className="w-full p-3 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent resize-y" 
+                          placeholder="Décrivez en détail le symptôme ou le travail à effectuer..." 
+                          rows="4"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section: Pièces de Rechange (Checklist) */}
+                  <div className="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4 border-b border-outline-variant pb-2">
+                      <h3 className="font-title-md text-title-md text-on-surface flex items-center gap-2">
+                        <span className="material-symbols-outlined k-parc-accent" style={{fontSize: '20px'}}>build</span>
+                        Pièces de Rechange (Magasin)
+                      </h3>
+                      <button onClick={handleAddSparePart} className="text-sm font-medium k-parc-accent hover:underline flex items-center gap-1">
+                        <span className="material-symbols-outlined" style={{fontSize: '16px'}}>add</span>
+                        Ajouter Ligne
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      {spareParts.map((part, index) => (
+                        <div key={index} className="flex items-center gap-3 bg-surface-container-low p-2 rounded border border-outline-variant">
+                          <input 
+                            checked={part.checked}
+                            onChange={() => handleSparePartCheck(index)}
+                            className="w-4 h-4 rounded border-outline k-parc-accent focus:ring-0 cursor-pointer" 
+                            type="checkbox"
+                          />
+                          <div className="flex-1">
+                            <input 
+                              className="w-full bg-transparent border-none text-sm p-1 focus:ring-0 focus:outline-none text-on-surface" 
+                              type="text" 
+                              value={part.name}
+                              onChange={(e) => handleSparePartNameChange(index, e.target.value)}
+                              placeholder="Rechercher une pièce par Réf ou Nom..."
+                            />
+                          </div>
+                          <div className="w-24">
+                            <input 
+                              className="w-full p-1 bg-surface border border-outline-variant rounded text-sm text-center focus:outline-none focus:ring-1 k-parc-ring-accent focus:border-transparent" 
+                              min="1" 
+                              type="number" 
+                              value={part.quantity}
+                              onChange={(e) => handleSparePartQuantityChange(index, parseInt(e.target.value) || 1)}
+                              disabled={!part.checked}
+                            />
+                          </div>
+                          {index > 0 && (
+                            <button onClick={() => handleRemoveSparePart(index)} className="p-1 text-on-surface-variant hover:text-error transition-colors">
+                              <span className="material-symbols-outlined" style={{fontSize: '18px'}}>close</span>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant mt-3 italic text-xs">Note : Les pièces cochées généreront automatiquement une demande de sortie au module K-Magasin.</p>
+                  </div>
+                </div>
+
+                {/* Right Column: Planning & Assignment */}
+                <div className="col-span-12 lg:col-span-4 space-y-6">
+                  {/* Status & Priority Card */}
+                  <div className="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+                    <h3 className="font-title-md text-title-md text-on-surface mb-4 border-b border-outline-variant pb-2 flex items-center gap-2">
+                      <span className="material-symbols-outlined k-parc-accent" style={{fontSize: '20px'}}>flag</span>
+                      Planification
+                    </h3>
+                    <div className="space-y-5">
+                      {/* Priority */}
+                      <div className="space-y-2">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant block">Niveau de Priorité</label>
+                        <div className="flex flex-col gap-2">
+                          <label className="flex items-center p-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors group">
+                            <input className="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="low" checked={priority === 'low'} onChange={() => setPriority('low')}/>
+                            <span className="ml-2 text-sm text-on-surface flex-1">Basse</span>
+                            <span className="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span>
+                          </label>
+                          <label className="flex items-center p-2 border border-outline-variant rounded cursor-pointer bg-surface-container-highest group">
+                            <input className="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="medium" checked={priority === 'medium'} onChange={() => setPriority('medium')}/>
+                            <span className="ml-2 text-sm font-medium text-on-surface flex-1">Moyenne</span>
+                            <span className="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+                          </label>
+                          <label className="flex items-center p-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors group">
+                            <input className="w-4 h-4 k-parc-accent border-outline focus:ring-0" name="priority" type="radio" value="high" checked={priority === 'high'} onChange={() => setPriority('high')}/>
+                            <span className="ml-2 text-sm text-on-surface flex-1">Haute</span>
+                            <span className="w-2 h-2 rounded-full bg-[#f97316]"></span>
+                          </label>
+                          <label className="flex items-center p-2 border border-error-container rounded cursor-pointer hover:bg-error-container/20 transition-colors group">
+                            <input className="w-4 h-4 text-error border-error focus:ring-0" name="priority" type="radio" value="critical" checked={priority === 'critical'} onChange={() => setPriority('critical')}/>
+                            <span className="ml-2 text-sm font-medium text-error flex-1">Critique (Immobilisation)</span>
+                            <span className="w-2 h-2 rounded-full bg-error"></span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* Assignment */}
+                      <div className="space-y-1">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant block">Mécanicien Assigné</label>
+                        <div className="relative">
+                          <select 
+                            className="w-full pl-3 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent appearance-none"
+                            value={mechanic}
+                            onChange={(e) => setMechanic(e.target.value)}
+                          >
+                            <option disabled value="">À assigner plus tard</option>
+                            <option value="MEC-01">Marc Dupont (Équipe Matin)</option>
+                            <option value="MEC-02">Jean Leblanc (Spécialiste Hydraulique)</option>
+                            <option value="MEC-03">Équipe Externe (Sous-traitant)</option>
+                          </select>
+                          <span className="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none" style={{fontSize: '18px'}}>arrow_drop_down</span>
+                        </div>
+                      </div>
+                      {/* Duration */}
+                      <div className="space-y-1">
+                        <label className="font-label-sm text-label-sm text-on-surface-variant block">Durée Estimée (Heures)</label>
+                        <div className="flex items-center border border-outline-variant rounded bg-surface-container-lowest overflow-hidden focus-within:ring-2 k-parc-ring-accent focus-within:border-transparent">
+                          <span className="material-symbols-outlined text-outline pl-3" style={{fontSize: '18px'}}>schedule</span>
+                          <input 
+                            className="w-full p-2 border-none bg-transparent text-sm focus:ring-0 focus:outline-none" 
+                            min="0.5" 
+                            step="0.5" 
+                            type="number" 
+                            value={duration}
+                            onChange={(e) => setDuration(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </>
+  )
+}

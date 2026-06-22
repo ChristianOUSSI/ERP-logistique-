@@ -1,4 +1,4 @@
-# app/models/base.py — BaseModel commun à toutes les tables
+# app/models/base.py  BaseModel commun à toutes les tables
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import DateTime, func, Integer
@@ -34,5 +34,5 @@ class BaseModel(Base):
     )
 
     def soft_delete(self) -> None:
-        """Suppression logique — ne jamais supprimer physiquement en prod."""
+        """Suppression logique  ne jamais supprimer physiquement en prod."""
         self.deleted_at = func.now()

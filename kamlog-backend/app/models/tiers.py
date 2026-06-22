@@ -1,4 +1,4 @@
-# app/models/tiers.py — Modèle SQLAlchemy Tiers
+# app/models/tiers.py  Modèle SQLAlchemy Tiers
 import enum
 from sqlalchemy import String, Boolean, Numeric, Text, Index
 from sqlalchemy.orm import Mapped, mapped_column

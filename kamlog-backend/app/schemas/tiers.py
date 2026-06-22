@@ -1,4 +1,4 @@
-# app/schemas/tiers.py — Schémas Tiers
+# app/schemas/tiers.py  Schémas Tiers
 from pydantic import BaseModel, Field, EmailStr
 from decimal import Decimal
 from datetime import datetime

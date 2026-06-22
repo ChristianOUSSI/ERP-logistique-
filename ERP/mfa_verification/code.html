@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MFA Verification | KAMLOG EM-ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daea",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#825100",
+                      "secondary-fixed-dim": "#4edea3",
+                      "secondary-container": "#6cf8bb",
+                      "tertiary-fixed": "#ffddb8",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#00714d",
+                      "on-primary-fixed": "#001a42",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container": "#e7eefe",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#006c49",
+                      "on-secondary-fixed": "#002113",
+                      "primary-fixed": "#d8e2ff",
+                      "on-background": "#151c27",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#2a1700",
+                      "primary-fixed-dim": "#adc6ff",
+                      "outline": "#727785",
+                      "surface-container-highest": "#dce2f3",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#424754",
+                      "inverse-surface": "#2a313d",
+                      "on-primary-container": "#fefcff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary": "#0058be",
+                      "primary-container": "#2170e4",
+                      "on-tertiary-container": "#fffbff",
+                      "surface": "#f9f9ff",
+                      "surface-bright": "#f9f9ff",
+                      "background": "#f9f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c2c6d6",
+                      "surface-variant": "#dce2f3",
+                      "surface-tint": "#005ac2",
+                      "on-surface": "#151c27",
+                      "surface-container-high": "#e2e8f8",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#653e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "1rem",
+                      "lg": "1.5rem",
+                      "margin-desktop": "1.5rem",
+                      "max-width": "1600px",
+                      "sm": "0.75rem",
+                      "xs": "0.5rem",
+                      "gutter": "1rem",
+                      "xl": "2rem",
+                      "xxs": "0.25rem"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "title-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "data-tabular": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .mfa-input:focus {
+            outline: none;
+            border-color: #0058be;
+            box-shadow: 0 0 0 2px rgba(0, 88, 190, 0.1);
+        }
+        .shimmer-effect {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Shell Component - suppressed for auth flow priority) -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-xs">
+<span class="text-primary font-bold text-title-lg tracking-tight">KAMLOG EM-ERP</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end hidden md:flex">
+<span class="text-label-md font-label-md text-primary uppercase tracking-widest">Secure Gateway</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Session: Pending MFA</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="security">security</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center pt-16 px-md relative overflow-hidden">
+<!-- Background Atmospheric Element -->
+<div class="absolute inset-0 z-0 opacity-40">
+
+</div>
+<div class="relative z-10 w-full max-w-[480px] bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Header Section -->
+<div class="p-lg bg-surface-container-high/50 border-b border-outline-variant flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[28px]" data-icon="lock_person" style="font-variation-settings: 'FILL' 1;">lock_person</span>
+</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm text-on-surface">MFA Verification</h1>
+<p class="text-body-sm text-on-surface-variant">Two-step authentication required</p>
+</div>
+</div>
+<div class="p-lg space-y-xl">
+<!-- TOTP Verification Form -->
+<div class="space-y-lg" id="totp-view">
+<div class="space-y-xs">
+<p class="text-body-md text-on-surface font-medium">Enter 6-digit code</p>
+<p class="text-body-sm text-on-surface-variant leading-relaxed">Enter the dynamic verification code generated by your mobile authenticator app to proceed.</p>
+</div>
+<div class="flex justify-between gap-xxs" id="mfa-inputs">
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+<div class="flex items-center text-outline-variant">
+<span class="w-3 h-[2px] bg-current"></span>
+</div>
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+<input class="mfa-input w-12 h-14 text-center text-headline-sm font-bold border border-outline-variant rounded bg-surface-container-lowest focus:border-primary transition-all" inputmode="numeric" maxlength="1" pattern="\d*" type="text"/>
+</div>
+<button class="w-full h-12 bg-primary text-on-primary font-bold rounded flex items-center justify-center gap-xs hover:bg-primary-container transition-all active:scale-[0.98]">
+<span>Verify &amp; Login</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="pt-sm border-t border-outline-variant flex flex-col gap-sm text-center">
+<a class="text-body-sm text-primary font-medium hover:underline flex items-center justify-center gap-xxs" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="key">key</span>
+                            Enter backup code
+                        </a>
+<button class="text-body-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-xxs" onclick="toggleView('setup-view')">
+<span class="material-symbols-outlined text-[16px]" data-icon="qr_code_2">qr_code_2</span>
+                            First time? Set up QR code
+                        </button>
+</div>
+</div>
+<!-- QR Setup View (Hidden by default) -->
+<div class="hidden space-y-lg" id="setup-view">
+<div class="space-y-xs">
+<p class="text-body-md text-on-surface font-medium">Authenticator Setup</p>
+<p class="text-body-sm text-on-surface-variant leading-relaxed">Scan this QR code with Google Authenticator or Microsoft Authenticator to link your account.</p>
+</div>
+<div class="flex justify-center p-md bg-white border-2 border-dashed border-outline-variant rounded-lg">
+<div class="relative w-48 h-48">
+<img alt="MFA QR Code" class="w-full h-full" data-alt="A clean and sharp high-contrast QR code centered on a white minimalist background. The style is modern corporate, following a flat design language with crisp edges and precise geometric mapping. The lighting is bright and uniform, reflecting a secure light-mode ERP interface environment. A subtle watermark of the KAMLOG EM-ERP logo is integrated into the center of the QR code pattern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIS9VvST_w4csvB_WyzL51UgVvEtNrTwb7Gz7EDGHw3EsJ_SQF3FAYEjPYHkPkL6v29rKilEMHViorLbF7h0wEzU7ISIPvtXVCNh-YjDPM3vULBB4332dbeD8iSkPKuJYYUoGk1KGa65TgLX66YoM80OP4OLWkmD4ItAywKijz7-CNVmXYh07_wz9niZH5-ebfMuoR1FaVC7OY4kPIgCGLSfnxCICCd5rQUcy0niATowDASgtqeJ0MszVaeR3hdrUFLOwHsGu_U34"/>
+<!-- Scanning Shimmer -->
+<div class="absolute inset-0 shimmer-effect opacity-30 pointer-events-none"></div>
+</div>
+</div>
+<div class="bg-surface-container p-sm rounded border border-outline-variant/30">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-xxs">Manual Secret Key</p>
+<p class="text-data-tabular font-mono text-on-surface break-all bg-surface-container-lowest p-xs border border-outline-variant rounded select-all">JBSW Y3DP EBLW 64TJ M5SS K7TG</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex-1 h-11 border border-outline text-on-surface font-medium rounded hover:bg-surface-container-high transition-all" onclick="toggleView('totp-view')">
+                            Back to Verify
+                        </button>
+<button class="flex-1 h-11 bg-primary text-on-primary font-bold rounded hover:bg-primary-container transition-all">
+                            Complete Setup
+                        </button>
+</div>
+</div>
+</div>
+<!-- Footer Compliance -->
+<div class="px-lg py-md bg-surface-container-lowest text-center">
+<p class="text-label-sm font-label-sm text-on-surface-variant">KAMLOG Secure Access Control © 2026</p>
+<div class="flex justify-center gap-md mt-xxs">
+<span class="text-label-sm text-outline flex items-center gap-xxs">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span> 
+                        ISO 27001 Compliant
+                    </span>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Identity Strip -->
+<div class="fixed bottom-0 left-0 w-full h-1 bg-primary flex">
+<div class="h-full bg-secondary w-1/4"></div>
+<div class="h-full bg-tertiary-container w-1/4"></div>
+<div class="h-full bg-primary w-2/4"></div>
+</div>
+<script>
+        // Auto-focus logic for MFA inputs
+        const inputs = document.querySelectorAll('#mfa-inputs input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Prevent non-numeric characters
+            input.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // View Toggling
+        function toggleView(viewId) {
+            const totpView = document.getElementById('totp-view');
+            const setupView = document.getElementById('setup-view');
+            
+            if (viewId === 'setup-view') {
+                totpView.classList.add('hidden');
+                setupView.classList.remove('hidden');
+            } else {
+                setupView.classList.add('hidden');
+                totpView.classList.remove('hidden');
+                // Focus first input
+                inputs[0].focus();
+            }
+        }
+
+        // Focus first input on load
+        window.onload = () => inputs[0].focus();
+    </script>
+</body></html>

@@ -1,59 +1,152 @@
+/* kamlog-frontend/src/app/globals.css
+   ERP Design System - 100% fidèle au HTML original
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #151c27;
+    background-color: #f9f9ff;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Styles Material Symbols fidèles au HTML original */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.fill-icon {
+  font-variation-settings: 'FILL' 1;
+}
+
+/* Effets visuels ERP fidèles */
+.logistics-overlay {
+  background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+  opacity: 0.03;
+}
+
+.auth-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3B82F6;
+}
+
+/* Zebra striping pour tables */
+.zebra-table tr:nth-child(even) {
+  background-color: #F9FAFB;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #dce2f3;
+  border-radius: 10px;
+}
+
+/* Classes typographiques ERP exactes */
+@layer utilities {
+  /* Fonts fidèles au design ERP */
+  .font-body-md { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+  .font-label-md { font-size: 0.75rem; line-height: 1rem; font-weight: 500; letter-spacing: 0.02em; }
+  .font-title-md { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; }
+  .font-title-lg { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; }
+  .font-headline-sm { font-size: 1.25rem; line-height: 1.75rem; font-weight: 800; }
+  .font-body-sm { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+  .font-label-sm { font-size: 0.75rem; line-height: 1rem; font-weight: 600; }
+
+  /* Classes K-Magasin spécifiques */
+  .font-label-caps { font-size: 12px; line-height: 16px; letter-spacing: 0.05em; font-weight: 600; }
+  .font-headline-md { font-size: 24px; line-height: 32px; letter-spacing: -0.01em; font-weight: 600; }
+  .font-title-sm { font-size: 18px; line-height: 24px; font-weight: 600; }
+  .font-mono-data { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 16px; font-weight: 500; }
+  .font-display-lg { font-size: 36px; line-height: 44px; letter-spacing: -0.02em; font-weight: 700; }
+  .font-body-base { font-size: 14px; line-height: 20px; font-weight: 400; }
+
+  /* Textes */
+  .text-body-md { font-size: 0.875rem; line-height: 1.25rem; }
+  .text-body-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .text-label-md { font-size: 0.75rem; line-height: 1rem; }
+  .text-label-sm { font-size: 0.75rem; line-height: 1rem; }
+  .text-title-lg { font-size: 1.25rem; line-height: 1.75rem; }
+  .text-title-md { font-size: 1.125rem; line-height: 1.75rem; }
+  .text-headline-sm { font-size: 1.25rem; line-height: 1.75rem; }
+  .text-headline-md { font-size: 24px; line-height: 32px; }
+  .text-display-lg { font-size: 36px; line-height: 44px; }
+  .text-label-caps { font-size: 12px; line-height: 16px; }
+  .text-mono-data { font-size: 13px; line-height: 16px; }
+  .text-title-sm { font-size: 18px; line-height: 24px; }
+  .text-body-base { font-size: 14px; line-height: 20px; }
+
+  /* Couleurs ERP */
+  .bg-surface-container-low { background-color: #f0f3ff; }
+  .bg-surface-container-lowest { background-color: #ffffff; }
+  .bg-surface { background-color: #f9f9ff; }
+  .bg-surface-container { background-color: #ecedf7; }
+  .bg-surface-container-high { background-color: #e6e7f2; }
+  .bg-surface-container-highest { background-color: #e1e2ec; }
+  .bg-error-container { background-color: #ffdad6; }
+  .bg-primary-container { background-color: #FEE2E2; }
+  .bg-km-red\/10 { background-color: rgba(239, 68, 68, 0.1); }
+  .bg-km-red { background-color: #EF4444; }
+  
+  .text-on-surface { color: #151c27; }
+  .text-on-background { color: #151c27; }
+  .text-on-surface-variant { color: #424754; }
+  .text-outline { color: #727785; }
+  .text-primary { color: #0058be; }
+  .text-auth-blue { color: #3B82F6; }
+  .text-on-error-container { color: #93000a; }
+  .text-error { color: #ba1a1a; }
+  .text-secondary { color: #505f76; }
+  .text-on-primary { color: #ffffff; }
+  .text-on-primary-container { color: #fefcff; }
+  .text-tertiary { color: #924700; }
+  .text-km-red { color: #EF4444; }
+  .text-surface { color: #f9f9ff; }
+  
+  .border-outline-variant { border-color: #c2c6d6; }
+  .border-outline { border-color: #727785; }
+  .border-primary { border-color: #0058be; }
+  .border-error { border-color: #ba1a1a; }
+  .border-km-red { border-color: #EF4444; }
+  .border-km-red\/20 { border-color: rgba(239, 68, 68, 0.2); }
+  
+  .focus\:border-km-red:focus { border-color: #EF4444; }
+  .focus\:ring-km-red:focus { ring-color: #EF4444; }
+  
+  .placeholder\:text-outline::placeholder { color: #727785; }
+
+  /* Espacements ERP */
+  .p-stack-md { padding: 1rem; }
+  .p-stack-sm { padding: 0.5rem; }
+  .gap-stack-md { gap: 1rem; }
+  .gap-stack-lg { gap: 1.5rem; }
+  .gap-stack-sm { gap: 0.5rem; }
+  .mb-stack-lg { margin-bottom: 1.5rem; }
+  .mb-stack-md { margin-bottom: 1rem; }
+  .px-gutter { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .p-container-margin { padding: 2rem; }
+  .h-grid-row-height { height: 40px; }
+
+  /* Gradients ERP */
+  .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
+  .from-surface-container-low { --tw-gradient-from: #f0f3ff; --tw-gradient-to: rgb(240 243 255 / 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+  .via-white { --tw-gradient-to: rgb(255 255 255 / 0); --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to); }
+  .to-surface-container-highest { --tw-gradient-to: #dce2f3; }
 }

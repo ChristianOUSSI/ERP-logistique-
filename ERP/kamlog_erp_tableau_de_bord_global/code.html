@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG EM-ERP | Global Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#825100",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6cf8bb",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#00714d",
+                        "on-primary-fixed": "#001a42",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container": "#e7eefe",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#a36700",
+                        "secondary": "#006c49",
+                        "on-secondary-fixed": "#002113",
+                        "primary-fixed": "#d8e2ff",
+                        "on-background": "#151c27",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-tertiary-fixed": "#2a1700",
+                        "primary-fixed-dim": "#adc6ff",
+                        "outline": "#727785",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#424754",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "primary": "#0058be",
+                        "primary-container": "#2170e4",
+                        "on-tertiary-container": "#fffbff",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c2c6d6",
+                        "surface-variant": "#dce2f3",
+                        "surface-tint": "#005ac2",
+                        "on-surface": "#151c27",
+                        "surface-container-high": "#e2e8f8",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#653e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "1rem",
+                        "lg": "1.5rem",
+                        "margin-desktop": "1.5rem",
+                        "max-width": "1600px",
+                        "sm": "0.75rem",
+                        "xs": "0.5rem",
+                        "gutter": "1rem",
+                        "xl": "2rem",
+                        "xxs": "0.25rem"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* surface-container-low from design guidance */
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Zebra striping for tables */
+        .zebra-table tr:nth-child(even) {
+            background-color: #F9FAFB;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dce2f3;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-xl">
+<span class="text-title-lg font-title-lg font-bold text-primary dark:text-primary-fixed-dim">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex items-center gap-md">
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">Alerts</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">MFA Status</a>
+<a class="text-label-md font-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Modules</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs hover:bg-surface-container-high transition-colors rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-xs hover:bg-surface-container-high transition-colors rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+</button>
+<button class="p-xs hover:bg-surface-container-high transition-colors rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-outline-variant">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate logistics manager wearing a crisp white shirt against a neutral, high-key studio background. The lighting is soft and professional, reflecting the reliable and modern corporate style of the KAMLOG ERP interface. The image is clean, sharp, and fits perfectly within a minimalist UI profile circle." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlVGmjmhA1cMwRWovq_WLrw2YhDeovqVj5zlc62N7PTWlcRm0NlItJcbgP48oTZ3yDucvCUi2eBXx4-jMUY9gHt0rvrF78R3tCOps7BI5OTw8TYGpKFjj-18M2lOrWCuXzLO_8e0MpJyg3wc0cbm1JqXyvylrePXFUzLPjSoz05UB-pqlW2x30uvIK2pZH2zK8ebn1_aeYc46LdyiBjz23OKitO-HoYRwHQwcQDdW625aVqF-AzCWwo28S1TkehLQJx87bu-5YT3E"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant">
+<div class="px-md py-lg border-b border-outline-variant mb-md">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<span class="text-headline-sm font-headline-sm font-black text-primary">KAMLOG ERP</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</p>
+</div>
+<nav class="flex-1 px-xs space-y-xxs overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-label-md font-label-md">Transport</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-md font-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">Parc</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="text-label-md font-label-md">Magasin</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="text-label-md font-label-md">Audit</span>
+</a>
+</nav>
+<div class="px-xs pt-md border-t border-outline-variant space-y-xxs">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all text-error" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-60 pt-16 min-h-screen">
+<div class="p-lg max-w-max-width mx-auto">
+<!-- Global Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">
+<div>
+<nav class="flex items-center gap-xxs text-label-sm font-label-sm text-on-surface-variant mb-xs">
+<span>Modules</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary">Global Dashboard</span>
+</nav>
+<h1 class="text-headline-lg font-headline-lg text-on-background">System Overview</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md font-label-md text-on-surface-variant">Last Update: 14:32:01</span>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-title-md text-title-md flex items-center gap-xs shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">refresh</span>
+                        Force Sync
+                    </button>
+</div>
+</div>
+<!-- Bento Layout Main Dashboard -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- KPI CARDS (4 Modules) -->
+<!-- Stock Value - Red (Magasin) -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-xs bg-error/10 text-error rounded-lg">
+<span class="material-symbols-outlined">warehouse</span>
+</div>
+<span class="text-label-sm font-label-sm px-xs py-1 bg-error/10 text-error rounded">+2.4%</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Stock Value</p>
+<h2 class="text-headline-md font-headline-md text-on-background">$14,204,500</h2>
+</div>
+<div class="mt-md border-t border-outline-variant pt-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Module: <span class="font-bold text-error">K-Magasin</span></p>
+</div>
+</div>
+<!-- Pending Missions - Orange (Audit) -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-xs bg-tertiary/10 text-tertiary rounded-lg">
+<span class="material-symbols-outlined">assignment_late</span>
+</div>
+<span class="text-label-sm font-label-sm px-xs py-1 bg-tertiary/10 text-tertiary rounded">Urgent</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Pending Missions</p>
+<h2 class="text-headline-md font-headline-md text-on-background">42 Active</h2>
+</div>
+<div class="mt-md border-t border-outline-variant pt-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Module: <span class="font-bold text-tertiary">K-Audit</span></p>
+</div>
+</div>
+<!-- Total Revenue - Purple (Finance) -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-xs bg-[#8E24AA]/10 text-[#8E24AA] rounded-lg">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="text-label-sm font-label-sm px-xs py-1 bg-[#8E24AA]/10 text-[#8E24AA] rounded">On Target</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Total Revenue</p>
+<h2 class="text-headline-md font-headline-md text-on-background">$2.8M <span class="text-body-sm font-body-sm text-on-surface-variant">MTD</span></h2>
+</div>
+<div class="mt-md border-t border-outline-variant pt-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Module: <span class="font-bold text-[#8E24AA]">K-Finance</span></p>
+</div>
+</div>
+<!-- Active Vehicles - Cyan (Transport) -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-xs bg-[#00ACC1]/10 text-[#00ACC1] rounded-lg">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<span class="text-label-sm font-label-sm px-xs py-1 bg-[#00ACC1]/10 text-[#00ACC1] rounded">88% Util.</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Active Vehicles</p>
+<h2 class="text-headline-md font-headline-md text-on-background">156 Units</h2>
+</div>
+<div class="mt-md border-t border-outline-variant pt-sm">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Module: <span class="font-bold text-[#00ACC1]">K-Transport</span></p>
+</div>
+</div>
+<!-- T-Code Quick Launcher (Central) -->
+<div class="col-span-12 lg:col-span-8">
+<div class="bg-white p-lg rounded-xl border border-outline-variant h-full">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="text-title-lg font-title-lg text-on-background flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">terminal</span>
+                                T-Code Quick Launcher
+                            </h3>
+<span class="text-label-md font-label-md text-on-surface-variant">F1 for command help</span>
+</div>
+<div class="relative mb-xl">
+<input class="w-full h-14 bg-surface-container-low border border-outline-variant rounded-lg px-xl text-body-lg font-body-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" placeholder="Enter Transaction Code (e.g., KFIN_01, KTRN_EXPL)..." type="text"/>
+<div class="absolute left-md top-1/2 -translate-y-1/2">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<div class="absolute right-md top-1/2 -translate-y-1/2">
+<kbd class="px-xs py-xxs bg-surface-container-highest border border-outline-variant rounded text-label-sm font-label-sm">ENTER</kbd>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-md">
+<button class="flex flex-col items-center gap-xs p-md rounded-lg border border-outline-variant hover:border-primary hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">inventory</span>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">KMAG_INV</span>
+</button>
+<button class="flex flex-col items-center gap-xs p-md rounded-lg border border-outline-variant hover:border-primary hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">account_balance</span>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">KFIN_TAX</span>
+</button>
+<button class="flex flex-col items-center gap-xs p-md rounded-lg border border-outline-variant hover:border-primary hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">route</span>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">KTRN_RTE</span>
+</button>
+<button class="flex flex-col items-center gap-xs p-md rounded-lg border border-outline-variant hover:border-primary hover:bg-surface-container transition-all group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">verified_user</span>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">KAUD_LOG</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Alerts Center (Right) -->
+<div class="col-span-12 lg:col-span-4">
+<div class="bg-white p-lg rounded-xl border border-outline-variant flex flex-col h-[400px]">
+<div class="flex items-center justify-between mb-md">
+<h3 class="text-title-lg font-title-lg text-on-background flex items-center gap-xs">
+<span class="material-symbols-outlined text-error">warning</span>
+                                Critical Alerts
+                            </h3>
+<a class="text-label-sm font-label-sm text-primary font-bold hover:underline" href="#">View All</a>
+</div>
+<div class="flex-1 overflow-y-auto space-y-sm custom-scrollbar pr-xs">
+<!-- Alert 1 -->
+<div class="p-sm bg-error-container/20 border-l-4 border-error rounded-r-lg">
+<div class="flex justify-between items-start mb-xxs">
+<span class="text-label-sm font-label-sm font-bold text-on-error-container uppercase">System Critical</span>
+<span class="text-[10px] text-on-surface-variant">2m ago</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">Vehicle ID TRK-902 reported telematics failure in Sector 4.</p>
+</div>
+<!-- Alert 2 -->
+<div class="p-sm bg-tertiary-fixed/30 border-l-4 border-tertiary-container rounded-r-lg">
+<div class="flex justify-between items-start mb-xxs">
+<span class="text-label-sm font-label-sm font-bold text-on-tertiary-container uppercase">Mission Pending</span>
+<span class="text-[10px] text-on-surface-variant">15m ago</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">Audit mission #4412 is 48 hours overdue for final sign-off.</p>
+</div>
+<!-- Alert 3 -->
+<div class="p-sm bg-surface-container-highest border-l-4 border-outline rounded-r-lg">
+<div class="flex justify-between items-start mb-xxs">
+<span class="text-label-sm font-label-sm font-bold text-on-surface uppercase">MFA Update</span>
+<span class="text-[10px] text-on-surface-variant">1h ago</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">New security protocol applied to Finance Module access points.</p>
+</div>
+<!-- Alert 4 -->
+<div class="p-sm bg-error-container/20 border-l-4 border-error rounded-r-lg">
+<div class="flex justify-between items-start mb-xxs">
+<span class="text-label-sm font-label-sm font-bold text-on-error-container uppercase">Low Stock</span>
+<span class="text-[10px] text-on-surface-variant">3h ago</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface">Hazardous container gaskets (Item #22) below safety threshold.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity / Logistics Stream (Bottom Full Width) -->
+<div class="col-span-12">
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant flex items-center justify-between">
+<h3 class="text-title-lg font-title-lg text-on-background">Live Operations Stream</h3>
+<div class="flex gap-xs">
+<span class="flex items-center gap-xxs px-sm py-xs bg-surface-container rounded text-label-md font-label-md">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></span>
+                                    Live Feed
+                                </span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left zebra-table">
+<thead class="bg-surface-container-low text-label-md font-label-md text-on-surface-variant border-b border-outline-variant">
+<tr>
+<th class="px-lg py-sm font-medium">Timestamp</th>
+<th class="px-lg py-sm font-medium">Module</th>
+<th class="px-lg py-sm font-medium">Operation</th>
+<th class="px-lg py-sm font-medium">Operator</th>
+<th class="px-lg py-sm font-medium">Status</th>
+<th class="px-lg py-sm font-medium text-right">Reference</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-body-sm text-on-surface">
+<tr>
+<td class="px-lg py-md font-data-tabular">14:30:44</td>
+<td class="px-lg py-md"><span class="px-xs py-xxs bg-[#00ACC1]/10 text-[#00ACC1] rounded text-label-sm">K-Transport</span></td>
+<td class="px-lg py-md">Gate Entry Validation</td>
+<td class="px-lg py-md flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-outline-variant overflow-hidden">
+<img alt="Operator" class="w-full h-full object-cover" data-alt="A detailed, realistic portrait of a warehouse operator in a navy blue uniform, set against a blurred industrial background of shipping containers. The lighting is bright and clear, emphasizing professionalism and operational readiness. The aesthetic is clean and corporate, matching the high-precision ERP interface style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLy38_eejwPr8MJHy0ltkC9gM0IhfzDluBsW19c59fB5KHkH9QXr0D620A3BoyqpQh7tr0FU9oPQJPN7SU-cUAZ5VGnKfew91Joevp5FKZNNRkxtQ9lkkck7WJoI70NtqXivS2Sh1cJwJPSzwW7ykhSrULhHk1o4hOM_q0CGNGd9LEIdubTFLn9hJ-pRJq8uHBi5R1FO2TVTkTe2XD7SHH2eMrsidalitObeo0mMvScuLTbMesUHOYY4Vrmk6IP4r3o47b_fGIeTg"/>
+</div>
+                                            J. Chen
+                                        </td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-xs text-secondary font-bold">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                                                Completed
+                                            </span>
+</td>
+<td class="px-lg py-md text-right font-data-tabular text-on-surface-variant">#G-40912</td>
+</tr>
+<tr>
+<td class="px-lg py-md font-data-tabular">14:28:12</td>
+<td class="px-lg py-md"><span class="px-xs py-xxs bg-[#8E24AA]/10 text-[#8E24AA] rounded text-label-sm">K-Finance</span></td>
+<td class="px-lg py-md">Invoice Generation</td>
+<td class="px-lg py-md flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-outline-variant overflow-hidden">
+<img alt="Operator" class="w-full h-full object-cover" data-alt="A portrait of a financial analyst working in a modern, glass-walled office environment. The scene is illuminated by soft, natural daylight, creating a high-key, professional corporate mood. The visual style is minimalist and clean, aligning with a premium enterprise resource planning system aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjtO3F6zz5RxJhlvw7cVK_sm404zUMOJh_qR7AJacaoXBdGHxY2UYi36rWINW1Zu8TH5GwuK3dWVMCKs954MPUr3JQv6ebP8twJUlBV0WA6-E-Bm1zOmvlWMrwxFr73KdOioe4Jnm32mMrm8RcjlcsydDjGuuvroSBIR5QwbZzcP6nuKnMQdGUX78mrS2-HBGWf5T6G1mAaExa8FZIyArMs8BMMLEoUNYtN7MsM3sMRpT6G8-HDzOVzc6Wzc_YYDgN-wPMbfKvSlI"/>
+</div>
+                                            S. Miller
+                                        </td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-xs text-secondary font-bold">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                                                Verified
+                                            </span>
+</td>
+<td class="px-lg py-md text-right font-data-tabular text-on-surface-variant">#INV-8822</td>
+</tr>
+<tr>
+<td class="px-lg py-md font-data-tabular">14:25:01</td>
+<td class="px-lg py-md"><span class="px-xs py-xxs bg-error/10 text-error rounded text-label-sm">K-Magasin</span></td>
+<td class="px-lg py-md">Inventory Adjustment</td>
+<td class="px-lg py-md flex items-center gap-xs">
+<div class="w-6 h-6 rounded-full bg-outline-variant overflow-hidden">
+<img alt="Operator" class="w-full h-full object-cover" data-alt="A high-quality photo of a logistics coordinator using a rugged tablet in a well-lit distribution center. The background features organized warehouse racking under bright industrial LED lighting. The style is professional and grounded in realistic industrial precision, utilizing a cool blue and white color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZbM5A_m0TvSvPobX_sZPze8fuVs97YPVWZW5GyVPmwu-tZK5z_eUkcAc-AmWqTO9PO2ypk00EBuxrbFhear6D_H3be_KAG91qcHNAs7vMbOxkhRKJjqEd-WQezJzMocABhIdnEuiSMwr18fPGUv2Xk7Hhu3DAPd7ZAeo1lTCXTCQ6QOIcqi1pPXo5vEmTlltMV0q1yoo7tzTkvUfW-YSOLWXxZttnUz65Z7G6z9KhpQxLLdnKGpQGHuN01MdMCiJQgAGzsVmnybg"/>
+</div>
+                                            A. Petrov
+                                        </td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-xs text-tertiary font-bold">
+<span class="material-symbols-outlined text-sm">pending</span>
+                                                Awaiting Sign-off
+                                            </span>
+</td>
+<td class="px-lg py-md text-right font-data-tabular text-on-surface-variant">#ADJ-004</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Polish: Persistent Floating Module Status (Bottom Left) -->
+<div class="fixed bottom-lg left-lg z-50 flex flex-col gap-xs">
+<div class="bg-white px-md py-xs rounded-full border border-outline-variant shadow-xl flex items-center gap-sm">
+<div class="w-3 h-3 rounded-full bg-secondary-fixed-dim"></div>
+<span class="text-label-md font-label-md text-on-surface-variant">System Connectivity: 99.9%</span>
+</div>
+</div>
+<!-- Micro-interaction script -->
+<script>
+        // Simulate T-Code Focus interaction
+        const tcodeInput = document.querySelector('input[placeholder*="Enter Transaction Code"]');
+        tcodeInput.addEventListener('focus', () => {
+            tcodeInput.parentElement.classList.add('scale-[1.01]');
+        });
+        tcodeInput.addEventListener('blur', () => {
+            tcodeInput.parentElement.classList.remove('scale-[1.01]');
+        });
+
+        // Toggle alert visibility logic (simplified for demo)
+        document.querySelector('[data-icon="notifications"]')?.parentElement.addEventListener('click', () => {
+            alert('Notifications Pane Toggled');
+        });
+    </script>
+</body></html>

@@ -1,4 +1,4 @@
-# scripts/seed_data.py — Seed Data KAMLOG
+# scripts/seed_data.py  Seed Data KAMLOG
 import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import AsyncSessionLocal, engine

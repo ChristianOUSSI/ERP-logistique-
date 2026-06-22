@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Security: Alert Monitoring Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dce2f3",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary": "#825100",
+                        "primary": "#0058be",
+                        "on-secondary-fixed": "#002113",
+                        "on-primary-fixed": "#001a42",
+                        "surface-tint": "#005ac2",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-primary": "#adc6ff",
+                        "primary-container": "#2170e4",
+                        "surface-container-high": "#e2e8f8",
+                        "surface-bright": "#f9f9ff",
+                        "outline-variant": "#c2c6d6",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container-low": "#f0f3ff",
+                        "tertiary-container": "#a36700",
+                        "surface-variant": "#dce2f3",
+                        "on-background": "#151c27",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#fefcff",
+                        "tertiary-fixed": "#ffddb8",
+                        "outline": "#727785",
+                        "primary-fixed-dim": "#adc6ff",
+                        "inverse-surface": "#2a313d",
+                        "secondary": "#006c49",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e7eefe",
+                        "on-primary-fixed-variant": "#004395",
+                        "secondary-container": "#6cf8bb",
+                        "on-surface": "#151c27",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-secondary-container": "#00714d",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-fixed-variant": "#005236"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "xs": "0.5rem",
+                        "md": "1rem",
+                        "xxs": "0.25rem",
+                        "sm": "0.75rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "margin-desktop": "1.5rem",
+                        "max-width": "1600px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full bg-surface-container-highest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-desktop h-14 z-50">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">KAMLOG EM-ERP</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-on-surface-variant transition-colors cursor-pointer" href="#">Dashboard</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-on-surface-variant transition-colors cursor-pointer" href="#">Activity Log</a>
+<a class="font-label-md text-label-md text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 cursor-pointer" href="#">User Audit</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-on-surface-variant transition-colors cursor-pointer" href="#">Compliance</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container flex items-center px-3 py-1.5 rounded border border-outline-variant w-64">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-full" placeholder="Search T-Codes (e.g. K-SEC-01)" type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">security</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">admin_panel_settings</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">account_circle</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-60 bg-surface-container-low dark:bg-on-surface-variant flex flex-col pt-14 z-40">
+<div class="p-6 border-b border-outline-variant/30">
+<div class="flex items-center gap-3 mb-4">
+<img alt="Audit Officer Avatar" class="w-10 h-10 rounded-full border border-secondary" data-alt="A professional headshot of a middle-aged security compliance officer in a modern corporate office setting. The lighting is bright and clean, with a neutral background that emphasizes the professional and authoritative demeanor. The image uses a cool-toned industrial color palette with teals and grays to align with the audit module's branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD_Pb2epWHWmHciH_vEIQNpENB1yWD0ysIVYy-0Wp4dslL01eNSnjOkiVq3QSClFCsr--bWz0a8UsmBu9f3EWwN6M2OYTNwZr5JZv8NVTbAHNem6a0WMILJjYJny7zKSzdWp-mmlwriMlSrWxaLyRjySuWXgF7Ym1TFOAURqJziiyl7HG1k29x-hK-DN3k8V08o3AtMuEQWNvSJw2eW57f4lfWlT8WUfwupvf-xNUzDD0-aiyyPca1qj4gknzG29P-QnNOkQ5QFCQ"/>
+<div>
+<p class="font-headline-sm text-headline-sm font-black text-secondary">Audit &amp; Security</p>
+<p class="font-label-sm text-label-sm text-outline">Module: K-AUDIT</p>
+</div>
+</div>
+<button class="w-full bg-secondary text-on-secondary font-label-md text-label-md py-2 rounded shadow-sm hover:opacity-90 transition-all">Generate Forensic Report</button>
+</div>
+<nav class="flex-1 py-4 overflow-y-auto custom-scrollbar">
+<a class="flex items-center px-4 py-3 text-secondary dark:text-secondary-fixed-dim font-bold border-l-4 border-secondary dark:border-secondary-fixed-dim bg-secondary-container/10 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">shield</span>
+<span class="font-title-md text-title-md">Security Overview</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">list_alt</span>
+<span class="font-label-md text-label-md">Event Viewer</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">policy</span>
+<span class="font-label-md text-label-md">Policy Manager</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">vpn_key</span>
+<span class="font-label-md text-label-md">Key Vault</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">verified_user</span>
+<span class="font-label-md text-label-md">System Integrity</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+<span class="font-label-md text-label-md">Audit Reports</span>
+</a>
+</nav>
+<div class="p-4 border-t border-outline-variant/30">
+<a class="flex items-center px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-all" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-all" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-60 pt-14 min-h-screen">
+<div class="max-w-max-width mx-auto p-gutter">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-4 text-outline font-label-md text-label-md">
+<a class="hover:text-primary" href="#">ERP Global</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Audit &amp; Security</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface">Security: Alert Monitoring Center</span>
+</nav>
+<div class="flex gap-gutter">
+<!-- Filter Sidebar -->
+<aside class="w-64 flex-shrink-0 flex flex-col gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg shadow-sm">
+<h3 class="font-title-md text-title-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">filter_alt</span>
+                            Alert Filters
+                        </h3>
+<div class="space-y-6">
+<!-- Severity -->
+<div>
+<label class="font-label-sm text-label-sm uppercase text-outline block mb-2">Severity Level</label>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-4 h-4 rounded border-outline-variant text-error focus:ring-error/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface">Critical</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-4 h-4 rounded border-outline-variant text-tertiary focus:ring-tertiary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface">High</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface">Medium</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary/20" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface">Low</span>
+</label>
+</div>
+</div>
+<!-- Module -->
+<div>
+<label class="font-label-sm text-label-sm uppercase text-outline block mb-2">Target Module</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded p-2 font-body-sm text-body-sm">
+<option>All Modules</option>
+<option>K-FINANCE</option>
+<option>K-PARC</option>
+<option>K-MAGASIN</option>
+<option>K-HR</option>
+</select>
+</div>
+<!-- Time Range -->
+<div>
+<label class="font-label-sm text-label-sm uppercase text-outline block mb-2">Time Range</label>
+<div class="space-y-2">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded p-2 font-body-sm text-body-sm" type="date"/>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded p-2 font-body-sm text-body-sm" type="date"/>
+</div>
+</div>
+<button class="w-full bg-surface-container-high border border-outline-variant font-label-md text-label-md py-2 rounded hover:bg-surface-variant transition-colors">Reset All Filters</button>
+</div>
+</div>
+<!-- Risk Profile Image Card -->
+<div class="relative overflow-hidden rounded-lg h-48 border border-outline-variant bg-secondary-container/10 group">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale transition-transform duration-500 group-hover:scale-110" data-alt="A macro shot of a complex circuit board illuminated by pulsating green and teal cyan light. The aesthetic is futuristic and high-tech, emphasizing system integrity and data flow. The lighting is dramatic and precise, reflecting a state-of-the-art security environment within a large industrial enterprise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2XbDxjH52vfsB9gyP9agkFvm12_efHAOYKrHhL6mhRsQ1Gv3lF5AluMG6UMhifFzggIF6-Cn_1-hKG93kHpa0JRqxDmjdLEfhnEtDDbqcHJR-dpoymzMc7t0fbFvrDz7Kb1rceCpPAnUULYO6P4AbQYOV4LOzjyZEJ2mkZoTzllBvUrjuyNEtue2Efwuinbiw6SBZ5nKwZCkwrXEeVArdosiiBw5imPHQJHFzpt9OVFhikSr71gf9lIj0CVU6Nc3CX10GIq9-9cM"/>
+<div class="relative p-4 flex flex-col h-full justify-between">
+<span class="font-label-sm text-label-sm bg-secondary/10 text-secondary px-2 py-1 rounded w-fit">Live Status</span>
+<div class="space-y-1">
+<p class="font-title-md text-title-md font-bold text-secondary">System Integrity: 98.4%</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Last deep scan: 14m ago</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Alerts List Area -->
+<div class="flex-1">
+<!-- Page Header Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Security: Alert Monitoring Center</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time surveillance of ERP transaction patterns and access logs.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high border border-outline-variant text-on-surface font-label-md text-label-md px-4 py-2.5 rounded flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">done_all</span>
+                                Acknowledge All
+                            </button>
+<button class="bg-secondary text-on-secondary font-label-md text-label-md px-4 py-2.5 rounded flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                                Clear Resolved
+                            </button>
+</div>
+</div>
+<!-- Alerts Table/List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<!-- Table Headers -->
+<div class="grid grid-cols-[48px_1.2fr_1fr_1fr_1fr_100px] gap-4 bg-surface-container-low border-b border-outline-variant px-4 py-3">
+<div class="flex justify-center"><input class="w-4 h-4 rounded border-outline-variant" type="checkbox"/></div>
+<div class="font-label-sm text-label-sm text-outline uppercase">Alert Type &amp; Severity</div>
+<div class="font-label-sm text-label-sm text-outline uppercase">Module / Location</div>
+<div class="font-label-sm text-label-sm text-outline uppercase">User / Device ID</div>
+<div class="font-label-sm text-label-sm text-outline uppercase">Timestamp</div>
+<div class="font-label-sm text-label-sm text-outline uppercase text-right">Action</div>
+</div>
+<!-- Alert Rows -->
+<div class="divide-y divide-outline-variant/30">
+<!-- Critical Alert -->
+<div class="grid grid-cols-[48px_1.2fr_1fr_1fr_1fr_100px] gap-4 px-4 py-4 hover:bg-surface-container transition-colors items-center">
+<div class="flex justify-center"><input class="w-4 h-4 rounded border-outline-variant" type="checkbox"/></div>
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<div>
+<p class="font-title-md text-title-md font-semibold text-on-surface">MFA Bypass Attempt</p>
+<span class="bg-error/10 text-error text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Critical</span>
+</div>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">K-FINANCE</p>
+<p class="text-[11px] text-outline">Terminal B-04 / IP: 192.168.1.42</p>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">U_ADMN_921</p>
+<p class="text-[11px] text-outline">Token: AB-92-9331</p>
+</div>
+<div class="font-data-tabular text-data-tabular text-on-surface">
+                                    2023-11-24 14:02:11
+                                </div>
+<div class="text-right">
+<button class="text-primary font-label-md text-label-md hover:underline">View Details</button>
+</div>
+</div>
+<!-- High Alert -->
+<div class="grid grid-cols-[48px_1.2fr_1fr_1fr_1fr_100px] gap-4 px-4 py-4 hover:bg-surface-container transition-colors items-center">
+<div class="flex justify-center"><input class="w-4 h-4 rounded border-outline-variant" type="checkbox"/></div>
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<div>
+<p class="font-title-md text-title-md font-semibold text-on-surface">Unauthorized File Export</p>
+<span class="bg-tertiary/10 text-tertiary text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">High</span>
+</div>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">K-HR</p>
+<p class="text-[11px] text-outline">Export: Payroll_2023.csv</p>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">U_MGR_012</p>
+<p class="text-[11px] text-outline">Dept: Logistics-Ops</p>
+</div>
+<div class="font-data-tabular text-data-tabular text-on-surface">
+                                    2023-11-24 13:58:45
+                                </div>
+<div class="text-right">
+<button class="text-primary font-label-md text-label-md hover:underline">View Details</button>
+</div>
+</div>
+<!-- Medium Alert -->
+<div class="grid grid-cols-[48px_1.2fr_1fr_1fr_1fr_100px] gap-4 px-4 py-4 hover:bg-surface-container transition-colors items-center">
+<div class="flex justify-center"><input class="w-4 h-4 rounded border-outline-variant" type="checkbox"/></div>
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<div>
+<p class="font-title-md text-title-md font-semibold text-on-surface">Brute Force Detected</p>
+<span class="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Medium</span>
+</div>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">Auth Gateway</p>
+<p class="text-[11px] text-outline">5 failed attempts / 30s</p>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">ANON_EXT_01</p>
+<p class="text-[11px] text-outline">Proxy Detected</p>
+</div>
+<div class="font-data-tabular text-data-tabular text-on-surface">
+                                    2023-11-24 13:42:01
+                                </div>
+<div class="text-right">
+<button class="text-primary font-label-md text-label-md hover:underline">View Details</button>
+</div>
+</div>
+<!-- Low Alert -->
+<div class="grid grid-cols-[48px_1.2fr_1fr_1fr_1fr_100px] gap-4 px-4 py-4 hover:bg-surface-container transition-colors items-center">
+<div class="flex justify-center"><input class="w-4 h-4 rounded border-outline-variant" type="checkbox"/></div>
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<div>
+<p class="font-title-md text-title-md font-semibold text-on-surface">System Integrity Warning</p>
+<span class="bg-secondary/10 text-secondary text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Low</span>
+</div>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">K-MAGASIN</p>
+<p class="text-[11px] text-outline">Checksum mismatch (Log-04)</p>
+</div>
+<div>
+<p class="font-data-tabular text-data-tabular text-on-surface">SYS_BOT_88</p>
+<p class="text-[11px] text-outline">Auto-correct pending</p>
+</div>
+<div class="font-data-tabular text-data-tabular text-on-surface">
+                                    2023-11-24 13:10:12
+                                </div>
+<div class="text-right">
+<button class="text-primary font-label-md text-label-md hover:underline">View Details</button>
+</div>
+</div>
+</div>
+<!-- Footer / Pagination -->
+<div class="bg-surface-container-low border-t border-outline-variant px-4 py-3 flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Showing 1-4 of 24 active security alerts</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded flex items-center justify-center border border-outline-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-secondary text-on-secondary font-label-md text-label-md">1</button>
+<button class="w-8 h-8 rounded flex items-center justify-center border border-outline-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md">2</button>
+<button class="w-8 h-8 rounded flex items-center justify-center border border-outline-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md">3</button>
+<button class="w-8 h-8 rounded flex items-center justify-center border border-outline-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Statistics Bento Section -->
+<div class="mt-gutter grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex items-center gap-4">
+<div class="w-12 h-12 bg-error-container text-on-error-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase">Active Critical</p>
+<p class="font-headline-sm text-headline-sm font-bold text-on-surface">03</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex items-center gap-4">
+<div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">history</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase">Resolved (24h)</p>
+<p class="font-headline-sm text-headline-sm font-bold text-on-surface">142</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">security</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase">Audit Score</p>
+<p class="font-headline-sm text-headline-sm font-bold text-on-surface">A+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interaction for table rows and buttons
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('.grid');
+                if (this.checked) {
+                    row.classList.add('bg-secondary-container/5');
+                } else {
+                    row.classList.remove('bg-secondary-container/5');
+                }
+            });
+        });
+
+        // Real-time update simulation
+        setInterval(() => {
+            const timestampElements = document.querySelectorAll('.font-data-tabular');
+            // This would normally fetch real data, here it just simulates activity
+        }, 30000);
+    </script>
+</body></html>

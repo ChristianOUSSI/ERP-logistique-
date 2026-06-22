@@ -1,4 +1,7 @@
-# Guide de Déploiement — KAMLOG EM-ERP
+# Guide de Déploiement - KAMLOG EM-ERP
+
+**Version**: 1.1  
+**Date**: Juin 2026 (Mis à jour le 10 Juin 2026)
 
 ## US-21: Déploiement sur VPS (Contabo)
 
@@ -163,7 +166,7 @@ certbot --nginx -d kamlog-erp.cm
 certbot renew --dry-run
 ```
 
-### Étape 7: Application des migrations
+### Étape 7: Application des migrations (Updated 15 Juin 2026)
 
 ```bash
 # Entrer dans le conteneur API
@@ -178,6 +181,65 @@ python scripts/seed_data.py
 # Sortir
 exit
 ```
+
+**Note**: Si vous rencontrez des erreurs de migration, assurez-vous que les modèles sont correctement importés dans `app/models/__init__.py`.
+
+**Nouvelles migrations (15 Juin 2026):**
+- `add_gateway_tables.py` - Tables passerelles pour interconnexions modules
+- `add_new_models.py` - Nouveaux modèles (goods_declarations, removal_slips, receptions_mag3, suppliers)
+
+**Vérification des migrations:**
+```bash
+# Vérifier le statut des migrations
+alembic current
+
+# Vérifier l'historique des migrations
+alembic history
+
+# Rollback si nécessaire
+alembic downgrade -1
+```
+
+**Configuration PostgreSQL pour les nouveaux modèles:**
+Les migrations créent automatiquement les tables suivantes:
+- `goods_declarations` - Déclarations de marchandises
+- `goods_declaration_lines` - Lignes de déclaration
+- `removal_slips` - Bons d'enlèvement Mag3
+- `receptions_mag3` - Réceptions Mag3
+- `suppliers` - Fournisseurs
+- `supplier_profiles` - Profils fournisseurs
+
+**Types enum créés:**
+- `statutdeclaration` - Statuts des déclarations (BROUILLON, SOUMISE, VALIDEE, EN_COURS, COMPLETEE, ANNULEE)
+- `statutremovalslip` - Statuts des bons d'enlèvement (EN_ATTENTE, AUTORISE, EN_TRANSIT, LIVRE, ANNULE)
+- `statutreceptionmag3` - Statuts des réceptions (EN_ATTENTE, EN_COURS, COMPLETEE, ANNULEE)
+- `statutfournisseur` - Statuts des fournisseurs (ACTIF, INACTIF, BLOQUE)
+- `categoriefournisseur` - Catégories de fournisseurs (LOGISTIQUE, IMPORT_EXPORT, SERVICES, MATERIEL)
+
+### Étape 8: Configuration MFA (Multi-Factor Authentication)
+
+Pour les comptes admin, MFA est obligatoire. Voici comment le configurer:
+
+```bash
+# Se connecter à l'application et obtenir un token admin
+curl -X POST https://kamlog-erp.cm/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin_password"}'
+
+# Configurer MFA pour l'admin
+curl -X POST https://kamlog-erp.cm/api/auth/mfa/setup \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"password":"admin_password"}'
+
+# Activer MFA avec le code TOTP généré par l'app authenticator
+curl -X POST https://kamlog-erp.cm/api/auth/mfa/enable \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"token":"123456"}'
+```
+
+**Note**: Sauvegardez les codes de secours fournis lors de la configuration MFA.
 
 ### Étape 8: Vérification
 
@@ -194,7 +256,24 @@ curl -X POST https://kamlog-erp.cm/api/auth/login \
   -d '{"username":"admin","password":"admin123"}'
 ```
 
-### Étape 9: Monitoring
+### Étape 9: Vérification Frontend
+
+```bash
+# Vérifier que le frontend compile correctement
+docker-compose -f docker-compose.prod.yml exec frontend npm run build
+
+# Vérifier les logs du frontend
+docker-compose -f docker-compose.prod.yml logs -f frontend
+```
+
+**Note**: Le frontend utilise TailwindCSS v3. Assurez-vous que `globals.css` contient:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Les composants UI utilisent les packages `@radix-ui/react-*` spécifiques et non le package générique `radix-ui`.
 
 ```bash
 # Logs en temps réel
@@ -214,7 +293,7 @@ docker-compose -f docker-compose.prod.yml exec db pg_dump -U kamlog kamlog_erp >
 docker-compose -f docker-compose.prod.yml exec minio mc mirror /data /backup/minio
 ```
 
-### Mise à jour (Update)
+### Étape 12: Mise à jour (Update)
 
 ```bash
 # Pull les dernières modifications

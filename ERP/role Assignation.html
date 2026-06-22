@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Role Assignment | KAMLOG EM-ERP</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e7eefe",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#6ffbbe",
+                    "surface-tint": "#005ac2",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e2e8f8",
+                    "primary-fixed": "#d8e2ff",
+                    "outline-variant": "#c2c6d6",
+                    "inverse-primary": "#adc6ff",
+                    "on-background": "#151c27",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#00714d",
+                    "surface-dim": "#d3daea",
+                    "on-primary-fixed-variant": "#004395",
+                    "tertiary-container": "#a36700",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#fffbff",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "surface": "#f9f9ff",
+                    "primary": "#0058be",
+                    "primary-container": "#2170e4",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "tertiary-fixed": "#ffddb8",
+                    "secondary-container": "#6cf8bb",
+                    "background": "#f9f9ff",
+                    "inverse-surface": "#2a313d",
+                    "surface-container-low": "#f0f3ff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#727785",
+                    "surface-container-highest": "#dce2f3",
+                    "on-surface-variant": "#424754",
+                    "on-primary-fixed": "#001a42",
+                    "surface-variant": "#dce2f3",
+                    "on-secondary-fixed": "#002113",
+                    "tertiary": "#825100",
+                    "on-surface": "#151c27",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "secondary": "#006c49"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "1.5rem",
+                    "xl": "2rem",
+                    "xs": "0.5rem",
+                    "xxs": "0.25rem",
+                    "lg": "1.5rem",
+                    "gutter": "1rem",
+                    "max-width": "1600px",
+                    "sm": "0.75rem",
+                    "md": "1rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "data-tabular": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-module-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: theme('colors.primary');
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-60 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col z-50">
+<div class="px-lg py-xl">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">KAMLOG ERP</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Admin Suite</p>
+</div>
+<nav class="flex-1 space-y-xxs">
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</div>
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer transition-all text-primary font-bold border-l-4 border-primary bg-surface-container-high font-label-md text-label-md">
+<span class="material-symbols-outlined">group</span>
+<span>User Management</span>
+</div>
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">local_shipping</span>
+<span>Logistics</span>
+</div>
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventory</span>
+</div>
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">payments</span>
+<span>Finance</span>
+</div>
+</nav>
+<div class="mt-auto border-t border-outline-variant py-md">
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</div>
+<div class="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</div>
+</div>
+</aside>
+<div class="ml-60 flex flex-col min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="w-full h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-margin-desktop sticky top-0 z-40">
+<div class="flex items-center gap-lg">
+<div class="flex items-center bg-surface-container-high rounded px-sm py-xxs border border-outline-variant">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm placeholder:text-outline-variant w-64" placeholder="T-Code Search (e.g. U-ASSIGN)" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors" data-icon="help">help</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors" data-icon="settings">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed overflow-hidden border border-outline-variant">
+<img alt="User profile" data-alt="A professional close-up portrait of a corporate executive against a clean, neutral background, suitable for an enterprise user profile. The person is wearing a sharp, modern business attire, and the lighting is crisp and high-key, aligning with a bright, minimalist modern interface. The mood is confident, organized, and reliable, mirroring industrial precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApNZ6bDWVMYEvbSQpsNp8XOiye14eu6DU1JFrJkIsKO2msWluTqs5wtvguolPobcQnFsf2m3Z5rBK3CFOSBRJMEolXrkZx8VdgjBHU0wBMsgKYPaD35t-Pxw1_PnuvXMmqOUY_x7I9J4uljB9kmjECwhqunr9uE1WwWdGJoqn2MiUbfuCq1SrBxVcxwFzShxjNqMmRwi0NibnE1DX84G9ChDttaAIq3Bxz6MF4Tl7m2SDQqV-NIYkjSL5TD2hpN_Tq8PkPjvZKWA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="p-lg space-y-lg max-w-max-width w-full mx-auto">
+<!-- Breadcrumbs & Header -->
+<div class="space-y-xxs">
+<div class="flex items-center gap-xs text-on-surface-variant text-label-sm font-label-sm uppercase tracking-wider">
+<span>Admin</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span>User Management</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary font-bold">Role Assignment</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Assign User Roles</h2>
+</div>
+<!-- Role Assignment Grid -->
+<div class="grid grid-cols-12 gap-gutter items-start">
+<!-- Left Panel: User Profile Summary -->
+<section class="col-span-3 space-y-md">
+<div class="bg-surface border border-outline-variant rounded p-lg space-y-lg">
+<div class="flex flex-col items-center text-center space-y-sm">
+<div class="w-24 h-24 rounded-full border-4 border-surface-container-high overflow-hidden">
+<img alt="User Avatar" data-alt="A professional portrait of a tech-focused logistics manager wearing glasses and a focused expression. The setting is a bright, modern corporate office environment with clean lines and subtle blue architectural accents. The visual style is high-definition and flat, reflecting systematic industrial efficiency and control within an ERP application context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBrbdE7i_0rRRKGxVlkwpZeAdzdNNWgxqPzeduVnyzvEgBdsFLNCJmZI1aVCjgG8pNvf8lB1a73Rc59OTkiRXiCAKGvHh9vD-2nwWp0s5v33bP5ukX_Xu0LtzOFPwGjQfH-UFxFlG03MK37Ywu7bNYd6U4bn8_SAP8rbQbWJjD4d8o0zBwdwLCNhTTOb_6-WsAfQoSxCqRUDyLGeoHhMGvxWDCWB7tmYwSFFaKiKRhuY6Ph10WIWtw3yRwVw7jgG6CBf0-MEveOA"/>
+</div>
+<div class="space-y-xxs">
+<h3 class="font-title-lg text-title-lg text-on-surface">Marcus Vance</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">mvance.kam@logistics.corp</p>
+<span class="inline-block bg-secondary-container text-on-secondary-container px-xs py-xxs rounded text-label-sm font-label-sm">Active Personnel</span>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<div class="space-y-md">
+<div>
+<p class="text-label-sm font-label-sm text-outline-variant uppercase">Department</p>
+<p class="text-body-md font-body-md text-on-surface">Terminal Operations</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline-variant uppercase">Employee ID</p>
+<p class="text-body-md font-body-md text-on-surface">#KAM-8820-T</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-outline-variant uppercase">Last Login</p>
+<p class="text-body-md font-body-md text-on-surface">Oct 24, 2023 - 08:14 AM</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded p-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="text-label-md font-label-md text-on-surface-variant">Changes will take effect after the user re-authenticates.</p>
+</div>
+</section>
+<!-- Center Area: Role Selection -->
+<section class="col-span-6">
+<div class="bg-surface border border-outline-variant rounded flex flex-col min-h-[600px]">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">Available System Roles</h3>
+<div class="relative w-48">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">filter_list</span>
+<input class="w-full pl-xl pr-sm py-xxs rounded border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Filter roles..." type="text"/>
+</div>
+</div>
+<div class="flex-1 p-lg overflow-y-auto max-h-[500px] space-y-xs" id="role-list">
+<!-- Role Items -->
+<label class="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="mt-xxs">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" data-perms="Full Access, User Mgmt, System Config" data-role="Admin" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">System Administrator</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">shield_person</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xxs">Full read/write access to all modules including security and ERP configuration.</p>
+</div>
+</label>
+<label class="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="mt-xxs">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" data-perms="Assign Trucks, Real-time tracking, Log manifest" data-role="Dispatcher" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">Terminal Dispatcher</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">hub</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xxs">Manage vehicle flow, assign loading docks, and supervise gate movements.</p>
+</div>
+</label>
+<label class="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="mt-xxs">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" data-perms="Create Invoices, Payroll access, Ledger Read" data-role="Finance" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">Finance Specialist</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">account_balance_wallet</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xxs">Invoicing, expense auditing, and financial reporting across port activities.</p>
+</div>
+</label>
+<label class="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="mt-xxs">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" data-perms="Scan IDs, Vehicle Entry, Weigh Bridge Data" data-role="GateAgent" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">Gate Agent</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">gate</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xxs">Operational gate control, vehicle scanning, and basic entry data logging.</p>
+</div>
+</label>
+<label class="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="mt-xxs">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" data-perms="Read Stock, Inventory Adjustment, Warehouse Map" data-role="Inventory" type="checkbox"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">Inventory Controller</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">warehouse</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-xxs">Warehouse auditing, stock level monitoring, and storage optimization.</p>
+</div>
+</label>
+</div>
+<div class="p-lg bg-surface-container-lowest border-t border-outline-variant flex items-center justify-end gap-md rounded-b">
+<button class="px-lg py-sm text-on-surface-variant hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors">Reset Selection</button>
+<button class="px-xl py-sm bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary-container transition-all shadow-sm active:scale-95">Confirm Assignments</button>
+</div>
+</div>
+</section>
+<!-- Right Panel: Permission Preview -->
+<section class="col-span-3 space-y-gutter">
+<div class="bg-surface border border-outline-variant rounded flex flex-col h-full min-h-[600px]">
+<div class="p-lg border-b border-outline-variant">
+<h3 class="font-title-md text-title-md text-on-surface">Permission Preview</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-xxs">Live aggregate of selected role capabilities</p>
+</div>
+<div class="p-lg flex-1 space-y-lg overflow-y-auto" id="preview-container">
+<!-- Dynamic Content -->
+<div class="space-y-sm">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Operational Rights</p>
+<div class="space-y-xxs" id="ops-permissions">
+<!-- Populated via JS -->
+</div>
+</div>
+<div class="space-y-sm">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Financial Access</p>
+<div class="space-y-xxs" id="finance-permissions">
+<!-- Populated via JS -->
+</div>
+</div>
+<div class="space-y-sm">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">System Privileges</p>
+<div class="space-y-xxs" id="system-permissions">
+<!-- Populated via JS -->
+</div>
+</div>
+<!-- Empty State Placeholder -->
+<div class="hidden h-full flex flex-col items-center justify-center text-center p-xl opacity-40" id="empty-preview">
+<span class="material-symbols-outlined text-[48px] mb-sm">lock_open</span>
+<p class="font-body-sm text-body-sm">Select one or more roles to see the effective permissions list.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const opsContainer = document.getElementById('ops-permissions');
+        const financeContainer = document.getElementById('finance-permissions');
+        const systemContainer = document.getElementById('system-permissions');
+        const emptyState = document.getElementById('empty-preview');
+
+        const permissionMap = {
+            'Admin': {
+                ops: ['Override Safety Protocols', 'Global Real-time Tracking'],
+                finance: ['View Global Balance Sheet', 'Audit Payroll Records'],
+                system: ['Create/Delete Users', 'Modify T-Code Routings', 'Security Log Access']
+            },
+            'Dispatcher': {
+                ops: ['Dock Assignment', 'Truck Queue Mgmt', 'Manifest Signing'],
+                finance: [],
+                system: ['View Operational Dashboards']
+            },
+            'Finance': {
+                ops: ['View Cargo Manifests'],
+                finance: ['Issue Invoices', 'Approve Petty Cash', 'VAT Reporting'],
+                system: []
+            },
+            'GateAgent': {
+                ops: ['Vehicle Entry Log', 'Weight Bridge Record', 'Visitor Pass Issuance'],
+                finance: [],
+                system: []
+            },
+            'Inventory': {
+                ops: ['Stock Adjustment', 'Bin Transfer', 'Cycle Counting'],
+                finance: ['Inventory Value Report'],
+                system: []
+            }
+        };
+
+        function updatePreview() {
+            let selectedRoles = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    selectedRoles.push(cb.getAttribute('data-role'));
+                }
+            });
+
+            // Clear containers
+            opsContainer.innerHTML = '';
+            financeContainer.innerHTML = '';
+            systemContainer.innerHTML = '';
+
+            if (selectedRoles.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            let opsSet = new Set();
+            let financeSet = new Set();
+            let systemSet = new Set();
+
+            selectedRoles.forEach(role => {
+                permissionMap[role].ops.forEach(p => opsSet.add(p));
+                permissionMap[role].finance.forEach(p => financeSet.add(p));
+                permissionMap[role].system.forEach(p => systemSet.add(p));
+            });
+
+            renderPermissions(opsSet, opsContainer);
+            renderPermissions(financeSet, financeContainer);
+            renderPermissions(systemSet, systemContainer);
+        }
+
+        function renderPermissions(set, container) {
+            if (set.size === 0) {
+                container.innerHTML = '<p class="text-body-sm italic text-on-surface-variant opacity-50">No permissions in this category.</p>';
+                return;
+            }
+            set.forEach(perm => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-xs text-body-sm font-body-sm text-on-surface py-xxs border-b border-outline-variant border-dotted last:border-0';
+                div.innerHTML = `
+                    <span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+                    <span>${perm}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updatePreview);
+        });
+
+        // Initialize
+        updatePreview();
+    </script>
+</body></html>

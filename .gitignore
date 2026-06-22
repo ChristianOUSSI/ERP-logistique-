@@ -25,11 +25,18 @@ venv/
 ENV/
 env/
 
+# Exception for frontend lib
+!kamlog-frontend/src/lib/
+
 # FastAPI
 .env
 .env.local
 *.db
 *.sqlite
+
+# NextAuth (temporarily removed for setup)
+!kamlog-frontend/src/lib/auth.ts
+!kamlog-frontend/src/lib/api-client.ts
 
 # Alembic
 alembic/versions/*.pyc
@@ -57,3 +64,4 @@ Thumbs.db
 
 # Logs
 *.log
+.agenticagents/

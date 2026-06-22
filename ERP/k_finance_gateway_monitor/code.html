@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>K-Finance Gateway Monitor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dce2f3;
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .purple-accent {
+            border-left: 4px solid #8B5CF6;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daea",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#825100",
+                      "secondary-fixed-dim": "#4edea3",
+                      "secondary-container": "#6cf8bb",
+                      "tertiary-fixed": "#ffddb8",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#00714d",
+                      "on-primary-fixed": "#001a42",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container": "#e7eefe",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#006c49",
+                      "on-secondary-fixed": "#002113",
+                      "primary-fixed": "#d8e2ff",
+                      "on-background": "#151c27",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#2a1700",
+                      "primary-fixed-dim": "#adc6ff",
+                      "outline": "#727785",
+                      "surface-container-highest": "#dce2f3",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#424754",
+                      "inverse-surface": "#2a313d",
+                      "on-primary-container": "#fefcff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary": "#8B5CF6", /* Overridden for Finance Module Identity */
+                      "primary-container": "#EDE9FE",
+                      "on-tertiary-container": "#fffbff",
+                      "surface": "#f9f9ff",
+                      "surface-bright": "#f9f9ff",
+                      "background": "#f9f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c2c6d6",
+                      "surface-variant": "#dce2f3",
+                      "surface-tint": "#8B5CF6",
+                      "on-surface": "#151c27",
+                      "surface-container-high": "#e2e8f8",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#653e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "1rem",
+                      "lg": "1.5rem",
+                      "margin-desktop": "1.5rem",
+                      "max-width": "1600px",
+                      "sm": "0.75rem",
+                      "xs": "0.5rem",
+                      "gutter": "1rem",
+                      "xl": "2rem",
+                      "xxs": "0.25rem"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "title-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "data-tabular": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
+<div class="hidden md:flex gap-md ml-xl items-center">
+<a class="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">Alerts</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">MFA Status</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-bold text-label-md font-label-md" href="#">Modules</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-highest border-none rounded-lg text-body-md focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="T-Code Search..." type="text"/>
+</div>
+<div class="flex items-center gap-xs">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">apps</span>
+</button>
+</div>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdIrUZYGD7MxV0h8gyRyZ0qXpfutTKrDeyOPSzDvmQFs2qlDMQyQJPRUsrQ_OXmqcZ07xjwissbGHhXCru0i-22o3zKN5bHy335XuaGGO9-Y92iqbuoquJ2LZWUullca7KB-5y2k4BgvBWM3JlYAcCsmIGYlMWqZcLw_We0Pub0JhTszDsizhy6W-nsCc5Ihb2xT_NYK_nnePIJOMEH0VinSVuUZQ5TvAuDxVy7Gx_61rKnbIUROfXrJylVj5Auwjt-Pm4zn7az38"/>
+</div>
+</header>
+<div class="flex flex-1 pt-16 overflow-hidden">
+<!-- SideNavBar -->
+<aside class="w-60 bg-surface-container border-r border-outline-variant flex flex-col pt-4 pb-md z-40">
+<div class="px-md mb-lg">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm font-black text-primary leading-tight">KAMLOG</div>
+<div class="text-label-md font-label-md text-on-surface-variant">K-Finance Gateway</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-xxs">
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span>Transport</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all text-label-md font-label-md scale-[0.99]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span>Finance</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Parc</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span>Magasin</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span>Audit</span>
+</a>
+</nav>
+<div class="mt-auto px-xxs pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-error">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto custom-scrollbar bg-surface p-md md:p-lg space-y-lg">
+<!-- Breadcrumbs & Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div class="space-y-xxs">
+<nav class="flex text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+<span>ERP CENTRAL</span>
+<span class="mx-2">/</span>
+<span>FINANCE</span>
+<span class="mx-2">/</span>
+<span class="text-primary">GATEWAY MONITOR</span>
+</nav>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Financial Integration Gateway</h1>
+</div>
+<div class="flex gap-xs">
+<button class="bg-primary text-white px-md py-2 rounded-lg font-label-md text-label-md flex items-center gap-xs hover:opacity-90 transition-opacity active:scale-[0.98]" id="bulkValidate">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+                        Bulk Validate Transactions
+                    </button>
+<button class="bg-surface-container-highest text-on-surface px-md py-2 rounded-lg font-label-md text-label-md flex items-center gap-xs hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export logs
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Stats & Charts -->
+<div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-md h-auto">
+<!-- Main Status Chart -->
+<div class="md:col-span-4 lg:col-span-8 bg-white border border-outline-variant rounded-xl p-lg flex flex-col relative overflow-hidden">
+<div class="flex justify-between items-start mb-lg">
+<div>
+<h2 class="text-title-md font-title-md text-on-surface">Revenue Projection by Module</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Live gateway processing throughput (EUR)</p>
+</div>
+<div class="flex gap-xs">
+<span class="flex items-center gap-xs text-label-sm font-label-sm"><span class="w-3 h-3 bg-primary rounded-full"></span>K-Parc</span>
+<span class="flex items-center gap-xs text-label-sm font-label-sm"><span class="w-3 h-3 bg-secondary-fixed-dim rounded-full"></span>K-Transport</span>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-xs px-md">
+<!-- Simplified bar chart representation -->
+<div class="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[40%]"></div>
+<div class="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[65%]"></div>
+<div class="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[20%]"></div>
+<div class="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[90%]"></div>
+<div class="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[55%]"></div>
+<div class="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[75%]"></div>
+<div class="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[45%]"></div>
+<div class="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[85%]"></div>
+<div class="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[35%]"></div>
+<div class="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[60%]"></div>
+</div>
+<div class="grid grid-cols-5 mt-md border-t border-outline-variant pt-md">
+<div class="text-center"><span class="block text-title-md font-bold text-primary">€42k</span><span class="text-label-sm text-on-surface-variant">Mon</span></div>
+<div class="text-center"><span class="block text-title-md font-bold text-primary">€68k</span><span class="text-label-sm text-on-surface-variant">Tue</span></div>
+<div class="text-center"><span class="block text-title-md font-bold text-primary">€39k</span><span class="text-label-sm text-on-surface-variant">Wed</span></div>
+<div class="text-center"><span class="block text-title-md font-bold text-primary">€92k</span><span class="text-label-sm text-on-surface-variant">Thu</span></div>
+<div class="text-center"><span class="block text-title-md font-bold text-primary">€54k</span><span class="text-label-sm text-on-surface-variant">Fri</span></div>
+</div>
+</div>
+<!-- Circular Gateway Status -->
+<div class="md:col-span-4 lg:col-span-4 bg-white border border-outline-variant rounded-xl p-lg flex flex-col items-center justify-center text-center space-y-md">
+<h2 class="text-title-md font-title-md text-on-surface w-full text-left">Gateway Health</h2>
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="30" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-headline-md font-headline-md text-on-surface">94.2%</span>
+<span class="text-label-md text-primary font-bold">OPTIMIZED</span>
+</div>
+</div>
+<div class="w-full space-y-xs pt-xs">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Successful</span>
+<span class="font-bold">1,482</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Pending</span>
+<span class="font-bold">24</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant">Failed</span>
+<span class="font-bold text-error">12</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Transaction Table Section -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="p-md flex flex-col md:flex-row justify-between items-center gap-md border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<h2 class="text-title-md font-title-md text-on-surface">Recent Inter-Module Transactions</h2>
+<div class="flex gap-xs">
+<span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold">K-TRANSPORT</span>
+<span class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold">K-PARC</span>
+</div>
+</div>
+<div class="flex items-center gap-xs w-full md:w-auto">
+<button class="flex-1 md:flex-none px-md py-1.5 rounded-lg border border-outline-variant text-body-md hover:bg-surface-container-low transition-colors">Filters</button>
+<button class="flex-1 md:flex-none px-md py-1.5 rounded-lg border border-outline-variant text-body-md hover:bg-surface-container-low transition-colors">Date Range</button>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low sticky top-0 z-10">
+<tr>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase w-12">
+<input class="rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Type</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Source ID</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Target ID</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Amount</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Status</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase">Timestamp</th>
+<th class="px-md py-3 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-3"><input class="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-md py-3">
+<span class="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
+</td>
+<td class="px-md py-3 text-body-md font-data-tabular">TR-9921-X</td>
+<td class="px-md py-3 text-body-md font-data-tabular">FI-2026-001</td>
+<td class="px-md py-3 font-bold text-on-surface">€12,450.00</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
+                                        TRAITÉ
+                                    </span>
+</td>
+<td class="px-md py-3 text-label-md text-on-surface-variant">Today, 10:42 AM</td>
+<td class="px-md py-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
+<td class="px-md py-3"><input class="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-md py-3">
+<span class="text-body-sm font-bold font-mono">MISSION_FACTURE</span>
+</td>
+<td class="px-md py-3 text-body-md font-data-tabular">MS-4412-K</td>
+<td class="px-md py-3 text-body-md font-data-tabular">FI-2026-002</td>
+<td class="px-md py-3 font-bold text-on-surface">€3,890.15</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/40 text-on-error-container text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>
+                                        ÉCHOUÉ
+                                    </span>
+</td>
+<td class="px-md py-3 text-label-md text-on-surface-variant">Today, 09:15 AM</td>
+<td class="px-md py-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">refresh</span></button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-3"><input class="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-md py-3">
+<span class="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
+</td>
+<td class="px-md py-3 text-body-md font-data-tabular">TR-9945-Z</td>
+<td class="px-md py-3 text-body-md font-data-tabular">FI-2026-003</td>
+<td class="px-md py-3 font-bold text-on-surface">€45,000.00</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span>
+                                        EN ATTENTE
+                                    </span>
+</td>
+<td class="px-md py-3 text-label-md text-on-surface-variant">Today, 08:30 AM</td>
+<td class="px-md py-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
+<td class="px-md py-3"><input class="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-md py-3">
+<span class="text-body-sm font-bold font-mono">MISSION_FACTURE</span>
+</td>
+<td class="px-md py-3 text-body-md font-data-tabular">MS-4415-L</td>
+<td class="px-md py-3 text-body-md font-data-tabular">FI-2026-004</td>
+<td class="px-md py-3 font-bold text-on-surface">€1,120.00</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
+                                        TRAITÉ
+                                    </span>
+</td>
+<td class="px-md py-3 text-label-md text-on-surface-variant">Yesterday, 05:55 PM</td>
+<td class="px-md py-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-3"><input class="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+<td class="px-md py-3">
+<span class="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
+</td>
+<td class="px-md py-3 text-body-md font-data-tabular">TR-9948-M</td>
+<td class="px-md py-3 text-body-md font-data-tabular">FI-2026-005</td>
+<td class="px-md py-3 font-bold text-on-surface">€28,500.00</td>
+<td class="px-md py-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
+                                        TRAITÉ
+                                    </span>
+</td>
+<td class="px-md py-3 text-label-md text-on-surface-variant">Yesterday, 04:12 PM</td>
+<td class="px-md py-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-md bg-surface-container-low flex justify-between items-center text-label-md border-t border-outline-variant">
+<span class="text-on-surface-variant">Showing 1-5 of 152 transactions</span>
+<div class="flex gap-xs">
+<button class="p-1.5 rounded hover:bg-surface-dim transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="px-2 rounded bg-primary text-white font-bold">1</button>
+<button class="px-2 rounded hover:bg-surface-dim transition-colors">2</button>
+<button class="px-2 rounded hover:bg-surface-dim transition-colors">3</button>
+<button class="p-1.5 rounded hover:bg-surface-dim transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Operational Pane -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-white border border-outline-variant rounded-xl p-lg relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 -mr-16 -mt-16 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+<h3 class="text-title-md font-title-md text-on-surface mb-md">System Log Insight</h3>
+<div class="space-y-sm">
+<div class="flex gap-md text-body-sm font-mono p-xs bg-surface-container rounded">
+<span class="text-primary font-bold">[11:04:22]</span>
+<span class="text-on-surface">GATEWAY: COMMANDE_FACTURE validated (ID: TR-9921-X)</span>
+</div>
+<div class="flex gap-md text-body-sm font-mono p-xs">
+<span class="text-tertiary font-bold">[10:58:10]</span>
+<span class="text-on-surface">SECURITY: Authentication handshake from K-PARC confirmed.</span>
+</div>
+<div class="flex gap-md text-body-sm font-mono p-xs bg-surface-container rounded">
+<span class="text-error font-bold">[10:45:00]</span>
+<span class="text-on-surface">ERROR: Mission FI-2026-002 timeout - Retrying in 300s.</span>
+</div>
+</div>
+</div>
+<!-- Financial Summary Card -->
+<div class="bg-primary text-white rounded-xl p-lg flex flex-col justify-between shadow-lg shadow-primary/20">
+<div>
+<div class="flex justify-between items-start mb-lg">
+<span class="text-label-md font-label-md opacity-80 uppercase tracking-widest">Gateway Cashflow (24h)</span>
+<span class="material-symbols-outlined opacity-60">trending_up</span>
+</div>
+<div class="text-headline-lg font-headline-lg leading-none">€ 482,904.55</div>
+<div class="mt-xs text-label-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>+12.4% vs previous period</span>
+</div>
+</div>
+<div class="pt-lg flex gap-md">
+<div class="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
+<div class="text-label-sm opacity-70">Tax Accrual</div>
+<div class="text-title-md font-bold">€ 91.5k</div>
+</div>
+<div class="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
+<div class="text-label-sm opacity-70">Net Transfer</div>
+<div class="text-title-md font-bold">€ 391.4k</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction: Toast Logic Simulation -->
+<div class="fixed bottom-8 right-8 bg-inverse-surface text-inverse-on-surface px-lg py-md rounded-xl shadow-2xl translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-md z-[100]" id="toast">
+<span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+<div>
+<div class="font-bold text-label-md">Operation Successful</div>
+<div class="text-body-sm opacity-80">14 pending transactions have been processed.</div>
+</div>
+</div>
+<script>
+        const btn = document.getElementById('bulkValidate');
+        const toast = document.getElementById('toast');
+
+        btn.addEventListener('click', () => {
+            // Visual feedback on button
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Validating...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified</span> Bulk Validate Transactions';
+                btn.disabled = false;
+                
+                // Show toast
+                toast.classList.remove('translate-y-24', 'opacity-0');
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-y-24', 'opacity-0');
+                }, 4000);
+            }, 1500);
+        });
+
+        // Toggle checkboxes logic
+        const headCheck = document.querySelector('th input[type="checkbox"]');
+        const rowChecks = document.querySelectorAll('.transaction-check');
+        
+        headCheck.addEventListener('change', () => {
+            rowChecks.forEach(c => c.checked = headCheck.checked);
+        });
+    </script>
+</body></html>

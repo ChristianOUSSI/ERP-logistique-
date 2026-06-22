@@ -1,194 +1,448 @@
-# app/routers/finance.py — Router Finance
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List
+# app/routers/finance.py  Router Finance
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from sqlalchemy.orm import Session
+from typing import List, Optional
 from datetime import datetime
 from decimal import Decimal
+import csv
+import io
 
 from app.database import get_db
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
 from app.models.transport import MissionTransport
+from app.models.user import User
 from app.schemas.finance import (
-    FactureCreate, FactureResponse,
-    EncaissementCreate, EncaissementResponse,
-    GrilleTarifaireCreate, GrilleTarifaireResponse,
-    EncoursResponse
+    FactureCreate, FactureUpdate, FactureResponse,
+    EncaissementCreate, EncaissementUpdate, EncaissementResponse,
+    GrilleTarifaireCreate, GrilleTarifaireUpdate, GrilleTarifaireResponse, EncoursResponse,
+    ReconciliationMatchResponse, AvoirCreate, AvoirResponse
 )
 from app.routers.auth import get_current_user
-from app.models.user import User
-from app.utils.rbac import require_role
-from app.services.finance_service import calculer_encours_client, verifier_limite_credit, calculer_tva
+from app.utils.rbac import require_role, require_permission
+from app.services.finance_service import (
+    FactureService, EncaissementService, GrilleTarifaireService, EncoursService,
+    calculer_tva, BankReconciliationService
+    AvoirService
 
 router = APIRouter()
 
 
 @router.get("/factures", response_model=List[FactureResponse])
+@require_permission("finance:read")
 async def list_factures(
     skip: int = 0,
     limit: int = 100,
     statut: str | None = None,
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Liste toutes les factures."""
-    query = select(Facture)
-    
     if statut:
-        query = query.where(Facture.statut == statut)
-    
-    query = query.offset(skip).limit(limit)
-    result = await db.execute(query)
-    return result.scalars().all()
+        if statut == "non_soldees":
+            return FactureService.get_factures_non_soldées(db)
+    return FactureService.get_all_factures(db, skip, limit)
+
+
+@router.get("/factures/{facture_id}", response_model=FactureResponse)
+@require_permission("finance:read")
+async def get_facture(
+    facture_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère une facture par ID."""
+    facture = FactureService.get_facture(db, facture_id)
+    if not facture:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture introuvable")
+    return facture
+
+
+@router.get("/factures/tiers/{tiers_id}", response_model=List[FactureResponse])
+@require_permission("finance:read")
+async def get_factures_by_tiers(
+    tiers_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère les factures d'un tiers."""
+    return FactureService.get_factures_by_tiers(db, tiers_id)
 
 
 @router.post("/factures", response_model=FactureResponse, status_code=status.HTTP_201_CREATED)
 @require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
 async def create_facture(
     facture_data: FactureCreate,
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Crée une nouvelle facture."""
     # Vérifier la limite de crédit
-    await verifier_limite_credit(db, facture_data.tiers_id, facture_data.montant_ttc_xaf)
+    try:
+        EncoursService.verifier_limite_credit(db, facture_data.tiers_id, facture_data.montant_ht_xaf)
+    except ValueError as e:
+        raise HTTPException(status.HTTP_402_PAYMENT_REQUIRED, str(e))
     
-    db_facture = Facture(**facture_data.model_dump())
-    db.add(db_facture)
-    await db.commit()
-    await db.refresh(db_facture)
-    
-    return db_facture
+    return FactureService.create_facture(db, facture_data, current_user.username)
 
 
-@router.post("/factures/from-mission/{mission_id}", response_model=FactureResponse, status_code=status.HTTP_201_CREATED)
+@router.put("/factures/{facture_id}", response_model=FactureResponse)
 @require_role([User.Role.ADMIN, User.Role.FINANCE])
-async def create_facture_from_mission(
-    mission_id: int,
-    db: AsyncSession = Depends(get_db),
+@require_permission("finance:write")
+async def update_facture(
+    facture_id: int,
+    facture_data: FactureUpdate,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Crée une facture automatiquement à partir d'une mission livrée (US-15)."""
-    # Récupérer la mission
-    mission = await db.get(MissionTransport, mission_id)
-    if not mission:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission non trouvée")
-    
-    if mission.statut != "LIVRE":
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            "La mission doit être livrée pour créer une facture"
-        )
-    
-    # Vérifier si une facture existe déjà pour cette mission
-    existing_facture = await db.execute(
-        select(Facture).where(Facture.mission_id == mission_id)
-    )
-    if existing_facture.scalar_one_or_none():
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            "Une facture existe déjà pour cette mission"
-        )
-    
-    # Récupérer la grille tarifaire applicable
-    tarif_result = await db.execute(
-        select(GrilleTarifaire).where(
-            GrilleTarifaire.type_marchandise == mission.type_marchandise,
-            GrilleTarifaire.actif == True
-        ).order_by(GrilleTarifaire.date_debut.desc())
-    )
-    tarif = tarif_result.scalar_one_or_none()
-    
-    if not tarif:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            "Aucune grille tarifaire applicable trouvée"
-        )
-    
-    # Calculer le montant (distance * tarif par km)
-    montant_ht_xaf = Decimal(str(mission.distance_km)) * tarif.tarif_par_km_xaf
-    
-    # Calculer TVA et TTC
-    calcul_tva_result = calculer_tva(montant_ht_xaf)
-    
-    # Vérifier la limite de crédit
-    await verifier_limite_credit(db, mission.tiers_id, calcul_tva_result["montant_ttc_xaf"])
-    
-    # Créer la facture
-    new_facture = Facture(
-        numero_facture=f"FAC-{datetime.now().strftime('%Y%m%d')}-{mission_id}",
-        tiers_id=mission.tiers_id,
-        mission_id=mission_id,
-        montant_ht_xaf=calcul_tva_result["montant_ht_xaf"],
-        tva_xaf=calcul_tva_result["tva_xaf"],
-        montant_ttc_xaf=calcul_tva_result["montant_ttc_xaf"],
-        date_emission=datetime.now().date(),
-        statut=StatutFacture.EMISE,
-    )
-    db.add(new_facture)
-    await db.commit()
-    await db.refresh(new_facture)
-    
-    return new_facture
+    """Met à jour une facture."""
+    facture = FactureService.update_facture(db, facture_id, facture_data)
+    if not facture:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture introuvable")
+    return facture
 
 
-@router.get("/encours/{tiers_id}", response_model=EncoursResponse)
-async def get_encours(
+@router.delete("/factures/{facture_id}", status_code=status.HTTP_204_NO_CONTENT)
+@require_role([User.Role.ADMIN])
+@require_permission("finance:delete")
+async def delete_facture(
+    facture_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Supprime une facture."""
+    success = FactureService.delete_facture(db, facture_id)
+    if not success:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture introuvable")
+    return None
+
+
+@router.post("/factures/{facture_id}/valider", response_model=FactureResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:validate")
+async def valider_facture(
+    facture_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Valide une facture."""
+    facture = FactureService.valider_facture(db, facture_id, current_user.username)
+    if not facture:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture introuvable")
+    return facture
+
+
+@router.post("/factures/{facture_id}/annuler", response_model=FactureResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:validate")
+async def annuler_facture(
+    facture_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Annule une facture."""
+    facture = FactureService.annuler_facture(db, facture_id)
+    if not facture:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture introuvable")
+    return facture
+
+
+@router.get("/encaissements", response_model=List[EncaissementResponse])
+@require_permission("finance:read")
+async def list_encaissements(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Liste tous les encaissements."""
+    return EncaissementService.get_all_encaissements(db, skip, limit)
+
+
+@router.get("/encaissements/{encaissement_id}", response_model=EncaissementResponse)
+@require_permission("finance:read")
+async def get_encaissement(
+    encaissement_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère un encaissement par ID."""
+    encaissement = EncaissementService.get_encaissement(db, encaissement_id)
+    if not encaissement:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Encaissement introuvable")
+    return encaissement
+
+
+@router.get("/encaissements/tiers/{tiers_id}", response_model=List[EncaissementResponse])
+@require_permission("finance:read")
+async def get_encaissements_by_tiers(
     tiers_id: int,
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Calcule l'encours client en temps réel."""
-    encours = await calculer_encours_client(db, tiers_id)
-    return encours
+    """Récupère les encaissements d'un tiers."""
+    return EncaissementService.get_encaissements_by_tiers(db, tiers_id)
+
+
+@router.get("/encaissements/non-lettrés", response_model=List[EncaissementResponse])
+@require_permission("finance:read")
+async def get_encaissements_non_lettrés(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère les encaissements non lettrés."""
+    return EncaissementService.get_encaissements_non_lettrés(db)
 
 
 @router.post("/encaissements", response_model=EncaissementResponse, status_code=status.HTTP_201_CREATED)
 @require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
 async def create_encaissement(
     encaissement_data: EncaissementCreate,
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Enregistre un encaissement."""
-    db_encaissement = Encaissement(**encaissement_data.model_dump())
-    db.add(db_encaissement)
-    await db.commit()
-    await db.refresh(db_encaissement)
-    
-    return db_encaissement
+    return EncaissementService.create_encaissement(db, encaissement_data, current_user.username)
+
+
+@router.put("/encaissements/{encaissement_id}", response_model=EncaissementResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def update_encaissement(
+    encaissement_id: int,
+    encaissement_data: EncaissementUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Met à jour un encaissement."""
+    encaissement = EncaissementService.update_encaissement(db, encaissement_id, encaissement_data)
+    if not encaissement:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Encaissement introuvable")
+    return encaissement
+
+
+@router.delete("/encaissements/{encaissement_id}", status_code=status.HTTP_204_NO_CONTENT)
+@require_role([User.Role.ADMIN])
+@require_permission("finance:delete")
+async def delete_encaissement(
+    encaissement_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Supprime un encaissement."""
+    success = EncaissementService.delete_encaissement(db, encaissement_id)
+    if not success:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Encaissement introuvable")
+    return None
+
+
+@router.post("/encaissements/{encaissement_id}/lettrer/{facture_id}", response_model=EncaissementResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def lettrer_encaissement(
+    encaissement_id: int,
+    facture_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Lettre un encaissement à une facture."""
+    encaissement = EncaissementService.lettrer_encaissement(db, encaissement_id, facture_id)
+    if not encaissement:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Encaissement introuvable")
+    return encaissement
+
+
+@router.get("/encours/{tiers_id}", response_model=EncoursResponse)
+@require_permission("finance:read")
+async def get_encours(
+    tiers_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Calcule l'encours client en temps réel."""
+    return EncoursService.calculer_encours_client(db, tiers_id)
 
 
 @router.get("/tarifs", response_model=List[GrilleTarifaireResponse])
+@require_permission("finance:read")
 async def list_tarifs(
     skip: int = 0,
     limit: int = 100,
-    service: str | None = None,
-    db: AsyncSession = Depends(get_db),
+    type_service: str | None = None,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Liste les grilles tarifaires."""
-    query = select(GrilleTarifaire)
+    if type_service:
+        return GrilleTarifaireService.get_grilles_by_type(db, type_service)
+    return GrilleTarifaireService.get_all_grilles(db, skip, limit)
+
+
+@router.get("/tarifs/{grille_id}", response_model=GrilleTarifaireResponse)
+@require_permission("finance:read")
+async def get_tarif(
+    grille_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère une grille tarifaire par ID."""
+    grille = GrilleTarifaireService.get_grille(db, grille_id)
+    if not grille:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Grille tarifaire introuvable")
+    return grille
+
+
+# --- Avoirs ---
+
+avoir_service = AvoirService()
+
+@router.post("/avoirs", response_model=AvoirResponse, status_code=status.HTTP_201_CREATED)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def create_avoir(
+    avoir_data: AvoirCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Crée un nouvel avoir."""
+    try:
+        return avoir_service.create_avoir(db, avoir_data, current_user.username)
+    except ConflictException as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
     
-    if service:
-        query = query.where(GrilleTarifaire.service == service)
+
+@router.get("/avoirs", response_model=List[AvoirResponse])
+@require_permission("finance:read")
+async def list_avoirs(
+    skip: int = 0,
+    limit: int = 100,
+    tiers_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Liste tous les avoirs ou les avoirs d'un tiers."""
+    if tiers_id:
+        return avoir_service.get_avoirs_by_tiers(db, tiers_id)
+    return avoir_service.get_all_avoirs(db, skip, limit)
+
+
+@router.get("/avoirs/{avoir_id}", response_model=AvoirResponse)
+@require_permission("finance:read")
+async def get_avoir(
+    avoir_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère un avoir par ID."""
+    try:
+        return avoir_service.get_avoir(db, avoir_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     
-    query = query.offset(skip).limit(limit)
-    result = await db.execute(query)
-    return result.scalars().all()
+
+@router.post("/avoirs/{avoir_id}/mark-used", response_model=AvoirResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def mark_avoir_as_used(
+    avoir_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Marque un avoir comme utilisé."""
+    try:
+        return avoir_service.mark_avoir_as_used(db, avoir_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except BusinessLogicException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.get("/avoirs/unutilized/{tiers_id}", response_model=List[AvoirResponse])
+@require_permission("finance:read")
+async def get_unutilized_avoirs_by_tiers(
+    tiers_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère les avoirs non utilisés d'un tiers."""
+    return avoir_service.get_unutilized_avoirs_by_tiers(db, tiers_id)
+
+@router.get("/tarifs/active/{type_service}", response_model=GrilleTarifaireResponse)
+@require_permission("finance:read")
+async def get_tarif_active(
+    type_service: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère la grille tarifaire active pour un service."""
+    grille = GrilleTarifaireService.get_grille_active(db, type_service)
+    if not grille:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Aucune grille tarifaire active trouvée")
+    return grille
 
 
 @router.post("/tarifs", response_model=GrilleTarifaireResponse, status_code=status.HTTP_201_CREATED)
 @require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
 async def create_tarif(
     tarif_data: GrilleTarifaireCreate,
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Crée une nouvelle grille tarifaire."""
-    db_tarif = GrilleTarifaire(**tarif_data.model_dump())
-    db.add(db_tarif)
-    await db.commit()
-    await db.refresh(db_tarif)
-    
-    return db_tarif
+    return GrilleTarifaireService.create_grille(db, tarif_data, current_user.username)
+
+
+@router.put("/tarifs/{grille_id}", response_model=GrilleTarifaireResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def update_tarif(
+    grille_id: int,
+    tarif_data: GrilleTarifaireUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Met à jour une grille tarifaire."""
+    grille = GrilleTarifaireService.update_grille(db, grille_id, tarif_data)
+    if not grille:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Grille tarifaire introuvable")
+    return grille
+
+
+@router.delete("/tarifs/{grille_id}", status_code=status.HTTP_204_NO_CONTENT)
+@require_role([User.Role.ADMIN])
+@require_permission("finance:delete")
+async def delete_tarif(
+    grille_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Supprime une grille tarifaire."""
+    success = GrilleTarifaireService.delete_grille(db, grille_id)
+    if not success:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Grille tarifaire introuvable")
+    return None
+
+
+@router.post("/tarifs/{grille_id}/activer", response_model=GrilleTarifaireResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def activer_tarif(
+    grille_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Active une grille tarifaire."""
+    grille = GrilleTarifaireService.activer_grille(db, grille_id)
+    if not grille:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Grille tarifaire introuvable")
+    return grille
+
+
+@router.post("/calculer-tva")
+@require_permission("finance:read")
+async def calculer_tva_endpoint(
+    montant_ht: Decimal,
+):
+    """Calcule la TVA pour un montant HT."""
+    return calculer_tva(montant_ht)

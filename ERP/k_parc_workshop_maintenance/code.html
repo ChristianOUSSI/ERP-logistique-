@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KAMLOG ERP - Parc Automobile Maintenance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#727785",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-container": "#00714d",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-background": "#151c27",
+                        "surface-container": "#e7eefe",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#2a313d",
+                        "surface-container-high": "#e2e8f8",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-primary-fixed": "#001a42",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6cf8bb",
+                        "secondary": "#006c49",
+                        "on-surface": "#151c27",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002113",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c6d6",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "tertiary": "#825100",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#6ffbbe",
+                        "primary-container": "#2170e4",
+                        "tertiary-fixed": "#ffddb8",
+                        "surface-tint": "#005ac2",
+                        "primary": "#0058be",
+                        "surface-variant": "#dce2f3",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-container": "#a36700",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#d3daea",
+                        "on-secondary-fixed-variant": "#005236",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f0f3ff",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        
+                        // Overriding primary to cyan theme as requested
+                        "primary": "#06B6D4",
+                        "primary-container": "#cffafe",
+                        "on-primary-container": "#083344",
+                        "primary-fixed": "#a5f3fc",
+                        "on-primary-fixed": "#083344",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "xs": "0.5rem",
+                        "max-width": "1600px",
+                        "md": "1rem",
+                        "margin-desktop": "1.5rem",
+                        "xxs": "0.25rem",
+                        "sm": "0.75rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "data-tabular": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "data-tabular": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom Scrollbar for dense lists */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c2c6d6;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #727785;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen p-md bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm z-50">
+<!-- Header -->
+<div class="flex items-center gap-sm mb-xl px-xs">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="minor_crash" data-weight="fill">minor_crash</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold leading-none">KAMLOG ERP</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Port Operations</p>
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm px-md rounded flex items-center justify-center gap-xs mb-lg hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+            Nouvelle Opération
+        </button>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-xs px-sm uppercase text-[10px] tracking-wider font-semibold">Modules</div>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-title-md text-title-md">Tableau de bord</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-title-md text-title-md">Transport</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-title-md text-title-md">Finances</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded text-primary bg-primary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="#">
+<span class="material-symbols-outlined icon-filled" data-icon="minor_crash" data-weight="fill">minor_crash</span>
+<span class="font-title-md text-title-md">Parc Automobile</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim mt-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-title-md text-title-md">Paramètres</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto pt-md border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+                Support
+            </a>
+<a class="flex items-center gap-sm px-sm py-xs rounded hover:bg-surface-container-high transition-colors text-error font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+                Déconnexion
+            </a>
+</div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[260px] min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
+<!-- Left: Module Title & Breadcrumbs -->
+<div class="flex items-center gap-md">
+<div class="flex flex-col">
+<div class="flex items-center text-[10px] text-on-surface-variant font-medium tracking-wide uppercase mb-1">
+<span>KAMLOG ERP</span>
+<span class="material-symbols-outlined text-[12px] mx-1">chevron_right</span>
+<span>K-Parc</span>
+<span class="material-symbols-outlined text-[12px] mx-1">chevron_right</span>
+<span class="text-primary font-bold">Atelier</span>
+</div>
+<div class="font-title-sm text-title-sm text-on-surface font-black">Maintenance Workshop</div>
+</div>
+</div>
+<!-- Center: Search -->
+<div class="flex-1 max-w-md mx-md">
+<div class="relative flex items-center w-full focus-within:ring-2 focus-within:ring-primary rounded bg-surface-container-low border border-outline-variant px-sm py-1.5 transition-all">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none p-0 text-body-sm font-body-sm focus:ring-0 text-on-surface placeholder:text-outline" placeholder="Rechercher T-Code ou ID Véhicule..." type="text"/>
+<div class="bg-surface-variant text-on-surface-variant text-[10px] px-1.5 py-0.5 rounded font-mono ml-2 border border-outline-variant">⌘K</div>
+</div>
+</div>
+<!-- Right: Actions & Profile -->
+<div class="flex items-center gap-sm">
+<button class="p-xs text-on-surface-variant hover:text-primary transition-all rounded hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-all rounded hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</button>
+<div class="w-px h-6 bg-outline-variant mx-xs"></div>
+<button class="flex items-center gap-2 hover:bg-surface-container-high p-1 pr-2 rounded transition-all border border-transparent hover:border-outline-variant">
+<img alt="User profile with MFA status" class="w-8 h-8 rounded bg-surface-variant" data-alt="Close up portrait of a serious male port logistics manager wearing a high visibility vest. The lighting is bright and industrial, reflecting a modern light-mode interface aesthetic. The mood is focused and professional. The background is a slightly out of focus office environment with subtle cyan accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCREtjIQMM7fVKsaXjhbPC0SUOAekei_nJbzjsy_EbKQd2vfX6lLd3ZozQ_tYzJYvqENPnvhmdOk8-W0CHuB2CRJy9-s6kUotJLO1W1SO9AWTP59qE0ThNYbMks3Rz5EHyPyNV600Av92_V1MrhOZdGGE-27MUlSp9CQYOC730g9oHrTmJjtZhHb-ss0DPNndPZG3DHcry1KqAtjttPTinNnMc_bbPTbrNWo_rydmu6P5UScuxCHjtYRP4Soeb5HkLMFpyaqdmtH9M"/>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-gutter max-w-max-width w-full mx-auto overflow-y-auto">
+<!-- Bento Grid Layout for Workshop -->
+<div class="grid grid-cols-12 gap-gutter h-full">
+<!-- Left Column: Active Repairs & Schedule (8 cols) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<!-- KPIs -->
+<div class="grid grid-cols-3 gap-sm">
+<div class="bg-surface-container-lowest border border-outline-variant p-sm rounded-lg flex flex-col justify-between relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-primary/5 rounded-bl-full"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">En Réparation</span>
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="build_circle" data-weight="fill">build_circle</span>
+</div>
+<div class="flex items-end gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold leading-none">12</span>
+<span class="font-label-md text-label-md text-error flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +2</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-sm rounded-lg flex flex-col justify-between relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-secondary/5 rounded-bl-full"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Disponibilité Flotte</span>
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="local_shipping" data-weight="fill">local_shipping</span>
+</div>
+<div class="flex items-end gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold leading-none">84%</span>
+<span class="font-label-md text-label-md text-secondary flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +1.2%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-sm rounded-lg flex flex-col justify-between relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-tertiary/5 rounded-bl-full"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Interventions Prévues</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="event_note" data-weight="fill">event_note</span>
+</div>
+<div class="flex items-end gap-2 z-10">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold leading-none">05</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Aujourd'hui</span>
+</div>
+</div>
+</div>
+<!-- Active Repairs Table (Dense) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg flex-1 flex flex-col min-h-[400px]">
+<div class="px-sm py-xs border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h2 class="font-title-md text-title-md font-bold text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">handyman</span>
+                                Véhicules en Réparation
+                            </h2>
+<button class="text-primary hover:text-primary-fixed-variant font-label-md text-label-md flex items-center gap-1 transition-colors">
+                                Voir Tout <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse font-data-tabular text-data-tabular">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant uppercase tracking-wider font-label-sm text-label-sm border-b border-outline-variant">
+<th class="px-sm py-2 font-semibold">ID Véhicule</th>
+<th class="px-sm py-2 font-semibold">Type</th>
+<th class="px-sm py-2 font-semibold">Problème Signalé</th>
+<th class="px-sm py-2 font-semibold">Mécanicien</th>
+<th class="px-sm py-2 font-semibold">Statut</th>
+<th class="px-sm py-2 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-on-surface">
+<tr class="hover:bg-surface-container-low transition-colors h-[40px] border-l-2 border-primary">
+<td class="px-sm py-1 font-medium">TRK-4092</td>
+<td class="px-sm py-1 text-on-surface-variant">Tracteur Lourd</td>
+<td class="px-sm py-1">Fuite hydraulique (Grue)</td>
+<td class="px-sm py-1 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[9px] font-bold">MK</div>
+                                            M. Kouamé
+                                        </td>
+<td class="px-sm py-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">En cours</span>
+</td>
+<td class="px-sm py-1 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-sm py-1 font-medium">FLT-102</td>
+<td class="px-sm py-1 text-on-surface-variant">Chariot Élévateur</td>
+<td class="px-sm py-1">Remplacement batterie</td>
+<td class="px-sm py-1 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-[9px] font-bold">SD</div>
+                                            S. Diarrassouba
+                                        </td>
+<td class="px-sm py-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-secondary/10 text-secondary">Terminé (Test)</span>
+</td>
+<td class="px-sm py-1 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors h-[40px] border-l-2 border-error">
+<td class="px-sm py-1 font-medium">VUL-884</td>
+<td class="px-sm py-1 text-on-surface-variant">Utilitaire Léger</td>
+<td class="px-sm py-1 text-error">Panne moteur - En attente pièces</td>
+<td class="px-sm py-1 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-label-sm text-[9px] font-bold">AT</div>
+                                            A. Touré
+                                        </td>
+<td class="px-sm py-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-error/10 text-error">Bloqué</span>
+</td>
+<td class="px-sm py-1 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-sm py-1 font-medium">TRK-3921</td>
+<td class="px-sm py-1 text-on-surface-variant">Tracteur Standard</td>
+<td class="px-sm py-1">Révision 50k KM</td>
+<td class="px-sm py-1 flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[9px] font-bold">MK</div>
+                                            M. Kouamé
+                                        </td>
+<td class="px-sm py-1">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-outline-variant/30 text-on-surface-variant">À assigner</span>
+</td>
+<td class="px-sm py-1 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column: Contextual Rail (4 cols) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Quick Actions Glassmorphism Card -->
+<div class="bg-primary-container/80 backdrop-blur-md border border-primary/20 rounded-lg p-sm relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary rounded-full opacity-20 blur-xl"></div>
+<h3 class="font-title-md text-title-md font-bold text-on-primary-container mb-xs">Accès Rapide T-Code</h3>
+<div class="grid grid-cols-2 gap-2">
+<button class="bg-surface-container-lowest/90 hover:bg-surface border border-outline-variant/50 p-2 rounded flex flex-col items-center justify-center gap-1 transition-all">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="add_box">add_box</span>
+<span class="font-label-sm text-label-sm text-on-surface">Créer OT</span>
+</button>
+<button class="bg-surface-container-lowest/90 hover:bg-surface border border-outline-variant/50 p-2 rounded flex flex-col items-center justify-center gap-1 transition-all">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm text-on-surface">Sortie Magasin</span>
+</button>
+</div>
+</div>
+<!-- Inventory Alerts -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg flex-1 flex flex-col">
+<div class="px-sm py-xs border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h2 class="font-title-md text-title-md font-bold text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-tertiary">warning</span>
+                                Alertes Pièces
+                            </h2>
+</div>
+<div class="p-sm flex-1 overflow-y-auto space-y-2">
+<div class="flex items-start gap-2 p-2 border border-error/20 bg-error/5 rounded">
+<div class="mt-0.5"><span class="material-symbols-outlined text-error text-[16px]" data-icon="error">error</span></div>
+<div>
+<div class="font-label-md text-label-md font-bold text-error">Rupture Stock: Filtre à Huile H30</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 text-[11px] leading-tight">Nécessaire pour TRK-4092. Commande en cours, livraison est. demain.</div>
+</div>
+</div>
+<div class="flex items-start gap-2 p-2 border border-tertiary/20 bg-tertiary/5 rounded">
+<div class="mt-0.5"><span class="material-symbols-outlined text-tertiary text-[16px]" data-icon="warning">warning</span></div>
+<div>
+<div class="font-label-md text-label-md font-bold text-tertiary">Seuil Critique: Pneus Michelin XZM</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 text-[11px] leading-tight">Stock actuel: 2 unités. Demande de réapprovisionnement générée (PR-992).</div>
+</div>
+</div>
+</div>
+<div class="p-xs border-t border-outline-variant bg-surface text-center">
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">Ouvrir Module Magasin (K-Mag)</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
