@@ -1,17 +1,20 @@
 # app/services/finance_service.py - Service métier pour le module K-Finance
+import difflib
 from decimal import Decimal
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import and_, or_, selectinload
 from typing import List, Optional
 from datetime import datetime
 
-from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
+from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture, Avoir
 from app.models.tiers import Tiers
 from app.schemas.finance import (
-    FactureCreate, FactureUpdate,
-    EncaissementCreate, EncaissementUpdate,
-    GrilleTarifaireCreate, GrilleTarifaireUpdate
+    FactureCreate,
+    EncaissementCreate,
+    GrilleTarifaireCreate, AvoirCreate
 )
+from app.repositories.finance_repository import AvoirRepository
+from app.exceptions import NotFoundException, ConflictException, BusinessLogicException
 from app.utils.audit import AuditService
 from app.utils.logger import get_logger
 from app.utils.cache import cache_service, invalidate_cache_pattern
@@ -424,3 +427,111 @@ def calculer_tva(montant_ht: Decimal) -> dict:
         "montant_ttc_xaf": montant_ht + tva_xaf,
         "taux_tva": float(TVA_CAMEROUN * 100),
     }
+
+
+class BankReconciliationService:
+    """Service pour le rapprochement automatique des relevés bancaires."""
+
+    @staticmethod
+    def _calculate_similarity(s1: str, s2: str) -> float:
+        """Calcule le ratio de similarité entre deux chaînes."""
+        if not s1 or not s2:
+            return 0.0
+        return difflib.SequenceMatcher(None, s1.upper(), s2.upper()).ratio()
+
+    @staticmethod
+    def perform_automatic_matching(db: Session, bank_statements: List[dict]) -> List[dict]:
+        """
+        Exécute l'algorithme de matching automatique entre un relevé importé et l'ERP.
+        
+        bank_statements: [{'date': datetime, 'description': str, 'amount': Decimal}, ...]
+        """
+        # Récupérer tout l'encours non lettré
+        unmatched_erp = EncaissementService.get_encaissements_non_lettrés(db)
+        reconciliation_results = []
+
+        for statement in bank_statements:
+            best_match = None
+            highest_score = 0.0
+            
+            # Filtrage initial par montant exact (marge de 0.01 pour les arrondis)
+            # Cela réduit drastiquement l'espace de recherche floue
+            potential_matches = [
+                e for e in unmatched_erp 
+                if abs(e.montant_xaf - Decimal(str(statement['amount']))) < 0.01
+            ]
+
+            for erp_entry in potential_matches:
+                score = 0.0
+                
+                # 1. Proximité de date (Poids: 30%)
+                # Match idéal si les dates sont à moins de 3 jours d'intervalle
+                date_diff = abs((erp_entry.date_paiement.date() - statement['date'].date()).days)
+                if date_diff <= 3:
+                    score += 0.3
+                elif date_diff <= 7:
+                    score += 0.1
+                
+                # 2. Similarité textuelle floue (Poids: 70%)
+                # Compare la description bancaire avec la référence ERP et les notes
+                sim_ref = BankReconciliationService._calculate_similarity(statement['description'], erp_entry.reference or "")
+                sim_notes = BankReconciliationService._calculate_similarity(statement['description'], erp_entry.notes or "")
+                score += (max(sim_ref, sim_notes) * 0.7)
+
+                # Seuil de confiance minimal à 0.65
+                if score > highest_score and score >= 0.65:
+                    highest_score = score
+                    best_match = erp_entry
+
+            reconciliation_results.append({
+                "bank_entry": statement,
+                "erp_match": best_match,
+                "confidence": round(highest_score * 100, 2)
+            })
+            
+            # On retire l'entrée ERP pour ne pas la matcher deux fois
+            if best_match:
+                unmatched_erp.remove(best_match)
+
+        return reconciliation_results
+
+
+class AvoirService:
+    """Service pour la gestion des avoirs."""
+
+    def __init__(self):
+        self.repo = AvoirRepository()
+
+    def get_all_avoirs(self, db: Session, skip: int = 0, limit: int = 100) -> List[Avoir]:
+        return self.repo.get_all(db, skip, limit)
+
+    def get_avoir(self, db: Session, avoir_id: int) -> Optional[Avoir]:
+        avoir = self.repo.get_by_id(db, avoir_id)
+        if not avoir:
+            raise NotFoundException("Avoir introuvable.")
+        return avoir
+
+    def create_avoir(self, db: Session, avoir_data: AvoirCreate, cree_par: str) -> Avoir:
+        if self.repo.get_by_numero(db, avoir_data.numero_avoir):
+            raise ConflictException("Un avoir avec ce numéro existe déjà.")
+
+        db_avoir = Avoir(**avoir_data.model_dump(), cree_par=cree_par)
+        return self.repo.create(db, db_avoir)
+
+    def mark_avoir_as_used(self, db: Session, avoir_id: int) -> Avoir:
+        avoir = self.get_avoir(db, avoir_id)
+        if avoir.est_utilise:
+            raise BusinessLogicException("Cet avoir est déjà utilisé.")
+        avoir.est_utilise = True
+        db.commit()
+        db.refresh(avoir)
+        return avoir
+
+    def get_avoirs_by_tiers(self, db: Session, tiers_id: int) -> List[Avoir]:
+        return self.repo.get_by_tiers(db, tiers_id)
+
+    def get_unutilized_avoirs_by_tiers(self, db: Session, tiers_id: int) -> List[Avoir]:
+        return self.repo.get_unutilized_by_tiers(db, tiers_id)
+
+    def get_total_unutilized_avoir_amount(self, db: Session, tiers_id: int) -> Decimal:
+        return self.repo.get_total_unutilized_amount(db, tiers_id)

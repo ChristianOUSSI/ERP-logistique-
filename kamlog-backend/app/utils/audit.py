@@ -1,52 +1,16 @@
-# app/utils/audit.py - Système d'audit trail KAMLOG EM-ERP
+# app/utils/audit.py - Service d'audit pour tracer les modifications
 from sqlalchemy.orm import Session
+from typing import Optional
 from datetime import datetime
-from typing import Optional, Dict, Any
+from decimal import Decimal
 from app.models.audit import AuditLog
-from app.models.user import User
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class AuditService:
-    """Service pour enregistrer les événements d'audit."""
-    
-    @staticmethod
-    def log_event(
-        db: Session,
-        action: str,
-        entity_type: str,
-        entity_id: Optional[int],
-        user_id: Optional[int],
-        details: Optional[Dict[str, Any]] = None,
-        ip_address: Optional[str] = None
-    ) -> AuditLog:
-        """
-        Enregistre un événement d'audit.
-        
-        Args:
-            db: Session de base de données
-            action: Type d'action (create, update, delete, etc.)
-            entity_type: Type d'entité (Article, Stock, Commande, etc.)
-            entity_id: ID de l'entité concernée
-            user_id: ID de l'utilisateur qui a effectué l'action
-            details: Détails supplémentaires de l'action
-            ip_address: Adresse IP de l'utilisateur
-            
-        Returns:
-            AuditLog: L'entrée d'audit créée
-        """
-        audit_log = AuditLog(
-            action=action,
-            entity_type=entity_type,
-            entity_id=entity_id,
-            user_id=user_id,
-            details=details,
-            ip_address=ip_address,
-            timestamp=datetime.utcnow()
-        )
-        db.add(audit_log)
-        db.commit()
-        db.refresh(audit_log)
-        return audit_log
+    """Service pour enregistrer les traces d'audit."""
     
     @staticmethod
     def log_stock_modification(
@@ -54,111 +18,145 @@ class AuditService:
         action: str,
         article_id: int,
         magasin_id: int,
-        quantite_avant: float,
-        quantite_apres: float,
-        user_id: Optional[int],
-        raison: Optional[str] = None
+        quantite_avant: Decimal,
+        quantite_apres: Decimal,
+        user_id: Optional[int] = None,
+        raison: str = ""
     ) -> AuditLog:
         """
-        Enregistre une modification de stock.
+        Enregistre une modification de stock dans l'audit trail.
         
         Args:
             db: Session de base de données
-            action: Type d'action (reception, livraison, ajustement)
+            action: Type d'action (reception, livraison, stock_creation, etc.)
             article_id: ID de l'article
             magasin_id: ID du magasin
             quantite_avant: Quantité avant modification
             quantite_apres: Quantité après modification
-            user_id: ID de l'utilisateur
+            user_id: ID de l'utilisateur (optionnel)
             raison: Raison de la modification
             
         Returns:
-            AuditLog: L'entrée d'audit créée
+            AuditLog: Enregistrement d'audit créé
         """
-        details = {
-            "article_id": article_id,
-            "magasin_id": magasin_id,
-            "quantite_avant": quantite_avant,
-            "quantite_apres": quantite_apres,
-            "difference": quantite_apres - quantite_avant,
-            "raison": raison
-        }
-        
-        return AuditService.log_event(
-            db=db,
-            action=action,
-            entity_type="Stock",
-            entity_id=None,  # Stock n'a pas d'ID unique simple
-            user_id=user_id,
-            details=details
-        )
+        try:
+            audit_data = {
+                "user_id": user_id,
+                "action": action,
+                "table_name": "stocks",
+                "record_id": f"{magasin_id}_{article_id}",
+                "old_values": {"quantite_disponible": quantite_avant},
+                "new_values": {"quantite_disponible": quantite_apres},
+                "ip_address": None,  # Sera rempli par le middleware
+                "user_agent": None,  # Sera rempli par le middleware
+                "context": {
+                    "article_id": article_id,
+                    "magasin_id": magasin_id,
+                    "raison": raison,
+                    "delta": quantite_apres - quantite_avant
+                }
+            }
+            
+            audit_entry = AuditLog(**audit_data)
+            db.add(audit_entry)
+            db.commit()
+            db.refresh(audit_entry)
+            
+            logger.info(f"Audit stock modification: {action} - Article {article_id} - Delta {quantite_apres - quantite_avant}")
+            
+            return audit_entry
+            
+        except Exception as e:
+            logger.error(f"Erreur lors de l'enregistrement de l'audit: {str(e)}")
+            db.rollback()
+            raise
     
     @staticmethod
-    def log_commande_status_change(
+    def log_business_operation(
         db: Session,
-        commande_id: int,
-        statut_avant: str,
-        statut_apres: str,
-        user_id: Optional[int]
+        action: str,
+        table_name: str,
+        record_id: str,
+        old_values: dict = None,
+        new_values: dict = None,
+        user_id: Optional[int] = None,
+        context: dict = None
     ) -> AuditLog:
         """
-        Enregistre un changement de statut de commande.
+        Enregistre une opération métier dans l'audit trail.
         
         Args:
             db: Session de base de données
-            commande_id: ID de la commande
-            statut_avant: Statut avant
-            statut_apres: Statut après
+            action: Type d'action (create, update, delete, etc.)
+            table_name: Nom de la table
+            record_id: ID de l'enregistrement
+            old_values: Anciennes valeurs
+            new_values: Nouvelles valeurs
             user_id: ID de l'utilisateur
+            context: Contexte supplémentaire
             
         Returns:
-            AuditLog: L'entrée d'audit créée
+            AuditLog: Enregistrement d'audit créé
         """
-        details = {
-            "commande_id": commande_id,
-            "statut_avant": statut_avant,
-            "statut_apres": statut_apres
-        }
-        
-        return AuditService.log_event(
-            db=db,
-            action="status_change",
-            entity_type="Commande",
-            entity_id=commande_id,
-            user_id=user_id,
-            details=details
-        )
+        try:
+            audit_data = {
+                "user_id": user_id,
+                "action": action,
+                "table_name": table_name,
+                "record_id": record_id,
+                "old_values": old_values or {},
+                "new_values": new_values or {},
+                "context": context or {}
+            }
+            
+            audit_entry = AuditLog(**audit_data)
+            db.add(audit_entry)
+            db.commit()
+            db.refresh(audit_entry)
+            
+            logger.info(f"Audit business operation: {action} on {table_name}({record_id})")
+            
+            return audit_entry
+            
+        except Exception as e:
+            logger.error(f"Erreur lors de l'enregistrement de l'audit: {str(e)}")
+            db.rollback()
+            raise
     
     @staticmethod
-    def get_audit_logs(
+    def get_audit_trail(
         db: Session,
-        entity_type: Optional[str] = None,
-        entity_id: Optional[int] = None,
-        user_id: Optional[int] = None,
+        table_name: str = None,
+        record_id: str = None,
+        user_id: int = None,
+        action: str = None,
+        skip: int = 0,
         limit: int = 100
     ) -> list[AuditLog]:
         """
-        Récupère les logs d'audit avec filtres.
+        Récupère l'historique d'audit selon les filtres.
         
         Args:
             db: Session de base de données
-            entity_type: Filtrer par type d'entité
-            entity_id: Filtrer par ID d'entité
+            table_name: Filtrer par table
+            record_id: Filtrer par enregistrement
             user_id: Filtrer par utilisateur
-            limit: Nombre maximum de résultats
+            action: Filtrer par action
+            skip: Nombre d'enregistrements à ignorer
+            limit: Nombre maximum d'enregistrements
             
         Returns:
-            list[AuditLog]: Liste des logs d'audit
+            list[AuditLog]: Liste des enregistrements d'audit
         """
         query = db.query(AuditLog)
         
-        if entity_type:
-            query = query.filter(AuditLog.entity_type == entity_type)
-        
-        if entity_id:
-            query = query.filter(AuditLog.entity_id == entity_id)
-        
+        if table_name:
+            query = query.filter(AuditLog.table_name == table_name)
+        if record_id:
+            query = query.filter(AuditLog.record_id == record_id)
         if user_id:
             query = query.filter(AuditLog.user_id == user_id)
+        if action:
+            query = query.filter(AuditLog.action == action)
         
-        return query.order_by(AuditLog.timestamp.desc()).limit(limit).all()
+        return query.order_by(AuditLog.timestamp.desc()).offset(skip).limit(limit).all()

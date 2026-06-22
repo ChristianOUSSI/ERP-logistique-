@@ -9,13 +9,14 @@ from slowapi.errors import RateLimitExceeded
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
 from app import admin
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
 from app.utils.error_handler import setup_error_handlers
-from app.middleware.audit_middleware import AuditMiddleware
+from app.utils.audit_middleware import AuditMiddleware
 from app.utils.idempotency import IdempotencyMiddleware
+from app.utils.rbac import get_current_user  # Import unifié
 
 
 @asynccontextmanager

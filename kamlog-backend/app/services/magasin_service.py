@@ -28,7 +28,7 @@ from app.schemas.magasin import (
     CommandeCreate, CommandeUpdate, BandeLivraisonCreate, BandeLivraisonUpdate,
     StockFilter
 )
-from app.utils.cache import cache_service, invalidate_cache_pattern
+from app.utils.cache_sync import cache_service_sync as cache_service, invalidate_cache_pattern_sync as invalidate_cache_pattern
 
 
 class MagasinService:
@@ -722,12 +722,12 @@ class StockService:
             stock = StockService.get_stock(db, reception.magasin_id, ligne.article_id)
             
             if stock:
-                quantite_avant = float(stock.quantite_disponible)
+                quantite_avant = stock.quantite_disponible
                 stock.quantite_disponible += ligne.quantite_recue
                 stock.quantite_udb += ligne.quantite_udb
-                quantite_apres = float(stock.quantite_disponible)
+                quantite_apres = stock.quantite_disponible
                 
-                # Audit trail
+                # Audit trail avec précision Decimal
                 AuditService.log_stock_modification(
                     db=db,
                     action="reception",
@@ -747,14 +747,14 @@ class StockService:
                 )
                 db.add(stock)
                 
-                # Audit trail pour création de stock
+                # Audit trail pour création de stock avec précision Decimal
                 AuditService.log_stock_modification(
                     db=db,
                     action="stock_creation",
                     article_id=ligne.article_id,
                     magasin_id=reception.magasin_id,
-                    quantite_avant=0.0,
-                    quantite_apres=float(ligne.quantite_recue),
+                    quantite_avant=Decimal('0'),
+                    quantite_apres=ligne.quantite_recue,
                     user_id=user_id,
                     raison=f"Création stock via réception {reception.numero_reception}"
                 )
@@ -768,7 +768,10 @@ class StockService:
                 reception_id=reception.id,
                 magasin_id=reception.magasin_id,
                 numero_reception=reception.numero_reception,
-                lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_recue), "unite": l.unite_mesure} for l in reception.lignes]
+                lignes=[
+                    {"article_id": l.article_id, "quantite": l.quantite_recue, "unite": l.unite_mesure}
+                    for l in reception.lignes
+                ],
             )
             gateway_service.creer_reception_stock(db, dto, str(user_id) if user_id else None)
         except Exception as e:
@@ -804,12 +807,12 @@ class StockService:
                 if stock.quantite_udb < quantite_udb:
                     raise InsufficientStockError(f"Stock UDB insuffisant pour article {article.code_article}. Disponible: {stock.quantite_udb}, Demandé: {quantite_udb}")
                 
-                quantite_avant = float(stock.quantite_disponible)
+                quantite_avant = stock.quantite_disponible
                 stock.quantite_disponible -= ligne.quantite
                 stock.quantite_udb -= quantite_udb
-                quantite_apres = float(stock.quantite_disponible)
+                quantite_apres = stock.quantite_disponible
                 
-                # Audit trail
+                # Audit trail avec précision Decimal
                 AuditService.log_stock_modification(
                     db=db,
                     action="livraison",
@@ -950,10 +953,20 @@ class CommandeService:
                     commande_id=db_commande.id,
                     client_id=db_commande.client_id,
                     numero_commande=db_commande.numero_commande,
-                    montant_total=sum(ligne.quantite_demandee * (ligne.prix_unitaire or 0) for ligne in db_commande.lignes),
+                    montant_total=sum(
+                        ligne.quantite_demandee * (ligne.prix_unitaire or Decimal("0"))
+                        for ligne in db_commande.lignes
+                    ),
                     tva=Decimal("19.25"),
                     date_commande=db_commande.date_commande,
-                    lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_demandee), "prix": float(l.prix_unitaire or 0)} for l in db_commande.lignes]
+                    lignes=[
+                        {
+                            "article_id": l.article_id,
+                            "quantite": l.quantite_demandee,
+                            "prix": l.prix_unitaire or Decimal("0"),
+                        }
+                        for l in db_commande.lignes
+                    ],
                 )
                 gateway_service.creer_commande_facture(db, dto, valide_par)
             except Exception as e:
@@ -987,7 +1000,10 @@ class CommandeService:
                     numero_commande=db_commande.numero_commande,
                     adresse_livraison=adresse_livraison,
                     date_livraison_souhaitee=db_commande.date_livraison_souhaitee or datetime.now(),
-                    lignes=[{"article_id": l.article_id, "quantite": float(l.quantite_demandee), "unite": l.unite_mesure} for l in db_commande.lignes]
+                    lignes=[
+                        {"article_id": l.article_id, "quantite": l.quantite_demandee, "unite": l.unite_mesure}
+                        for l in db_commande.lignes
+                    ],
                 )
                 gateway_service.creer_commande_livraison(db, dto, db_commande.cree_par)
             except Exception as e:

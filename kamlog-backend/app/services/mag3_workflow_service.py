@@ -3,16 +3,26 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal
+
+from app.exceptions import BusinessLogicException
 from app.models.removal_slip import RemovalSlip, StatutRemovalSlip
 from app.models.reception_mag3 import ReceptionMag3, StatutReceptionMag3
-from app.services.removal_slip_service import RemovalSlipService
-from app.services.reception_mag3_service import ReceptionMag3Service
+from app.models.user import User
 from app.services.magasin_service import StockService
 from app.services.notification_service import NotificationService
+from app.services.reception_mag3_service import ReceptionMag3Service
+from app.services.removal_slip_service import RemovalSlipService
 
 
 class Mag3WorkflowService:
     """Service pour les workflows Mag3 (bon d'enlèvement → réception)"""
+
+    @staticmethod
+    def _get_user_agency_id(db: Session, username: str) -> int:
+        user = db.query(User).filter(User.username == username).first()
+        if not user:
+            raise ValueError(f"Utilisateur introuvable pour username={username}")
+        return user.agency_id
     
     @staticmethod
     def create_removal_slip_workflow(db: Session, slip_data, user: str) -> RemovalSlip:
@@ -23,17 +33,25 @@ class Mag3WorkflowService:
         3. Notifier les responsables
         """
         slip = RemovalSlipService.create_removal_slip(db, slip_data, user)
-        
-        # Notifier les responsables pour autorisation
-        # TODO: Récupérer la liste des responsables depuis la configuration ou la base de données
-        responsables = ["admin", "responsable_magasin"]  # Exemple
+
+        # Notifier les responsables pour autorisation (multi-tenancy via agency_id)
+        agency_id = Mag3WorkflowService._get_user_agency_id(db, user)
+
+        responsables_stock_ids = []
+        responsables_stock_ids.extend(
+            NotificationService.get_users_by_role(db, "ADMIN", agency_id)
+        )
+        responsables_stock_ids.extend(
+            NotificationService.get_users_by_role(db, "DISPATCHER", agency_id)
+        )
+
         NotificationService.notify_bon_enlevement_authorisation(
             db=db,
             slip_id=slip.id,
             slip_numero=slip.numero_bon,
-            responsables=responsables
+            responsables=responsables_stock_ids,
         )
-        
+
         return slip
     
     @staticmethod
@@ -97,16 +115,17 @@ class Mag3WorkflowService:
         reception_data.declaration_douaniere = slip.declaration_douaniere
         
         reception = ReceptionMag3Service.create_reception_mag3(db, reception_data, user)
-        
-        # Notifier les magasiniers
-        # TODO: Récupérer la liste des magasiniers depuis la configuration ou la base de données
-        magasiniers = ["magasinier1", "magasinier2"]  # Exemple
+
+        # Notifier les magasiniers (GATE_AGENT) en tenant compte de l'agence
+        agency_id = Mag3WorkflowService._get_user_agency_id(db, user)
+        magasiniers_ids = NotificationService.get_users_by_role(db, "GATE_AGENT", agency_id)
+
         NotificationService.notify_reception_created(
             db=db,
             reception_id=reception.id,
-            magasiniers=magasiniers
+            magasiniers=magasiniers_ids,
         )
-        
+
         return reception
     
     @staticmethod
@@ -133,63 +152,83 @@ class Mag3WorkflowService:
         
         validated_reception = ReceptionMag3Service.validate_reception_mag3(db, reception_id, received_by)
         
-        # Mettre à jour le stock dans le magasin de destination
+        # ATOMICITÉ: Toutes les opérations dans une transaction unique
         try:
-            StockService.update_stock(
-                db=db,
-                article_id=reception.article_id,
-                magasin_id=reception.magasin_destination,
-                quantite=reception.quantite_recue,
-                type_mouvement="ENTREE",
-                reference=f"Reception Mag3 #{reception_id}",
-                utilisateur=received_by
-            )
+            with db.begin():
+                # Mettre à jour le stock dans le magasin de destination
+                StockService.update_stock(
+                    db=db,
+                    article_id=reception.article_id,
+                    magasin_id=reception.magasin_destination,
+                    quantite=reception.quantite_recue,
+                    type_mouvement="ENTREE",
+                    reference=f"Reception Mag3 #{reception_id}",
+                    utilisateur=received_by
+                )
+                
+                # Mettre à jour le statut du bon d'enlèvement
+                if reception.removal_slip_id:
+                    slip = RemovalSlipService.get_removal_slip(db, reception.removal_slip_id)
+                    if slip and slip.statut == StatutRemovalSlip.AUTORISE:
+                        from app.schemas.removal_slip import RemovalSlipUpdate
+                        slip_update = RemovalSlipUpdate(statut=StatutRemovalSlip.LIVRE)
+                        RemovalSlipService.update_removal_slip(db, reception.removal_slip_id, slip_update)
+                
+                # Notification du succès
+                if reception.removal_slip_id:
+                    slip = RemovalSlipService.get_removal_slip(db, reception.removal_slip_id)
+                    if slip:
+                        NotificationService.notify_reception_validated(
+                            db=db,
+                            reception_id=reception_id,
+                            slip_id=reception.removal_slip_id,
+                            demandeur=slip.demande_par
+                        )
+                
+                # Notifier les responsables du stock (ADMIN + DISPATCHER)
+                agency_id = Mag3WorkflowService._get_user_agency_id(db, received_by)
+                responsables_stock_ids = []
+                responsables_stock_ids.extend(
+                    NotificationService.get_users_by_role(db, "ADMIN", agency_id)
+                )
+                responsables_stock_ids.extend(
+                    NotificationService.get_users_by_role(db, "DISPATCHER", agency_id)
+                )
+
+                NotificationService.notify_stock_updated(
+                    db=db,
+                    article_id=reception.article_id,
+                    magasin_id=reception.magasin_destination,
+                    quantite=reception.quantite_recue,
+                    responsables=responsables_stock_ids,
+                )
+                
         except Exception as e:
-            # Log l'erreur mais ne pas bloquer la validation
-            print(f"Erreur lors de la mise à jour du stock: {e}")
-        
-        # Mettre à jour le statut du bon d'enlèvement
-        if reception.removal_slip_id:
-            try:
-                slip = RemovalSlipService.get_removal_slip(db, reception.removal_slip_id)
-                if slip and slip.statut == StatutRemovalSlip.AUTORISE:
-                    # Mettre à jour le statut du bon d'enlèvement à LIVRE
-                    from app.schemas.removal_slip import RemovalSlipUpdate
-                    slip_update = RemovalSlipUpdate(statut=StatutRemovalSlip.LIVRE)
-                    RemovalSlipService.update_removal_slip(db, reception.removal_slip_id, slip_update)
-            except Exception as e:
-                # Log l'erreur mais ne pas bloquer la validation
-                print(f"Erreur lors de la mise à jour du bon d'enlèvement: {e}")
-        
-        # Notifier le demandeur que la réception a été validée
-        if reception.removal_slip_id:
-            try:
-                slip = RemovalSlipService.get_removal_slip(db, reception.removal_slip_id)
-                if slip:
-                    NotificationService.notify_reception_validated(
-                        db=db,
-                        reception_id=reception_id,
-                        slip_id=reception.removal_slip_id,
-                        demandeur=slip.demande_par
-                    )
-            except Exception as e:
-                # Log l'erreur mais ne pas bloquer la validation
-                print(f"Erreur lors de l'envoi de notification: {e}")
-        
-        # Notifier les responsables du stock
-        # TODO: Récupérer la liste des responsables du stock depuis la configuration ou la base de données
-        responsables_stock = ["responsable_stock", "admin"]  # Exemple
-        try:
-            NotificationService.notify_stock_updated(
+            # ROLLBACK automatique par context manager
+            # Mettre le statut de la réception en erreur
+            from app.schemas.reception_mag3 import ReceptionMag3Update
+            reception_update = ReceptionMag3Update(statut=StatutReceptionMag3.ERREUR)
+            ReceptionMag3Service.update_reception_mag3(db, reception_id, reception_update)
+            
+            # Notifier l'erreur
+            agency_id = Mag3WorkflowService._get_user_agency_id(db, received_by)
+            responsables_ids = []
+            responsables_ids.extend(NotificationService.get_users_by_role(db, "ADMIN", agency_id))
+            responsables_ids.extend(NotificationService.get_users_by_role(db, "DISPATCHER", agency_id))
+
+            NotificationService.notify_workflow_error(
                 db=db,
-                article_id=reception.article_id,
-                magasin_id=reception.magasin_destination,
-                quantite=reception.quantite_recue,
-                responsables=responsables_stock
+                workflow_type="validation_reception_mag3",
+                error_message=str(e),
+                responsables=responsables_ids,
             )
-        except Exception as e:
-            # Log l'erreur mais ne pas bloquer la validation
-            print(f"Erreur lors de la notification de stock: {e}")
+            
+            # Log structuré au lieu de print
+            from app.utils.logger import get_logger
+            logger = get_logger(__name__)
+            logger.error(f"Erreur critique dans workflow Mag3 - Reception {reception_id}: {str(e)}", exc_info=True)
+            
+            raise BusinessLogicException(f"Échec validation réception: {str(e)}")
         
         return validated_reception
     

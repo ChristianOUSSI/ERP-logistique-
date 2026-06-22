@@ -399,6 +399,16 @@ class MissionTransportService:
             invalidate_cache_pattern("transport:missions:*")
             invalidate_cache_pattern("transport:camions:*")
             invalidate_cache_pattern("transport:chauffeurs:*")
+
+            # Notification
+            try:
+                from app.utils.notifications import NotificationService
+                NotificationService.trigger_transport_alert(
+                    mission_id=mission_id,
+                    message=f"La mission {db_mission.reference} est maintenant TERMINEE."
+                )
+            except Exception as e:
+                logger.error(f"Failed to send notification: {e}")
         return db_mission
 
 

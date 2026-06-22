@@ -1,7 +1,7 @@
 # app/repositories/finance_repository.py - Repository pour les modèles du K-Finance
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 from decimal import Decimal
 
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
@@ -187,7 +187,7 @@ class GrilleTarifaireRepository(BaseRepository[GrilleTarifaire]):
                 GrilleTarifaire.deleted_at == None
             )
         ).all()
-    
+
     def get_by_service(self, db: Session, service: str) -> List[GrilleTarifaire]:
         """
         Récupère toutes les grilles tarifaires pour un service.
@@ -202,7 +202,62 @@ class GrilleTarifaireRepository(BaseRepository[GrilleTarifaire]):
         return db.query(GrilleTarifaire).filter(
             and_(
                 GrilleTarifaire.service == service,
-                GrilleTarifaire.est_actif == True,
-                GrilleTarifaire.deleted_at == None
+                GrilleTarifaire.est_actif == True
             )
         ).all()
+
+
+class AvoirRepository(BaseRepository[Avoir]):
+    """Repository pour les opérations sur les avoirs."""
+
+    def __init__(self):
+        super().__init__(Avoir)
+
+    def get_by_numero(self, db: Session, numero_avoir: str) -> Optional[Avoir]:
+        """
+        Récupère un avoir par son numéro.
+
+        Args:
+            db: Session de base de données
+            numero_avoir: Numéro de l'avoir
+
+        Returns:
+            L'avoir trouvé ou None
+        """
+        return db.query(Avoir).filter(Avoir.numero_avoir == numero_avoir).first()
+
+    def get_by_tiers(self, db: Session, tiers_id: int) -> List[Avoir]:
+        """
+        Récupère tous les avoirs d'un tiers.
+
+        Args:
+            db: Session de base de données
+            tiers_id: ID du tiers
+
+        Returns:
+            Liste des avoirs du tiers
+        """
+        return db.query(Avoir).filter(Avoir.tiers_id == tiers_id).all()
+
+    def get_unutilized_by_tiers(self, db: Session, tiers_id: int) -> List[Avoir]:
+        """
+        Récupère tous les avoirs non utilisés d'un tiers.
+
+        Args:
+            db: Session de base de données
+            tiers_id: ID du tiers
+
+        Returns:
+            Liste des avoirs non utilisés du tiers
+        """
+        return db.query(Avoir).filter(
+            and_(
+                Avoir.tiers_id == tiers_id,
+                Avoir.est_utilise == False
+            )
+        ).all()
+
+    def get_total_unutilized_amount(self, db: Session, tiers_id: int) -> Decimal:
+        """Calcule le montant total des avoirs non utilisés pour un tiers."""
+        total = db.query(func.sum(Avoir.montant_xaf)).filter(Avoir.tiers_id == tiers_id, Avoir.est_utilise == False).scalar()
+        return total if total else Decimal('0')

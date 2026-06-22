@@ -1,9 +1,11 @@
 # app/routers/finance.py  Router Finance
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from decimal import Decimal
+import csv
+import io
 
 from app.database import get_db
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
@@ -12,15 +14,15 @@ from app.models.user import User
 from app.schemas.finance import (
     FactureCreate, FactureUpdate, FactureResponse,
     EncaissementCreate, EncaissementUpdate, EncaissementResponse,
-    GrilleTarifaireCreate, GrilleTarifaireUpdate, GrilleTarifaireResponse,
-    EncoursResponse
+    GrilleTarifaireCreate, GrilleTarifaireUpdate, GrilleTarifaireResponse, EncoursResponse,
+    ReconciliationMatchResponse, AvoirCreate, AvoirResponse
 )
 from app.routers.auth import get_current_user
 from app.utils.rbac import require_role, require_permission
 from app.services.finance_service import (
     FactureService, EncaissementService, GrilleTarifaireService, EncoursService,
-    calculer_tva
-)
+    calculer_tva, BankReconciliationService
+    AvoirService
 
 router = APIRouter()
 
@@ -290,6 +292,80 @@ async def get_tarif(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Grille tarifaire introuvable")
     return grille
 
+
+# --- Avoirs ---
+
+avoir_service = AvoirService()
+
+@router.post("/avoirs", response_model=AvoirResponse, status_code=status.HTTP_201_CREATED)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def create_avoir(
+    avoir_data: AvoirCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Crée un nouvel avoir."""
+    try:
+        return avoir_service.create_avoir(db, avoir_data, current_user.username)
+    except ConflictException as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    
+
+@router.get("/avoirs", response_model=List[AvoirResponse])
+@require_permission("finance:read")
+async def list_avoirs(
+    skip: int = 0,
+    limit: int = 100,
+    tiers_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Liste tous les avoirs ou les avoirs d'un tiers."""
+    if tiers_id:
+        return avoir_service.get_avoirs_by_tiers(db, tiers_id)
+    return avoir_service.get_all_avoirs(db, skip, limit)
+
+
+@router.get("/avoirs/{avoir_id}", response_model=AvoirResponse)
+@require_permission("finance:read")
+async def get_avoir(
+    avoir_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère un avoir par ID."""
+    try:
+        return avoir_service.get_avoir(db, avoir_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    
+
+@router.post("/avoirs/{avoir_id}/mark-used", response_model=AvoirResponse)
+@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_permission("finance:write")
+async def mark_avoir_as_used(
+    avoir_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Marque un avoir comme utilisé."""
+    try:
+        return avoir_service.mark_avoir_as_used(db, avoir_id)
+    except NotFoundException as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except BusinessLogicException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.get("/avoirs/unutilized/{tiers_id}", response_model=List[AvoirResponse])
+@require_permission("finance:read")
+async def get_unutilized_avoirs_by_tiers(
+    tiers_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère les avoirs non utilisés d'un tiers."""
+    return avoir_service.get_unutilized_avoirs_by_tiers(db, tiers_id)
 
 @router.get("/tarifs/active/{type_service}", response_model=GrilleTarifaireResponse)
 @require_permission("finance:read")
