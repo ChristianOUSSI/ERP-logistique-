@@ -9,12 +9,14 @@ from app.models.transport import (
     MissionTransport,
     TypeVehicule,
     StatutMission,
+    StatutCamion,
 )
 from app.models.finance import (
     Facture,
     Encaissement,
     GrilleTarifaire,
     StatutFacture,
+    Avoir,
 )
 from app.models.parc import (
     ZoneParc,
@@ -68,6 +70,16 @@ from app.models.suppliers import (
     StatutSupplier,
     CategorieSupplier,
 )
+from app.models.agency import Agency
+from app.models.idempotency import IdempotencyKey
+from app.models.notification import (
+    Notification,
+    NotificationDestination,
+    TypeNotification,
+    PrioriteNotification,
+    StatutNotification,
+)
+from app.models.dossier import DossierOperationnel
 
 __all__ = [
     "Base",
@@ -82,10 +94,12 @@ __all__ = [
     "MissionTransport",
     "TypeVehicule",
     "StatutMission",
+    "StatutCamion",
     "Facture",
     "Encaissement",
     "GrilleTarifaire",
     "StatutFacture",
+    "Avoir",
     "ZoneParc",
     "EmplacementParc",
     "StockPhysiqueParc",
@@ -124,4 +138,12 @@ __all__ = [
     "SupplierProfile",
     "StatutSupplier",
     "CategorieSupplier",
+    "Agency",
+    "IdempotencyKey",
+    "Notification",
+    "NotificationDestination",
+    "TypeNotification",
+    "PrioriteNotification",
+    "StatutNotification",
+    "DossierOperationnel",
 ]

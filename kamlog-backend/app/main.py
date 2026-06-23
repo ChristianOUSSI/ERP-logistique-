@@ -18,15 +18,26 @@ from app.utils.audit_middleware import AuditMiddleware
 from app.utils.idempotency import IdempotencyMiddleware
 from app.utils.rbac import get_current_user  # Import unifié
 
+from sqlalchemy import text
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup : initialiser logger, monitoring et vérifier connexion DB
     setup_logger()
     setup_monitoring(app)
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+
+    # Vérifier la connexion à la base de données
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        print("✅ Database connection OK")
+    except Exception as e:
+        print(f"❌ Database connection failed: {e}")
+        raise
+
     yield
+
     # Shutdown : fermer connexions
     await engine.dispose()
 
@@ -35,7 +46,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="KAMLOG EM-ERP API",
-    description="ERP Logistique Portuaire  Port de Douala",
+    description="ERP Logistique Portuaire - Port de Douala",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -58,8 +69,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-Idempotency-Key"],
 )
 
 # Routers
@@ -79,11 +90,12 @@ app.include_router(reception_mag3.router, prefix="/api/magasin/receptions-mag3",
 app.include_router(master_data.router, prefix="/api/master-data", tags=["Master Data"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies"])
+app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"])
 
 
 @app.get('/api/health')
 async def health_check():
-    """Health check basique."""
+    """Health check basique - utilisé par Railway."""
     return {"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}
 
 
@@ -96,40 +108,42 @@ async def detailed_health_check():
         "version": "1.0.0",
         "checks": {}
     }
-    
+
     # Vérifier la base de données
     try:
         async with engine.begin() as conn:
-            await conn.execute("SELECT 1")
+            await conn.execute(text("SELECT 1"))
         checks["checks"]["database"] = {"status": "ok", "message": "PostgreSQL connecté"}
     except Exception as e:
         checks["checks"]["database"] = {"status": "error", "message": str(e)}
         checks["status"] = "degraded"
-    
+
     # Vérifier Redis (si configuré)
     try:
-        import redis.asyncio as redis
-        redis_client = await redis.from_url(settings.REDIS_URL)
+        import redis.asyncio as aioredis
+        redis_client = aioredis.from_url(settings.REDIS_URL)
         await redis_client.ping()
-        await redis_client.close()
+        await redis_client.aclose()
         checks["checks"]["redis"] = {"status": "ok", "message": "Redis connecté"}
     except Exception as e:
-        checks["checks"]["redis"] = {"status": "error", "message": str(e)}
-        checks["status"] = "degraded"
-    
-    # Vérifier MinIO (si configuré)
-    try:
-        from minio import Minio
-        minio_client = Minio(
-            settings.MINIO_ENDPOINT,
-            access_key=settings.MINIO_ACCESS_KEY,
-            secret_key=settings.MINIO_SECRET_KEY,
-            secure=settings.MINIO_SECURE
-        )
-        minio_client.bucket_exists(settings.MINIO_BUCKET_DOCUMENTS)
-        checks["checks"]["minio"] = {"status": "ok", "message": "MinIO connecté"}
-    except Exception as e:
-        checks["checks"]["minio"] = {"status": "error", "message": str(e)}
-        checks["status"] = "degraded"
-    
+        checks["checks"]["redis"] = {"status": "warning", "message": f"Redis indisponible: {str(e)}"}
+        # Ne pas marquer comme degraded - Redis est optionnel
+
+    # Vérifier MinIO (si activé)
+    if settings.MINIO_ENABLED:
+        try:
+            from minio import Minio
+            minio_client = Minio(
+                settings.MINIO_ENDPOINT,
+                access_key=settings.MINIO_ACCESS_KEY,
+                secret_key=settings.MINIO_SECRET_KEY,
+                secure=settings.MINIO_SECURE
+            )
+            minio_client.bucket_exists(settings.MINIO_BUCKET_DOCUMENTS)
+            checks["checks"]["minio"] = {"status": "ok", "message": "MinIO connecté"}
+        except Exception as e:
+            checks["checks"]["minio"] = {"status": "warning", "message": f"MinIO indisponible: {str(e)}"}
+    else:
+        checks["checks"]["minio"] = {"status": "disabled", "message": "MinIO désactivé (MINIO_ENABLED=false)"}
+
     return checks

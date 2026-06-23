@@ -19,7 +19,6 @@ psycopg2-binary==2.9.9
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.9
-pgcrypto==0.1.0
 slowapi==0.1.9
 pyotp==2.9.0
 qrcode==7.4.2
@@ -45,7 +44,7 @@ ortools==9.10.4067
 
 # --- Emails ---
 fastapi-mail==1.4.1
-aiosmtplib==3.0.1
+aiosmtplib>=2.0.0,<3.0.0
 email-validator==2.1.0
 
 # --- Tests ---
@@ -59,5 +58,9 @@ python-dotenv==1.0.1
 loguru==0.7.2
 python-dateutil==2.9.0.post0
 pytz==2026.1
-prometheus==2.0.0
+prometheus-client==0.20.0
 prometheus-fastapi-instrumentator==7.0.0
+
+# --- Performance async (production) ---
+uvloop==0.19.0
+aiofiles==23.2.1
