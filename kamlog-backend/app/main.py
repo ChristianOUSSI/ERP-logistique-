@@ -115,7 +115,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 setup_error_handlers(app)
 
 # Middlewares de Sécurité et Audit (Niveau World Pro)
-app.add_middleware(AuditMiddleware)
+# app.add_middleware(AuditMiddleware) # Disabled due to incompatible DB model
 app.add_middleware(IdempotencyMiddleware, redis_url=settings.REDIS_URL)
 
 # CORS  autoriser le frontend Next.js

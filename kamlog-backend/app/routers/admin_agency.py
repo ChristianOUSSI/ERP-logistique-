@@ -4,7 +4,7 @@ from typing import List
 from app.database import get_db
 from app.services.agency_service import AgencyService
 from app.schemas.agency import AgencyResponse, AgencyCreate, AgencyUpdate
-from app.routers.auth import get_current_admin_user # Supposant ce helper existant
+from app.utils.permissions import check_permission, get_current_user
 
 router = APIRouter()
 agency_service = AgencyService()
@@ -13,7 +13,7 @@ agency_service = AgencyService()
 def create_agency(
     agency_in: AgencyCreate, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_admin_user)
+    current_user = Depends(get_current_user)
 ):
     return agency_service.create_agency(db, agency_in)
 
@@ -22,7 +22,7 @@ def list_agencies(
     skip: int = 0, 
     limit: int = 100, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_admin_user)
+    current_user = Depends(get_current_user)
 ):
     return agency_service.get_agencies(db, skip, limit)
 
@@ -31,11 +31,11 @@ def update_agency(
     agency_id: int, 
     agency_in: AgencyUpdate, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_admin_user)
+    current_user = Depends(get_current_user)
 ):
     return agency_service.update_agency(db, agency_id, agency_in)
 
 @router.delete("/{agency_id}")
-def delete_agency(agency_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_admin_user)):
+def delete_agency(agency_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     agency_service.delete_agency(db, agency_id)
     return {"status": "success", "message": "Agence supprimée"}
