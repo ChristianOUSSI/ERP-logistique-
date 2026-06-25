@@ -1,5 +1,6 @@
 # app/models/finance.py  Modèles K-Finance
 import enum
+from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import String, Numeric, Text, ForeignKey, Index, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
@@ -60,3 +61,17 @@ class GrilleTarifaire(BaseModel):
     unite: Mapped[str] = mapped_column(String(20))  # KM, TONNE, EVP, HEURE
     date_debut_validite: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
     date_fin_validite: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
+
+
+class Avoir(BaseModel):
+    __tablename__ = "avoirs"
+
+    numero_avoir: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    facture_origine_id: Mapped[int | None] = mapped_column(ForeignKey('factures.id'))
+    tiers_id: Mapped[int] = mapped_column(ForeignKey('tiers.id'))
+    montant_xaf: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
+    motif: Mapped[str] = mapped_column(String(500), nullable=False)
+    est_utilise: Mapped[bool] = mapped_column(default=False)
+    cree_par: Mapped[str | None] = mapped_column(String(100))
+    date_emission: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+

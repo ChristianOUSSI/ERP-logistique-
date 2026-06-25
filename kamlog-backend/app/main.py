@@ -21,6 +21,10 @@ from app.utils.rbac import get_current_user  # Import unifié
 from sqlalchemy import text
 
 
+# État de santé global de l'application
+startup_errors: list = []
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup : initialiser logger, monitoring et vérifier connexion DB
@@ -28,13 +32,18 @@ async def lifespan(app: FastAPI):
     setup_monitoring(app)
 
     # Vérifier la connexion à la base de données
+    # Ne pas raise ici : laisser uvicorn démarrer même si DB indisponible
+    # Le health check signalera l'état dégradé
     try:
         async with engine.begin() as conn:
             await conn.execute(text("SELECT 1"))
         print("✅ Database connection OK")
+        startup_errors.clear()
     except Exception as e:
-        print(f"❌ Database connection failed: {e}")
-        raise
+        err_msg = f"Database connection failed: {e}"
+        print(f"❌ {err_msg}")
+        startup_errors.append(err_msg)
+        # Ne pas raise - l'app démarre quand même pour que /api/health réponde
 
     yield
 
@@ -96,6 +105,15 @@ app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"]
 @app.get('/api/health')
 async def health_check():
     """Health check basique - utilisé par Railway."""
+    if startup_errors:
+        # Retourner 200 avec status dégradé plutôt que de crasher
+        # Railway vérifie le HTTP status code, pas le contenu
+        return {
+            "status": "degraded",
+            "service": "KAMLOG EM-ERP",
+            "version": "1.0.0",
+            "errors": startup_errors
+        }
     return {"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}
 
 

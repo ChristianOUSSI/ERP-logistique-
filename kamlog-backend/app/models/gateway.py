@@ -105,7 +105,7 @@ class FacturePaiement(BaseModel):
 
     id = Column(Integer, primary_key=True, index=True)
     facture_id = Column(Integer, ForeignKey("factures.id"), nullable=False)
-    paiement_id = Column(Integer, ForeignKey("paiements.id"), nullable=True)
+    paiement_id = Column(Integer, ForeignKey("encaissements.id"), nullable=True)
     passerelle_id = Column(Integer, ForeignKey("passerelles.id"), nullable=False)
     
     montant_facture = Column(Integer, nullable=False)
@@ -123,7 +123,7 @@ class MissionFacture(BaseModel):
     __tablename__ = "mission_factures"
 
     id = Column(Integer, primary_key=True, index=True)
-    mission_id = Column(Integer, ForeignKey("missions.id"), nullable=False)
+    mission_id = Column(Integer, ForeignKey("missions_transport.id"), nullable=False)
     facture_id = Column(Integer, ForeignKey("factures.id"), nullable=True)
     passerelle_id = Column(Integer, ForeignKey("passerelles.id"), nullable=False)
     

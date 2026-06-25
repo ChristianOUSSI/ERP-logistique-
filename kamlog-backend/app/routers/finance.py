@@ -21,8 +21,9 @@ from app.routers.auth import get_current_user
 from app.utils.rbac import require_role, require_permission
 from app.services.finance_service import (
     FactureService, EncaissementService, GrilleTarifaireService, EncoursService,
-    calculer_tva, BankReconciliationService
+    calculer_tva, BankReconciliationService,
     AvoirService
+)
 
 router = APIRouter()
 

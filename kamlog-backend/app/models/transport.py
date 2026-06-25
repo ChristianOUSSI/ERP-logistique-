@@ -23,6 +23,13 @@ class StatutMission(str, enum.Enum):
     CLOTURE = "CLOTURE"
 
 
+class StatutCamion(str, enum.Enum):
+    DISPONIBLE = "DISPONIBLE"
+    MAINTENANCE = "MAINTENANCE"
+    EN_ROUTE = "EN_ROUTE"
+    EN_CHARGEMENT = "EN_CHARGEMENT"
+
+
 class CamionFlotte(BaseModel):
     __tablename__ = "camions_flotte"
 

@@ -1,5 +1,5 @@
 # app/models/suppliers.py - Modèle pour les fournisseurs (séparé des clients)
-from sqlalchemy import Column, Integer, String, Text, Numeric, DateTime, Enum as SQLEnum, Boolean
+from sqlalchemy import Column, Integer, String, Text, Numeric, DateTime, Enum as SQLEnum, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
