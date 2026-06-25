@@ -25,6 +25,9 @@ All active bugs and deployment items have been resolved successfully:
 ## ✅ Resolving Backend Boot & Seeder Issues (Railway Deployment)
 - [x] **User.Role Attribute Error**: Added `Role = Role` class alias inside `User` class to resolve `AttributeError: type object 'User' has no attribute 'Role'` across multiple router files (`tiers.py`, `transport.py`, `parc.py`, `finance.py`, `documents.py`, `alerts.py`).
 - [x] **Seeder Module Imports**: Added `export PYTHONPATH=.` to the top of `start.sh` so that running scripts inside the subfolders (like `scripts/seed_data.py`) correctly resolves root module imports (`import app`).
+- [x] **BaseModel NameError in alerts.py**: Moved the pydantic import statement to the top of the file so that the `AlertResponse` model compiles successfully.
+- [x] **Passlib Bcrypt ValueError in Python 3.12+**: Substituted the legacy `passlib` crypt context wrapper with a direct invocation of the native `bcrypt` library, bypassing all Python 3.12+ setup incompatibility warnings and preventing errors related to 72-byte limit validation when hashing passwords in `security.py`.
+
 
 
 
