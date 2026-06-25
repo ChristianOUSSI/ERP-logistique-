@@ -9,7 +9,7 @@ export default function ParcPage() {
   // ── Micro-interactions JavaScript fidèles au HTML original ─────────
   useEffect(() => {
     // Add hover scale effect to cards
-    const cards = document.querySelectorAll('.hover\\:border-secondary')
+    const cards = document.querySelectorAll<HTMLElement>('.hover\\:border-secondary')
     cards.forEach((card) => {
       card.addEventListener('mouseenter', () => {
         card.style.boxShadow = '0 10px 25px -5px rgba(6, 182, 212, 0.1)'

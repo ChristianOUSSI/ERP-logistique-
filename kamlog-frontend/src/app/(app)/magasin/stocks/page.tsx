@@ -17,8 +17,7 @@ export default function StocksPage() {
   
   const [filters, setFilters] = useState<StockFilter>({
     code_article: '',
-    nom_article: '',
-    magasin_id: undefined,
+    magasin_ids: [],
     client_id: undefined,
     date_debut: '',
     date_fin: ''
@@ -88,8 +87,7 @@ export default function StocksPage() {
   const handleReset = () => {
     setFilters({
       code_article: '',
-      nom_article: '',
-      magasin_id: undefined,
+      magasin_ids: [],
       client_id: undefined,
       date_debut: '',
       date_fin: ''
@@ -133,23 +131,12 @@ export default function StocksPage() {
               </div>
               <div>
                 <label className="mb-1 flex items-center gap-2 text-sm font-medium">
-                  <Package className="h-4 w-4" />
-                  Nom article
-                </label>
-                <Input
-                  placeholder="Ex: Riz Bellaluna"
-                  value={filters.nom_article}
-                  onChange={(e) => setFilters({ ...filters, nom_article: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="mb-1 flex items-center gap-2 text-sm font-medium">
                   <Warehouse className="h-4 w-4" />
                   Magasin
                 </label>
                 <Select
-                  value={filters.magasin_id?.toString() || ''}
-                  onValueChange={(value) => setFilters({ ...filters, magasin_id: value ? parseInt(value) : undefined })}
+                  value={filters.magasin_ids?.[0]?.toString() || ''}
+                  onValueChange={(value) => setFilters({ ...filters, magasin_ids: value ? [parseInt(value)] : [] })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les magasins" />

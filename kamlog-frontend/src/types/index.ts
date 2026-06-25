@@ -1,7 +1,7 @@
 // Types généraux pour l'application ERP
 export * from './auth'
 export * from './magasin'
-export * from './commandes'
+// export * from './commandes' // Avoid StatutCommande conflict
 
 // Types Transport (placeholder)
 export interface Mission {
@@ -14,6 +14,7 @@ export interface Mission {
   origine?: string
   destination?: string
   type_mission?: string
+  type_marchandise?: string
   date_creation: string
 }
 

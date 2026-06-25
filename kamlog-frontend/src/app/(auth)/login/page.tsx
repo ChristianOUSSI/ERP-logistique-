@@ -46,7 +46,7 @@ export default function LoginPage() {
     const inputs = document.querySelectorAll<HTMLInputElement>('input[type="email"], input[type="password"]')
     inputs.forEach((input) => {
       const handleFocus = () => {
-        const label = input.parentElement?.parentElement?.querySelector('label') as HTMLElement | null
+        const label = input.parentElement?.parentElement?.querySelector<HTMLElement>('label')
         if (label) label.style.color = '#3B82F6'
       }
       const handleBlur = () => {

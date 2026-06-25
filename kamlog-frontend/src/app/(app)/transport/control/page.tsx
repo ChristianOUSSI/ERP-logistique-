@@ -216,7 +216,7 @@ export default function KTransportControl() {
                     <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
                       <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-901</td>
                       <td className="py-2 px-4 text-on-surface">Amadou Diallo</td>
-                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port -> ZI Dakar</td>
+                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port {'->'} ZI Dakar</td>
                       <td className="py-2 px-4 text-on-surface">VOL-FR-45</td>
                       <td className="py-2 px-4">
                         <span className="status-transit px-2 py-1 rounded font-label-caps text-label-caps">In Transit</span>
@@ -225,7 +225,7 @@ export default function KTransportControl() {
                     <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group bg-surface-bright">
                       <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-902</td>
                       <td className="py-2 px-4 text-on-surface">Jean Dupont</td>
-                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Whse 1 -> Port Term</td>
+                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Whse 1 {'->'} Port Term</td>
                       <td className="py-2 px-4 text-on-surface">MER-AX-12</td>
                       <td className="py-2 px-4">
                         <span className="status-loading px-2 py-1 rounded font-label-caps text-label-caps">Loading</span>
@@ -234,7 +234,7 @@ export default function KTransportControl() {
                     <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
                       <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-903</td>
                       <td className="py-2 px-4 text-on-surface">Sarah Koné</td>
-                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Dakar -> Thies</td>
+                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Dakar {'->'} Thies</td>
                       <td className="py-2 px-4 text-on-surface">SCA-R-09</td>
                       <td className="py-2 px-4">
                         <span className="status-delivered px-2 py-1 rounded font-label-caps text-label-caps">Delivered</span>
@@ -243,7 +243,7 @@ export default function KTransportControl() {
                     <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group bg-surface-bright">
                       <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-904</td>
                       <td className="py-2 px-4 text-on-surface">Moussa Sow</td>
-                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">ZI Sud -> Port Term</td>
+                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">ZI Sud {'->'} Port Term</td>
                       <td className="py-2 px-4 text-on-surface">MAN-TG-88</td>
                       <td className="py-2 px-4">
                         <span className="status-transit px-2 py-1 rounded font-label-caps text-label-caps">In Transit</span>
@@ -252,7 +252,7 @@ export default function KTransportControl() {
                     <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
                       <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-905</td>
                       <td className="py-2 px-4 text-on-surface">Oumar Fall</td>
-                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port -> Whse 3</td>
+                      <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port {'->'} Whse 3</td>
                       <td className="py-2 px-4 text-on-surface">VOL-FR-42</td>
                       <td className="py-2 px-4">
                         <span className="status-loading px-2 py-1 rounded font-label-caps text-label-caps">Loading</span>

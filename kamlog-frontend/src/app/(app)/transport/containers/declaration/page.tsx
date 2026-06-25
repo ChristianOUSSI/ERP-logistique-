@@ -279,7 +279,7 @@ export default function ContainerDeclaration() {
                       <textarea 
                         className="w-full p-[1rem] bg-surface border border-outline-variant rounded focus:ring-2 focus:ring-tertiary focus:border-tertiary font-body-md text-on-surface resize-none placeholder:text-outline" 
                         placeholder="Numéros de scellés, dommages visibles..." 
-                        rows="2"
+                        rows={2}
                         value={observations}
                         onChange={(e) => setObservations(e.target.value)}
                       ></textarea>

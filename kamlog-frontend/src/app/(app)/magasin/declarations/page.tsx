@@ -251,8 +251,6 @@ function DeclarationForm({
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState<DeclarationCreate>({
-    numero_bl: initialData?.numero_bl || '',
-    date_declaration: initialData?.date_declaration ? new Date(initialData.date_declaration).toISOString().split('T')[0] : '',
     client_id: initialData?.client_id || 0,
     date_arrivee_prevue: initialData?.date_arrivee_prevue ? new Date(initialData.date_arrivee_prevue).toISOString().split('T')[0] : '',
     statut: initialData?.statut || StatutDeclaration.BROUILLON,
@@ -260,7 +258,8 @@ function DeclarationForm({
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
       quantite_declaree: l.quantite_declaree,
-      prix_unitaire: l.prix_unitaire
+      unite_mesure: l.unite_mesure ?? UniteMesure.UDB,
+      quantite_udb: l.quantite_udb ?? 0
     })) || []
   })
 

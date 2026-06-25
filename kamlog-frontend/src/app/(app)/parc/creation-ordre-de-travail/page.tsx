@@ -226,7 +226,7 @@ export default function CreationOrdreDeTravailPage() {
                         <textarea 
                           className="w-full p-3 bg-surface-container-lowest border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 k-parc-ring-accent focus:border-transparent resize-y" 
                           placeholder="Décrivez en détail le symptôme ou le travail à effectuer..." 
-                          rows="4"
+                          rows={4}
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                         />

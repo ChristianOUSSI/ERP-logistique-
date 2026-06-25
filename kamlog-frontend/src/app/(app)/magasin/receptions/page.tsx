@@ -252,15 +252,15 @@ function ReceptionForm({
   onCancel: () => void
 }) {
   const [formData, setFormData] = useState<ReceptionCreate>({
-    numero_reception: initialData?.numero_reception || '',
-    date_reception: initialData?.date_reception ? new Date(initialData.date_reception).toISOString().split('T')[0] : '',
     declaration_id: initialData?.declaration_id || 0,
     magasin_id: initialData?.magasin_id || 0,
     statut: initialData?.statut || StatutReception.EN_COURS,
     notes: initialData?.notes || '',
     lignes: initialData?.lignes?.map(l => ({
       article_id: l.article_id,
-      quantite_recue: l.quantite_recue
+      quantite_recue: l.quantite_recue,
+      unite_mesure: l.unite_mesure ?? UniteMesure.UDB,
+      quantite_udb: l.quantite_udb ?? 0
     })) || []
   })
 
