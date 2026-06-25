@@ -29,6 +29,14 @@ const handler = NextAuth({
             is_active: true,
           };
         } catch (error) {
+          console.error("NextAuth Authorize Error:", error);
+          if (error.response) {
+            console.error("Response data:", error.response.data);
+            console.error("Response status:", error.response.status);
+          } else {
+            console.error("Error message:", error.message);
+          }
+          console.error("API URL used:", process.env.NEXT_PUBLIC_API_URL);
           return null;
         }
       },
