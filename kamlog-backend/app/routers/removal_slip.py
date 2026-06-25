@@ -8,7 +8,7 @@ from slowapi.util import get_remote_address
 from app.database import get_db
 from app.utils.permissions import check_permission, get_current_user
 from app.schemas.removal_slip import (
-    RemovalSlip, RemovalSlipCreate, RemovalSlipUpdate
+    RemovalSlipResponse, RemovalSlipCreate, RemovalSlipUpdate
 )
 from app.services.removal_slip_service import RemovalSlipService
 from app.services.mag3_workflow_service import Mag3WorkflowService
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/magasin/removal-slips", tags=["Removal Slip"])
 
 
 # ============ REMOVAL SLIPS ============
-@router.get("/", response_model=List[RemovalSlip])
+@router.get("/", response_model=List[RemovalSlipResponse])
 def get_removal_slips(
     skip: int = 0,
     limit: int = 100,
@@ -37,7 +37,7 @@ def get_removal_slips(
     return RemovalSlipService.get_all_removal_slips(db, skip, limit)
 
 
-@router.get("/{slip_id}", response_model=RemovalSlip)
+@router.get("/{slip_id}", response_model=RemovalSlipResponse)
 def get_removal_slip(slip_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère un bon d'enlèvement par son ID"""
     slip = RemovalSlipService.get_removal_slip(db, slip_id)
@@ -46,7 +46,7 @@ def get_removal_slip(slip_id: int, db: Session = Depends(get_db), current_user =
     return slip
 
 
-@router.post("/", response_model=RemovalSlip)
+@router.post("/", response_model=RemovalSlipResponse)
 @limiter.limit("10/minute")
 @check_permission("magasin:create")
 def create_removal_slip(
@@ -58,7 +58,7 @@ def create_removal_slip(
     return RemovalSlipService.create_removal_slip(db, slip, current_user.username)
 
 
-@router.put("/{slip_id}", response_model=RemovalSlip)
+@router.put("/{slip_id}", response_model=RemovalSlipResponse)
 @limiter.limit("20/minute")
 @check_permission("magasin:update")
 def update_removal_slip(
@@ -89,7 +89,7 @@ def delete_removal_slip(
     return {"message": "Bon d'enlèvement supprimé avec succès"}
 
 
-@router.post("/{slip_id}/autoriser", response_model=RemovalSlip)
+@router.post("/{slip_id}/autoriser", response_model=RemovalSlipResponse)
 @limiter.limit("10/minute")
 @check_permission("magasin:authorize")
 def authorize_removal_slip(

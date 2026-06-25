@@ -8,7 +8,7 @@ from slowapi.util import get_remote_address
 from app.database import get_db
 from app.utils.permissions import check_permission, get_current_user
 from app.schemas.reception_mag3 import (
-    ReceptionMag3, ReceptionMag3Create, ReceptionMag3Update
+    ReceptionMag3Response, ReceptionMag3Create, ReceptionMag3Update
 )
 from app.services.reception_mag3_service import ReceptionMag3Service
 from app.services.mag3_workflow_service import Mag3WorkflowService
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/magasin/receptions-mag3", tags=["Reception Mag3"
 
 
 # ============ RECEPTIONS MAG3 ============
-@router.get("/", response_model=List[ReceptionMag3])
+@router.get("/", response_model=List[ReceptionMag3Response])
 def get_receptions_mag3(
     skip: int = 0,
     limit: int = 100,
@@ -37,7 +37,7 @@ def get_receptions_mag3(
     return ReceptionMag3Service.get_all_receptions_mag3(db, skip, limit)
 
 
-@router.get("/{reception_id}", response_model=ReceptionMag3)
+@router.get("/{reception_id}", response_model=ReceptionMag3Response)
 def get_reception_mag3(reception_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère une réception Mag3 par son ID"""
     reception = ReceptionMag3Service.get_reception_mag3(db, reception_id)
@@ -46,7 +46,7 @@ def get_reception_mag3(reception_id: int, db: Session = Depends(get_db), current
     return reception
 
 
-@router.post("/", response_model=ReceptionMag3)
+@router.post("/", response_model=ReceptionMag3Response)
 @limiter.limit("10/minute")
 @check_permission("magasin:create")
 def create_reception_mag3(
@@ -58,7 +58,7 @@ def create_reception_mag3(
     return ReceptionMag3Service.create_reception_mag3(db, reception, current_user.username)
 
 
-@router.put("/{reception_id}", response_model=ReceptionMag3)
+@router.put("/{reception_id}", response_model=ReceptionMag3Response)
 @limiter.limit("20/minute")
 @check_permission("magasin:update")
 def update_reception_mag3(
@@ -89,7 +89,7 @@ def delete_reception_mag3(
     return {"message": "Réception Mag3 supprimée avec succès"}
 
 
-@router.post("/{reception_id}/valider", response_model=ReceptionMag3)
+@router.post("/{reception_id}/valider", response_model=ReceptionMag3Response)
 @limiter.limit("10/minute")
 @check_permission("magasin:validate")
 def validate_reception_mag3(
@@ -105,7 +105,7 @@ def validate_reception_mag3(
 
 
 # ============ WORKFLOW ENDPOINTS ============
-@router.post("/from-slip/{slip_id}", response_model=ReceptionMag3)
+@router.post("/from-slip/{slip_id}", response_model=ReceptionMag3Response)
 @limiter.limit("10/minute")
 @check_permission("magasin:create")
 def create_reception_from_slip(
@@ -118,7 +118,7 @@ def create_reception_from_slip(
     return Mag3WorkflowService.create_reception_from_slip_workflow(db, slip_id, reception, current_user.username)
 
 
-@router.post("/{reception_id}/workflow-validate", response_model=ReceptionMag3)
+@router.post("/{reception_id}/workflow-validate", response_model=ReceptionMag3Response)
 @limiter.limit("10/minute")
 @check_permission("magasin:validate")
 def validate_reception_workflow(

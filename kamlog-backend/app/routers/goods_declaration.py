@@ -8,8 +8,8 @@ from slowapi.util import get_remote_address
 from app.database import get_db
 from app.utils.permissions import check_permission, get_current_user
 from app.schemas.goods_declaration import (
-    GoodsDeclaration, GoodsDeclarationCreate, GoodsDeclarationUpdate,
-    LigneGoodsDeclaration, LigneGoodsDeclarationCreate
+    GoodsDeclarationResponse, GoodsDeclarationCreate, GoodsDeclarationUpdate,
+    LigneGoodsDeclarationResponse, LigneGoodsDeclarationCreate
 )
 from app.services.goods_declaration_service import GoodsDeclarationService
 
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/transport/goods-declarations", tags=["Goods Decl
 
 
 # ============ GOODS DECLARATIONS ============
-@router.get("/", response_model=List[GoodsDeclaration])
+@router.get("/", response_model=List[GoodsDeclarationResponse])
 def get_goods_declarations(
     skip: int = 0,
     limit: int = 100,
@@ -33,7 +33,7 @@ def get_goods_declarations(
     return GoodsDeclarationService.get_all_goods_declarations(db, skip, limit)
 
 
-@router.get("/{declaration_id}", response_model=GoodsDeclaration)
+@router.get("/{declaration_id}", response_model=GoodsDeclarationResponse)
 def get_goods_declaration(declaration_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère une déclaration de marchandises par son ID"""
     declaration = GoodsDeclarationService.get_goods_declaration(db, declaration_id)
@@ -42,7 +42,7 @@ def get_goods_declaration(declaration_id: int, db: Session = Depends(get_db), cu
     return declaration
 
 
-@router.post("/", response_model=GoodsDeclaration)
+@router.post("/", response_model=GoodsDeclarationResponse)
 @limiter.limit("10/minute")
 @check_permission("transport:create")
 def create_goods_declaration(
@@ -54,7 +54,7 @@ def create_goods_declaration(
     return GoodsDeclarationService.create_goods_declaration(db, declaration, current_user.username)
 
 
-@router.put("/{declaration_id}", response_model=GoodsDeclaration)
+@router.put("/{declaration_id}", response_model=GoodsDeclarationResponse)
 @limiter.limit("20/minute")
 @check_permission("transport:update")
 def update_goods_declaration(
@@ -86,7 +86,7 @@ def delete_goods_declaration(
 
 
 # ============ LIGNES GOODS DECLARATION ============
-@router.post("/{declaration_id}/lignes", response_model=LigneGoodsDeclaration)
+@router.post("/{declaration_id}/lignes", response_model=LigneGoodsDeclarationResponse)
 @limiter.limit("10/minute")
 @check_permission("transport:create")
 def add_ligne_goods_declaration(

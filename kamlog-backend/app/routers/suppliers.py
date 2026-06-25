@@ -8,8 +8,8 @@ from slowapi.util import get_remote_address
 from app.database import get_db
 from app.utils.permissions import check_permission, get_current_user
 from app.schemas.suppliers import (
-    Supplier, SupplierCreate, SupplierUpdate,
-    SupplierProfile, SupplierProfileCreate
+    SupplierResponse, SupplierCreate, SupplierUpdate,
+    SupplierProfileResponse, SupplierProfileCreate
 )
 from app.services.suppliers_service import SupplierService
 
@@ -19,7 +19,7 @@ router = APIRouter(tags=["Suppliers"])
 
 
 # ============ SUPPLIERS ============
-@router.get("/", response_model=List[Supplier])
+@router.get("/", response_model=List[SupplierResponse])
 def get_suppliers(
     skip: int = 0,
     limit: int = 100,
@@ -36,7 +36,7 @@ def get_suppliers(
     return SupplierService.get_all_suppliers(db, skip, limit)
 
 
-@router.get("/{supplier_id}", response_model=Supplier)
+@router.get("/{supplier_id}", response_model=SupplierResponse)
 def get_supplier(supplier_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère un fournisseur par son ID"""
     supplier = SupplierService.get_supplier(db, supplier_id)
@@ -45,7 +45,7 @@ def get_supplier(supplier_id: int, db: Session = Depends(get_db), current_user =
     return supplier
 
 
-@router.get("/code/{code_fournisseur}", response_model=Supplier)
+@router.get("/code/{code_fournisseur}", response_model=SupplierResponse)
 def get_supplier_by_code(code_fournisseur: str, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère un fournisseur par son code"""
     supplier = SupplierService.get_supplier_by_code(db, code_fournisseur)
@@ -54,7 +54,7 @@ def get_supplier_by_code(code_fournisseur: str, db: Session = Depends(get_db), c
     return supplier
 
 
-@router.get("/niu/{niu}", response_model=Supplier)
+@router.get("/niu/{niu}", response_model=SupplierResponse)
 def get_supplier_by_niu(niu: str, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     """Récupère un fournisseur par son NIU"""
     supplier = SupplierService.get_supplier_by_niu(db, niu)
@@ -63,7 +63,7 @@ def get_supplier_by_niu(niu: str, db: Session = Depends(get_db), current_user = 
     return supplier
 
 
-@router.post("/", response_model=Supplier)
+@router.post("/", response_model=SupplierResponse)
 @limiter.limit("10/minute")
 @check_permission("master-data:create")
 def create_supplier(
@@ -75,7 +75,7 @@ def create_supplier(
     return SupplierService.create_supplier(db, supplier, current_user.username)
 
 
-@router.put("/{supplier_id}", response_model=Supplier)
+@router.put("/{supplier_id}", response_model=SupplierResponse)
 @limiter.limit("20/minute")
 @check_permission("master-data:update")
 def update_supplier(
@@ -107,7 +107,7 @@ def delete_supplier(
 
 
 # ============ SUPPLIER PROFILES ============
-@router.post("/{supplier_id}/profiles", response_model=SupplierProfile)
+@router.post("/{supplier_id}/profiles", response_model=SupplierProfileResponse)
 @limiter.limit("10/minute")
 @check_permission("master-data:create")
 def create_supplier_profile(
