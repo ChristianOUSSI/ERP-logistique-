@@ -27,6 +27,8 @@ All active bugs and deployment items have been resolved successfully:
 - [x] **Seeder Module Imports**: Added `export PYTHONPATH=.` to the top of `start.sh` so that running scripts inside the subfolders (like `scripts/seed_data.py`) correctly resolves root module imports (`import app`).
 - [x] **BaseModel NameError in alerts.py**: Moved the pydantic import statement to the top of the file so that the `AlertResponse` model compiles successfully.
 - [x] **Passlib Bcrypt ValueError in Python 3.12+**: Substituted the legacy `passlib` crypt context wrapper with a direct invocation of the native `bcrypt` library, bypassing all Python 3.12+ setup incompatibility warnings and preventing errors related to 72-byte limit validation when hashing passwords in `security.py`.
+- [x] **app.utils.permissions ModuleNotFoundError**: Created the helper module `app.utils.permissions` mapping `check_permission` and `get_current_user` to the unified `rbac` module, resolving boot-time `ModuleNotFoundError: No module named 'app.utils.permissions'` in several core routers.
+
 
 
 
