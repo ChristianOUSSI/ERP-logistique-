@@ -5,6 +5,51 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from fastapi import Request
+import inspect
+from functools import wraps
+
+# Patch Limiter.limit to dynamically wrap and inject 'request' to avoid SlowAPI exceptions
+original_limit = Limiter.limit
+
+def patched_limit(self, *args, **kwargs):
+    decorator = original_limit(self, *args, **kwargs)
+    def custom_decorator(func):
+        sig = inspect.signature(func)
+        has_request = any(
+            param.name in ('request', 'websocket') or param.annotation == Request
+            for param in sig.parameters.values()
+        )
+        if has_request:
+            return decorator(func)
+        
+        if inspect.iscoroutinefunction(func):
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                kwargs.pop('request', None)
+                kwargs.pop('websocket', None)
+                return await func(*args, **kwargs)
+        else:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                kwargs.pop('request', None)
+                kwargs.pop('websocket', None)
+                return func(*args, **kwargs)
+        
+        # Inject 'request' parameter as KEYWORD_ONLY with default None to satisfy SlowAPI
+        parameters = list(sig.parameters.values())
+        request_param = inspect.Parameter(
+            'request',
+            inspect.Parameter.KEYWORD_ONLY,
+            default=None,
+            annotation=Request
+        )
+        parameters.append(request_param)
+        wrapper.__signature__ = sig.replace(parameters=parameters)
+        return decorator(wrapper)
+    return custom_decorator
+
+Limiter.limit = patched_limit
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
