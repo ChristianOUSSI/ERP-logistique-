@@ -59,7 +59,7 @@ from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
 from app.utils.error_handler import setup_error_handlers
-from app.utils.audit_middleware import AuditMiddleware
+# from app.utils.audit_middleware import AuditMiddleware # Disabled due to incompatible DB model and SessionLocal import error
 from app.utils.idempotency import IdempotencyMiddleware
 from app.utils.rbac import get_current_user  # Import unifié
 
