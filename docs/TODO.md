@@ -22,5 +22,10 @@ All active bugs and deployment items have been resolved successfully:
 - [x] **Integration Testing**: Created integration tests for new `/api/master-data/...` endpoints in `tests/test_magasin.py`.
 - [x] **Compilation and Builds**: Verified zero syntax warnings in Python code and successful build execution of Next.js project.
 
+## ✅ Resolving Backend Boot & Seeder Issues (Railway Deployment)
+- [x] **User.Role Attribute Error**: Added `Role = Role` class alias inside `User` class to resolve `AttributeError: type object 'User' has no attribute 'Role'` across multiple router files (`tiers.py`, `transport.py`, `parc.py`, `finance.py`, `documents.py`, `alerts.py`).
+- [x] **Seeder Module Imports**: Added `export PYTHONPATH=.` to the top of `start.sh` so that running scripts inside the subfolders (like `scripts/seed_data.py`) correctly resolves root module imports (`import app`).
+
+
 
 
