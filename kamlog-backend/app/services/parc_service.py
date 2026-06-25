@@ -1,6 +1,6 @@
 # app/services/parc_service.py - Service métier pour le module K-Parc
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, selectinload
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import datetime
 

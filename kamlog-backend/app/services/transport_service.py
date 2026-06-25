@@ -1,20 +1,21 @@
 # app/services/transport_service.py - Service métier pour le module K-Transport
 from decimal import Decimal
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, selectinload
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import datetime
 
 from app.models.transport import (
-    CamionFlotte, ChauffeurProfil, MissionTransport, BandeLivraison,
+    CamionFlotte, ChauffeurProfil, MissionTransport,
     StatutMission, StatutCamion
 )
+from app.models.magasin import BandeLivraison
 from app.schemas.transport import (
     CamionFlotteCreate, CamionFlotteUpdate,
     ChauffeurProfilCreate, ChauffeurProfilUpdate,
-    MissionCreate, MissionUpdate,
-    BandeLivraisonCreate, BandeLivraisonUpdate
+    MissionCreate, MissionUpdate
 )
+from app.schemas.magasin import BandeLivraisonCreate, BandeLivraisonUpdate
 from app.utils.audit import AuditService
 from app.utils.logger import get_logger
 from app.utils.cache import cache_service, invalidate_cache_pattern

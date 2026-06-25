@@ -23,6 +23,20 @@ class FactureCreate(FactureBase):
     mission_id: int | None = None
 
 
+class FactureUpdate(BaseModel):
+    numero_facture: Optional[str] = Field(None, max_length=30)
+    tiers_id: Optional[int] = None
+    montant_ht_xaf: Optional[Decimal] = Field(None, ge=0)
+    tva_xaf: Optional[Decimal] = Field(None, ge=0)
+    montant_ttc_xaf: Optional[Decimal] = Field(None, ge=0)
+    date_emission: Optional[datetime] = None
+    date_echeance: Optional[datetime] = None
+    notes: Optional[str] = None
+    dossier_id: Optional[int] = None
+    mission_id: Optional[int] = None
+    statut: Optional[StatutFacture] = None
+
+
 class FactureResponse(FactureBase):
     id: int
     statut: StatutFacture
@@ -47,6 +61,18 @@ class EncaissementBase(BaseModel):
 
 class EncaissementCreate(EncaissementBase):
     facture_id: int | None = None
+
+
+class EncaissementUpdate(BaseModel):
+    reference: Optional[str] = Field(None, max_length=30)
+    tiers_id: Optional[int] = None
+    montant_xaf: Optional[Decimal] = Field(None, ge=0)
+    mode_paiement: Optional[str] = Field(None, max_length=50)
+    date_paiement: Optional[datetime] = None
+    reference_paiement: Optional[str] = Field(None, max_length=100)
+    notes: Optional[str] = None
+    facture_id: Optional[int] = None
+    lettree: Optional[bool] = None
 
 
 class EncaissementResponse(EncaissementBase):
@@ -86,6 +112,17 @@ class GrilleTarifaireBase(BaseModel):
 
 class GrilleTarifaireCreate(GrilleTarifaireBase):
     lignes: List[LigneTarifaireCreate] = []
+
+
+class GrilleTarifaireUpdate(BaseModel):
+    code: Optional[str] = Field(None, max_length=50)
+    nom: Optional[str] = Field(None, max_length=200)
+    service: Optional[str] = None
+    groupe_client: Optional[str] = None
+    date_debut_validite: Optional[datetime] = None
+    date_fin_validite: Optional[datetime] = None
+    est_actif: Optional[bool] = None
+    lignes: Optional[List[LigneTarifaireCreate]] = None
 
 
 class GrilleTarifaireResponse(GrilleTarifaireBase):

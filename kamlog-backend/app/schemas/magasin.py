@@ -2,8 +2,11 @@
 from pydantic import BaseModel, Field, validator, ConfigDict
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional, List
+from typing import Optional, List, Annotated
 from enum import Enum
+
+ConstrainedDecimal3 = Annotated[Decimal, Field(ge=0, decimal_places=3)]
+ConstrainedDecimal2 = Annotated[Decimal, Field(ge=0, decimal_places=2)]
 
 
 class UniteMesure(str, Enum):
@@ -219,7 +222,7 @@ class LigneDeclarationBase(BaseModel):
     article_id: int
     quantite_declaree: Decimal = Field(..., gt=0, decimal_places=3)
     unite_mesure: UniteMesure
-    quantite_udb: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
+    quantite_udb: Optional[ConstrainedDecimal3] = None
 
 
 class LigneDeclarationCreate(LigneDeclarationBase):
@@ -299,7 +302,7 @@ class LigneReceptionBase(BaseModel):
     article_id: int
     quantite_recue: Decimal = Field(..., gt=0, decimal_places=3)
     unite_mesure: UniteMesure
-    quantite_udb: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
+    quantite_udb: Optional[ConstrainedDecimal3] = None
 
 
 class LigneReceptionCreate(LigneReceptionBase):
@@ -379,8 +382,8 @@ class StockCreate(StockBase):
 
 
 class StockUpdate(BaseModel):
-    quantite_disponible: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
-    quantite_udb: Optional[Decimal] = Field(None, ge=0, decimal_places=3)
+    quantite_disponible: Optional[ConstrainedDecimal3] = None
+    quantite_udb: Optional[ConstrainedDecimal3] = None
     statut: Optional[StatutStock] = None
 
 
@@ -417,7 +420,7 @@ class LigneCommandeBase(BaseModel):
     quantite_demandee: Decimal = Field(..., gt=0, decimal_places=3)
     quantite_livree: Decimal = Field(default=0, ge=0, decimal_places=3)
     unite_mesure: UniteMesure
-    prix_unitaire: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
+    prix_unitaire: Optional[ConstrainedDecimal2] = None
 
 
 class LigneCommandeCreate(LigneCommandeBase):

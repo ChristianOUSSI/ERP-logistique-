@@ -19,6 +19,22 @@ class CamionCreate(CamionBase):
     pass
 
 
+class CamionFlotteCreate(CamionBase):
+    pass
+
+
+class CamionFlotteUpdate(BaseModel):
+    immatriculation: str | None = Field(None, max_length=20)
+    type_vehicule: TypeVehicule | None = None
+    marque: str | None = Field(None, max_length=50)
+    modele: str | None = Field(None, max_length=50)
+    charge_utile_kg: Decimal | None = Field(None, ge=0)
+    volume_reservoir_litres: Decimal | None = Field(None, ge=0)
+    conso_theorique_l_100: Decimal | None = Field(None, ge=0)
+    statut: str | None = None
+    actif: bool | None = None
+
+
 class CamionResponse(CamionBase):
     id: int
     statut: str
@@ -39,6 +55,19 @@ class ChauffeurBase(BaseModel):
 
 class ChauffeurCreate(ChauffeurBase):
     pass
+
+
+class ChauffeurProfilCreate(ChauffeurBase):
+    pass
+
+
+class ChauffeurProfilUpdate(BaseModel):
+    nom: str | None = Field(None, max_length=100)
+    prenom: str | None = Field(None, max_length=100)
+    numero_permis: str | None = Field(None, max_length=50)
+    categorie_permis: str | None = Field(None, max_length=10)
+    telephone: str | None = Field(None, max_length=30)
+    actif: bool | None = None
 
 
 class ChauffeurResponse(ChauffeurBase):

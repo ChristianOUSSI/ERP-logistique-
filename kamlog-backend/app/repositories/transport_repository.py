@@ -6,9 +6,10 @@ from datetime import datetime
 from decimal import Decimal
 
 from app.models.transport import (
-    CamionFlotte, ChauffeurProfil, MissionTransport, BandeLivraison,
+    CamionFlotte, ChauffeurProfil, MissionTransport,
     StatutMission, StatutCamion
 )
+from app.models.magasin import BandeLivraison
 from app.repositories.base_repository import BaseRepository
 
 

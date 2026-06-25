@@ -2,7 +2,7 @@
 import difflib
 from decimal import Decimal
 from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import and_, or_, selectinload
+from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import datetime
 
@@ -10,8 +10,12 @@ from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFac
 from app.models.tiers import Tiers
 from app.schemas.finance import (
     FactureCreate,
+    FactureUpdate,
     EncaissementCreate,
-    GrilleTarifaireCreate, AvoirCreate
+    EncaissementUpdate,
+    GrilleTarifaireCreate,
+    GrilleTarifaireUpdate,
+    AvoirCreate
 )
 from app.repositories.finance_repository import AvoirRepository
 from app.exceptions import NotFoundException, ConflictException, BusinessLogicException

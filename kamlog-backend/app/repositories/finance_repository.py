@@ -4,7 +4,7 @@ from typing import Optional, List
 from sqlalchemy import and_, or_, func
 from decimal import Decimal
 
-from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
+from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture, Avoir
 from app.repositories.base_repository import BaseRepository
 
 
