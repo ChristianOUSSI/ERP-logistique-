@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+export PYTHONPATH=.
+
 
 echo "🚀 KAMLOG EM-ERP - Starting deployment sequence..."
 

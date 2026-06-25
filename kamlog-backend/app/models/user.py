@@ -15,6 +15,8 @@ class Role(str, enum.Enum):
 
 class User(BaseModel):
     __tablename__ = "users"
+    
+    Role = Role
 
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
