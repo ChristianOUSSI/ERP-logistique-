@@ -40,13 +40,16 @@ KAMLOG-EM-ERP/
 │   │   └── types/          # TypeScript
 │   ├── package.json
 │   └── Dockerfile
-├── docs/                    # Documentation (6 documents)
+├── docs/                    # Documentation (9 documents)
 │   ├── README.md
 │   ├── ARCHITECTURE.md
 │   ├── API_DOCUMENTATION.md
 │   ├── DEPLOYMENT.md
+│   ├── RAILWAY_DEPLOYMENT.md
 │   ├── STATUT_GLOBAL_PROJET.md
-│   └── TESTING_CHECKLIST.md
+│   ├── TESTING_CHECKLIST.md
+│   ├── TODO.md
+│   └── VERIFICATION_FIDELITE.md
 ├── docker-compose.yml
 └── README.md
 ```

@@ -329,3 +329,70 @@ En cas de problème:
 1. Vérifier les logs: `docker-compose logs`
 2. Vérifier le statut: `docker-compose ps`
 3. Redémarrer les services: `docker-compose restart`
+
+---
+
+## US-22: Déploiement Cloud (Railway & Vercel)
+
+Cette section décrit la procédure recommandée pour déployer l'ERP dans une infrastructure Cloud Moderne sans serveur (Serverless/Managed).
+
+### 🛰️ 1. Déploiement du Backend (FastAPI) sur Railway
+
+Le backend est conçu pour être exécuté sur [Railway](https://railway.com) à l'aide du `Dockerfile` fourni.
+
+#### Prérequis & Plugins
+- Créez un projet sur Railway.
+- Ajoutez le plugin **PostgreSQL** (il générera et injectera automatiquement la variable `DATABASE_URL` au format `postgresql://`).
+- Ajoutez le plugin **Redis** (il générera et injectera automatiquement `REDIS_URL`).
+
+#### Variables d'environnement à configurer sur Railway :
+Configurez les variables suivantes dans l'onglet **Variables** de votre service backend :
+
+| Variable | Exemple / Recommandation | Rôle |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | *Injectée par Railway* | Connexion PostgreSQL |
+| `REDIS_URL` | *Injectée par Railway* | Stockage cache & broker Celery |
+| `JWT_SECRET_KEY` | `UnSecretSuperLongEtSecuriseDePlusDe32Caracteres!` | **Requis (strict)** : Clé de chiffrement des jetons JWT |
+| `JWT_ALGORITHM` | `HS256` | Algorithme des jetons d'authentification |
+| `SEED_DATA` | `true` | Crée les comptes par défaut au démarrage |
+| `CELERY_BROKER_URL` | `${{REDIS_URL}}` | Réutilisation du Redis de Railway pour Celery |
+| `CELERY_RESULT_BACKEND` | `${{REDIS_URL}}` | Réutilisation du Redis de Railway pour Celery |
+| `ALLOWED_ORIGINS` | `https://kamlog.vercel.app,http://localhost:3000` | **Crucial** : Domaines autorisés (CORS) |
+
+---
+
+### 🎨 2. Déploiement du Frontend (Next.js) sur Vercel
+
+Le frontend Next.js 14 est déployé sur [Vercel](https://vercel.com).
+
+#### Configuration du Projet Vercel
+- Dans vos paramètres de projet Vercel, assurez-vous que le **Root Directory** est défini sur `kamlog-frontend` (et non sur la racine `/` du dépôt global).
+- Assurez-vous que le framework sélectionné est **Next.js**.
+
+#### Variables d'environnement à configurer sur Vercel :
+Dans **Settings > Environment Variables**, ajoutez les clés de production suivantes :
+
+| Variable | Exemple / Valeur | Rôle / Note |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_API_URL` | `https://votre-backend-railway.up.railway.app` | URL de votre API Railway (sans le slash `/` final) |
+| `NEXTAUTH_SECRET` | `kamlog_nextauth_secret_change_in_prod_min_32_chars` | **Requis (strict)** : Clé pour sécuriser les sessions NextAuth en prod |
+| `NEXTAUTH_URL` | `https://kamlog-frontend.vercel.app` | URL finale de votre site Vercel |
+
+#### Déploiement via Vercel CLI
+Si vous déployez depuis votre poste local :
+```bash
+# Lier le dossier local (kamlog-frontend) au projet Vercel
+npx vercel link
+
+# Déployer en production
+npx vercel --prod --yes
+```
+
+---
+
+### 🔧 3. Résolution des problèmes de démarrage (Diagnostics)
+
+- **Erreur 500 sur la page d'accueil** : Vérifiez que `NEXTAUTH_SECRET` est correctement renseignée dans Vercel. NextAuth plante avec une erreur 500 si le secret n'est pas fourni en production.
+- **Port d'écoute** : Le script `start.sh` détecte le port fourni par Railway via la variable `${PORT}` et s'y lie dynamiquement.
+- **Vérification de la santé (Healthcheck)** : Railway utilise l'endpoint `/api/health` pour vérifier l'état du backend. Les logs de connexion PostgreSQL ne sont pas masqués et s'affichent en clair si le service DB est indisponible.
+

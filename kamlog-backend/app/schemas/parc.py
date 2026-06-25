@@ -77,3 +77,26 @@ class GateInRequest(BaseModel):
 
 class GateOutRequest(BaseModel):
     numero_conteneur: str = Field(..., max_length=20)
+
+class ZoneParcUpdate(BaseModel):
+    nom_zone: str | None = Field(None, max_length=100)
+    type_zone: str | None = Field(None, max_length=50)
+    capacite_evp: int | None = Field(None, ge=0)
+    description: str | None = Field(None, max_length=500)
+
+class EmplacementParcUpdate(BaseModel):
+    code_emplacement: str | None = Field(None, max_length=30)
+    zone_id: int | None = Field(None)
+    rangee: str | None = Field(None, max_length=10)
+    bay: int | None = Field(None, ge=0)
+    tier: int | None = Field(None, ge=0)
+    statut: StatutEmplacement | None = Field(None)
+
+class StockPhysiqueParcUpdate(BaseModel):
+    numero_conteneur: str | None = Field(None, max_length=20)
+    emplacement_id: int | None = Field(None)
+    type_conteneur: str | None = Field(None, max_length=20)
+    etat: str | None = Field(None, max_length=20)
+    poids_tare_kg: int | None = Field(None, ge=0)
+    date_gate_in: datetime | None = Field(None)
+    date_gate_out: datetime | None = Field(None)
