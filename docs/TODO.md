@@ -14,4 +14,13 @@ All active bugs and deployment items have been resolved successfully:
 - [x] **Seeders Stability**: Converted `scripts/seed_magasin_data.py` to use asynchronous database sessions compatible with the async engine.
 - [x] **Git Repository Updates**: Pushed clean, feature-grouped commits directly to both `main` and `develop` branches.
 
+## ✅ Master Data Connection & Integration
+- [x] **Incoterms page**: Connected to backend FastAPI API CRUD endpoints.
+- [x] **Container Types page**: Connected to backend API with automatic JSON serialization of dimensions in the description column.
+- [x] **Measurement Units page**: Fetch units from Python backend enums in read-only mode.
+- [x] **Article Categories page**: Fetch classification categories from Python backend enums in read-only mode.
+- [x] **Integration Testing**: Created integration tests for new `/api/master-data/...` endpoints in `tests/test_magasin.py`.
+- [x] **Compilation and Builds**: Verified zero syntax warnings in Python code and successful build execution of Next.js project.
+
+
 

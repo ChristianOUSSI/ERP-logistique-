@@ -373,6 +373,7 @@ Le projet KAMLOG EM-ERP est dans un état **PRÊT POUR PRODUCTION** (déployé a
 22. ✅ Vérification des routers (tous correctement connectés aux services et sécurisés par RBAC)
 23. ✅ Implémentation complète du Repository Pattern sur tous les modules
 24. ✅ Création de toutes les interfaces manquantes (Incidents, Sauvegardes, Relances, etc.)
+25. ✅ Connexion des données de référence (Incoterms, types de conteneurs, unités, catégories) à l'API backend et ajout des tests d'intégration.
 
 ### 7.2 Tâches en Attente ⏳
 
@@ -453,10 +454,11 @@ Pour passer en production, les étapes suivantes sont requises:
 - **API:** Alignée + 1 nouvel endpoint ✅
 
 ### 8.7 Master Data
-- **Interfaces:** 6/6 ✅ (dont 1 nouvelle pour suppliers)
-- **Backend:** Complet + 1 nouveau service ✅
-- **Frontend:** Complet + 1 nouvelle page ✅
-- **API:** Alignée + 1 nouvel endpoint ✅
+- **Interfaces:** 10/10 ✅ (dont 4 connectées à l'API : Incoterms, Types de conteneurs, Unités de mesure, Catégories d'articles)
+- **Backend:** Complet + 3 services métier (IncotermService, TypeConteneurService, ArticleService) ✅
+- **Frontend:** Complet + 4 pages connectées (incoterms, container-types, units, article-categories) ✅
+- **API:** Alignée + 4 nouveaux groupes d'endpoints CRUD / Read-only ✅
+
 
 ### 8.8 Dashboard
 - **Interfaces:** 2/2 ✅
@@ -474,37 +476,27 @@ Pour passer en production, les étapes suivantes sont requises:
 
 ### Immédiat (Priorité Haute)
 
-1. **Implémenter la logique métier dans les routers**
-   - Connecter les services aux routers
-   - Ajouter la validation des données
-   - Implémenter les permissions RBAC
+1. **Configuration PostgreSQL en production**
+   - Configurer l'instance PostgreSQL sur Railway ou le serveur cible.
+   - Exécuter les migrations de base de données : `alembic upgrade head`.
+   - Exécuter les seeders pour pré-remplir les données : `python scripts/seed_data.py`.
 
-2. **Créer les migrations de base de données**
-   - Générer les migrations Alembic pour les nouveaux modèles
-   - Exécuter les migrations pour créer les tables
-
-3. **Tester les endpoints API**
-   - Tests unitaires pour les services
-   - Tests d'intégration pour les routers
-   - Tests E2E avec les interfaces frontend
+2. **Tests et Validation E2E**
+   - Réaliser les tests de validation de bout en bout (E2E) entre le frontend et le backend.
+   - Vérifier le fonctionnement des permissions RBAC pour tous les rôles.
 
 ### Court Terme (Priorité Moyenne)
 
-1. **Compléter les interfaces manquantes**
-   - Gestion des incoterms
-   - Gestion des types de conteneurs
-   - Gestion des unités de mesure
-   - Gestion des catégories d'articles
-
-2. **Améliorer le reporting**
+1. **Améliorer le reporting**
    - Rapports personnalisés
    - Export Excel/PDF
    - Graphiques avancés
 
-3. **Ajouter les intégrations**
+2. **Ajouter les intégrations**
    - Systèmes douaniers
    - Systèmes bancaires
    - GPS véhicules
+
 
 ### Moyen Terme (Priorité Basse)
 
