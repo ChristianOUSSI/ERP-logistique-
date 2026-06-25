@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser({
           id: 'dev-demo-id',
           email: 'admin@kamlog.cm',
-          role: 'admin',
+          role: UserRole.ADMIN,
           fullName: 'Super Administrateur (Démo Vercel)',
           agencyId: 1
         });

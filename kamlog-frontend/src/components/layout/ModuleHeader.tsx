@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getModuleIcon, getModuleName } from '../../config/moduleColors';
 import { ModuleType } from './ModuleSidebar'; // Still needed for ModuleHeaderProps type
 import { useModuleTheme } from '../../hooks/useModuleTheme'; // Import the hook
-import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from './tcodeLookup';
+import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from '@/utils/tcodeLookup';
 import { useAuth } from './AuthProvider';
 import { useSettings, ThemePreference } from './SettingsProvider';
 import { toast } from 'sonner';
@@ -382,7 +382,7 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
                   >
                     <div className="flex items-center space-x-3">
                       <span className="font-mono text-sm font-bold text-kamlog-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-100">{tcodeKey}</span>
-                      <span className="text-sm font-medium text-slate-700">Aller vers : {matchedSuggestion.route.split('/').pop()?.replace(/-/g, ' ')}</span>
+                      <span className="text-sm font-medium text-slate-700">Aller vers : {matchedSuggestion.split('/').pop()?.replace(/-/g, ' ')}</span>
                     </div>
                     <span className="text-[10px] font-bold text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded uppercase">Entrée ↵</span>
                   </button>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '@/providers/AuthProvider';
+import { useAuth } from '@/components/layout/AuthProvider';
 import { UserRole, canAccessTCode } from '@/utils/tcodeLookup';
 import { useRouter } from 'next/navigation';
 
