@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
 
 const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET || "k9M+3L/7jBvW4zTqRcX8yF2pE5aH1nD6vK9M+3L/7jBv=",
   providers: [
     CredentialsProvider({
       name: 'Credentials',
