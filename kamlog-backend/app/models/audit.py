@@ -1,6 +1,6 @@
 # app/models/audit.py  Table audit_log globale
 from sqlalchemy import String, JSON, ForeignKey, Integer, DateTime, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
 
