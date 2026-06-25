@@ -28,7 +28,7 @@ async def check():
         sys.exit(1)
 
 asyncio.run(check())
-" 2>/dev/null; do
+" ; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
         echo "❌ PostgreSQL not available after $MAX_RETRIES attempts. Exiting."

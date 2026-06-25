@@ -1,17 +1,19 @@
 # scripts/seed_magasin_data.py - Script pour initialiser les données du module K-Magasin
 import sys
 import os
+import asyncio
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sqlalchemy.orm import Session
-from app.database import engine, get_db
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.database import AsyncSessionLocal, engine
 from app.models.magasin import (
     Magasin, Incoterm, TypeConteneur, Transaction,
     CategorieArticle, StatutStock
 )
 
 
-def seed_magasins(db: Session):
+async def seed_magasins(db: AsyncSession):
     """Crée les magasins prédéfinis (MAG 3, DNW1, DNW2)"""
     magasins_data = [
         {
@@ -21,7 +23,6 @@ def seed_magasins(db: Session):
             "ville": "Douala",
             "pays": "Cameroun",
             "telephone": "+237 233 000 000",
-            "email": "mag3@kamlog.cm",
             "est_actif": True
         },
         {
@@ -31,7 +32,6 @@ def seed_magasins(db: Session):
             "ville": "Douala",
             "pays": "Cameroun",
             "telephone": "+237 233 000 001",
-            "email": "dnw1@kamlog.cm",
             "est_actif": True
         },
         {
@@ -41,13 +41,13 @@ def seed_magasins(db: Session):
             "ville": "Douala",
             "pays": "Cameroun",
             "telephone": "+237 233 000 002",
-            "email": "dnw2@kamlog.cm",
             "est_actif": True
         }
     ]
     
     for mag_data in magasins_data:
-        existing = db.query(Magasin).filter(Magasin.code == mag_data["code"]).first()
+        result = await db.execute(select(Magasin).where(Magasin.code == mag_data["code"]))
+        existing = result.scalar_one_or_none()
         if not existing:
             magasin = Magasin(**mag_data)
             db.add(magasin)
@@ -55,11 +55,11 @@ def seed_magasins(db: Session):
         else:
             print(f"ℹ️ Magasin {mag_data['code']} existe déjà")
     
-    db.commit()
+    await db.commit()
     print("\n✅ Magasins initialisés avec succès")
 
 
-def seed_incoterms(db: Session):
+async def seed_incoterms(db: AsyncSession):
     """Crée tous les incoterms"""
     incoterms_data = [
         {"code": "EXW", "nom": "Ex Works", "description": "Le vendeur met les marchandises à disposition dans ses locaux"},
@@ -76,7 +76,8 @@ def seed_incoterms(db: Session):
     ]
     
     for inc_data in incoterms_data:
-        existing = db.query(Incoterm).filter(Incoterm.code == inc_data["code"]).first()
+        result = await db.execute(select(Incoterm).where(Incoterm.code == inc_data["code"]))
+        existing = result.scalar_one_or_none()
         if not existing:
             incoterm = Incoterm(**inc_data)
             db.add(incoterm)
@@ -84,11 +85,11 @@ def seed_incoterms(db: Session):
         else:
             print(f"ℹ️ Incoterm {inc_data['code']} existe déjà")
     
-    db.commit()
+    await db.commit()
     print("\n✅ Incoterms initialisés avec succès")
 
 
-def seed_types_conteneur(db: Session):
+async def seed_types_conteneur(db: AsyncSession):
     """Crée tous les types de conteneurs"""
     types_conteneur_data = [
         {"code": "20DRY", "nom": "20' Dry", "description": "Conteneur sec 20 pieds", "longueur": "20'", "type_conteneur": "Dry"},
@@ -103,7 +104,8 @@ def seed_types_conteneur(db: Session):
     ]
     
     for tc_data in types_conteneur_data:
-        existing = db.query(TypeConteneur).filter(TypeConteneur.code == tc_data["code"]).first()
+        result = await db.execute(select(TypeConteneur).where(TypeConteneur.code == tc_data["code"]))
+        existing = result.scalar_one_or_none()
         if not existing:
             type_conteneur = TypeConteneur(**tc_data)
             db.add(type_conteneur)
@@ -111,11 +113,11 @@ def seed_types_conteneur(db: Session):
         else:
             print(f"ℹ️ Type conteneur {tc_data['code']} existe déjà")
     
-    db.commit()
+    await db.commit()
     print("\n✅ Types de conteneur initialisés avec succès")
 
 
-def seed_transactions(db: Session):
+async def seed_transactions(db: AsyncSession):
     """Crée les transactions principales"""
     transactions_data = [
         {"code_transaction": "KC34", "nom": "Création profil client", "description": "Création d'un nouveau profil client", "interface": "client_create", "role_requis": "ADMIN"},
@@ -131,7 +133,8 @@ def seed_transactions(db: Session):
     ]
     
     for trans_data in transactions_data:
-        existing = db.query(Transaction).filter(Transaction.code_transaction == trans_data["code_transaction"]).first()
+        result = await db.execute(select(Transaction).where(Transaction.code_transaction == trans_data["code_transaction"]))
+        existing = result.scalar_one_or_none()
         if not existing:
             transaction = Transaction(**trans_data)
             db.add(transaction)
@@ -139,36 +142,36 @@ def seed_transactions(db: Session):
         else:
             print(f"ℹ️ Transaction {trans_data['code_transaction']} existe déjà")
     
-    db.commit()
+    await db.commit()
     print("\n✅ Transactions initialisées avec succès")
 
 
-def main():
+async def main():
     """Fonction principale pour exécuter tous les seeds"""
     print("🚀 Début de l'initialisation des données K-Magasin...\n")
     
     # Créer les tables si elles n'existent pas
     from app.models.magasin import Base
-    Base.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     
     # Obtenir une session de base de données
-    db = next(get_db())
-    
-    try:
-        seed_magasins(db)
-        seed_incoterms(db)
-        seed_types_conteneur(db)
-        seed_transactions(db)
-        
-        print("\n🎉 Initialisation des données K-Magasin terminée avec succès!")
-        
-    except Exception as e:
-        print(f"\n❌ Erreur lors de l'initialisation: {e}")
-        db.rollback()
-        raise
-    finally:
-        db.close()
+    async with AsyncSessionLocal() as db:
+        try:
+            await seed_magasins(db)
+            await seed_incoterms(db)
+            await seed_types_conteneur(db)
+            await seed_transactions(db)
+            
+            print("\n🎉 Initialisation des données K-Magasin terminée avec succès!")
+            
+        except Exception as e:
+            print(f"\n❌ Erreur lors de l'initialisation: {e}")
+            await db.rollback()
+            raise
+        finally:
+            await engine.dispose()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
