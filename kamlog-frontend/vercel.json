@@ -1,8 +1,7 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://votre-api-vps-contabo.cm/api/:path*"
-    }
-  ]
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev"
 }
