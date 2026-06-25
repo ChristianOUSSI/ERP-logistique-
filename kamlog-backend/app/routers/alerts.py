@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
 from datetime import datetime, timedelta
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.models.transport import MissionTransport, StatutMission
@@ -22,9 +23,6 @@ class AlertResponse(BaseModel):
     message: str
     gravite: str
     date_alerte: datetime
-
-
-from pydantic import BaseModel
 
 
 @router.get("/fuel-siphoning", response_model=List[AlertResponse])
