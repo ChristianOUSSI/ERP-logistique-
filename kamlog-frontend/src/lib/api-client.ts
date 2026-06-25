@@ -1,7 +1,7 @@
 // src/lib/api-client.ts  Client API TypeScript KAMLOG
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-83b1.up.railway.app';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
