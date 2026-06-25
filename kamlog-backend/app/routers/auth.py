@@ -95,8 +95,15 @@ async def login(
     mfa_token: str | None = None,
     db: AsyncSession = Depends(get_db)
 ):
-    """Authentifie un utilisateur et retourne les tokens JWT."""
-    result = await db.execute(select(User).where(User.username == credentials.username))
+    from sqlalchemy import or_
+    result = await db.execute(
+        select(User).where(
+            or_(
+                User.username == credentials.username,
+                User.email == credentials.username
+            )
+        )
+    )
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(credentials.password, user.password_hash):
