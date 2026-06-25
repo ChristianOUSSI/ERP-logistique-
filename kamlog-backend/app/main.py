@@ -72,9 +72,8 @@ startup_errors: list = []
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup : initialiser logger, monitoring et vérifier connexion DB
+    # Startup : initialiser logger et vérifier connexion DB
     setup_logger()
-    setup_monitoring(app)
 
     # Vérifier la connexion à la base de données
     # Ne pas raise ici : laisser uvicorn démarrer même si DB indisponible
@@ -113,6 +112,9 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Setup error handlers
 setup_error_handlers(app)
+
+# Setup monitoring (must be called outside lifespan because it adds a middleware)
+setup_monitoring(app)
 
 # Middlewares de Sécurité et Audit (Niveau World Pro)
 # app.add_middleware(AuditMiddleware) # Disabled due to incompatible DB model
