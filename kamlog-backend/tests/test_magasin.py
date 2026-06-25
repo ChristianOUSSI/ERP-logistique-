@@ -266,3 +266,83 @@ async def test_create_bande(client: AsyncClient):
         }
     )
     assert response.status_code in [201, 404]
+
+
+# ============ MASTER DATA TESTS ============
+
+@pytest.mark.asyncio
+async def test_list_incoterms(client: AsyncClient, auth_headers):
+    """Test la liste des Incoterms."""
+    response = await client.get("/api/master-data/incoterms", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+
+
+@pytest.mark.asyncio
+async def test_create_incoterm(client: AsyncClient, auth_headers):
+    """Test la création d'un Incoterm."""
+    response = await client.post(
+        "/api/master-data/incoterms",
+        headers=auth_headers,
+        json={
+            "code": "TESTINCO",
+            "nom": "Test Incoterm Name",
+            "description": "Test Incoterm Description",
+            "est_actif": True
+        }
+    )
+    assert response.status_code in [200, 201]
+    data = response.json()
+    assert data["code"] == "TESTINCO"
+    assert data["nom"] == "Test Incoterm Name"
+
+
+@pytest.mark.asyncio
+async def test_list_container_types(client: AsyncClient, auth_headers):
+    """Test la liste des types de conteneurs."""
+    response = await client.get("/api/master-data/container-types", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+
+
+@pytest.mark.asyncio
+async def test_create_container_type(client: AsyncClient, auth_headers):
+    """Test la création d'un type de conteneur."""
+    response = await client.post(
+        "/api/master-data/container-types",
+        headers=auth_headers,
+        json={
+            "code": "TESTCONT",
+            "nom": "Test Container Name",
+            "description": "Test Container Description",
+            "longueur": "20'",
+            "type_conteneur": "Dry",
+            "est_actif": True
+        }
+    )
+    assert response.status_code in [200, 201]
+    data = response.json()
+    assert data["code"] == "TESTCONT"
+
+
+@pytest.mark.asyncio
+async def test_list_units(client: AsyncClient, auth_headers):
+    """Test la liste des unités de mesure."""
+    response = await client.get("/api/master-data/units", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert "KG" in data
+
+
+@pytest.mark.asyncio
+async def test_list_article_categories(client: AsyncClient, auth_headers):
+    """Test la liste des catégories d'articles."""
+    response = await client.get("/api/master-data/article-categories", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert "ALIMENTAIRE" in data
+

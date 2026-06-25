@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MaterialSymbol } from '@/components/MaterialSymbol'
+import { apiClient } from '@/lib/api-client'
+import { toast } from 'sonner'
 
 interface Category {
   id: number
@@ -11,41 +13,63 @@ interface Category {
   niveau: number
 }
 
-export default function ArticleCategoriesPage() {
-  const [categories, setCategories] = useState([
-    { id: 1, code: 'ALIM', description: 'Alimentation', parent: null, niveau: 1 },
-    { id: 2, code: 'ELEC', description: 'Électronique', parent: null, niveau: 1 },
-    { id: 3, code: 'TEXT', description: 'Textile', parent: null, niveau: 1 },
-    { id: 4, code: 'ALIM-FRAIS', description: 'Produits frais', parent: 'ALIM', niveau: 2 },
-    { id: 5, code: 'ALIM-SEC', description: 'Produits secs', parent: 'ALIM', niveau: 2 },
-    { id: 6, code: 'ELEC-INFO', description: 'Informatique', parent: 'ELEC', niveau: 2 },
-    { id: 7, code: 'ELEC-TEL', description: 'Téléphonie', parent: 'ELEC', niveau: 2 },
-  ])
+const CATEGORY_MAPPINGS: Record<string, { description: string, parent: string | null, niveau: number }> = {
+  ALIMENTAIRE: { description: 'Alimentaire', parent: null, niveau: 1 },
+  PHARMACEUTIQUE: { description: 'Pharmaceutique', parent: null, niveau: 1 },
+  MATIERES_PREMIERES: { description: 'Matières premières', parent: null, niveau: 1 },
+  PRODUITS_FINIS: { description: 'Produits finis', parent: null, niveau: 1 },
+  EMBALLAGES_PALETES: { description: 'Emballages & Palettes', parent: null, niveau: 1 },
+  EQUIPEMENT: { description: 'Équipement', parent: null, niveau: 1 },
+  PIECES_DETACHEES: { description: 'Pièces détachées', parent: null, niveau: 1 },
+  MOBILIER_BUREAU_INFORMATIQUE: { description: 'Mobilier de bureau & Informatique', parent: null, niveau: 1 },
+  PRODUITS_DANGEREUX: { description: 'Produits dangereux', parent: null, niveau: 1 },
+  PRODUITS_LUXE_VALEUR: { description: 'Produits de luxe & valeur', parent: null, niveau: 1 },
+  VRAC: { description: 'Vrac', parent: null, niveau: 1 },
+  HORS_GABARIT: { description: 'Hors gabarit', parent: null, niveau: 1 }
+}
 
+export default function ArticleCategoriesPage() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [showModal, setShowModal] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true)
+      const { data } = await apiClient.get<string[]>('/api/master-data/article-categories')
+      
+      const mappedCategories: Category[] = data.map((code, index) => {
+        const mapping = CATEGORY_MAPPINGS[code] || {
+          description: code,
+          parent: null,
+          niveau: 1
+        }
+        return {
+          id: index + 1,
+          code,
+          description: mapping.description,
+          parent: mapping.parent,
+          niveau: mapping.niveau
+        }
+      })
+      
+      setCategories(mappedCategories)
+    } catch (err) {
+      console.error(err)
+      toast.error("Impossible de charger les catégories d'articles.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   const filteredCategories = categories.filter(category =>
     category.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     category.description.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
-  const handleCreate = () => {
-    setEditingCategory(null)
-    setShowModal(true)
-  }
-
-  const handleEdit = (category: Category) => {
-    setEditingCategory(category)
-    setShowModal(true)
-  }
-
-  const handleDelete = (id: number) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie?')) {
-      setCategories(categories.filter(c => c.id !== id))
-    }
-  }
 
   const getNiveauLabel = (niveau: number) => {
     switch (niveau) {
@@ -62,15 +86,12 @@ export default function ArticleCategoriesPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Catégories d'Articles</h1>
-          <p className="text-gray-600 mt-1">Gérer la classification des articles</p>
+          <p className="text-gray-600 mt-1">Consulter la classification des articles</p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <MaterialSymbol icon="add" size={20} />
-          Nouvelle Catégorie
-        </button>
+        <div className="flex items-center gap-2 bg-blue-50 text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-200">
+          <MaterialSymbol icon="info" size={18} />
+          <span>Classification Système (Lecture seule)</span>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -89,134 +110,51 @@ export default function ArticleCategoriesPage() {
 
       {/* Categories Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredCategories.map((category) => (
-              <tr key={category.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="font-mono font-semibold text-blue-600">{category.code}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{category.description}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {category.parent ? (
-                    <span className="bg-gray-100 px-2 py-1 rounded font-mono text-sm">{category.parent}</span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-                    {getNiveauLabel(category.niveau)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => handleEdit(category)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      <MaterialSymbol icon="edit" size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(category.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <MaterialSymbol icon="delete" size={20} />
-                    </button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="p-12 text-center text-gray-500">Chargement des données...</div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredCategories.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                    Aucune catégorie trouvée.
+                  </td>
+                </tr>
+              ) : (
+                filteredCategories.map((category) => (
+                  <tr key={category.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="font-mono font-semibold text-blue-600">{category.code}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{category.description}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {category.parent ? (
+                        <span className="bg-gray-100 px-2 py-1 rounded font-mono text-sm">{category.parent}</span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                        {getNiveauLabel(category.niveau)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {editingCategory ? 'Modifier Catégorie' : 'Nouvelle Catégorie'}
-              </h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <MaterialSymbol icon="close" size={20} />
-              </button>
-            </div>
-            <div className="p-6">
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
-                  <input
-                    type="text"
-                    defaultValue={editingCategory?.code || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Ex: ALIM, ELEC"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <input
-                    type="text"
-                    defaultValue={editingCategory?.description || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Ex: Alimentation"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie parent</label>
-                  <select
-                    defaultValue={editingCategory?.parent || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Aucune (catégorie principale)</option>
-                    {categories.filter(c => c.niveau === 1).map(cat => (
-                      <option key={cat.id} value={cat.code}>{cat.code} - {cat.description}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
-                  <select
-                    defaultValue={editingCategory?.niveau || 1}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value={1}>Niveau 1 - Catégorie principale</option>
-                    <option value={2}>Niveau 2 - Sous-catégorie</option>
-                    <option value={3}>Niveau 3 - Sous-sous-catégorie</option>
-                  </select>
-                </div>
-              </form>
-            </div>
-            <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {editingCategory ? 'Modifier' : 'Créer'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

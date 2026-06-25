@@ -19,14 +19,14 @@ from app.models.magasin import (
     Magasin, ClientMagasin, Article, Declaration, LigneDeclaration,
     Reception, LigneReception, Stock, Commande, LigneCommande,
     BandeLivraison, LigneBandeLivraison, UniteMesure, StatutDeclaration,
-    StatutReception, StatutCommande
+    StatutReception, StatutCommande, Incoterm, TypeConteneur
 )
 from app.schemas.magasin import (
     MagasinCreate, MagasinUpdate, ClientMagasinCreate, ClientMagasinUpdate,
     ArticleCreate, ArticleUpdate, DeclarationCreate, DeclarationUpdate,
     ReceptionCreate, ReceptionUpdate, StockCreate, StockUpdate,
     CommandeCreate, CommandeUpdate, BandeLivraisonCreate, BandeLivraisonUpdate,
-    StockFilter
+    StockFilter, IncotermCreate, IncotermUpdate, TypeConteneurCreate, TypeConteneurUpdate
 )
 from app.utils.cache_sync import cache_service_sync as cache_service, invalidate_cache_pattern_sync as invalidate_cache_pattern
 
@@ -1146,3 +1146,135 @@ class BandeLivraisonService:
             # Invalider le cache
             invalidate_cache_pattern("magasin:bandes:*")
         return db_bande
+
+
+class IncotermService:
+    """Service pour la gestion des Incoterms"""
+
+    @staticmethod
+    def get_all(db: Session, skip: int = 0, limit: int = 100) -> List[Incoterm]:
+        cache_key = f"magasin:incoterms:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Incoterm).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def get_by_id(db: Session, incoterm_id: int) -> Optional[Incoterm]:
+        cache_key = f"magasin:incoterm:{incoterm_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Incoterm).filter(Incoterm.id == incoterm_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def get_by_code(db: Session, code: str) -> Optional[Incoterm]:
+        cache_key = f"magasin:incoterm:code:{code}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(Incoterm).filter(Incoterm.code == code).first()
+        if result:
+            cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def create(db: Session, incoterm: IncotermCreate) -> Incoterm:
+        db_incoterm = Incoterm(**incoterm.dict())
+        db.add(db_incoterm)
+        db.commit()
+        db.refresh(db_incoterm)
+        invalidate_cache_pattern("magasin:incoterms:*")
+        return db_incoterm
+
+    @staticmethod
+    def update(db: Session, incoterm_id: int, incoterm: IncotermUpdate) -> Optional[Incoterm]:
+        db_incoterm = IncotermService.get_by_id(db, incoterm_id)
+        if db_incoterm:
+            for field, value in incoterm.dict(exclude_unset=True).items():
+                setattr(db_incoterm, field, value)
+            db.commit()
+            db.refresh(db_incoterm)
+            invalidate_cache_pattern("magasin:incoterms:*")
+        return db_incoterm
+
+    @staticmethod
+    def delete(db: Session, incoterm_id: int) -> bool:
+        db_incoterm = IncotermService.get_by_id(db, incoterm_id)
+        if db_incoterm:
+            db_incoterm.est_actif = False
+            db.commit()
+            invalidate_cache_pattern("magasin:incoterms:*")
+            return True
+        return False
+
+
+class TypeConteneurService:
+    """Service pour la gestion des types de conteneurs"""
+
+    @staticmethod
+    def get_all(db: Session, skip: int = 0, limit: int = 100) -> List[TypeConteneur]:
+        cache_key = f"magasin:types_conteneur:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(TypeConteneur).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def get_by_id(db: Session, type_id: int) -> Optional[TypeConteneur]:
+        cache_key = f"magasin:type_conteneur:{type_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(TypeConteneur).filter(TypeConteneur.id == type_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def get_by_code(db: Session, code: str) -> Optional[TypeConteneur]:
+        cache_key = f"magasin:type_conteneur:code:{code}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(TypeConteneur).filter(TypeConteneur.code == code).first()
+        if result:
+            cache_service.set(cache_key, result, expire=3600)
+        return result
+
+    @staticmethod
+    def create(db: Session, type_conteneur: TypeConteneurCreate) -> TypeConteneur:
+        db_type = TypeConteneur(**type_conteneur.dict())
+        db.add(db_type)
+        db.commit()
+        db.refresh(db_type)
+        invalidate_cache_pattern("magasin:types_conteneur:*")
+        return db_type
+
+    @staticmethod
+    def update(db: Session, type_id: int, type_conteneur: TypeConteneurUpdate) -> Optional[TypeConteneur]:
+        db_type = TypeConteneurService.get_by_id(db, type_id)
+        if db_type:
+            for field, value in type_conteneur.dict(exclude_unset=True).items():
+                setattr(db_type, field, value)
+            db.commit()
+            db.refresh(db_type)
+            invalidate_cache_pattern("magasin:types_conteneur:*")
+        return db_type
+
+    @staticmethod
+    def delete(db: Session, type_id: int) -> bool:
+        db_type = TypeConteneurService.get_by_id(db, type_id)
+        if db_type:
+            db_type.est_actif = False
+            db.commit()
+            invalidate_cache_pattern("magasin:types_conteneur:*")
+            return True
+        return False

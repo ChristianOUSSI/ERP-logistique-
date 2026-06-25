@@ -1,40 +1,108 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MaterialSymbol } from '@/components/MaterialSymbol'
-import Link from 'next/link'
+import { apiClient } from '@/lib/api-client'
+import { toast } from 'sonner'
+
+interface IncotermData {
+  id: number
+  code: string
+  nom: string
+  description: string | null
+}
 
 export default function IncotermsPage() {
-  const [incoterms, setIncoterms] = useState([
-    { id: 1, code: 'EXW', description: 'Ex Works', lieu: 'Usine' },
-    { id: 2, code: 'FOB', description: 'Free On Board', lieu: 'Port de départ' },
-    { id: 3, code: 'CIF', description: 'Cost, Insurance and Freight', lieu: 'Port de destination' },
-    { id: 4, code: 'DAP', description: 'Delivered at Place', lieu: 'Lieu de destination' },
-    { id: 5, code: 'DDP', description: 'Delivered Duty Paid', lieu: 'Lieu de destination' },
-  ])
-
+  const [incoterms, setIncoterms] = useState<IncotermData[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [editingIncoterm, setEditingIncoterm] = useState(null)
+  const [editingIncoterm, setEditingIncoterm] = useState<IncotermData | null>(null)
+  
+  // Form fields
+  const [code, setCode] = useState('')
+  const [nom, setNom] = useState('')
+  const [description, setDescription] = useState('')
+
+  const fetchIncoterms = async () => {
+    try {
+      setLoading(true)
+      const { data } = await apiClient.get('/api/master-data/incoterms')
+      setIncoterms(data)
+    } catch (err) {
+      console.error(err)
+      toast.error("Impossible de charger les Incoterms depuis le serveur.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchIncoterms()
+  }, [])
 
   const filteredIncoterms = incoterms.filter(incoterm =>
     incoterm.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    incoterm.description.toLowerCase().includes(searchTerm.toLowerCase())
+    incoterm.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (incoterm.description && incoterm.description.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   const handleCreate = () => {
     setEditingIncoterm(null)
+    setCode('')
+    setNom('')
+    setDescription('')
     setShowModal(true)
   }
 
-  const handleEdit = (incoterm) => {
+  const handleEdit = (incoterm: IncotermData) => {
     setEditingIncoterm(incoterm)
+    setCode(incoterm.code)
+    setNom(incoterm.nom)
+    setDescription(incoterm.description || '')
     setShowModal(true)
   }
 
-  const handleDelete = (id) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet incoterm?')) {
-      setIncoterms(incoterms.filter(i => i.id !== id))
+  const handleDelete = async (id: number) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet incoterm ?')) {
+      try {
+        await apiClient.delete(`/api/master-data/incoterms/${id}`)
+        toast.success("Incoterm supprimé avec succès.")
+        fetchIncoterms()
+      } catch (err) {
+        console.error(err)
+        toast.error("Erreur lors de la suppression.")
+      }
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!code || !nom) {
+      toast.error("Veuillez remplir les champs obligatoires.")
+      return
+    }
+
+    try {
+      if (editingIncoterm) {
+        await apiClient.put(`/api/master-data/incoterms/${editingIncoterm.id}`, {
+          nom: nom,
+          description: description
+        })
+        toast.success("Incoterm mis à jour avec succès.")
+      } else {
+        await apiClient.post('/api/master-data/incoterms', {
+          code: code.toUpperCase(),
+          nom: nom,
+          description: description
+        })
+        toast.success("Incoterm créé avec succès.")
+      }
+      setShowModal(false)
+      fetchIncoterms()
+    } catch (err) {
+      console.error(err)
+      toast.error("Erreur lors de l'enregistrement.")
     }
   }
 
@@ -71,43 +139,55 @@ export default function IncotermsPage() {
 
       {/* Incoterms Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredIncoterms.map((incoterm) => (
-              <tr key={incoterm.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="font-mono font-semibold text-blue-600">{incoterm.code}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{incoterm.description}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-600">{incoterm.lieu}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => handleEdit(incoterm)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      <MaterialSymbol icon="edit" size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(incoterm.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <MaterialSymbol icon="delete" size={20} />
-                    </button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="p-12 text-center text-gray-500">Chargement des données...</div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredIncoterms.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                    Aucun incoterm trouvé.
+                  </td>
+                </tr>
+              ) : (
+                filteredIncoterms.map((incoterm) => (
+                  <tr key={incoterm.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="font-mono font-semibold text-blue-600">{incoterm.code}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{incoterm.nom}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">{incoterm.description}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEdit(incoterm)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
+                          <MaterialSymbol icon="edit" size={20} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(incoterm.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <MaterialSymbol icon="delete" size={20} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Modal */}
@@ -125,51 +205,58 @@ export default function IncotermsPage() {
                 <MaterialSymbol icon="close" size={20} />
               </button>
             </div>
-            <div className="p-6">
-              <form className="space-y-4">
+            <form onSubmit={handleSubmit}>
+              <div className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
                   <input
                     type="text"
-                    defaultValue={editingIncoterm?.code || ''}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    disabled={!!editingIncoterm}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                     placeholder="Ex: EXW, FOB, CIF"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description (Nom)</label>
                   <input
                     type="text"
-                    defaultValue={editingIncoterm?.description || ''}
+                    value={nom}
+                    onChange={(e) => setNom(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ex: Ex Works"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lieu</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Lieu (Description)</label>
                   <input
                     type="text"
-                    defaultValue={editingIncoterm?.lieu || ''}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ex: Usine, Port de départ"
                   />
                 </div>
-              </form>
-            </div>
-            <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {editingIncoterm ? 'Modifier' : 'Créer'}
-              </button>
-            </div>
+              </div>
+              <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {editingIncoterm ? 'Modifier' : 'Créer'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
