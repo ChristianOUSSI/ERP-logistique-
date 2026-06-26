@@ -14,19 +14,19 @@ const ROLES_TEST = [
   { 
     label: 'Dispatcher', 
     email: 'dispatcher@kamlog.cm', 
-    password: 'disp123',
+    password: 'dispatcher123',
     color: 'border-blue-400 text-blue-600 hover:bg-blue-50'
   },
   { 
     label: 'Finance', 
     email: 'finance@kamlog.cm', 
-    password: 'fin123',
+    password: 'finance123',
     color: 'border-green-400 text-green-600 hover:bg-green-50'
   },
   { 
     label: 'Douane', 
     email: 'douane@kamlog.cm', 
-    password: 'doua123',
+    password: 'douane123',
     color: 'border-orange-400 text-orange-600 hover:bg-orange-50'
   },
   { 
