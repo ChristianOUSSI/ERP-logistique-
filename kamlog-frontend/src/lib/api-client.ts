@@ -58,16 +58,8 @@ apiClient.interceptors.response.use(
 
 // ─── Service Auth ─────────────────────────────────────────
 export const authAPI = {
-  login: (data: { username: string; password: string }) => {
-    const params = new URLSearchParams();
-    params.append('username', data.username);
-    params.append('password', data.password);
-    return apiClient.post('/api/auth/login', params, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-  },
+  login: (data: { username: string; password: string }) =>
+    apiClient.post('/api/auth/login', data),
   register: (data: unknown) =>
     apiClient.post('/api/auth/register', data),
   getMe: () =>
