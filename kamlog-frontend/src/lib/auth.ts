@@ -10,19 +10,19 @@ const handler = NextAuth({
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: 'Email', type: 'email' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         try {
           const response = await authAPI.login({
-            username: credentials?.username as string,
+            username: credentials?.email as string,
             password: credentials?.password as string,
           });
 
           return {
             id: '1',
-            email: credentials?.username as string,
+            email: credentials?.email as string,
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
             role: 'user',
