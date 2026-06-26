@@ -1,9 +1,9 @@
 // src/lib/auth.ts - Configuration NextAuth KAMLOG
-import NextAuth from 'next-auth';
+import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   debug: true,
   secret: process.env.NEXTAUTH_SECRET || "k9M+3L/7jBvW4zTqRcX8yF2pE5aH1nD6vK9M+3L/7jBv=",
   providers: [
@@ -30,16 +30,20 @@ const handler = NextAuth({
             prenom: '',
             is_active: true,
           };
-        } catch (error) {
+        } catch (error: any) {
           console.error("NextAuth Authorize Error:", error);
           if (error.response) {
             console.error("Response data:", error.response.data);
             console.error("Response status:", error.response.status);
+            
+            // On lève une erreur spécifique avec le message du backend pour le frontend
+            const backendError = error.response.data?.detail || "Identifiants incorrects ou compte inactif";
+            throw new Error(backendError);
           } else {
             console.error("Error message:", error.message);
+            // Erreur réseau (ex: NEXT_PUBLIC_API_URL incorrect)
+            throw new Error("Erreur de connexion au serveur d'authentification");
           }
-          console.error("API URL used:", process.env.NEXT_PUBLIC_API_URL);
-          return null;
         }
       },
     }),
@@ -58,12 +62,19 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
+      // @ts-ignore
       session.user.accessToken = token.accessToken as string;
+      // @ts-ignore
       session.user.refreshToken = token.refreshToken as string;
+      // @ts-ignore
       session.user.role = token.role as string;
+      // @ts-ignore
       session.user.nom = token.nom as string;
+      // @ts-ignore
       session.user.prenom = token.prenom as string;
+      // @ts-ignore
       session.user.is_active = token.is_active as boolean;
+      // @ts-ignore
       session.user.id = token.userId as string;
       return session;
     },
@@ -71,9 +82,8 @@ const handler = NextAuth({
   pages: {
     signIn: '/login',
   },
-});
+};
 
-export { handler as GET, handler as POST };
 
 // Pour les composants serveur, utiliser getServerSession
 import { getServerSession } from 'next-auth';

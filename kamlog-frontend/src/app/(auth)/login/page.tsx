@@ -73,7 +73,7 @@ export default function LoginPage() {
         redirect: false,
       })
       if (result?.error) {
-        setErrorMessage('Identifiants incorrects. Veuillez réessayer.')
+        setErrorMessage(result.error === "CredentialsSignin" ? "Identifiants incorrects." : result.error)
         setIsLoading(false)
         return
       }

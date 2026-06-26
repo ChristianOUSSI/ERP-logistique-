@@ -9,6 +9,9 @@ All active bugs and deployment items have been resolved successfully:
 
 ## ✅ Resolving Deployment & Runtime Bugs
 - [x] **Vercel 500 Error**: Removed incorrect `/api/:path*` placeholder rewrites in root `vercel.json` that were intercepting NextAuth authentication routes.
+- [x] **Vercel 401 CSRF Mismatch**: Implemented an advanced dynamic `NEXTAUTH_URL` resolver in `src/app/api/auth/[...nextauth]/route.ts` to seamlessly handle Vercel deployment and preview URLs, bypassing CSRF rejection.
+- [x] **NextAuth Duplicate Handler Bug**: Deleted the duplicate and conflicting file `src/app/(app)/api/[...nextauth]/routes.tsx` that caused Next.js build compilation failures.
+- [x] **NextAuth Error Propagation**: Refactored `auth.ts` to intercept Railway backend errors (401, 403) and pass the precise error message to the frontend UI instead of failing silently.
 - [x] **Backend Syntax Error**: Fixed import statement error in `app/routers/finance.py` (missing comma and closing parenthesis).
 - [x] **Backend Schema Imports**: Added missing `ZoneParcUpdate`, `EmplacementParcUpdate`, and `StockPhysiqueParcUpdate` schemas to `app/schemas/parc.py` to fix import errors on start.
 - [x] **Seeders Stability**: Converted `scripts/seed_magasin_data.py` to use asynchronous database sessions compatible with the async engine.
