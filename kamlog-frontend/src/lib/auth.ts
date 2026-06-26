@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
             
             // On lève une erreur spécifique avec le message du backend pour le frontend
             const backendError = error.response.data?.detail || "Identifiants incorrects ou compte inactif";
-            throw new Error(backendError);
+            throw new Error(typeof backendError === 'string' ? backendError : JSON.stringify(backendError));
           } else {
             console.error("Error message:", error.message);
             // Erreur réseau (ex: NEXT_PUBLIC_API_URL incorrect)

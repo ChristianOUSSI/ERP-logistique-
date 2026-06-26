@@ -1,7 +1,10 @@
 // src/lib/api-client.ts  Client API TypeScript KAMLOG
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-83b1.up.railway.app';
+let BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-83b1.up.railway.app';
+if (process.env.NODE_ENV === 'production' && BASE_URL.includes('localhost')) {
+  BASE_URL = 'https://backend-production-83b1.up.railway.app';
+}
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -55,8 +58,16 @@ apiClient.interceptors.response.use(
 
 // ─── Service Auth ─────────────────────────────────────────
 export const authAPI = {
-  login: (data: { username: string; password: string }) =>
-    apiClient.post('/api/auth/login', data),
+  login: (data: { username: string; password: string }) => {
+    const params = new URLSearchParams();
+    params.append('username', data.username);
+    params.append('password', data.password);
+    return apiClient.post('/api/auth/login', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+  },
   register: (data: unknown) =>
     apiClient.post('/api/auth/register', data),
   getMe: () =>
