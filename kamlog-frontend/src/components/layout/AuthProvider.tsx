@@ -2,14 +2,14 @@
 
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { UserRole } from '@/utils/tcodeLookup';
-import { toast } from 'sonner';
+import { useSession, signOut } from 'next-auth/react';
 
 interface User {
   id: string;
   email: string;
   role: UserRole;
   fullName: string;
-  agencyId: number; // Added for multi-tenancy
+  agencyId: number;
 }
 
 interface AuthContextType {
@@ -24,73 +24,62 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<Date | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Mode Bypass Démo pour déploiement autonome sur Vercel sans backend actif
-      if (process.env.NEXT_PUBLIC_MOCK_AUTH === 'true') {
-        setUser({
-          id: 'dev-demo-id',
-          email: 'admin@kamlog.cm',
-          role: UserRole.ADMIN,
-          fullName: 'Super Administrateur (Démo Vercel)',
-          agencyId: 1
-        });
-        setSessionExpiresAt(new Date(Date.now() + 24 * 3600 * 1000)); // Session 24h
-        setLoading(false);
-        return;
-      }
+    if (status === 'loading') {
+      setLoading(true);
+      return;
+    }
 
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('kamlog_token')}`
-          }
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-          // Calcul de l'expiration réelle depuis le JWT (à extraire du payload)
-          const expiry = new Date(Date.now() + 3600 * 1000); // Fallback 1h
-          setSessionExpiresAt(expiry);
-        } else {
-           setUser(null);
-        }
-      } catch (error) {
-        console.error("Auth check failed", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
+    if (session?.user) {
+      setUser({
+        id: session.user.id || '',
+        email: session.user.email || '',
+        role: ((session.user.role as string)?.toUpperCase() as UserRole) || UserRole.USER,
+        fullName: session.user.nom || '',
+        agencyId: 1, // Default fallback
+      });
+      // La durée de session est gérée par NextAuth (12h).
+      // On met un timer local de 12h pour correspondre.
+      setSessionExpiresAt(new Date(Date.now() + 12 * 3600 * 1000));
+      setSessionExpired(false);
+      setLoading(false);
+    } else {
+      setUser(null);
+      setLoading(false);
+    }
+  }, [session, status]);
 
   const logout = useCallback(() => {
     setUser(null);
     setSessionExpiresAt(null);
-    setSessionExpired(false); // Reset on logout
-    // In a real app, this would clear tokens and redirect to login
-    window.location.href = '/login';
+    setSessionExpired(false);
+    
+    // Nettoyer le localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('kamlog_token');
+    localStorage.removeItem('refresh_token');
+    
+    // Déconnexion NextAuth
+    signOut({ callbackUrl: '/login' });
   }, []);
 
   const renewSession = useCallback(() => {
     if (user) {
       const newExpiry = new Date();
-      newExpiry.setMinutes(newExpiry.getMinutes() + 30); // Extend by 30 minutes
+      newExpiry.setMinutes(newExpiry.getMinutes() + 30);
       setSessionExpiresAt(newExpiry);
-      setSessionExpired(false); // Reset expired state
+      setSessionExpired(false);
       console.log('Session renewed until:', newExpiry.toLocaleTimeString());
-      // In a real app, this would make an API call to refresh the token
     }
   }, [user]);
 
-  // Monitor session expiration
+  // Monitor session expiration locally
   useEffect(() => {
     if (!sessionExpiresAt || sessionExpired) return;
 
@@ -99,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSessionExpired(true);
         clearInterval(timer);
       }
-    }, 1000); // Check every second
+    }, 1000);
     return () => clearInterval(timer);
   }, [sessionExpiresAt, sessionExpired, logout]);
 

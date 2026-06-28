@@ -2,6 +2,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
+import axios from 'axios';
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -20,15 +21,25 @@ export const authOptions: NextAuthOptions = {
             password: credentials?.password as string,
           });
 
+          // Récupérer le vrai rôle et les infos de l'utilisateur avec le token
+          const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-83b1.up.railway.app';
+          const meResponse = await axios.get(`${BASE_URL}/api/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${response.data.access_token}`
+            }
+          });
+          
+          const userData = meResponse.data;
+
           return {
-            id: '1',
-            email: credentials?.email as string,
+            id: String(userData.id),
+            email: userData.email,
             accessToken: response.data.access_token,
             refreshToken: response.data.refresh_token,
-            role: 'user',
-            nom: '',
+            role: userData.role,
+            nom: userData.full_name || '',
             prenom: '',
-            is_active: true,
+            is_active: userData.is_active ?? true,
           };
         } catch (error: any) {
           console.error("NextAuth Authorize Error:", error);
@@ -78,6 +89,10 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.userId as string;
       return session;
     },
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 12 * 60 * 60, // 12 heures par défaut
   },
   pages: {
     signIn: '/login',
