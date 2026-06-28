@@ -78,7 +78,9 @@ export default function LoginPage() {
         return
       }
       if (result?.ok) {
-        router.push('/dashboard')
+        const session = await getSession()
+        const role = session?.user?.role
+        router.push(getRouteForRole(role))
         router.refresh()
       }
     } catch {
