@@ -1,11 +1,35 @@
 // src/app/(app)/dashboard/page.tsx - Global Dashboard ERP Design - Fidèle 100% au HTML original
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/components/layout/AuthProvider'
+import { getRouteForRole } from '@/lib/role-routes'
 
 export default function GlobalDashboard() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(true);
+
+  // Redirection basée sur le rôle
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login');
+      } else {
+        const targetRoute = getRouteForRole(user.role);
+        if (targetRoute === '/dashboard') {
+          setIsRedirecting(false);
+        } else {
+          router.push(targetRoute);
+        }
+      }
+    }
+  }, [user, loading, router]);
+
   // ── Micro-interactions JavaScript fidèles au HTML original ─────────
   useEffect(() => {
+    if (isRedirecting) return;
     // Simulate T-Code Focus interaction
     const tcodeInput = document.querySelector('input[placeholder*="Enter Transaction Code"]') as HTMLInputElement
     if (tcodeInput) {
@@ -22,7 +46,11 @@ export default function GlobalDashboard() {
         tcodeInput.removeEventListener('blur', handleBlur)
       }
     }
-  }, [])
+  }, [isRedirecting])
+
+  if (loading || isRedirecting) {
+    return <div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface">Redirection vers votre espace...</div>;
+  }
 
   return (
     <>

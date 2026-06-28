@@ -1,7 +1,7 @@
 // src/lib/auth.ts - Configuration NextAuth KAMLOG
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { authAPI } from './api-client';
+import { authAPI, apiClient } from './api-client';
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -20,15 +20,26 @@ export const authOptions: NextAuthOptions = {
             password: credentials?.password as string,
           });
 
+          const { access_token, refresh_token } = response.data;
+
+          // Le login ne renvoie pas le rôle réel: on le récupère avec /me.
+          const me = await apiClient.get('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+
+          const userData = me.data;
+
           return {
-            id: '1',
-            email: credentials?.email as string,
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            role: 'user',
-            nom: '',
+            id: String(userData.id),
+            email: userData.email,
+            accessToken: access_token,
+            refreshToken: refresh_token,
+            role: userData.role,
+            nom: userData.full_name || '',
             prenom: '',
-            is_active: true,
+            is_active: userData.is_active ?? true,
           };
         } catch (error: any) {
           console.error("NextAuth Authorize Error:", error);
@@ -57,7 +68,7 @@ export const authOptions: NextAuthOptions = {
         token.nom = user.nom;
         token.prenom = user.prenom;
         token.is_active = user.is_active;
-        token.userId = user.id;
+        token.id = user.id;
       }
       return token;
     },
@@ -75,7 +86,7 @@ export const authOptions: NextAuthOptions = {
       // @ts-ignore
       session.user.is_active = token.is_active as boolean;
       // @ts-ignore
-      session.user.id = token.userId as string;
+      session.user.id = token.id as string;
       return session;
     },
   },
@@ -89,5 +100,5 @@ export const authOptions: NextAuthOptions = {
 import { getServerSession } from 'next-auth';
 
 export async function auth() {
-  return await getServerSession();
+  return await getServerSession(authOptions);
 }

@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import { RoleBadges } from '@/components/auth/RoleBadges'
+import { getRouteForRole } from '@/lib/role-routes'
 
 // ── Schéma Zod ─────────────────────────────────────────────
 const loginSchema = z.object({
@@ -78,11 +79,16 @@ export default function LoginPage() {
         return
       }
       if (result?.ok) {
-        router.push('/dashboard')
+        const session = await getSession()
+        const role = session?.user?.role
+        router.push(getRouteForRole(role))
         router.refresh()
+        return
       }
     } catch {
       setErrorMessage('Une erreur est survenue. Réessayez.')
+      return
+    } finally {
       setIsLoading(false)
     }
   }
