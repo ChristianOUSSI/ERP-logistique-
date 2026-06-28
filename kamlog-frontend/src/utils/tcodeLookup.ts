@@ -3,7 +3,13 @@ export enum UserRole {
   MANAGER = 'MANAGER',
   OPERATOR = 'OPERATOR',
   AUDITOR = 'AUDITOR',
-  USER = 'USER'
+  USER = 'USER',
+  DISPATCHER = 'DISPATCHER',
+  FINANCE = 'FINANCE',
+  DOUANE = 'DOUANE',
+  GATE = 'GATE',
+  PARC = 'PARC',
+  MAGASIN = 'MAGASIN'
 }
 
 export const TCODE_MAP: Record<string, string> = {
