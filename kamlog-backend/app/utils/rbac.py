@@ -83,13 +83,14 @@ def require_permission(permission: str):
                 Role.DOUANE: ["documents:read", "documents:write", "magasin:read"],
                 Role.MAGASIN: [
                     "magasin:create", "magasin:read", "magasin:update", "magasin:delete",
+                    "magasin:validate", "magasin:authorize",
                     "article:create", "article:read", "article:update", "article:delete",
                     "stock:read", "stock:write",
                     "reception:create", "reception:read", "reception:update",
                     "declaration:create", "declaration:read", "declaration:update",
                     "commande:create", "commande:read", "commande:update",
                     "bande:create", "bande:read", "bande:update",
-                    "tiers:read", "documents:read",
+                    "tiers:read", "documents:read", "master-data:read",
                 ],
                 Role.AUDITOR: [
                     "audit:read", "audit:write",
