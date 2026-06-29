@@ -19,7 +19,7 @@ export default function PhysicalInventory() {
     try {
       const response = await magasinAPI.getStocks()
       // Map API response to UI model
-      const mappedItems = response.map((stock: any, index: number) => ({
+      const mappedItems = (response.data || []).map((stock: any, index: number) => ({
         id: stock.id || index + 1,
         status: 'pending',
         empl: `A-12-0${(index % 9) + 1}`, // Mock emplacement for UI

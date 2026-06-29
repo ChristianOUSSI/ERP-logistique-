@@ -18,9 +18,36 @@ export default function NewVehicle() {
     router.push('/parc/vehicles')
   }
 
-  const handleSave = () => {
-    // Save vehicle - will be connected to backend
-    router.push('/parc/vehicles')
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSave = async () => {
+    if (!plaque || !typeVehicule || !chassis) {
+      alert('Veuillez remplir les champs obligatoires.');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      const { transportAPI } = await import('@/lib/api-client');
+      await transportAPI.createCamion({
+        immatriculation: plaque,
+        type_camion: typeVehicule,
+        chassis: chassis,
+        chauffeur_id: chauffeur ? parseInt(chauffeur) || null : null,
+        actif: true,
+        capacite_tonnes: 0,
+        marque: 'N/A',
+        modele: 'N/A',
+        annee: new Date().getFullYear(),
+        date_acquisition: new Date().toISOString()
+      });
+      alert('Véhicule créé avec succès !');
+      router.push('/parc/overview'); // Redirect back to parc overview
+    } catch (error) {
+      console.error("Failed to create vehicle", error);
+      alert('Erreur lors de la création du véhicule.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const handleChassisChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,9 +197,9 @@ export default function NewVehicle() {
               <button onClick={handleCancel} className="px-[1rem] py-2 border border-outline text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors">
                 Annuler
               </button>
-              <button onClick={handleSave} className="px-[1rem] py-2 bg-k-parc text-white rounded-lg font-label-md text-label-md hover:bg-[#0891b2] transition-colors flex items-center gap-2 shadow-sm">
+              <button onClick={handleSave} disabled={isSubmitting} className="px-[1rem] py-2 bg-k-parc text-white rounded-lg font-label-md text-label-md hover:bg-[#0891b2] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50">
                 <span className="material-symbols-outlined text-[18px]">save</span>
-                Sauvegarder l'unité
+                {isSubmitting ? "Sauvegarde..." : "Sauvegarder l'unité"}
               </button>
             </div>
           </div>
