@@ -4,6 +4,7 @@ import { SessionProvider, useSession } from 'next-auth/react'
 import { Toaster } from '@/components/ui/sonner'
 import { useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
+import { AuthProvider as CustomAuthProvider } from '@/components/layout/AuthProvider'
 
 function AuthSync({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
@@ -48,7 +49,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <AuthSync>
-        {children}
+        <CustomAuthProvider>
+          {children}
+        </CustomAuthProvider>
       </AuthSync>
       <Toaster />
     </SessionProvider>
