@@ -6,10 +6,10 @@ from app.models.user import Role
 
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
     username: str = Field(..., min_length=3, max_length=50)
     full_name: Optional[str] = Field(None, max_length=200)
-    role: Role = Role.GATE_AGENT
+    role: str = "gate_agent"
 
 
 class UserCreate(UserBase):
