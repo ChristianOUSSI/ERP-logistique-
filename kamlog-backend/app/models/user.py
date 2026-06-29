@@ -11,6 +11,8 @@ class Role(str, enum.Enum):
     FINANCE = "finance"
     DOUANE = "douane"
     GATE_AGENT = "gate_agent"
+    MAGASIN = "magasin"
+    AUDITOR = "auditor"
 
 
 class User(BaseModel):

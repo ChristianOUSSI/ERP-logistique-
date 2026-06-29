@@ -25,7 +25,7 @@ from app.services.magasin_service import (
 
 
 limiter = Limiter(key_func=get_remote_address)
-router = APIRouter(prefix="/api/magasin", tags=["K-Magasin"])
+router = APIRouter(tags=["K-Magasin"])
 
 
 # ============ MAGASINS ============

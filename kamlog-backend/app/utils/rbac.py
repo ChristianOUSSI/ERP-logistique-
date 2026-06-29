@@ -81,6 +81,22 @@ def require_permission(permission: str):
                 Role.FINANCE: ["finance:read", "finance:write", "tiers:read", "magasin:read"],
                 Role.GATE_AGENT: ["parc:read", "parc:gate", "magasin:read"],
                 Role.DOUANE: ["documents:read", "documents:write", "magasin:read"],
+                Role.MAGASIN: [
+                    "magasin:create", "magasin:read", "magasin:update", "magasin:delete",
+                    "article:create", "article:read", "article:update", "article:delete",
+                    "stock:read", "stock:write",
+                    "reception:create", "reception:read", "reception:update",
+                    "declaration:create", "declaration:read", "declaration:update",
+                    "commande:create", "commande:read", "commande:update",
+                    "bande:create", "bande:read", "bande:update",
+                    "tiers:read", "documents:read",
+                ],
+                Role.AUDITOR: [
+                    "audit:read", "audit:write",
+                    "magasin:read", "stock:read",
+                    "finance:read", "transport:read", "tiers:read",
+                    "documents:read", "parc:read",
+                ],
             }
             
             user_permissions = ROLE_PERMISSIONS.get(current_user.role, [])
@@ -98,11 +114,13 @@ def require_permission(permission: str):
 
 # Définition des permissions par module
 MODULE_PERMISSIONS = {
-    "tiers": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE],
-    "transport": [Role.ADMIN, Role.DISPATCHER],
-    "finance": [Role.ADMIN, Role.FINANCE],
-    "parc": [Role.ADMIN, Role.GATE_AGENT, Role.DISPATCHER],
-    "documents": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE, Role.DOUANE],
+    "tiers": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE, Role.MAGASIN],
+    "transport": [Role.ADMIN, Role.DISPATCHER, Role.AUDITOR],
+    "finance": [Role.ADMIN, Role.FINANCE, Role.AUDITOR],
+    "parc": [Role.ADMIN, Role.GATE_AGENT, Role.DISPATCHER, Role.AUDITOR],
+    "documents": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE, Role.DOUANE, Role.MAGASIN, Role.AUDITOR],
+    "magasin": [Role.ADMIN, Role.MAGASIN, Role.DISPATCHER, Role.AUDITOR],
+    "audit": [Role.ADMIN, Role.AUDITOR],
 }
 
 

@@ -15,7 +15,7 @@ from app.services.goods_declaration_service import GoodsDeclarationService
 
 
 limiter = Limiter(key_func=get_remote_address)
-router = APIRouter(prefix="/api/transport/goods-declarations", tags=["Goods Declaration"])
+router = APIRouter(tags=["Goods Declaration"])
 
 
 # ============ GOODS DECLARATIONS ============

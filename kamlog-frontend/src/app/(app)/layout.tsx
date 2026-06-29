@@ -29,25 +29,29 @@ export default function AppLayout({
     // Extract base module from pathname (e.g. '/magasin/dashboard' -> 'magasin')
     const baseModule = pathname.split('/')[1];
 
+    // Pages accessibles à tous les rôles authentifiés
+    const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings'];
+    if (commonPages.includes(baseModule)) return true;
+
     switch (role) {
       case 'MAGASINIER':
       case 'MAGASIN':
-        return baseModule === 'magasin' || baseModule === 'dashboard';
+        return ['magasin', 'master-data', 'reports', 'documents'].includes(baseModule);
       case 'FINANCE':
-        return baseModule === 'finance' || baseModule === 'dashboard';
+        return ['finance', 'reports', 'documents', 'tiers'].includes(baseModule);
       case 'TRANSPORT':
       case 'DISPATCHER':
-        return baseModule === 'transport' || baseModule === 'dashboard';
+        return ['transport', 'magasin', 'tiers', 'reports', 'documents', 'master-data'].includes(baseModule);
       case 'PARC':
       case 'GATE':
       case 'GATE_AGENT':
-        return baseModule === 'parc' || baseModule === 'dashboard';
+        return ['parc', 'magasin'].includes(baseModule);
+      case 'DOUANE':
+        return ['documents', 'magasin', 'tiers'].includes(baseModule);
       case 'AUDITOR':
-        return ['audit', 'security', 'reports', 'dashboard'].includes(baseModule);
+        return ['audit', 'security', 'reports', 'admin', 'magasin', 'finance', 'transport', 'parc', 'documents', 'tiers'].includes(baseModule);
       default:
-        // By default, assume standard access, or we can be strict and deny.
-        // Let's allow access to global dashboard to everyone to avoid breaking things, but restrict specifics.
-        return baseModule === 'dashboard'; 
+        return false;
     }
   };
 

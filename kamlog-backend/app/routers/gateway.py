@@ -15,7 +15,7 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/api/gateway", tags=["Gateway"])
+router = APIRouter(tags=["Gateway"])
 
 
 @router.post("/passerelles", response_model=Passerelle, status_code=status.HTTP_201_CREATED)

@@ -15,7 +15,7 @@ from app.services.mag3_workflow_service import Mag3WorkflowService
 
 
 limiter = Limiter(key_func=get_remote_address)
-router = APIRouter(prefix="/api/magasin/removal-slips", tags=["Removal Slip"])
+router = APIRouter(tags=["Removal Slip"])
 
 
 # ============ REMOVAL SLIPS ============

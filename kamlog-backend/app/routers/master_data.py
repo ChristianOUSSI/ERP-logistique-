@@ -18,7 +18,7 @@ from app.routers.suppliers import router as suppliers_router
 
 
 limiter = Limiter(key_func=get_remote_address)
-router = APIRouter(prefix="/api/master-data", tags=["Master Data"])
+router = APIRouter(tags=["Master Data"])
 
 # Include suppliers router
 router.include_router(suppliers_router, prefix="/suppliers")

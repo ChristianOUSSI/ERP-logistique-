@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useModuleTheme } from '../../hooks/useModuleTheme';
 import { useSettings } from './SettingsProvider';
 
-export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc';
+export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc' | 'audit';
 
 interface NavItem {
   labelKey: string;
@@ -46,9 +46,10 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     reconciliation: 'Rapprochement Bancaire',
     gateway: 'Passerelle Monitor',
     transactions: 'Saisie Transaction',
-    stock: 'Stock Mag3',
+    stock: 'Gestion des Stocks',
     removal: 'Bons d\'Enlèvement',
     reception: 'Réceptions Mag3',
+    receptions_list: 'Réceptions',
     inventory: 'Inventaire Physique',
     manual: 'Mouvement Manuel',
     workshop: 'Atelier (Workshop)',
@@ -56,7 +57,21 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     gate_in: 'Gate In',
     gate_out: 'Gate Out',
     settings: 'Paramètres Module',
-    logout: 'Déconnexion'
+    logout: 'Déconnexion',
+    mag_articles: 'Articles',
+    mag_clients: 'Clients Magasin',
+    mag_commandes: 'Commandes',
+    mag_declarations: 'Déclarations (BL)',
+    mag_stocks_search: 'Recherche Stock',
+    mag_capacity: 'Capacité Magasin',
+    mag_history: 'Historique',
+    mag_transactions: 'Transactions',
+    audit_health: 'Santé Système',
+    audit_trace: 'Traces d\'Opérations',
+    audit_alerts: 'Alertes Sécurité',
+    audit_reports: 'Rapports',
+    audit_notifications: 'Notifications',
+    audit_settings: 'Paramètres Audit'
   },
   en: {
     users: 'User Management',
@@ -82,9 +97,10 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     reconciliation: 'Bank Reconciliation',
     gateway: 'Gateway Monitor',
     transactions: 'Transaction Entry',
-    stock: 'Mag3 Stock',
+    stock: 'Stock Management',
     removal: 'Removal Slips',
     reception: 'Mag3 Receptions',
+    receptions_list: 'Receptions',
     inventory: 'Physical Inventory',
     manual: 'Manual Movement',
     workshop: 'Maintenance Shop',
@@ -92,7 +108,21 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     gate_in: 'Gate In',
     gate_out: 'Gate Out',
     settings: 'Module Settings',
-    logout: 'Sign Out'
+    logout: 'Sign Out',
+    mag_articles: 'Articles',
+    mag_clients: 'Warehouse Clients',
+    mag_commandes: 'Orders',
+    mag_declarations: 'Declarations (BL)',
+    mag_stocks_search: 'Stock Search',
+    mag_capacity: 'Warehouse Capacity',
+    mag_history: 'History',
+    mag_transactions: 'Transactions',
+    audit_health: 'System Health',
+    audit_trace: 'Operation Traces',
+    audit_alerts: 'Security Alerts',
+    audit_reports: 'Reports',
+    audit_notifications: 'Notifications',
+    audit_settings: 'Audit Settings'
   }
 };
 
@@ -130,11 +160,21 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   magasin: [
     { labelKey: 'overview', href: '/magasin/dashboard', icon: 'dashboard' },
-    { labelKey: 'stock', href: '/magasin/stock-management', icon: 'inventory' },
-    { labelKey: 'removal', href: '/magasin/removal-slip', icon: 'assignment_return', badge: 'Mag3' },
+    { labelKey: 'mag_articles', href: '/magasin/articles', icon: 'category' },
+    { labelKey: 'mag_clients', href: '/magasin/clients', icon: 'people' },
+    { labelKey: 'mag_commandes', href: '/magasin/commandes', icon: 'shopping_cart' },
+    { labelKey: 'mag_declarations', href: '/magasin/declarations', icon: 'description' },
+    { labelKey: 'receptions_list', href: '/magasin/receptions', icon: 'move_to_inbox' },
+    { labelKey: 'stock', href: '/magasin/stocks', icon: 'inventory' },
+    { labelKey: 'mag_stocks_search', href: '/magasin/search', icon: 'search' },
     { labelKey: 'reception', href: '/magasin/reception-mag3', icon: 'download_done', badge: 'Mag3' },
-    { labelKey: 'inventory', href: '/magasin/inventaire', icon: 'checklist' },
+    { labelKey: 'removal', href: '/magasin/removal-slip', icon: 'assignment_return', badge: 'Mag3' },
+    { labelKey: 'inventory', href: '/magasin/inventory/physical', icon: 'checklist' },
     { labelKey: 'manual', href: '/magasin/mouvement-de-stock-manuel', icon: 'sync_alt' },
+    { labelKey: 'mag_capacity', href: '/magasin/capacity', icon: 'warehouse' },
+    { labelKey: 'mag_history', href: '/magasin/history', icon: 'history' },
+    { labelKey: 'mag_transactions', href: '/magasin/transactions', icon: 'receipt_long' },
+    { labelKey: 'analytics', href: '/magasin/analytics', icon: 'analytics' },
   ],
   parc: [
     { labelKey: 'overview', href: '/parc/overview', icon: 'directions_car' },
@@ -142,6 +182,14 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'gate_out', href: '/parc/gate-out', icon: 'logout' },
     { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
     { labelKey: 'orders', href: '/parc/creation-ordre-de-travail', icon: 'handyman' },
+  ],
+  audit: [
+    { labelKey: 'audit_health', href: '/audit/dashboard/health', icon: 'monitoring' },
+    { labelKey: 'audit_trace', href: '/admin/audit/operation-trace', icon: 'history' },
+    { labelKey: 'audit_alerts', href: '/security/alert-monitoring', icon: 'security' },
+    { labelKey: 'audit_notifications', href: '/security/notifications', icon: 'notifications' },
+    { labelKey: 'audit_reports', href: '/reports/custom', icon: 'assessment' },
+    { labelKey: 'audit_settings', href: '/settings/system/audit-health', icon: 'settings' },
   ],
 };
 
@@ -166,7 +214,7 @@ export default function ModuleSidebar({ module, isCollapsed = false, onToggle }:
               className="material-symbols-outlined text-white transition-all duration-300"
               style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
             >
-              {module === 'magasin' ? 'warehouse' : module === 'transport' ? 'conversion_path' : 'rocket_launch'}
+              {module === 'magasin' ? 'warehouse' : module === 'transport' ? 'conversion_path' : module === 'audit' ? 'shield' : 'rocket_launch'}
             </span>
           </div>
           {!isCollapsed && (
