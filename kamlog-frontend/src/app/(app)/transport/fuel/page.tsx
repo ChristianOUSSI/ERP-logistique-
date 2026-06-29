@@ -142,7 +142,7 @@ export default function TransportFuelPage() {
                   <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Dépense Carburant</span>
                   <span className="material-symbols-outlined text-outline">euro</span>
                 </div>
-                <div className="font-headline-md text-headline-md text-on-surface">21,375 €</div>
+                <div className="font-headline-md text-headline-md text-on-surface">21,375 FCFA</div>
                 <div className="font-body-sm text-body-sm text-error mt-xs flex items-center gap-xxs">
                   <span className="material-symbols-outlined text-[14px]">trending_up</span> +8.1% vs M-1
                 </div>

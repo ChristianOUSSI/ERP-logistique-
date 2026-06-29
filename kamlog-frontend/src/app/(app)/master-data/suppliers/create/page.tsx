@@ -354,9 +354,9 @@ export default function SupplierProfileCreate() {
                       onChange={(e) => setCurrency(e.target.value)}
                     >
                       <option value="">Sélectionner</option>
-                      <option value="XOF">FCFA (XOF)</option>
-                      <option value="EUR">Euro (EUR)</option>
-                      <option value="USD">Dollar US (USD)</option>
+                      <option value="FCFA">FCFA (FCFA)</option>
+                      <option value="FCFA">Euro (FCFA)</option>
+                      <option value="FCFA">Dollar US (FCFA)</option>
                     </select>
                   </div>
                   <div className="space-y-2">

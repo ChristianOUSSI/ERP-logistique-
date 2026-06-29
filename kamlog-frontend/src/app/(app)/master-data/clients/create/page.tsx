@@ -310,18 +310,18 @@ export default function ClientCreate() {
                       <div>
                         <label className="kamlog-label">Devise de Facturation *</label>
                         <select className="kamlog-input" value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                          <option value="xaf">XAF (Franc CFA CEMAC)</option>
-                          <option value="eur">EUR (Euro)</option>
-                          <option value="usd">USD (Dollar US)</option>
+                          <option value="xaf">FCFA (Franc CFA CEMAC)</option>
+                          <option value="eur">FCFA (Euro)</option>
+                          <option value="usd">FCFA (Dollar US)</option>
                         </select>
                       </div>
                       <div className="pt-2 border-t border-outline-variant mt-2">
-                        <label className="kamlog-label text-error">Limite de Crédit Autorisée (XAF)</label>
+                        <label className="kamlog-label text-error">Limite de Crédit Autorisée (FCFA)</label>
                         <div className="relative">
                           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant font-mono">FCFA</span>
                           <input className="kamlog-input pl-12 text-right font-mono font-medium text-error focus:ring-error focus:border-error" placeholder="0" type="text" value={creditLimit} onChange={(e) => setCreditLimit(e.target.value)}/>
                         </div>
-                        <p className="text-[10px] text-on-surface-variant mt-1 leading-tight">Nécessite une approbation du DAF si &gt; 1M XAF.</p>
+                        <p className="text-[10px] text-on-surface-variant mt-1 leading-tight">Nécessite une approbation du DAF si &gt; 1M FCFA.</p>
                       </div>
                     </div>
                   </div>

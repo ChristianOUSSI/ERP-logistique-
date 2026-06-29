@@ -388,7 +388,7 @@ export default function ParcPage() {
                       <p className="text-body-sm font-bold">Brake Pad Replacement</p>
                       <p className="text-body-sm text-on-surface-variant italic">Routine maintenance. All units replaced.</p>
                       <div className="mt-xs flex items-center gap-xs">
-                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€1,240.00</span>
+                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">FCFA1,240.00</span>
                         <span className="text-secondary material-symbols-outlined text-[14px]" style={{ fontVariationSettings: 'FILL 1' }}>check_circle</span>
                       </div>
                     </div>
@@ -409,7 +409,7 @@ export default function ParcPage() {
                       <p className="text-body-sm font-bold">Hydraulic Leakage Repair</p>
                       <p className="text-body-sm text-on-surface-variant italic">Emergency repair at Dock A.</p>
                       <div className="mt-xs flex items-center gap-xs">
-                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€3,800.00</span>
+                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">FCFA3,800.00</span>
                         <span className="text-secondary material-symbols-outlined text-[14px]" style={{ fontVariationSettings: 'FILL 1' }}>check_circle</span>
                       </div>
                     </div>
@@ -430,7 +430,7 @@ export default function ParcPage() {
                       <p className="text-body-sm font-bold">Software Calibration</p>
                       <p className="text-body-sm text-on-surface-variant italic">System-wide OTA update.</p>
                       <div className="mt-xs flex items-center gap-xs">
-                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">€0.00</span>
+                        <span className="bg-surface-container text-on-surface-variant px-xs py-0.5 rounded text-label-sm">FCFA0.00</span>
                         <span className="text-secondary material-symbols-outlined text-[14px]" style={{ fontVariationSettings: 'FILL 1' }}>check_circle</span>
                       </div>
                     </div>
@@ -457,8 +457,8 @@ export default function ParcPage() {
                 </div>
                 <div>
                   <span className="block text-label-sm text-on-surface-variant">Avg. Cost per km</span>
-                  <span className="text-title-lg font-black">€0.84</span>
-                  <span className="text-label-sm text-error font-bold">↑ €0.05 from last month</span>
+                  <span className="text-title-lg font-black">FCFA0.84</span>
+                  <span className="text-label-sm text-error font-bold">↑ FCFA0.05 from last month</span>
                 </div>
               </div>
               <div className="bg-surface-container-highest/30 p-md rounded-lg flex items-center gap-md">

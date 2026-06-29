@@ -43,11 +43,11 @@ export default function CustomReportBuilder() {
   }
 
   const sampleData = [
-    { otNumber: 'TR-2023-8841', date: '2023-10-24 08:15', clientId: 'C-99201 (Maersk)', amount: '€ 4,500.00', status: 'Completed' },
-    { otNumber: 'TR-2023-8842', date: '2023-10-24 09:30', clientId: 'C-44120 (CMA CGM)', amount: '€ 1,250.00', status: 'In Transit' },
-    { otNumber: 'TR-2023-8843', date: '2023-10-24 10:05', clientId: 'C-11094 (MSC)', amount: '€ 8,900.00', status: 'Delayed' },
-    { otNumber: 'TR-2023-8844', date: '2023-10-24 11:20', clientId: 'C-99201 (Maersk)', amount: '€ 3,100.00', status: 'In Transit' },
-    { otNumber: 'TR-2023-8845', date: '2023-10-24 13:45', clientId: 'C-88321 (Hapag-Lloyd)', amount: '€ 5,600.00', status: 'Completed' }
+    { otNumber: 'TR-2023-8841', date: '2023-10-24 08:15', clientId: 'C-99201 (Maersk)', amount: 'FCFA 4,500.00', status: 'Completed' },
+    { otNumber: 'TR-2023-8842', date: '2023-10-24 09:30', clientId: 'C-44120 (CMA CGM)', amount: 'FCFA 1,250.00', status: 'In Transit' },
+    { otNumber: 'TR-2023-8843', date: '2023-10-24 10:05', clientId: 'C-11094 (MSC)', amount: 'FCFA 8,900.00', status: 'Delayed' },
+    { otNumber: 'TR-2023-8844', date: '2023-10-24 11:20', clientId: 'C-99201 (Maersk)', amount: 'FCFA 3,100.00', status: 'In Transit' },
+    { otNumber: 'TR-2023-8845', date: '2023-10-24 13:45', clientId: 'C-88321 (Hapag-Lloyd)', amount: 'FCFA 5,600.00', status: 'Completed' }
   ]
 
   const getStatusBadge = (status: string) => {

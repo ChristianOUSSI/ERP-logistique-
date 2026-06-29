@@ -298,9 +298,9 @@ export default function MissionDeFactureClientPage() {
                     <div className="space-y-1">
                       <label className="font-label-md text-label-md text-on-surface-variant">Devise</label>
                       <select className="w-full px-3 py-1.5 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary k-finance-border">
-                        <option>XAF - Franc CFA</option>
-                        <option>EUR - Euro</option>
-                        <option>USD - US Dollar</option>
+                        <option>FCFA - Franc CFA</option>
+                        <option>FCFA - Euro</option>
+                        <option>FCFA - US Dollar</option>
                       </select>
                     </div>
                     <div className="flex justify-between items-center pt-2">
@@ -419,7 +419,7 @@ export default function MissionDeFactureClientPage() {
                   <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
                   <h3 className="font-title-md text-title-md text-on-surface mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calculate</span>
-                    Synthèse Financière (XAF)
+                    Synthèse Financière (FCFA)
                   </h3>
                   <div className="space-y-2 font-data-tabular text-data-tabular">
                     <div className="flex justify-between items-center py-1">
