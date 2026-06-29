@@ -1,10 +1,10 @@
-// src/app/(app)/magasin/removal-slip/page.tsx - Bon d'Enlèvement Mag3 vers autres magasins - Fidèle 100% au HTML original
+// src/app/(app)/magasin/removal-slip/page.tsx - Bon d'Enlèvement Mag3 vers autres magasins - De-hardcoded
 'use client'
-
 
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { magasinAPI } from '@/lib/api-client'
 
 export default function RemovalSlipPage() {
   const router = useRouter()
@@ -12,6 +12,7 @@ export default function RemovalSlipPage() {
   const [sourceWarehouse, setSourceWarehouse] = useState('MAG3')
   const [destinationWarehouse, setDestinationWarehouse] = useState('')
   const [articleCode, setArticleCode] = useState('')
+  const [articleId, setArticleId] = useState('')
   const [articleDescription, setArticleDescription] = useState('')
   const [quantity, setQuantity] = useState('')
   const [unit, setUnit] = useState('')
@@ -20,12 +21,17 @@ export default function RemovalSlipPage() {
   const [authorizedBy, setAuthorizedBy] = useState('')
   const [date, setDate] = useState('')
   const [observations, setObservations] = useState('')
+  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
 
   const handleClear = () => {
     setSlipNumber('')
     setSourceWarehouse('MAG3')
     setDestinationWarehouse('')
     setArticleCode('')
+    setArticleId('')
     setArticleDescription('')
     setQuantity('')
     setUnit('')
@@ -34,12 +40,44 @@ export default function RemovalSlipPage() {
     setAuthorizedBy('')
     setDate('')
     setObservations('')
+    setErrorMsg('')
+    setSuccessMsg('')
   }
 
-  const handleSave = () => {
-    // Save removal slip - will be connected to backend
-    // This transaction produces a bon d'enlèvement for mag3 to other mag movements
-    router.push('/magasin/reception')
+  const handleSave = async () => {
+    setErrorMsg('')
+    setSuccessMsg('')
+
+    if (!destinationWarehouse || !articleId || !quantity || !unit || !customsDeclaration || !date) {
+      setErrorMsg("Veuillez remplir tous les champs obligatoires (Destination, Article ID, Quantité, Unité, Déclaration, Date).")
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const payload = {
+        magasin_source: sourceWarehouse,
+        magasin_destination: destinationWarehouse,
+        article_id: Number(articleId),
+        quantite: Number(quantity),
+        unite: unit,
+        declaration_douaniere: customsDeclaration,
+        motif: reason,
+        observations: observations,
+        date_bon: new Date(date).toISOString(),
+      }
+      
+      const response = await magasinAPI.createRemovalSlip(payload)
+      setSlipNumber(response.numero_bon)
+      setSuccessMsg(`Bon d'enlèvement créé avec succès: ${response.numero_bon}`)
+      setTimeout(() => {
+        router.push('/magasin/reception-mag3')
+      }, 2000)
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.detail || "Erreur lors de la création du bon d'enlèvement.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -160,12 +198,27 @@ export default function RemovalSlipPage() {
                   <button onClick={handleClear} className="px-3 py-1.5 border border-outline-variant rounded bg-surface text-body-sm font-body-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">refresh</span> Effacer
                   </button>
-                  <button onClick={handleSave} className="px-3 py-1.5 bg-error text-on-error rounded text-body-sm font-body-sm shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">save</span> Enregistrer
+                  <button disabled={isSubmitting} onClick={handleSave} className="px-3 py-1.5 bg-error text-on-error rounded text-body-sm font-body-sm shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center gap-2 disabled:opacity-50">
+                    <span className="material-symbols-outlined text-[18px]">save</span> 
+                    {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
                 </div>
               </div>
             </div>
+
+            {errorMsg && (
+              <div className="p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 flex items-center gap-2">
+                <span className="material-symbols-outlined">error</span>
+                {errorMsg}
+              </div>
+            )}
+            
+            {successMsg && (
+              <div className="p-4 bg-primary-container text-on-primary-container rounded-lg border border-primary/20 flex items-center gap-2">
+                <span className="material-symbols-outlined">check_circle</span>
+                {successMsg}
+              </div>
+            )}
 
             {/* Warning Banner */}
             <div className="bg-error-container border border-error/20 rounded-lg p-4 flex items-start gap-3">
@@ -184,19 +237,20 @@ export default function RemovalSlipPage() {
                   <label className="font-label-md font-label-md text-on-surface-variant block">Numéro du Bon d'Enlèvement</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Ex: BE-2023-001"
+                    placeholder="Auto-généré"
                     type="text"
                     value={slipNumber}
                     onChange={(e) => setSlipNumber(e.target.value)}
+                    disabled
                   />
                 </div>
 
                 {/* Date */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Date</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Date *</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    type="date"
+                    type="datetime-local"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                   />
@@ -215,7 +269,7 @@ export default function RemovalSlipPage() {
 
                 {/* Destination Warehouse */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Destination</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Destination *</label>
                   <select 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     value={destinationWarehouse}
@@ -227,7 +281,19 @@ export default function RemovalSlipPage() {
                   </select>
                 </div>
 
-                {/* Article Code */}
+                {/* Article ID */}
+                <div className="space-y-2">
+                  <label className="font-label-md font-label-md text-on-surface-variant block">ID Article (Backend) *</label>
+                  <input 
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
+                    placeholder="ID de l'article"
+                    type="number"
+                    value={articleId}
+                    onChange={(e) => setArticleId(e.target.value)}
+                  />
+                </div>
+
+                {/* Article Code (Optional, just UI) */}
                 <div className="space-y-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Code Article</label>
                   <div className="relative">
@@ -245,7 +311,7 @@ export default function RemovalSlipPage() {
                 </div>
 
                 {/* Article Description */}
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Description Article</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
@@ -258,7 +324,7 @@ export default function RemovalSlipPage() {
 
                 {/* Quantity */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Quantité</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Quantité *</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     placeholder="0.00"
@@ -271,7 +337,7 @@ export default function RemovalSlipPage() {
 
                 {/* Unit */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Unité</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Unité *</label>
                   <select 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     value={unit}
@@ -288,7 +354,7 @@ export default function RemovalSlipPage() {
 
                 {/* Customs Declaration */}
                 <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Déclaration Douanière</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Déclaration Douanière *</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     placeholder="Numéro de déclaration douanière"

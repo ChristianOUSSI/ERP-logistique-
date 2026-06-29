@@ -105,7 +105,7 @@ export default function KParcFleetManagementOverview() {
         <div className="flex items-center gap-md">
           <div className="flex items-center gap-sm">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+              {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
             </div>
           </div>
         </div>

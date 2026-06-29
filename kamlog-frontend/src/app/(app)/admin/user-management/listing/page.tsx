@@ -212,7 +212,7 @@ export default function UserListing() {
             <div className="p-6 border-b border-outline-variant flex justify-between items-center">
               <div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-bold">Édition Utilisateur</h3>
-                <p className="text-body-sm font-body-sm text-outline">{selectedUser?.username || 'Chargement...'}</p>
+                <p className="text-body-sm font-body-sm text-outline">{(selectedUser as any)?.fullName || (selectedUser as any)?.username || (selectedUser as any)?.email || 'Chargement...'}</p>
               </div>
               <button className="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant" onClick={() => toggleDrawer(false)}>
                 <span className="material-symbols-outlined">close</span>

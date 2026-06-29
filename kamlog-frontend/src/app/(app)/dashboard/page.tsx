@@ -110,7 +110,7 @@ export default function GlobalDashboard() {
               <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
             </button>
             <div className="w-8 h-8 rounded-full overflow-hidden bg-outline-variant flex items-center justify-center font-bold text-sm">
-              {user?.username?.charAt(0).toUpperCase() || 'U'}
+              {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
             </div>
           </div>
         </header>

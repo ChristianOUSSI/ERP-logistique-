@@ -98,8 +98,8 @@ export default function KFinanceOverview() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-finance-outline-variant flex items-center justify-center text-xs font-bold text-finance-primary">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-outline-variant flex items-center justify-center font-bold text-sm">
+                {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
               </div>
             </div>
           </div>

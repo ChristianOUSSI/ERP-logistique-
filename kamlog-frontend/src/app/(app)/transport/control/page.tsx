@@ -115,8 +115,8 @@ export default function KTransportControl() {
               <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
                 <span className="material-symbols-outlined text-[20px]">notifications</span>
               </button>
-              <div className="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center font-bold text-primary">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              <div className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary">
+                {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
               </div>
             </div>
           </div>

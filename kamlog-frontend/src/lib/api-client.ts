@@ -136,8 +136,12 @@ export const magasinAPI = {
     apiClient.get('/api/magasin/stocks', { params }),
   getReceptions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/receptions', { params }),
+  createReception: (data: unknown) =>
+    apiClient.post('/api/magasin/receptions', data),
   createReceptionMag3: (data: unknown) =>
     apiClient.post('/api/magasin/receptions-mag3', data),
+  createRemovalSlip: (data: unknown) =>
+    apiClient.post('/api/magasin/removal-slips', data),
   getDeclarations: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/declarations', { params }),
   getCommandes: (params?: Record<string, unknown>) =>
