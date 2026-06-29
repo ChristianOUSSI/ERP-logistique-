@@ -44,36 +44,11 @@ export default function ConfigurationDesRolesRbacPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col ">
       {/* Header */}
-      <header className="flex items-center justify-between px-margin-desktop h-16 bg-surface border-b border-outline-variant flex-shrink-0 z-10 shadow-sm">
-        <div className="flex items-center gap-md">
-          <Link href="/admin" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group">
-            <span className="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">arrow_back</span>
-          </Link>
-          <div className="flex flex-col">
-            <nav className="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-xxs">
-              <Link href="/admin" className="hover:text-primary transition-colors">Admin</Link>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-              <Link href="/admin/security" className="hover:text-primary transition-colors">Sécurité</Link>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-              <span className="text-on-surface">Rôles</span>
-            </nav>
-            <h1 className="font-title-lg text-title-lg text-on-surface">Configuration du Rôle</h1>
-          </div>
-        </div>
-        <div className="flex items-center gap-sm">
-          <Link href="/admin" className="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors bg-surface">
-            Annuler
-          </Link>
-          <button onClick={handleSave} className="px-4 py-2 rounded font-label-md text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-xs">
-            <span className="material-symbols-outlined text-[18px]">save</span>
-            Enregistrer
-          </button>
-        </div>
-      </header>
+      
 
-      {/* Main Canvas */}
+      
       <main className="flex-1 overflow-y-auto p-margin-desktop custom-scrollbar">
         <div className="max-w-max-width mx-auto flex flex-col gap-lg">
           {/* Section 1: Informations Générales */}

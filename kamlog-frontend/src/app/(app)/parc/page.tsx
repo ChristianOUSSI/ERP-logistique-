@@ -42,40 +42,10 @@ export default function ParcPage() {
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
       `}</style>
       <div className="bg-surface-container-low text-on-surface">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-md">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <div className="h-6 w-px bg-outline-variant mx-xs"></div>
-            <nav className="hidden md:flex gap-md">
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 rounded-sm text-label-md font-label-md" href="#">Alerts</a>
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-xs py-1 rounded-sm text-label-md font-label-md" href="#">MFA Status</a>
-              <a className="text-primary border-b-2 border-primary pb-1 font-bold text-label-md font-label-md" href="#">Modules</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-md">
-            <div className="bg-surface-container-high rounded px-xs py-1 flex items-center gap-xs">
-              <span className="material-symbols-outlined text-[20px] text-on-surface-variant">search</span>
-              <input className="bg-transparent border-none focus:ring-0 text-body-sm w-48" placeholder="T-Code Search" type="text"/>
-            </div>
-            <div className="flex gap-sm">
-              <button className="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant">notifications</button>
-              <button className="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant">security</button>
-              <button className="material-symbols-outlined p-xs hover:bg-surface-container-high rounded transition-colors text-on-surface-variant">apps</button>
-            </div>
-            <img alt="User Profile Avatar" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDYfUyIcT0UHXOlH0CO-7Di6pFMLnASFEekBzRkh9Mfxl_dUJ6gEjweb8tS1FaQ_rL4ym_-zHsmzZGa1RJ1eVj0wxTPJ9vehyr3mOWCA41D-eFMDc3B66jqmBO3dKR_PWk-CkI8S0sl5jL7YFpVvzMOjRTzi535wndDK8s_oa986ICEXmlD-MFCTkP9MR3RAs4nmU_a33umNRkBUg476Kytw_ZfoU4HHlNzxJMt_PWty7XOMvSy0OOoqdR0VYr3JxE7peuk7nkmtM"/>
-          </div>
-        </header>
+        
+        
 
-        {/* SideNavBar */}
+        
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
           <div className="px-md py-lg">
             <div className="flex items-center gap-sm mb-lg">
@@ -87,28 +57,7 @@ export default function ParcPage() {
                 <div className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Operational Control</div>
               </div>
             </div>
-            <nav className="flex flex-col gap-xs">
-              <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
-                <span className="material-symbols-outlined">local_shipping</span>
-                <span className="text-label-md font-label-md">Transport</span>
-              </a>
-              <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
-                <span className="material-symbols-outlined">payments</span>
-                <span className="text-label-md font-label-md">Finance</span>
-              </a>
-              <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all scale-[0.99]" href="/parc/overview">
-                <span className="material-symbols-outlined">inventory_2</span>
-                <span className="text-label-md font-label-md">Parc</span>
-              </a>
-              <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
-                <span className="material-symbols-outlined">warehouse</span>
-                <span className="text-label-md font-label-md">Magasin</span>
-              </a>
-              <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/audit/dashboard/health">
-                <span className="material-symbols-outlined">history_edu</span>
-                <span className="text-label-md font-label-md">Audit</span>
-              </a>
-            </nav>
+            
           </div>
           <div className="mt-auto px-md space-y-xs">
             <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
@@ -127,13 +76,7 @@ export default function ParcPage() {
           <div className="p-lg max-w-[1600px] mx-auto space-y-lg">
             {/* Breadcrumbs & Title */}
             <div className="flex flex-col gap-xxs">
-              <nav className="flex items-center gap-xs text-label-sm font-label-sm text-on-surface-variant">
-                <a className="hover:text-primary" href="/dashboard/global">Dashboard</a>
-                <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a className="hover:text-primary" href="#">Fleet Management</a>
-                <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span className="text-primary font-bold">K-Parc Hub</span>
-              </nav>
+              
               <div className="flex justify-between items-end">
                 <h1 className="text-headline-md font-headline-md text-on-surface">K-Parc: Fleet Intelligence</h1>
                 <div className="flex gap-xs">

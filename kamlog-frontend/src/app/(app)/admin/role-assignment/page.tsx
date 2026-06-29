@@ -110,28 +110,7 @@ export default function RoleAssignment() {
             <h1 className="font-headline-sm text-headline-sm font-bold text-primary">KAMLOG ERP</h1>
             <p className="font-label-md text-label-md text-on-surface-variant opacity-70">Admin Suite</p>
           </div>
-          <nav className="flex-1 space-y-xxs">
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">dashboard</span>
-              <span>Dashboard</span>
-            </div>
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer transition-all text-primary font-bold border-l-4 border-primary bg-surface-container-high font-label-md text-label-md">
-              <span className="material-symbols-outlined">group</span>
-              <span>User Management</span>
-            </div>
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span>Logistics</span>
-            </div>
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span>Inventory</span>
-            </div>
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">payments</span>
-              <span>Finance</span>
-            </div>
-          </nav>
+          
           <div className="mt-auto border-t border-outline-variant py-md">
             <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
               <span className="material-symbols-outlined">contact_support</span>
@@ -145,22 +124,7 @@ export default function RoleAssignment() {
         </aside>
         <div className="ml-60 flex flex-col min-h-screen">
           {/* TopNavBar Shell */}
-          <header className="w-full h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-[1.5rem] sticky top-0 z-40">
-            <div className="flex items-center gap-lg">
-              <div className="flex items-center bg-surface-container-high rounded px-sm py-xxs border border-outline-variant">
-                <span className="material-symbols-outlined text-outline">search</span>
-                <input className="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm placeholder:text-outline-variant w-64" placeholder="T-Code Search (e.g. U-ASSIGN)" type="text"/>
-              </div>
-            </div>
-            <div className="flex items-center gap-md">
-              <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors">notifications</span>
-              <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors">help</span>
-              <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container p-xxs rounded transition-colors">settings</span>
-              <div className="w-8 h-8 rounded-full bg-primary-fixed overflow-hidden border border-outline-variant">
-                <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApNZ6bDWVMYEvbSQpsNp8XOiye14eu6DU1JFrJkIsKO2msWluTqs5wtvguolPobcQnFsf2m3Z5rBK3CFOSBRJMEolXrkZx8VdgjBHU0wBMsgKYPaD35t-Pxw1_PnuvXMmqOUY_x7I9J4uljB9kmjECwhqunr9uE1WwWdGJoqn2MiUbfuCq1SrBxVcxwFzShxjNqMmRwi0NibnE1DX84G9ChDttaAIq3Bxz6MF4Tl7m2SDQqV-NIYkjSL5TD2hpN_Tq8PkPjvZKWA"/>
-              </div>
-            </div>
-          </header>
+          
           {/* Main Content Canvas */}
           <main className="p-lg space-y-lg max-w-[1600px] w-full mx-auto">
             {/* Breadcrumbs & Header */}

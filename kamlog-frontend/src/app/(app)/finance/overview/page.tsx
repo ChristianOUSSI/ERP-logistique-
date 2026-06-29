@@ -1,5 +1,6 @@
 // src/app/(app)/finance/overview/page.tsx
 'use client'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { financeAPI } from '@/lib/api-client'
 import { useAuth } from '@/components/layout/AuthProvider'
@@ -51,7 +52,7 @@ export default function KFinanceOverview() {
 
   return (
     <div className="bg-finance-background text-finance-on-background font-body-base antialiased min-h-screen flex">
-      {/* SideNavBar */}
+      
       <aside className="bg-finance-surface-container-lowest border-r border-finance-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
         <div className="mb-8 flex items-center gap-3 mt-16 md:mt-0">
           <div className="w-10 h-10 rounded bg-finance-primary-container text-finance-on-primary-container flex items-center justify-center font-bold text-xl">K</div>
@@ -66,44 +67,12 @@ export default function KFinanceOverview() {
           Nouvelle Opération
         </button>
 
-        <nav className="flex-1 flex flex-col gap-1">
-          <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/dashboard/global">
-            <span className="material-symbols-outlined">dashboard</span>
-            Tableau de bord
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/transport/control">
-            <span className="material-symbols-outlined">local_shipping</span>
-            Transport
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-primary bg-finance-primary/10 font-bold" href="/finance/overview">
-            <span className="material-symbols-outlined">payments</span>
-            Finances
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/parc/overview">
-            <span className="material-symbols-outlined">minor_crash</span>
-            Parc Automobile
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-finance-secondary hover:bg-finance-surface-container-high transition-colors" href="/magasin/dashboard">
-            <span className="material-symbols-outlined">warehouse</span>
-            Magasin
-          </a>
-        </nav>
+        
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen">
-        <header className="bg-finance-surface sticky top-0 w-full z-40 border-b border-finance-outline-variant flex justify-between items-center h-[64px] px-gutter">
-          <div className="flex items-center gap-6">
-            <h2 className="font-title-sm text-title-sm text-finance-on-surface font-black tracking-tight ml-10 lg:ml-0">KAMLOG EM-ERP</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-outline-variant flex items-center justify-center font-bold text-sm">
-                {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
-              </div>
-            </div>
-          </div>
-        </header>
+      <div className="flex-1  flex flex-col min-h-screen">
+        
 
         <main className="flex-1 p-container-margin overflow-y-auto bg-finance-background">
           <div className="flex justify-between items-end mb-8">
@@ -112,10 +81,10 @@ export default function KFinanceOverview() {
               <p className="font-body-base text-body-base text-finance-secondary">Aperçu global de la santé financière et des opérations en cours.</p>
             </div>
             <div className="flex gap-3">
-              <button className="px-4 py-2 bg-finance-primary text-white rounded-lg font-body-sm text-body-sm shadow-sm hover:opacity-90 flex items-center gap-2">
-                <span className="material-symbols-outlined">add_circle</span>
-                Créer Facture
-              </button>
+              <Link href="/finance/saisie-transaction-bancaire" className="bg-primary text-white px-4 py-2 rounded-DEFAULT font-title-sm text-title-sm hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+                <span className="material-symbols-outlined text-[18px]">add</span>
+                Nouvelle Opération
+              </Link>
             </div>
           </div>
 

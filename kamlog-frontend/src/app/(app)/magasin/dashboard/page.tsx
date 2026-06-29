@@ -1,6 +1,7 @@
 // src/app/(app)/magasin/dashboard/page.tsx
 'use client'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { magasinAPI } from '@/lib/api-client'
 
 export default function KMagasinDashboard() {
@@ -68,7 +69,7 @@ export default function KMagasinDashboard() {
 
   return (
     <div className="flex h-screen bg-surface text-on-background font-body-base antialiased overflow-hidden">
-      {/* SideNavBar */}
+      
       <aside className="bg-surface-container-lowest text-on-surface flex flex-col h-screen p-stack-md fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm z-50">
         <div className="mb-stack-lg flex items-center gap-3 px-3 mt-16 md:mt-0">
           <div className="w-10 h-10 bg-primary text-on-primary rounded flex items-center justify-center font-bold font-title-sm">
@@ -85,43 +86,13 @@ export default function KMagasinDashboard() {
           Nouvelle Opération
         </button>
         
-        <nav className="flex-1 flex flex-col gap-1">
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="/dashboard/global">
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            Tableau de bord
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="/transport/control">
-            <span className="material-symbols-outlined text-[20px]">local_shipping</span>
-            Transport
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-primary-container font-bold font-label-caps text-label-caps" href="/magasin/dashboard">
-            <span className="material-symbols-outlined text-[20px]">warehouse</span>
-            K-Magasin
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="/finance/overview">
-            <span className="material-symbols-outlined text-[20px]">payments</span>
-            Finances
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors font-label-caps text-label-caps" href="/parc/overview">
-            <span className="material-symbols-outlined text-[20px]">minor_crash</span>
-            Parc Automobile
-          </a>
-        </nav>
+        
       </aside>
 
       {/* Main Content Area */}
       <main className="flex-1 ml-[260px] flex flex-col h-screen bg-surface relative z-0">
-        {/* TopNavBar */}
-        <header className="bg-surface text-primary sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-          <div className="flex items-center gap-stack-lg">
-            <h2 className="font-title-sm text-title-sm text-on-surface font-black">K-Magasin</h2>
-            <nav className="hidden md:flex gap-stack-md">
-              <a className="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base" href="#">Dashboard</a>
-              <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Stocks</a>
-              <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Réceptions</a>
-            </nav>
-          </div>
-        </header>
+        
+        
 
         {/* Canvas / Dashboard Content */}
         <div className="flex-1 overflow-y-auto p-container-margin">
@@ -188,18 +159,18 @@ export default function KMagasinDashboard() {
               <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm">
                 <h4 className="font-label-caps text-label-caps text-secondary mb-3 border-b border-outline-variant pb-2">Actions Rapides</h4>
                 <div className="flex flex-col gap-2">
-                  <button className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+                  <Link href="/magasin/reception-mag3" className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-[16px]">add</span>
                       <span className="font-body-base text-sm font-medium text-on-surface">Nouvelle Réception</span>
                     </div>
-                  </button>
-                  <button className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
+                  </Link>
+                  <Link href="/magasin/search" className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-[16px]">search</span>
                       <span className="font-body-base text-sm font-medium text-on-surface">Recherche Stock</span>
                     </div>
-                  </button>
+                  </Link>
                 </div>
               </div>
 

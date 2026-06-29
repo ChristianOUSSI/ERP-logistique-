@@ -61,7 +61,7 @@ export default function TransportFuelPage() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex antialiased">
-        {/* SideNavBar */}
+        
         <aside className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-50">
           {/* Brand */}
           <div className="mb-xl flex items-center gap-sm px-xs mt-4">
@@ -72,70 +72,20 @@ export default function TransportFuelPage() {
             </div>
           </div>
           {/* Navigation Tabs */}
-          <nav className="flex-1 flex flex-col gap-2 font-label-md text-label-md mt-4">
-            <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a className="flex items-center gap-4 px-4 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 transport-active-border" href="/transport/control" style={{ color: '#F59E0B', backgroundColor: '#FEF3C7', borderLeftColor: '#F59E0B' }}>
-              <span className="material-symbols-outlined" style={{ color: '#F59E0B' }}>local_shipping</span>
-              Transport
-            </a>
-            <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/parc/overview">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary active:scale-95 duration-150" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </nav>
+          
           {/* Footer Actions */}
           <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-outline-variant">
             <button className="w-full py-2 px-4 bg-primary text-on-primary rounded font-label-md text-label-md font-bold hover:bg-opacity-90 transition-colors shadow-sm" style={{ backgroundColor: '#F59E0B', color: 'white' }}>
               Nouvelle Opération
             </button>
-            <nav className="flex flex-col gap-2 font-label-md text-label-md">
-              <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary" href="/support">
-                <span className="material-symbols-outlined">help_outline</span>
-                Support
-              </a>
-              <a className="flex items-center gap-4 px-4 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary" href="/login">
-                <span className="material-symbols-outlined">logout</span>
-                Déconnexion
-              </a>
-            </nav>
+            
           </div>
         </aside>
 
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 ml-[260px] flex flex-col min-w-0">
-          {/* TopNavBar */}
-          <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-8">
-            <div className="flex items-center gap-8 h-full">
-              <div className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</div>
-              <nav className="hidden md:flex items-end h-full gap-8 font-body-base text-body-base">
-                <a className="h-full flex items-center text-on-surface-variant hover:text-primary transition-all" href="#">Articles</a>
-                <a className="h-full flex items-center text-on-surface-variant hover:text-primary transition-all" href="#">Clients</a>
-                <a className="h-full flex items-center text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
-                <a className="h-full flex items-center text-primary border-b-2 border-primary pb-[2px]" href="#" style={{ color: '#F59E0B', borderColor: '#F59E0B' }}>Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              {/* Search T-Code */}
-              <TCodeSearch />
-              {/* Trailing Actions */}
-              <div className="flex items-center gap-2 text-on-surface-variant">
-                <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-                <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">verified_user</span></button>
-                <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">account_circle</span></button>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Main Stage */}
           <main className="flex-1 p-8 max-w-[1600px] mx-auto w-full flex flex-col gap-6">

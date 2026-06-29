@@ -40,101 +40,12 @@ export default function KTransportTerminalMapControl() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest text-primary font-label-caps text-label-caps fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
-          {/* Header */}
-          <div className="flex items-center gap-sm mb-lg px-sm">
-            <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary-container icon-fill">sailing</span>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button className="w-full bg-primary text-on-primary font-title-md text-title-md rounded-lg py-2 px-4 mb-lg hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Navigation Tabs */}
-          <ul className="flex-1 flex flex-col gap-1">
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-                <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                Tableau de bord
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="/transport/control">
-                <span className="material-symbols-outlined text-[20px] icon-fill">local_shipping</span>
-                Transport
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-                <span className="material-symbols-outlined text-[20px]">payments</span>
-                Finances
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-                <span className="material-symbols-outlined text-[20px]">minor_crash</span>
-                Parc Automobile
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-                <span className="material-symbols-outlined text-[20px]">settings</span>
-                Paramètres
-              </a>
-            </li>
-          </ul>
-          {/* Footer Tabs */}
-          <ul className="mt-auto flex flex-col gap-1 border-t border-outline-variant pt-4">
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/support">
-                <span className="material-symbols-outlined text-[18px]">help_outline</span>
-                Support
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors active:scale-95 duration-150" href="/login">
-                <span className="material-symbols-outlined text-[18px]">logout</span>
-                Déconnexion
-              </a>
-            </li>
-          </ul>
-        </nav>
-        {/* Main Content Wrapper */}
+        
+        
+        
         <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
-          {/* TopNavBar */}
-          <header className="bg-surface text-primary font-body-base text-body-base sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-            {/* Contextual Breadcrumb / Product Name */}
-            <div className="flex items-center gap-sm">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <span className="text-outline material-symbols-outlined text-[16px]">chevron_right</span>
-              <span className="font-label-md text-label-md text-tertiary bg-tertiary-fixed px-2 py-0.5 rounded-sm">K-Transport Map</span>
-            </div>
-            {/* Global Search */}
-            <TCodeSearch />
-            {/* Top Nav Links & Actions */}
-            <div className="flex items-center gap-md">
-              <nav className="hidden lg:flex items-center gap-sm">
-                <a className="text-on-surface-variant hover:text-primary transition-all px-2 py-1 font-title-md text-title-md" href="#">Articles</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all px-2 py-1 font-title-md text-title-md" href="#">Clients</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all px-2 py-1 font-title-md text-title-md" href="#">Stocks</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all px-2 py-1 font-title-md text-title-md" href="#">Rapports</a>
-              </nav>
-              <div className="h-6 w-px bg-outline-variant mx-xs"></div>
-              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
-              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">verified_user</button>
-              {/* Profile Image */}
-              <div className="w-8 h-8 rounded-full bg-surface-variant border border-outline flex items-center justify-center overflow-hidden cursor-pointer">
-                <span className="material-symbols-outlined text-on-surface-variant">account_circle</span>
-              </div>
-            </div>
-          </header>
+          
+          
           {/* Main Dashboard Stage */}
           <main className="flex-1 p-gutter flex gap-gutter overflow-hidden h-[calc(100vh-64px)]">
             {/* Left Pane: Interactive Terminal Map (Bento Grid Style) */}

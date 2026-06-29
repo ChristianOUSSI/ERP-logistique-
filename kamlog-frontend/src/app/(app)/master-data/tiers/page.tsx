@@ -68,86 +68,12 @@ export default function MasterDataTiers() {
         }
       `}</style>
       <div className="bg-background text-on-surface font-body-base antialiased flex overflow-hidden h-screen selection:bg-[#D1FAE5] selection:text-[#047857]">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col h-screen p-[1.5rem] z-50">
-          {/* Brand */}
-          <div className="flex items-center gap-3 mb-8 px-2">
-            <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md font-bold">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-caps text-label-caps text-secondary">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button className="bg-[#10B981] text-white rounded-lg py-2.5 px-4 flex items-center justify-center gap-2 mb-8 font-title-sm text-title-sm hover:bg-[#047857] transition-colors active:scale-95 duration-150 shadow-sm w-full">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Navigation Tabs */}
-          <div className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              Transport
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/parc/overview">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
-              <span className="material-symbols-outlined icon-fill">group</span>
-              Tiers
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </div>
-          {/* Footer Tabs */}
-          <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              Support
-            </a>
-            <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm">
-              <span className="material-symbols-outlined">logout</span>
-              Déconnexion
-            </button>
-          </div>
-        </nav>
+        
+        
         {/* Main Content Canvas */}
         <div className="ml-[260px] flex-1 flex flex-col h-full bg-surface-container-lowest">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-[1.5rem] shrink-0">
-            {/* Nav Links */}
-            <nav className="flex h-full gap-6">
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Articles</a>
-              <a className="flex items-center font-body-base text-body-base text-primary border-b-2 border-primary pb-1 hover:text-primary transition-all font-semibold" href="#">Clients</a>
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Rapports</a>
-            </nav>
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              <TCodeSearch />
-              {/* Icon Actions */}
-              <div className="flex items-center gap-2 text-on-surface-variant">
-                <button className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#10B981] rounded-full border border-surface-container-lowest"></span>
-                </button>
-                <button className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors">
-                  <span className="material-symbols-outlined text-[28px]">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
           {/* Main Workspace */}
           <main className="flex-1 overflow-hidden flex relative bg-[#F8FAFC]">
             {/* Left Data Section */}

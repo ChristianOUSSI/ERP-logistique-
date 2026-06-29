@@ -13,8 +13,8 @@ export default function DocumentsArchivePage() {
           font-variation-settings: 'FILL 1';
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface h-screen overflow-hidden flex">
-        {/* SideNavBar */}
+      <div className="bg-surface-container-low text-on-surface  flex">
+        
         <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
           <div className="flex items-center gap-sm mb-lg">
             <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary font-bold">K</div>
@@ -27,33 +27,7 @@ export default function DocumentsArchivePage() {
             <span className="material-symbols-outlined fill">add</span>
             Nouvelle Opération
           </button>
-          <nav className="flex-1 space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              Transport
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-primary bg-secondary-container font-bold transition-colors active:scale-95 duration-150 relative" href="#">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-primary rounded-r-full"></div>
-              <span className="material-symbols-outlined">folder</span>
-              Documents
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </nav>
+          
           <div className="mt-auto pt-sm border-t border-outline-variant space-y-xs">
             <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
@@ -68,35 +42,8 @@ export default function DocumentsArchivePage() {
 
         {/* Main Content Area */}
         <main className="flex-1 ml-[260px] flex flex-col h-full bg-background overflow-hidden">
-          {/* TopNavBar */}
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-            <div className="flex items-center gap-lg h-full">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex h-full items-center gap-md">
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Articles</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Clients</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Stocks</a>
-                <a className="font-body-base text-body-base text-primary border-b-2 border-primary pb-1 h-full flex items-center px-xs" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-sm">
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded">
-                <input className="pl-sm pr-lg py-xs text-body-sm bg-surface-container-lowest border border-outline-variant rounded focus:outline-none w-48" placeholder="Rechercher T-Code" type="text"/>
-                <span className="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-              </div>
-              <div className="flex items-center gap-xs ml-sm border-l border-outline-variant pl-sm">
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">notifications</span>
-                </button>
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Canvas */}
           <div className="flex-1 overflow-y-auto p-gutter lg:p-margin-desktop">

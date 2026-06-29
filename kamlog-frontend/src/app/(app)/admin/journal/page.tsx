@@ -36,7 +36,7 @@ export default function Journal() {
         .severity-info { color: #0058be; background-color: rgba(0, 88, 190, 0.1); }
       `}</style>
       <div className="bg-surface-container-low font-body-md text-on-surface antialiased overflow-hidden h-screen flex">
-        {/* SideNavBar */}
+        
         <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col h-screen p-[1.5rem] z-50">
           <div className="mb-lg">
             <div className="flex items-center gap-sm px-xs mb-md">
@@ -53,28 +53,7 @@ export default function Journal() {
               <span>Nouvelle Opération</span>
             </button>
           </div>
-          <nav className="flex-1 space-y-xxs overflow-y-auto">
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Tableau de bord</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">local_shipping</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Transport</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">payments</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Finances</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors group" href="/parc/overview">
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform">minor_crash</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Parc Automobile</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold shadow-sm transition-colors group" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined group-hover:scale-110 transition-transform icon-fill">settings</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Paramètres</span>
-            </a>
-          </nav>
+          
           <div className="mt-auto border-t border-outline-variant pt-md space-y-xxs">
             <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/support">
               <span className="material-symbols-outlined">help_outline</span>
@@ -88,43 +67,8 @@ export default function Journal() {
         </aside>
         {/* Main Content Area */}
         <main className="ml-[260px] flex-1 flex flex-col min-h-screen relative overflow-hidden">
-          {/* TopNavBar */}
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem]">
-            <div className="flex items-center gap-xl">
-              <h2 className="font-title-sm text-title-sm text-on-surface font-black tracking-tight">KAMLOG EM-ERP</h2>
-              <nav className="hidden lg:flex items-center gap-lg">
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Articles</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Clients</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base" href="#">Stocks</a>
-                <a className="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base font-bold" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-md flex-1 max-w-md justify-end">
-              <div className="relative group w-full">
-                <input className="w-full h-10 pl-10 pr-4 bg-surface-container-low border-none rounded-full text-body-sm focus:ring-2 focus:ring-primary transition-all placeholder:text-outline" placeholder="Rechercher T-Code" type="text"/>
-                <span className="material-symbols-outlined absolute left-3 top-2 text-outline group-focus-within:text-primary transition-colors">search</span>
-              </div>
-              <div className="flex items-center gap-xs ml-md">
-                <button className="p-xs hover:bg-surface-container-high rounded-full relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button className="p-xs hover:bg-surface-container-high rounded-full">
-                  <span className="material-symbols-outlined text-secondary">verified_user</span>
-                </button>
-                <div className="h-8 w-px bg-outline-variant mx-xs"></div>
-                <div className="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high px-xs py-1 rounded-lg">
-                  <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center">
-                    <span className="material-symbols-outlined text-on-primary-fixed">person</span>
-                  </div>
-                  <div className="hidden xl:block">
-                    <p className="text-label-md font-bold text-on-surface">Admin_SYSTEM</p>
-                    <p className="text-label-sm text-outline">Superviseur IT</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
+          
+          
           {/* Activity Log Content Stage */}
           <section className="flex-1 overflow-y-auto p-[1rem] space-y-lg relative">
             {/* Background Decorative Element */}
@@ -132,13 +76,7 @@ export default function Journal() {
             {/* Dashboard Header & Summary */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-md mb-lg">
               <div>
-                <nav className="flex items-center gap-xs text-outline text-label-sm mb-xs">
-                  <a className="hover:text-primary" href="#">Système</a>
-                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                  <a className="hover:text-primary" href="#">Administration</a>
-                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                  <span className="text-on-surface font-bold">Activity Logs</span>
-                </nav>
+                
                 <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Journaux d'Activité de Sécurité</h2>
                 <p className="text-body-md text-outline">Surveillance en temps réel des accès, privilèges et modifications critiques du système.</p>
               </div>

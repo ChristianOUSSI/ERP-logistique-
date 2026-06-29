@@ -86,69 +86,10 @@ export default function ReportsLibrary() {
         }
       `}</style>
       <div className="bg-surface-container-low min-h-screen text-on-surface overflow-x-hidden">
-        {/* SideNavBar */}
-        <nav className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-4 z-50">
-          <div className="mb-8 px-4 mt-2">
-            <div className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</div>
-            <div className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-1">Port Operations</div>
-          </div>
-          <button className="mb-6 flex items-center justify-center gap-2 w-full bg-primary text-on-primary py-2.5 px-4 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Nouvelle Opération
-          </button>
-          <div className="flex flex-col gap-1 flex-1">
-            <a onClick={() => router.push('/dashboard')} className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group cursor-pointer">
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">dashboard</span>
-              Tableau de bord
-            </a>
-            <a onClick={() => router.push('/transport')} className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group cursor-pointer">
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">local_shipping</span>
-              Transport
-            </a>
-            <a onClick={() => router.push('/finance')} className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group cursor-pointer">
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">payments</span>
-              Finances
-            </a>
-            <a onClick={() => router.push('/parc')} className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group cursor-pointer">
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a onClick={() => router.push('/settings')} className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-title-md text-title-md group cursor-pointer">
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">settings</span>
-              Paramètres
-            </a>
-          </div>
-          <div className="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-1">
-            <a onClick={() => router.push('/support')} className="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-body-sm text-body-sm cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">help_outline</span>
-              Support
-            </a>
-            <a onClick={() => router.push('/logout')} className="flex items-center gap-3 px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-body-sm text-body-sm cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </nav>
-        {/* TopNavBar */}
-        <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem] ml-[260px] w-[calc(100%-260px)] shadow-sm">
-          <div className="flex items-center gap-8 h-full">
-            <div className="font-title-sm text-title-sm text-on-surface font-black hidden md:block">KAMLOG EM-ERP</div>
-            <nav className="flex gap-6 h-full items-end">
-              <a onClick={() => router.push('/master-data/articles')} className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px] cursor-pointer">Articles</a>
-              <a onClick={() => router.push('/master-data/clients')} className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px] cursor-pointer">Clients</a>
-              <a onClick={() => router.push('/magasin')} className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all pb-[18px] cursor-pointer">Stocks</a>
-              <a onClick={() => router.push('/reports')} className="font-body-base text-body-base text-primary border-b-2 border-primary pb-[16px] font-medium cursor-pointer">Rapports</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <TCodeSearch />
-            <div className="flex items-center gap-2 text-on-surface-variant border-l border-outline-variant pl-4">
-              <button className="p-1 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-              <button onClick={() => router.push('/security')} className="p-1 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">verified_user</span></button>
-              <button onClick={() => router.push('/profile')} className="p-1 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined text-[28px] text-primary">account_circle</span></button>
-            </div>
-          </div>
-        </header>
+        
+        
+        
+        
         {/* Main Workspace */}
         <div className="ml-[260px] p-[1rem] min-h-[calc(100vh-64px)] flex gap-[1rem] items-start max-w-[1600px]">
           {/* Center Stage: Templates Library */}

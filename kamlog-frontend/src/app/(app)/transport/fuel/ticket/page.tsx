@@ -45,75 +45,11 @@ export default function FuelTicket() {
         .transport-accent-light { background-color: #fed7aa; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-low border-r border-outline-variant w-[240px] h-screen flex-shrink-0 flex flex-col z-40 fixed left-0 top-0 transition-all duration-200 ease-in-out hidden md:flex">
-          {/* Header */}
-          <div className="p-[1.5rem] border-b border-outline-variant flex items-center gap-[0.5rem]">
-            <div className="w-10 h-10 bg-transport-accent rounded flex items-center justify-center text-on-error font-title-lg font-bold">PA</div>
-            <div>
-              <h1 className="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
-            </div>
-          </div>
-          {/* T-Code Search */}
-          <div className="p-[1rem]">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
-              <input className="w-full pl-10 pr-4 py-2 bg-surface rounded border border-outline-variant text-body-sm font-body-sm focus:outline-none focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" placeholder="T-Code Search" type="text"/>
-            </div>
-          </div>
-          {/* Main Nav */}
-          <ul className="flex-1 py-[0.5rem]">
-            <li>
-              <a onClick={() => router.push('/transport')} className="flex items-center gap-3 px-[1.5rem] py-3 text-transport-accent bg-surface-container-highest border-l-4 border-transport-accent font-bold font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined icon-fill">local_shipping</span>
-                Transport
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/magasin')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">inventory_2</span>
-                Magasin
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/finance')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">payments</span>
-                Finance
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/parc')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">local_parking</span>
-                Parc
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/audit')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">fact_check</span>
-                Audit
-              </a>
-            </li>
-          </ul>
-          {/* Footer Nav */}
-          <ul className="border-t border-outline-variant py-[0.5rem]">
-            <li>
-              <a onClick={() => router.push('/support')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">support_agent</span>
-                Support
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/logout')} className="flex items-center gap-3 px-[1.5rem] py-3 text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all hover:bg-surface-container cursor-pointer">
-                <span className="material-symbols-outlined">logout</span>
-                Log out
-              </a>
-            </li>
-          </ul>
-        </nav>
+        
+        
         {/* Main Content Area */}
         <main className="flex-1 md:ml-[240px] flex flex-col min-h-screen">
-          {/* TopNavBar */}
+          
           <header className="bg-surface h-16 border-b border-outline-variant flex items-center justify-between px-[1.5rem] w-full mx-auto">
             <div className="flex items-center gap-[0.5rem] text-on-surface-variant font-label-md text-label-md">
               <a onClick={() => router.push('/transport')} className="hover:text-primary transition-colors cursor-pointer">Transport</a>

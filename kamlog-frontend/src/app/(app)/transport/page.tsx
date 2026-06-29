@@ -48,92 +48,16 @@ export default function TransportPage() {
           border-radius: 0.5rem;
         }
       `}</style>
-      <div className="bg-background text-on-background font-body-base antialiased flex h-screen overflow-hidden">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
-          <div className="flex items-center gap-3 mb-8 px-2">
-            <div className="w-8 h-8 module-bg rounded flex items-center justify-center font-bold text-white">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <span className="font-label-caps text-label-caps text-secondary">Port Operations</span>
-            </div>
-          </div>
-          <button className="module-bg hover:opacity-90 active:scale-95 duration-150 rounded px-4 py-2 mb-6 flex items-center justify-center gap-2 font-title-sm text-title-sm w-full transition-all shadow-sm">
-            <span className="material-symbols-outlined">add</span>
-            Nouvelle Opération
-          </button>
-          <ul className="flex-1 space-y-1">
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-                <span className="material-symbols-outlined">dashboard</span>
-                <span className="font-body-base text-body-base">Tableau de bord</span>
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-                <span className="material-symbols-outlined icon-fill">local_shipping</span>
-                <span className="font-body-base text-body-base">Transport</span>
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-                <span className="material-symbols-outlined">payments</span>
-                <span className="font-body-base text-body-base">Finances</span>
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-                <span className="material-symbols-outlined">minor_crash</span>
-                <span className="font-body-base text-body-base">Parc Automobile</span>
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-                <span className="material-symbols-outlined">settings</span>
-                <span className="font-body-base text-body-base">Paramètres</span>
-              </a>
-            </li>
-          </ul>
-          <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              <span className="font-body-base text-body-base">Support</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-body-base text-body-base">Déconnexion</span>
-            </a>
-          </div>
-        </nav>
+      <div className="bg-background text-on-background font-body-base antialiased flex flex-col">
+        
+        
 
-        {/* Main Content Wrapper */}
-        <div className="flex-1 ml-[260px] flex flex-col h-screen overflow-hidden">
-          {/* TopNavBar */}
-          <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter">
-            <div className="flex items-center gap-6">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex gap-4">
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-4" href="#">Articles</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-4" href="#">Clients</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-4" href="#">Stocks</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-4" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-full bg-surface-container-low px-4 py-2 flex items-center gap-2">
-                <span className="material-symbols-outlined text-outline">search</span>
-                <input className="bg-transparent border-none focus:ring-0 text-body-sm w-48 placeholder:text-outline p-0" placeholder="Rechercher T-Code" type="text"/>
-                <div className="hidden absolute right-2 top-2 bg-surface border border-outline-variant rounded px-1 text-[10px] text-outline font-mono-data">⌘K</div>
-              </div>
-              <div className="flex items-center gap-2 text-secondary">
-                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">verified_user</span></button>
-                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">account_circle</span></button>
-              </div>
-            </div>
-          </header>
+        
+        <div className="flex-1 ml-[260px] flex flex-col ">
+          
+          
 
-          {/* Main Canvas */}
+          
           <main className="flex-1 overflow-y-auto p-container-margin bg-background">
             <div className="flex justify-between items-end mb-stack-lg">
               <div>

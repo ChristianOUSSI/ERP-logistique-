@@ -39,70 +39,9 @@ export default function StockMovement() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
         {/* TopNavBar (Mobile Only) */}
-        <header className="md:hidden flex items-center justify-between px-[1.5rem] w-full h-16 bg-surface border-b border-outline-variant fixed top-0 z-50">
-          <div className="flex items-center gap-[0.25rem]">
-            <span className="material-symbols-outlined magasin-main">inventory_2</span>
-            <h1 className="font-headline-sm text-headline-sm font-bold text-on-surface">Magasin</h1>
-          </div>
-          <div className="flex items-center gap-[0.5rem] text-on-surface-variant">
-            <span className="material-symbols-outlined cursor-pointer hover:bg-surface-container-high p-1 rounded transition-colors">search</span>
-            <span className="material-symbols-outlined cursor-pointer hover:bg-surface-container-high p-1 rounded transition-colors">menu</span>
-          </div>
-        </header>
+        
         {/* SideNavBar (Desktop) */}
-        <nav className="hidden md:flex flex-col fixed left-0 top-0 h-full flex-shrink-0 z-40 bg-surface-container-low border-r border-outline-variant w-[240px] transition-all duration-200 ease-in-out">
-          {/* Header */}
-          <div className="p-[1.5rem] border-b border-outline-variant mb-[1rem] flex items-center gap-[1rem]">
-            <div className="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-title-lg font-bold">
-              PA
-            </div>
-            <div>
-              <div className="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</div>
-              <div className="font-body-sm text-body-sm text-on-surface-variant">Terminal A1</div>
-            </div>
-          </div>
-          {/* CTA */}
-          <div className="px-[1rem] mb-[1rem]">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style={{fontSize: '16px'}}>search</span>
-              <input className="w-full bg-surface-container border border-outline-variant rounded py-[0.5rem] pl-8 pr-2 font-label-md text-label-md focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder-on-surface-variant" placeholder="T-Code Search" type="text"/>
-            </div>
-          </div>
-          {/* Navigation Links */}
-          <div className="flex-1 flex flex-col gap-[0.25rem] px-[0.25rem]">
-            <a onClick={() => router.push('/transport')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span>Transport</span>
-            </a>
-            <a onClick={() => router.push('/magasin')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg font-label-md text-label-md magasin-active font-bold border-l-4 cursor-pointer">
-              <span className="material-symbols-outlined" style={{fontVariationSettings: 'FILL 1'}}>inventory_2</span>
-              <span>Magasin</span>
-            </a>
-            <a onClick={() => router.push('/finance')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">payments</span>
-              <span>Finance</span>
-            </a>
-            <a onClick={() => router.push('/parc')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">local_parking</span>
-              <span>Parc</span>
-            </a>
-            <a onClick={() => router.push('/audit')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">fact_check</span>
-              <span>Audit</span>
-            </a>
-          </div>
-          {/* Footer Links */}
-          <div className="border-t border-outline-variant p-[0.5rem] flex flex-col gap-[0.25rem] mt-auto">
-            <a onClick={() => router.push('/support')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">support_agent</span>
-              <span>Support</span>
-            </a>
-            <a onClick={() => router.push('/logout')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-              <span className="material-symbols-outlined">logout</span>
-              <span>Log out</span>
-            </a>
-          </div>
-        </nav>
+        
         {/* Contextual Pane (Sub-module Nav) */}
         <aside className="hidden xl:flex flex-col fixed left-[240px] top-0 h-full w-[200px] flex-shrink-0 z-30 bg-surface border-r border-outline-variant pt-[1.5rem] px-[1rem]">
           <h2 className="font-title-md text-title-md font-bold text-on-surface mb-[1rem]">Magasin Ops</h2>
@@ -118,13 +57,7 @@ export default function StockMovement() {
         <main className="flex-1 ml-0 md:ml-[240px] xl:ml-[440px] mt-16 md:mt-0 p-[1rem] md:p-[1.5rem] lg:p-[2rem] max-w-[1200px] w-full">
           {/* Breadcrumbs & Header */}
           <div className="mb-[1.5rem]">
-            <nav className="flex items-center gap-[0.25rem] font-label-sm text-label-sm text-on-surface-variant mb-[0.5rem]">
-              <a onClick={() => router.push('/dashboard')} className="hover:text-magasin-main transition-colors cursor-pointer">Port Ops</a>
-              <span className="material-symbols-outlined" style={{fontSize: '14px'}}>chevron_right</span>
-              <a onClick={() => router.push('/magasin')} className="hover:text-magasin-main transition-colors cursor-pointer">Magasin</a>
-              <span className="material-symbols-outlined" style={{fontSize: '14px'}}>chevron_right</span>
-              <span className="text-on-surface">Mouvement de Stock Manuel</span>
-            </nav>
+            
             <div className="flex justify-between items-end">
               <div>
                 <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Ajustement Manuel</h1>

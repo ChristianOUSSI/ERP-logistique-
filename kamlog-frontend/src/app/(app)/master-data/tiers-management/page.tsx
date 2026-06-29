@@ -28,8 +28,8 @@ export default function MasterDataTiersManagement() {
           border-left: 4px solid #10B981 !important;
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface flex min-h-screen overflow-hidden">
-        {/* SideNavBar */}
+      <div className="bg-surface-container-low text-on-surface flex min-">
+        
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
           <div className="px-md py-lg flex flex-col gap-xs">
             <div className="flex items-center gap-sm mb-lg">
@@ -42,28 +42,7 @@ export default function MasterDataTiersManagement() {
               </div>
             </div>
             {/* Navigation Links */}
-            <nav className="flex flex-col gap-1">
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/transport/control">
-                <span className="material-symbols-outlined text-title-md">local_shipping</span>
-                <span className="text-label-md font-label-md">Transport</span>
-              </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/finance/overview">
-                <span className="material-symbols-outlined text-title-md">payments</span>
-                <span className="text-label-md font-label-md">Finance</span>
-              </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/parc/overview">
-                <span className="material-symbols-outlined text-title-md">inventory_2</span>
-                <span className="text-label-md font-label-md">Parc</span>
-              </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all group" href="/magasin/dashboard">
-                <span className="material-symbols-outlined text-title-md">warehouse</span>
-                <span className="text-label-md font-label-md">Magasin</span>
-              </a>
-              <a className="flex items-center gap-sm px-md py-sm rounded-sm text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="/audit/dashboard/health">
-                <span className="material-symbols-outlined text-title-md icon-fill">history_edu</span>
-                <span className="text-label-md font-label-md">Audit</span>
-              </a>
-            </nav>
+            
             <div className="mt-xl pt-lg border-t border-outline-variant">
               <button className="w-full flex items-center justify-between px-md py-xs bg-surface-container-highest rounded border border-outline-variant text-label-md font-label-md text-on-surface-variant">
                 <span>T-Code Search</span>
@@ -82,39 +61,8 @@ export default function MasterDataTiersManagement() {
             </a>
           </div>
         </aside>
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-xl ml-60">
-            <h1 className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</h1>
-            <nav className="hidden md:flex items-center gap-lg">
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded" href="#">Alerts</a>
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 rounded" href="#">MFA Status</a>
-              <a className="text-label-md font-label-md text-primary border-b-2 border-primary pb-1" href="#">Modules</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-md">
-            <div className="relative">
-              <input 
-                className={`bg-surface-container-highest border-none rounded-full px-md py-xs text-label-md ${searchWidth} focus:ring-2 focus:ring-primary/20 transition-all duration-300`} 
-                placeholder="Search Master Data..." 
-                type="text"
-                onFocus={() => setSearchWidth('w-80')}
-                onBlur={() => setSearchWidth('w-64')}
-              />
-              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-md">search</span>
-            </div>
-            <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors relative">
-              <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface-container-low"></span>
-            </button>
-            <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
-              <span className="material-symbols-outlined text-on-surface-variant">security</span>
-            </button>
-            <div className="h-8 w-8 rounded-full overflow-hidden border border-outline-variant bg-surface-variant">
-              <img alt="User Profile Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh0YcMXQbu-z9ao_1YCWb26ZfNWtFG7tT-srqoAhUbHmCrea4tsXCDkqF-0qlSTgSVaCts7rfQ089fxbJYLYOKcNAKisBLIpg7Pek_-Eo_k0VO_ve2-a1uUL-hC2zsKy3pWTWq6xk8R4r9sHPFYVSDxOmELL7Mc4cTQ85fHlRlNM16bmNLfNVwAXnHkPTjULe9bTgPF-KtEZVmfOpTyRKCKA-kysb2BVnw--fhrScnRBaBtwHnxBkAU0E1UBJ0z_K03lIZkHYZVkM"/>
-            </div>
-          </div>
-        </header>
+        
+        
         {/* Main Content Stage */}
         <main className="flex-1 ml-60 mt-16 flex overflow-hidden">
           {/* Table Section */}

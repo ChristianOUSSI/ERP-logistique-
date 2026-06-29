@@ -101,19 +101,7 @@ export default function GlobalDashboard() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface min-h-screen">
         {/* TopAppBar Shell */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-xl">
-            <span className="text-title-lg font-title-lg font-bold text-primary ml-10 lg:ml-0">KAMLOG EM-ERP</span>
-          </div>
-          <div className="flex items-center gap-md">
-            <button className="p-xs hover:bg-surface-container-high transition-colors rounded-full">
-              <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-            </button>
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-outline-variant flex items-center justify-center font-bold text-sm">
-              {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </header>
+        
 
         {/* SideNavBar Shell */}
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant hidden lg:flex">
@@ -126,28 +114,7 @@ export default function GlobalDashboard() {
             </div>
             <p className="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</p>
           </div>
-          <nav className="flex-1 px-xs space-y-xxs overflow-y-auto custom-scrollbar">
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-primary bg-primary/10 font-bold transition-all" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="text-label-md font-label-md">Tableau de bord</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="text-label-md font-label-md">Transport</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              <span className="text-label-md font-label-md">Finance</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span className="text-label-md font-label-md">Parc</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="text-label-md font-label-md">Magasin</span>
-            </a>
-          </nav>
+          
         </aside>
 
         {/* Main Content Area */}
@@ -156,11 +123,7 @@ export default function GlobalDashboard() {
             {/* Global Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">
               <div>
-                <nav className="flex items-center gap-xxs text-label-sm font-label-sm text-on-surface-variant mb-xs">
-                  <span>Modules</span>
-                  <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-                  <span className="text-primary">Global Dashboard</span>
-                </nav>
+                
                 <h1 className="text-headline-lg font-headline-lg text-on-background">System Overview</h1>
               </div>
               <div className="flex items-center gap-sm">

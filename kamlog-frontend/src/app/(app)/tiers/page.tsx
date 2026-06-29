@@ -59,99 +59,13 @@ export default function TiersPage() {
         }
       `}</style>
       <div className="bg-background text-on-surface font-body-base antialiased flex overflow-hidden h-screen selection:bg-module-green-light selection:text-module-green-dark">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col h-screen p-stack-md z-50">
-          {/* Brand */}
-          <div className="flex items-center gap-3 mb-8 px-2">
-            <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md font-bold">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-caps text-label-caps text-secondary">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button className="bg-module-green text-white rounded-lg py-2.5 px-4 flex items-center justify-center gap-2 mb-8 font-title-sm text-title-sm hover:bg-module-green-dark transition-colors active:scale-95 duration-150 shadow-sm w-full">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Navigation Tabs */}
-          <div className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              Transport
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/parc/overview">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary bg-secondary-container font-bold hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="#">
-              <span className="material-symbols-outlined" data-weight="fill">group</span>
-              Tiers
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </div>
-          {/* Footer Tabs */}
-          <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              Support
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 font-title-sm text-title-sm" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </nav>
+        
+        
 
         {/* Main Content Canvas */}
         <div className="ml-[260px] flex-1 flex flex-col h-full bg-surface-container-lowest">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter shrink-0">
-            {/* Nav Links */}
-            <nav className="flex h-full gap-6">
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Articles</a>
-              <a className="flex items-center font-body-base text-body-base text-primary border-b-2 border-primary pb-1 hover:text-primary transition-all font-semibold" href="#">Clients</a>
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
-              <a className="flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Rapports</a>
-            </nav>
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              {/* Search */}
-              <div className="relative group focus-within:ring-2 focus-within:ring-primary rounded-lg overflow-hidden border border-outline-variant bg-surface-container-lowest flex items-center h-9">
-                <span className="material-symbols-outlined text-on-surface-variant ml-2 text-[20px]">search</span>
-                <input className="bg-transparent border-none focus:ring-0 text-sm w-48 font-mono-data text-mono-data placeholder:font-body-base" placeholder="Rechercher T-Code" type="text"/>
-                <div className="hidden group-focus-within:flex absolute top-full left-0 w-full bg-surface-container-lowest border border-outline-variant mt-1 rounded-lg shadow-lg z-50 flex-col">
-                  <div className="p-2 text-xs text-on-surface-variant border-b border-outline-variant">Quick Jump (T-Code)</div>
-                  <a className="px-3 py-2 text-sm hover:bg-surface-container-high flex justify-between" href="#"><span className="font-mono-data text-module-green">TR01</span><span>Create Tier</span></a>
-                  <a className="px-3 py-2 text-sm hover:bg-surface-container-high flex justify-between" href="#"><span className="font-mono-data text-module-green">TR02</span><span>Edit Tier</span></a>
-                </div>
-              </div>
-              {/* Icon Actions */}
-              <div className="flex items-center gap-2 text-on-surface-variant">
-                <button className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-module-green rounded-full border border-surface-container-lowest"></span>
-                </button>
-                <button className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <button className="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors">
-                  <span className="material-symbols-outlined text-[28px]">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Main Workspace */}
           <main className="flex-1 overflow-hidden flex relative bg-[#F8FAFC]">

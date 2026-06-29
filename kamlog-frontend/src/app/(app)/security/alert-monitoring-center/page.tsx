@@ -123,31 +123,11 @@ export default function AlertMonitoringCenterPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      {/* TopNavBar */}
-      <header className="fixed top-0 left-0 w-full bg-surface-container-highest border-b border-outline-variant flex justify-between items-center px-margin-desktop h-14 z-50">
-        <div className="flex items-center gap-8">
-          <span className="font-headline-md text-headline-md font-bold text-primary">KAMLOG EM-ERP</span>
-          <nav className="hidden md:flex gap-6">
-            <Link href="/dashboard" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Dashboard</Link>
-            <Link href="/activity-log" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Activity Log</Link>
-            <Link href="/security/alert-monitoring-center" className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer">User Audit</Link>
-            <Link href="/compliance" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Compliance</Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="bg-surface-container flex items-center px-3 py-1.5 rounded border border-outline-variant w-64">
-            <span className="material-symbols-outlined text-[20px] text-on-surface-variant mr-2">search</span>
-            <input className="bg-transparent border-none focus:ring-0 text-label-md w-full" placeholder="Search T-Codes (e.g. K-SEC-01)" type="text" />
-          </div>
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">security</button>
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">admin_panel_settings</button>
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">notifications</button>
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">account_circle</button>
-        </div>
-      </header>
+    <div className="flex flex-col ">
+      
+      
 
-      {/* SideNavBar */}
+      
       <aside className="fixed left-0 top-0 h-full w-60 bg-surface-container-low flex flex-col pt-14 z-40">
         <div className="p-6 border-b border-outline-variant/30">
           <div className="flex items-center gap-3 mb-4">
@@ -161,32 +141,7 @@ export default function AlertMonitoringCenterPage() {
           </div>
           <button className="w-full bg-secondary text-on-secondary font-label-md text-label-md py-2 rounded shadow-sm hover:opacity-90 transition-all">Generate Forensic Report</button>
         </div>
-        <nav className="flex-1 py-4 overflow-y-auto custom-scrollbar">
-          <Link href="/security/alert-monitoring-center" className="flex items-center px-4 py-3 text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">shield</span>
-            <span className="font-title-md text-title-md">Security Overview</span>
-          </Link>
-          <Link href="/audit/event-viewer" className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">list_alt</span>
-            <span className="font-label-md text-label-md">Event Viewer</span>
-          </Link>
-          <Link href="/audit/policy-manager" className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">policy</span>
-            <span className="font-label-md text-label-md">Policy Manager</span>
-          </Link>
-          <Link href="/audit/key-vault" className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">vpn_key</span>
-            <span className="font-label-md text-label-md">Key Vault</span>
-          </Link>
-          <Link href="/audit/system-integrity" className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">verified_user</span>
-            <span className="font-label-md text-label-md">System Integrity</span>
-          </Link>
-          <Link href="/audit/audit-reports" className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out">
-            <span className="material-symbols-outlined mr-3">analytics</span>
-            <span className="font-label-md text-label-md">Audit Reports</span>
-          </Link>
-        </nav>
+        
         <div className="p-4 border-t border-outline-variant/30">
           <Link href="/settings" className="flex items-center px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-all">
             <span className="material-symbols-outlined mr-3">settings</span>
@@ -203,13 +158,7 @@ export default function AlertMonitoringCenterPage() {
       <main className="ml-60 pt-14 min-h-screen">
         <div className="max-w-max-width mx-auto p-gutter">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 mb-4 text-outline font-label-md text-label-md">
-            <Link href="/erp-global" className="hover:text-primary">ERP Global</Link>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <Link href="/audit-security" className="hover:text-primary">Audit & Security</Link>
-            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="text-on-surface">Security: Alert Monitoring Center</span>
-          </nav>
+          
 
           <div className="flex gap-gutter">
             {/* Filter Sidebar */}

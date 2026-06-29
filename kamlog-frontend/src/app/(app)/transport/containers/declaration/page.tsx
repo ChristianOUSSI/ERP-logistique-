@@ -68,29 +68,7 @@ export default function ContainerDeclaration() {
               Nouvelle Opération
             </button>
           </div>
-          <nav className="flex-1 overflow-y-auto px-[0.25rem] py-[0.5rem] flex flex-col gap-[0.25rem] font-label-caps text-label-caps">
-            <a onClick={() => router.push('/dashboard')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a onClick={() => router.push('/transport')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative cursor-pointer">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-primary rounded-r-full"></div>
-              <span className="material-symbols-outlined" data-weight="fill">local_shipping</span>
-              Transport
-            </a>
-            <a onClick={() => router.push('/finance')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a onClick={() => router.push('/parc')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            <a onClick={() => router.push('/settings')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </nav>
+          
           <div className="border-t border-outline-variant/50 p-[0.25rem] mt-auto font-label-caps text-label-caps">
             <a onClick={() => router.push('/support')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors cursor-pointer">
               <span className="material-symbols-outlined">help_outline</span>
@@ -103,49 +81,11 @@ export default function ContainerDeclaration() {
           </div>
         </aside>
         <div className="flex-1 flex flex-col ml-[260px] min-w-0 h-full relative">
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem] font-body-base text-body-base">
-            <div className="flex items-center gap-[1.5rem]">
-              <span className="font-title-sm text-title-sm text-on-surface font-black tracking-tight">KAMLOG EM-ERP</span>
-              <nav className="hidden lg:flex gap-[1.5rem]">
-                <a onClick={() => router.push('/master-data/articles')} className="text-on-surface-variant hover:text-primary transition-all py-4 font-label-md text-label-md cursor-pointer">Articles</a>
-                <a onClick={() => router.push('/master-data/tiers')} className="text-on-surface-variant hover:text-primary transition-all py-4 font-label-md text-label-md cursor-pointer">Clients</a>
-                <a onClick={() => router.push('/magasin')} className="text-on-surface-variant hover:text-primary transition-all py-4 font-label-md text-label-md cursor-pointer">Stocks</a>
-                <a onClick={() => router.push('/reports')} className="text-on-surface-variant hover:text-primary transition-all py-4 font-label-md text-label-md cursor-pointer">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-[1rem]">
-              <div className="relative hidden md:block w-64 focus-within:ring-2 focus-within:ring-primary rounded">
-                <span className="material-symbols-outlined absolute left-[0.5rem] top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input className="w-full h-9 pl-10 pr-[0.5rem] bg-surface-container rounded border-none text-body-sm focus:ring-0 placeholder:text-on-surface-variant/70" placeholder="Rechercher T-Code ou ID..." type="text"/>
-                <div className="absolute right-[0.25rem] top-1/2 -translate-y-1/2 bg-surface border border-outline-variant rounded px-1 flex items-center justify-center">
-                  <span className="text-[10px] font-mono text-on-surface-variant">⌘K</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-[0.25rem] text-on-surface-variant">
-                <button className="p-[0.25rem] hover:bg-surface-container-high rounded-full transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button onClick={() => router.push('/security')} className="p-[0.25rem] hover:bg-surface-container-high rounded-full transition-colors text-tertiary">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <div className="w-px h-6 bg-outline-variant mx-[0.25rem]"></div>
-                <button onClick={() => router.push('/profile')} className="p-[0.25rem] hover:bg-surface-container-high rounded-full transition-colors flex items-center gap-[0.25rem]">
-                  <img alt="User profile with MFA status" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjFMFBe_rOAQdD64isoaSVyFJpOIiUGqAZ1921PMsxnwb0pdJoWGAyc505ZK7CNyB9rWf0z_mFhM68r98TCCfKJDCVEHS4yNAT8brZ8Pdb9zkqmV7oJXEjEEF3xcMPGyk6xFxrBwtr2wm9z63S_ltinoUcNgdmVlO-A678Ao1UFY4KdklET-o5GMJVOYRJylIPhdH03ycbpOwNZm3pBjYIgY-h6_pIgyJUSD08VWsS6hpca77JsaU9nxj1AJEHqOF0v3Rwa1zWpk0"/>
-                </button>
-              </div>
-            </div>
-          </header>
+          
           <main className="flex-1 overflow-y-auto p-[1rem] lg:p-[2rem] bg-surface-container-low">
             <div className="max-w-[1400px] mx-auto">
               <div className="mb-[1.5rem] flex flex-col gap-[0.25rem]">
-                <nav className="flex items-center gap-[0.25rem] font-label-sm text-label-sm text-on-surface-variant">
-                  <a onClick={() => router.push('/transport')} className="hover:text-primary transition-colors cursor-pointer">Transport</a>
-                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                  <a onClick={() => router.push('/transport/containers')} className="hover:text-primary transition-colors cursor-pointer">Opérations</a>
-                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                  <span className="text-on-surface font-medium">Déclaration</span>
-                </nav>
+                
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-[1rem]">
                     <h2 className="font-headline-lg text-headline-lg text-on-surface">Déclaration de Conteneur</h2>

@@ -103,36 +103,10 @@ export default function KMagasinReception() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <nav className="hidden md:flex gap-6">
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 cursor-pointer">Alerts</a>
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 cursor-pointer">MFA Status</a>
-              <a className="text-label-md font-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer">Modules</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-6">
-            <TCodeSearch />
-            <button className="material-symbols-outlined p-1 text-on-surface-variant hover:bg-surface-container-high transition-colors">notifications</button>
-            <button onClick={() => router.push('/security')} className="material-symbols-outlined p-1 text-on-surface-variant hover:bg-surface-container-high transition-colors">security</button>
-            <button className="material-symbols-outlined p-1 text-on-surface-variant hover:bg-surface-container-high transition-colors">apps</button>
-            <div onClick={() => router.push('/profile')} className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant cursor-pointer">
-              <img alt="User Profile Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhXyT5Ezo1_4DE8fDHXwAXU2PQbfpETqqbnLhWqg5-5L222krH67YRlhBUNtlgtQQjzw7bBp0iUxuan4CZppLyHE5whJdltEjF1S_tgQ5nnKbCzVKq0IOe3Nd_YkGzNTS3z93dgA1TQBa35Y7if8L9HnojwrMZg6qjucbQ3gFh8_a-zhlBiztJJ7eKN_Fs2wslpX0WZUEetQUo8l47BlTFc6HNevFBlj8hbjyjqBXui8LpKATlH7CT0KwgN4n-d5kVhQ1APELES5Y"/>
-            </div>
-          </div>
-        </header>
         
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-4 z-40 bg-surface-container-low border-r border-outline-variant">
           <div className="p-4 flex items-center gap-3">
             <div className="bg-primary-container text-on-primary-container p-2 rounded-lg">
@@ -143,29 +117,7 @@ export default function KMagasinReception() {
               <div className="text-label-sm font-label-sm text-on-surface-variant">Operational Control</div>
             </div>
           </div>
-          <nav className="mt-4 flex-1 overflow-y-auto custom-scrollbar">
-            <div className="px-4 mb-2 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Logistics Modules</div>
-            <a className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onClick={() => router.push('/transport')}>
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="font-label-md text-label-md">Transport</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onClick={() => router.push('/finance')}>
-              <span className="material-symbols-outlined">payments</span>
-              <span className="font-label-md text-label-md">Finance</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onClick={() => router.push('/parc')}>
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span className="font-label-md text-label-md">Parc</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-error font-bold border-l-4 border-error bg-surface-container-highest transition-all cursor-pointer" onClick={() => router.push('/magasin')}>
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="font-label-md text-label-md">Magasin</span>
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onClick={() => router.push('/admin/audit/system-health')}>
-              <span className="material-symbols-outlined">history_edu</span>
-              <span className="font-label-md text-label-md">Audit</span>
-            </a>
-          </nav>
+          
         </aside>
         
         {/* Main Stage */}

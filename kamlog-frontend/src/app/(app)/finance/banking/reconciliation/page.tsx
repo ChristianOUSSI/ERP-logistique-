@@ -42,98 +42,13 @@ export default function BankReconciliation() {
         ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #727785; }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface flex h-screen overflow-hidden">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-low border-r border-outline-variant w-[240px] h-screen flex-shrink-0 flex flex-col z-40 fixed left-0 top-0 transition-all duration-200 ease-in-out">
-          <div className="p-[1rem] flex items-center space-x-[0.5rem] border-b border-outline-variant">
-            <div className="w-10 h-10 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-lg">PA</div>
-            <div>
-              <h1 className="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
-            </div>
-          </div>
-          <div className="p-[1rem]">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-2 top-2 text-on-surface-variant text-[18px]">search</span>
-              <input className="w-full bg-surface-container-highest text-on-surface font-body-sm text-body-sm rounded pl-8 pr-3 py-2 border-none focus:ring-2 focus:ring-primary" placeholder="T-Code Search" type="text"/>
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto py-[0.5rem]">
-            <ul className="space-y-[0.25rem]">
-              <li>
-                <a onClick={() => router.push('/transport')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">local_shipping</span>
-                  Transport
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/magasin')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">inventory_2</span>
-                  Magasin
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/finance')} className="flex items-center px-[1rem] py-[0.5rem] text-primary bg-surface-container-highest border-l-4 border-primary font-bold font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px] fill">payments</span>
-                  Finance
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/parc')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">local_parking</span>
-                  Parc
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/audit')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">fact_check</span>
-                  Audit
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="p-[0.5rem] border-t border-outline-variant">
-            <ul className="space-y-[0.25rem]">
-              <li>
-                <a onClick={() => router.push('/support')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">support_agent</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/logout')} className="flex items-center px-[1rem] py-[0.5rem] text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md cursor-pointer">
-                  <span className="material-symbols-outlined mr-[0.5rem] text-[20px]">logout</span>
-                  Log out
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+      <div className="bg-surface-container-low text-on-surface flex flex-col">
+        
+        
         {/* Main Content Area */}
         <main className="ml-[240px] flex-1 flex flex-col h-full bg-surface-container-low">
           {/* TopAppBar */}
-          <header className="bg-surface border-b border-outline-variant h-16 flex items-center justify-between px-[1.5rem] flex-shrink-0 shadow-sm z-30">
-            <div className="flex items-center space-x-[1rem]">
-              <div className="flex items-center text-primary">
-                <span className="material-symbols-outlined text-[24px] mr-[0.25rem]">account_balance</span>
-                <span className="font-title-lg text-title-lg font-bold">K-Finance</span>
-              </div>
-              <div className="h-6 w-px bg-outline-variant mx-[0.5rem]"></div>
-              <div className="flex items-center text-on-surface-variant font-body-sm text-body-sm">
-                <span>FIN-402</span>
-                <span className="material-symbols-outlined text-[16px] mx-[0.25rem]">chevron_right</span>
-                <span className="font-medium text-on-surface">Rapprochement Bancaire - Saisie Manuelle</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-[0.5rem]">
-              <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors">
-                <span className="material-symbols-outlined text-[20px]">notifications</span>
-              </button>
-              <div onClick={() => router.push('/profile')} className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm font-bold cursor-pointer">
-                JD
-              </div>
-            </div>
-          </header>
+          
           {/* Content Canvas */}
           <div className="flex-1 overflow-hidden p-[1rem] flex gap-[1rem] max-w-[1600px] mx-auto w-full">
             {/* Left Pane: Bank Statement View */}

@@ -67,85 +67,13 @@ export default function MagasinAnalyticsPage() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex overflow-hidden">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-4 z-50">
-          <div className="flex items-center gap-3 mb-8">
-            <img alt="KAMLOG Company Logo" className="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW0GP3VedDFwGPDgLKO7sEG8n5FDtqgeWlGXY-CjavhTH98wTNlf8CV8_bDL1UejFBIfqNubK_5x5Ml_1Em31ArDWVEHKauY8aFwnBuA44uWQZlKooRT2bCmwaY5htQjYtZbuHpJRyFQjeZDTlkVF0zN6a0B9Pqlu6-rW8q7QQL7VwfSifEO9U0cfzOVZnIeu_mahfowBtsirHaFgfOF2eAloY5qsA8QwaiOH1Ldkh4CRcOXRmXBz16dk-GKVOnKHcze5GA9q8FAA"/>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          <button onClick={() => router.push('/magasin')} className="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-title-md text-title-md py-2 px-4 rounded flex items-center justify-center gap-2 mb-8 transition-colors active:scale-95 duration-150">
-            <span className="material-symbols-outlined icon-fill">add</span>
-            Nouvelle Opération
-          </button>
-          <div className="flex-1 flex flex-col gap-2">
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/dashboard/global')}>
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="font-label-caps text-label-caps">Tableau de bord</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/transport/control')}>
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="font-label-caps text-label-caps">Transport</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/finance/overview')}>
-              <span className="material-symbols-outlined">payments</span>
-              <span className="font-label-caps text-label-caps">Finances</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/parc/overview')}>
-              <span className="material-symbols-outlined">minor_crash</span>
-              <span className="font-label-caps text-label-caps">Parc Automobile</span>
-            </a>
-            {/* Active State mapping for K-Magasin */}
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold relative overflow-hidden group cursor-pointer" onClick={() => router.push('/magasin/dashboard')}>
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
-              <span className="material-symbols-outlined text-error">warehouse</span>
-              <span className="font-label-caps text-label-caps text-error">K-Magasin (KM32)</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/settings/system/audit-health')}>
-              <span className="material-symbols-outlined">settings</span>
-              <span className="font-label-caps text-label-caps">Paramètres</span>
-            </a>
-          </div>
-          <div className="mt-auto border-t border-outline-variant pt-4 flex flex-col gap-2">
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/support')}>
-              <span className="material-symbols-outlined">help_outline</span>
-              <span className="font-label-caps text-label-caps">Support</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded hover:bg-surface-container-high transition-colors text-secondary cursor-pointer" onClick={() => router.push('/login')}>
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-caps text-label-caps">Déconnexion</span>
-            </a>
-          </div>
-        </nav>
+        
+        
 
-        {/* Main Content Wrapper */}
-        <div className="flex-1 flex flex-col ml-[260px] h-screen overflow-hidden">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-6 shrink-0">
-            <div className="flex items-center gap-4">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex gap-4 ml-6">
-                <a className="text-on-surface-variant font-body-base text-body-base hover:text-primary transition-all cursor-pointer" onClick={() => router.push('/master-data')}>Articles</a>
-                <a className="text-on-surface-variant font-body-base text-body-base hover:text-primary transition-all cursor-pointer" onClick={() => router.push('/master-data/clients')}>Clients</a>
-                <a className="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base hover:text-primary transition-all cursor-pointer" onClick={() => router.push('/magasin/dashboard')}>Stocks</a>
-                <a className="text-on-surface-variant font-body-base text-body-base hover:text-primary transition-all cursor-pointer" onClick={() => router.push('/reports/custom')}>Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 text-on-surface-variant border-l border-outline-variant pl-4 ml-2">
-                <button className="p-2 hover:bg-surface-variant rounded-full transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button onClick={() => router.push('/security/dashboard')} className="p-2 hover:bg-surface-variant rounded-full transition-colors">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <img alt="User profile" onClick={() => router.push('/profile')} className="w-8 h-8 rounded-full ml-2 border border-outline-variant cursor-pointer hover:ring-2 ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSJKUOF26xssQOOz4ako_9m6QFiPfRJIKkYCteaKKyzUYrSWSsiAakZudPzDhs2DMq5OnswjTHt8-I5xfIjKPQqO_V1OOR7mjFG2EyqH4p0kf6k3QvgJFxrmHXWmh3Z7LB5oUivjveuSQZiEx8lKeKPS0uypT-oZK4kLJcxENu06q1yig4rZEPpLKu4DBztZJl_IEb5zXV01Kon6QoRUwIH4t3X_uslEg-wy2nxIaWOqHkU7GXJXVT7V2QjxjY_jV9eXpKo8hq0g4"/>
-              </div>
-            </div>
-          </header>
+        
+        <div className="flex-1 flex flex-col ml-[260px] ">
+          
+          
 
           {/* Main Stage Scrollable Area */}
           <main className="flex-1 overflow-y-auto p-6 bg-surface-container-low">

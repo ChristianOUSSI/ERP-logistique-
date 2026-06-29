@@ -90,7 +90,7 @@ function ModuleLayoutContent({ children, module = 'admin' }: ModuleLayoutProps) 
         
         <div className="flex">
           {/* Sidebar responsive */}
-          <ModuleSidebar module={currentModule} isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
+          <ModuleSidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
           {/* Contenu principal */}
           <main 
             className={`flex-1 p-6 transition-all duration-300 ${theme.mainBackground}`}

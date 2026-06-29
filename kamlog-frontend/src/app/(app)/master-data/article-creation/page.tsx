@@ -14,89 +14,13 @@ export default function MasterDataArticleCreation() {
           font-variation-settings: 'FILL 1';
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-background antialiased flex h-screen overflow-hidden">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
-          {/* Brand/Header */}
-          <div className="flex items-center space-x-3 mb-8 px-2">
-            <div className="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary shadow-sm">
-              <span className="material-symbols-outlined">anchor</span>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button className="w-full bg-primary hover:bg-surface-tint text-on-primary py-2 px-4 rounded font-label-md text-label-md flex items-center justify-center space-x-2 transition-colors mb-6 shadow-sm active:scale-95 duration-150">
-            <span className="material-symbols-outlined icon-fill">add_circle</span>
-            <span>Nouvelle Opération</span>
-          </button>
-          {/* Main Navigation */}
-          <div className="flex-1 overflow-y-auto space-y-1">
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="font-label-caps text-label-caps tracking-wide">Tableau de bord</span>
-            </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="font-label-caps text-label-caps tracking-wide">Transport</span>
-            </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              <span className="font-label-caps text-label-caps tracking-wide">Finances</span>
-            </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-primary bg-secondary-container font-bold border-l-4 border-primary" href="/parc/overview">
-              <span className="material-symbols-outlined icon-fill">minor_crash</span>
-              <span className="font-label-caps text-label-caps tracking-wide">Parc Automobile</span>
-            </a>
-            <a className="flex items-center space-x-3 px-3 py-2.5 rounded text-secondary hover:bg-surface-container-high transition-colors group" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="font-label-caps text-label-caps tracking-wide">Paramètres</span>
-            </a>
-          </div>
-          {/* Footer Navigation */}
-          <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              <span className="font-label-md text-label-md">Support</span>
-            </a>
-            <a className="flex items-center space-x-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-md text-label-md">Déconnexion</span>
-            </a>
-          </div>
-        </nav>
-        {/* Main Content Wrapper */}
+      <div className="bg-surface-container-low text-on-background antialiased flex flex-col">
+        
+        
+        
         <div className="flex-1 flex flex-col ml-[260px] w-[calc(100%-260px)] h-screen">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-            {/* Left: T-Code Search & Context */}
-            <div className="flex items-center space-x-6 flex-1">
-              <span className="font-title-sm text-title-sm text-on-surface font-black tracking-tight">KAMLOG EM-ERP</span>
-              <TCodeSearch />
-              <nav className="hidden lg:flex space-x-1">
-                <a className="px-3 py-4 font-body-base text-body-base text-primary border-b-2 border-primary pb-1" href="#">Articles</a>
-                <a className="px-3 py-4 font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Clients</a>
-                <a className="px-3 py-4 font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
-                <a className="px-3 py-4 font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Rapports</a>
-              </nav>
-            </div>
-            {/* Right: Actions & Profile */}
-            <div className="flex items-center space-x-4">
-              <button className="text-on-surface-variant hover:text-primary transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface"></span>
-              </button>
-              <button className="text-on-surface-variant hover:text-primary transition-colors">
-                <span className="material-symbols-outlined">verified_user</span>
-              </button>
-              <div className="w-px h-6 bg-outline-variant mx-2"></div>
-              <button className="flex items-center space-x-2 text-on-surface-variant hover:text-primary transition-colors">
-                <span className="material-symbols-outlined text-[28px]">account_circle</span>
-              </button>
-            </div>
-          </header>
+          
+          
           {/* Stage (Main Content) */}
           <main className="flex-1 overflow-y-auto p-margin-desktop bg-surface-container-low">
             <div className="max-w-[1200px] mx-auto">

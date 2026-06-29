@@ -73,25 +73,9 @@ export default function ClientCreate() {
       `}</style>
       <div className="text-on-background min-h-screen flex overflow-hidden">
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
-          {/* TopNavBar */}
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem] shrink-0">
-            <div className="flex items-center gap-6">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex gap-1 h-full items-end">
-                <a onClick={() => router.push('/master-data/articles')} className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base px-3 py-4 border-b-2 border-transparent cursor-pointer">Articles</a>
-                <a onClick={() => router.push('/master-data/tiers')} className="text-primary border-b-2 border-primary pb-1 font-body-base text-body-base px-3 py-4 cursor-pointer">Clients / Tiers</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              {/* Global Search / T-Code */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-md">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[18px]">search</span>
-                <input className="w-64 h-9 pl-9 pr-3 bg-surface-container-lowest border border-outline-variant rounded-md font-body-sm text-body-sm focus:outline-none" placeholder="Rechercher T-Code" type="text"/>
-                <div className="absolute right-1 top-1/2 -translate-y-1/2 bg-surface-container px-1.5 rounded text-xs text-on-surface-variant font-medium border border-outline-variant">⌘K</div>
-              </div>
-            </div>
-          </header>
+        <div className="flex-1 flex flex-col ">
+          
+          
           {/* Page Canvas */}
           <main className="flex-1 overflow-y-auto p-[1rem] bg-surface-container-low">
             <div className="max-w-[1200px] mx-auto">

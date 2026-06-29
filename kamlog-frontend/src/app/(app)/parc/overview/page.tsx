@@ -51,7 +51,7 @@ export default function KParcFleetManagementOverview() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased">
-      {/* SideNavBar */}
+      
       <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm z-50 flex flex-col p-md">
         {/* Brand / Header */}
         <div className="flex items-center gap-sm mb-xl px-xs mt-16 md:mt-0">
@@ -71,48 +71,14 @@ export default function KParcFleetManagementOverview() {
         </button>
 
         {/* Navigation Links */}
-        <nav className="flex-1 flex flex-col gap-xs overflow-y-auto scrollbar-hide">
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/dashboard/global">
-            <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">dashboard</span>
-            <span className="flex-1">Tableau de bord</span>
-          </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/transport/control">
-            <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">local_shipping</span>
-            <span className="flex-1">Transport</span>
-          </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/finance/overview">
-            <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">payments</span>
-            <span className="flex-1">Finances</span>
-          </a>
-          {/* ACTIVE TAB: Parc Automobile */}
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-primary bg-primary/10 font-bold relative overflow-hidden group" href="/parc/overview">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-            <span className="material-symbols-outlined text-primary icon-filled text-[20px]">minor_crash</span>
-            <span className="flex-1">Parc Automobile</span>
-          </a>
-          <a className="flex items-center gap-sm px-md py-sm rounded-lg font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors group" href="/magasin/dashboard">
-            <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">warehouse</span>
-            <span className="flex-1">Magasin</span>
-          </a>
-        </nav>
+        
       </aside>
 
-      {/* TopNavBar */}
-      <header className="sticky top-0 w-full z-40 bg-surface flex justify-between items-center h-[64px] px-gutter lg:ml-[260px] border-b border-outline-variant lg:w-[calc(100%-260px)]">
-        <div className="flex items-center gap-md">
-          <span className="font-title-sm text-title-sm text-on-surface font-black ml-10 lg:ml-0">KAMLOG EM-ERP</span>
-        </div>
-        <div className="flex items-center gap-md">
-          <div className="flex items-center gap-sm">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-              {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </div>
-      </header>
+      
+      
 
       {/* Main Content Canvas */}
-      <main className="lg:ml-[260px] p-gutter max-w-max-width mx-auto">
+      <main className=" p-gutter max-w-max-width mx-auto">
         <div className="mb-md">
           <div className="flex justify-between items-end">
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Gestion de Flotte</h2>

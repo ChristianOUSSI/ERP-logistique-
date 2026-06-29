@@ -14,144 +14,20 @@ export default function BankReconciliationPage() {
         ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #727785; }
       `}</style>
-      <div className="text-on-background antialiased flex h-screen overflow-hidden bg-surface-container-low">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
-          {/* Header */}
-          <div className="px-md py-lg mb-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden">
-              <img alt="KAMLOG Company Logo" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ7HHHL90gIK0_YoxNeYHjtOb1wg9Mp1veW8M-m-yf0UR9naV2uKc0ltulD3VYo9Uyn_ZyT0dMXLJxrdgX7rxYHh6A6CvMy9SE3gEmXIXQvzHXVffBA4Utvpl9F6F8bugLmV9dR5hy6VN-S8EvQy28PJpjBK5k0dupte165qYmtNg3je9Jpzk99qa7KcAIrufK5AAPFigXWkAOgQVTineVuMdBVpJjI-56QUxRqKiVX0b6ZbpDcqldiftILvLjBuIYJy8ZncaQDro"/>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <div className="px-md mb-6">
-            <button className="w-full py-2 px-4 bg-primary text-on-primary rounded-md font-label-md text-label-md font-medium hover:bg-primary-fixed-variant transition-colors flex items-center justify-center gap-2 shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              Nouvelle Opération
-            </button>
-          </div>
-          {/* Tabs */}
-          <ul className="flex-1 overflow-y-auto px-xs space-y-1">
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-                <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                Tableau de bord
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-                <span className="material-symbols-outlined text-[20px]">local_shipping</span>
-                Transport
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-primary bg-secondary-container font-bold border-l-4 border-module-finance hover:bg-surface-container-high transition-colors active:scale-95 duration-150 relative" href="/finance/overview">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-module-finance rounded-r-sm"></div>
-                <span className="material-symbols-outlined text-[20px] text-module-finance">payments</span>
-                <span className="text-module-finance">Finances</span>
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-                <span className="material-symbols-outlined text-[20px]">minor_crash</span>
-                Parc Automobile
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-3 py-2.5 rounded-md font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-                <span className="material-symbols-outlined text-[20px]">settings</span>
-                Paramètres
-              </a>
-            </li>
-          </ul>
-          {/* Footer */}
-          <div className="mt-auto px-xs pb-4 pt-4 border-t border-outline-variant">
-            <ul className="space-y-1">
-              <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="/support">
-                  <span className="material-symbols-outlined text-[18px]">help_outline</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded-md font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container-high transition-colors" href="/login">
-                  <span className="material-symbols-outlined text-[18px]">logout</span>
-                  Déconnexion
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+      <div className="text-on-background antialiased flex flex-col bg-surface-container-low">
+        
+        
 
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 ml-[260px] flex flex-col min-w-0">
-          {/* TopNavBar */}
-          <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter">
-            {/* Left Side: Brand/Nav Links */}
-            <div className="flex items-center gap-6">
-              <span className="font-title-sm text-title-sm text-on-surface font-black tracking-tight hidden lg:block">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex items-center gap-2 h-full">
-                <a className="px-3 h-[64px] flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Articles</a>
-                <a className="px-3 h-[64px] flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Clients</a>
-                <a className="px-3 h-[64px] flex items-center font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Stocks</a>
-                <a className="px-3 h-[64px] flex items-center font-body-base text-body-base text-primary border-b-2 border-primary pb-1 hover:text-primary transition-all" href="#">Rapports</a>
-              </nav>
-            </div>
-            {/* Right Side: Search & Actions */}
-            <div className="flex items-center gap-4">
-              {/* T-Code Search */}
-              <div className="relative hidden sm:block focus-within:ring-2 focus-within:ring-primary rounded-md">
-                <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-                <input className="w-48 pl-8 pr-3 py-1.5 bg-surface-container-high border-none rounded-md font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-0 placeholder-on-surface-variant/50" placeholder="Rechercher T-Code" type="text"/>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 px-1 rounded bg-surface border border-outline-variant font-label-caps text-[9px] text-outline">CMD+K</div>
-              </div>
-              {/* Icon Actions */}
-              <div className="flex items-center gap-2">
-                <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors relative">
-                  <span className="material-symbols-outlined text-[20px]">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">verified_user</span>
-                </button>
-                <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">account_circle</span>
-                </button>
-              </div>
-              {/* Profile */}
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant cursor-pointer">
-                <img alt="User profile with MFA status" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAurS-CSvGogAg-JccJPtkScng5b-c-bbHAZoaLzCrVgKVa8_OCEJgUtBzEHA07nwfBeJBT-CG6ftiANIL905e70U01NOtYRzKEqmYZCPJWmwLCV0ShHKf5bZOfmbcFCeOmys2sevARJdJTUWa2bqJWaqwOQ7ON1faKu7yrNUE6l_jmAgma453npg_miJpg1YGOZoJHgWhFrdzkFTLIOQSU9inDXQjfg6l5snvPmBikTvJgp-ioNb6mUjcYWwEkm8FVP-2h9gJEMBs"/>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Main Stage Canvas */}
           <main className="flex-1 p-gutter overflow-hidden flex flex-col">
             {/* Context Header */}
             <div className="mb-4 flex flex-col gap-1">
-              <nav aria-label="Breadcrumb" className="flex text-on-surface-variant font-label-md text-label-md">
-                <ol className="inline-flex items-center space-x-1 md:space-x-2">
-                  <li className="inline-flex items-center">
-                    <a className="hover:text-primary transition-colors" href="/finance/overview">K-Finance</a>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <span className="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
-                      <a className="hover:text-primary transition-colors" href="#">Trésorerie</a>
-                    </div>
-                  </li>
-                  <li aria-current="page">
-                    <div className="flex items-center">
-                      <span className="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
-                      <span className="text-on-surface font-medium">Bank Reconciliation</span>
-                    </div>
-                  </li>
-                </ol>
-              </nav>
+              
               <div className="flex justify-between items-end">
                 <div>
                   <h2 className="font-headline-lg text-headline-lg text-on-background flex items-center gap-2">

@@ -14,103 +14,20 @@ export default function MfaConfigurationPage() {
           font-variation-settings: 'FILL 1';
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest shadow-sm border-r border-outline-variant fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
-          <div className="px-md py-lg">
-            <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-            <p className="font-label-sm text-label-sm text-on-surface-variant mt-xxs">Port Operations</p>
-          </div>
-          <button className="mx-md mb-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md rounded py-sm px-md flex items-center justify-center gap-xs transition-colors shadow-sm active:scale-95 duration-150">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Nouvelle Opération
-          </button>
-          <ul className="flex-1 flex flex-col gap-xs px-xs overflow-y-auto">
-            <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-                <span className="material-symbols-outlined">dashboard</span>
-                Tableau de bord
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-                <span className="material-symbols-outlined">local_shipping</span>
-                Transport
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-                <span className="material-symbols-outlined">payments</span>
-                Finances
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-                <span className="material-symbols-outlined">minor_crash</span>
-                Parc Automobile
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-primary bg-secondary-container font-bold transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-                <span className="material-symbols-outlined">settings</span>
-                Paramètres
-              </a>
-            </li>
-          </ul>
-          <div className="mt-auto px-xs pb-md pt-md border-t border-outline-variant">
-            <ul className="flex flex-col gap-xs">
-              <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-                  <span className="material-symbols-outlined">help_outline</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-sm px-sm py-xs rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-                  <span className="material-symbols-outlined">logout</span>
-                  Déconnexion
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+      <div className="bg-surface-container-low text-on-surface font-body-md antialiased  flex">
+        
+        
 
         {/* Main Content Area */}
         <div className="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-            <div className="flex items-center gap-lg">
-              <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden lg:flex gap-md">
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-md" href="#">Articles</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-md" href="#">Clients</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-md" href="#">Stocks</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-md" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-md">
-              <TCodeSearch />
-              <div className="flex items-center gap-sm text-on-surface-variant">
-                <button className="hover:text-primary transition-colors p-xs rounded-full hover:bg-surface-container-high"><span className="material-symbols-outlined">notifications</span></button>
-                <button className="hover:text-primary transition-colors p-xs rounded-full hover:bg-surface-container-high"><span className="material-symbols-outlined">verified_user</span></button>
-                <button className="hover:text-primary transition-colors p-xs rounded-full hover:bg-surface-container-high">
-                  <img alt="User profile with MFA status" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEzsWXfgdLygHWSnZ5xwM0RDWfpjAxx1LFL5ix51L0qxEFqEPbK2u-m-8Jy7U3Mq7JoHCpH45CEJ99ALa5azAnGAgWElTNJ5-GFJgwAfeMhyNC4u9P-X_IDFo-hwB-ZuicTMOgzEF4mOcyfRQ5XsbFH4LrC1ReZPydW_amSXNpn1SS610ilSB-jdBHRmmSdgGsPh1Nl9xkAiaEiUltRI1MrIhEecfCJBWDXOK3IAT58VTMG6U9XTCizTxbPCttPIASSrE37XQ9KfA"/>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
 
-          {/* Main Canvas */}
+          
           <main className="flex-1 overflow-y-auto p-lg bg-surface-container-low">
             <div className="max-w-[1000px] mx-auto">
               {/* Breadcrumbs */}
-              <nav className="flex text-label-md font-label-md text-on-surface-variant mb-md gap-xs items-center">
-                <a className="hover:text-primary transition-colors" href="/settings/system/audit-health">Paramètres</a>
-                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                <a className="hover:text-primary transition-colors" href="#">Sécurité</a>
-                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                <span className="text-on-surface font-medium">Configuration MFA</span>
-              </nav>
+              
 
               <div className="flex justify-between items-end mb-lg">
                 <div>

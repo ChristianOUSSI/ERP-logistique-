@@ -44,130 +44,14 @@ export default function InvoiceCreation() {
         .k-finance-border { border-color: #8B5CF6; }
         .bg-finance-surface { background-color: #faf5ff; }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
-        {/* SideNavBar */}
-        <nav className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-[1rem] z-50">
-          {/* Header */}
-          <div className="px-[0.5rem] py-[1.5rem] mb-4 flex items-center gap-[0.5rem] border-b border-surface-variant">
-            <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md font-bold k-finance-accent text-white">
-              K
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Port Operations</p>
-            </div>
-          </div>
-          {/* Main Tabs */}
-          <div className="flex-1 overflow-y-auto py-2">
-            <ul className="space-y-1 px-[0.25rem]">
-              <li>
-                <a onClick={() => router.push('/dashboard')} className="flex items-center gap-3 px-[0.5rem] py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                  Tableau de bord
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/transport')} className="flex items-center gap-3 px-[0.5rem] py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined text-[20px]">local_shipping</span>
-                  Transport
-                </a>
-              </li>
-              {/* ACTIVE TAB: Finances */}
-              <li className="relative">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full k-finance-accent"></div>
-                <a onClick={() => router.push('/finance')} className="flex items-center gap-3 px-[0.5rem] py-2 ml-1 rounded-lg font-label-md text-label-md text-primary bg-secondary-container font-bold active:scale-95 duration-150 k-finance-text bg-purple-100 cursor-pointer">
-                  <span className="material-symbols-outlined text-[20px] fill">payments</span>
-                  Finances
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/parc')} className="flex items-center gap-3 px-[0.5rem] py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined text-[20px]">minor_crash</span>
-                  Parc Automobile
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/settings')} className="flex items-center gap-3 px-[0.5rem] py-2 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined text-[20px]">settings</span>
-                  Paramètres
-                </a>
-              </li>
-            </ul>
-            {/* Contextual Pane (Sub-module) */}
-            <div className="mt-8 px-[0.5rem]">
-              <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-3">T-Codes Finance</p>
-              <div className="space-y-2">
-                <button className="w-full flex items-center justify-between px-3 py-2 bg-surface-container-low rounded border border-outline-variant hover:border-primary transition-colors text-left group">
-                  <span className="font-data-tabular text-data-tabular text-on-surface group-hover:text-primary">F-01</span>
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
-                </button>
-                <button className="w-full flex items-center justify-between px-3 py-2 bg-primary-container text-on-primary-container rounded border border-primary text-left k-finance-accent k-finance-border text-white">
-                  <span className="font-data-tabular text-data-tabular font-semibold">VF01</span>
-                  <span className="material-symbols-outlined text-[16px]">add</span>
-                </button>
-                <button className="w-full flex items-center justify-between px-3 py-2 bg-surface-container-low rounded border border-outline-variant hover:border-primary transition-colors text-left group">
-                  <span className="font-data-tabular text-data-tabular text-on-surface group-hover:text-primary">FBL5N</span>
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* Footer CTA & Links */}
-          <div className="mt-auto px-[0.5rem] py-4 border-t border-surface-variant">
-            <button onClick={handleAddLine} className="w-full mb-4 py-2 px-4 bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex justify-center items-center gap-2 k-finance-accent">
-              <span className="material-symbols-outlined text-[18px]">add_circle</span>
-              Nouvelle Opération
-            </button>
-            <ul className="space-y-2">
-              <li>
-                <a onClick={() => router.push('/support')} className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-secondary hover:bg-surface-container-high transition-colors cursor-pointer">
-                  <span className="material-symbols-outlined text-[18px]">help_outline</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/logout')} className="flex items-center gap-3 px-2 py-1.5 rounded font-label-md text-label-md text-error hover:bg-error-container transition-colors cursor-pointer">
-                  <span className="material-symbols-outlined text-[18px]">logout</span>
-                  Déconnexion
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        {/* Main Content Wrapper */}
+      <div className="bg-surface-container-low text-on-surface font-body-md antialiased  flex">
+        
+        
+        
         <div className="flex-1 ml-[260px] flex flex-col h-full bg-finance-surface">
-          {/* TopNavBar */}
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem]">
-            {/* Left: Breadcrumbs & Context */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center text-sm text-on-surface-variant">
-                <span onClick={() => router.push('/finance')} className="hover:text-primary cursor-pointer font-label-md text-label-md">K-Finance</span>
-                <span className="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
-                <span onClick={() => router.push('/finance/invoicing')} className="hover:text-primary cursor-pointer font-label-md text-label-md">Facturation</span>
-                <span className="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
-                <span className="font-label-md text-label-md text-on-surface font-semibold k-finance-text">Création Facture Client (VF01)</span>
-              </div>
-            </div>
-            {/* Right: Search & Actions */}
-            <div className="flex items-center gap-4">
-              {/* T-Code Search */}
-              <TCodeSearch />
-              <div className="h-6 w-px bg-outline-variant mx-2"></div>
-              {/* Icon Actions */}
-              <button className="text-on-surface-variant hover:text-primary transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
-              </button>
-              <button onClick={() => router.push('/security')} className="text-on-surface-variant hover:text-primary transition-colors">
-                <span className="material-symbols-outlined">verified_user</span>
-              </button>
-              {/* Profile */}
-              <button onClick={() => router.push('/profile')} className="ml-2 w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
-                <img alt="User profile with MFA status" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2m3t74ULBJxvSrslZkQ6Y_0P8lKGAmW9nIpVm59EY2FlR-Uk9R2KqOrMJYLGhIWyCYrAn9DeR6ntDqND65I-BWYuiBa0GeUE1TdZgLR9WLDXWAzRPkh3IEPGEr2DVzw4F7j1H0RTDhTjeWP1bQMM9c_L7msvIhsm18xRIYQ_Bi9YFU640lqJwo-NK8uBc2neHrAQJwZsbWj5QxbOBhbqRXsnvVfi7kIXbFjb7z6fzFQQ_BvVI-zt1WDjiRSMphW1BE1HBuUYtaKo"/>
-              </button>
-            </div>
-          </header>
-          {/* Main Canvas */}
+          
+          
+          
           <main className="flex-1 overflow-y-auto p-[1rem] relative">
             <div className="max-w-[1200px] mx-auto space-y-[1rem] pb-[2rem]">
               {/* Page Header */}

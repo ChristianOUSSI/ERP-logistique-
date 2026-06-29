@@ -5,6 +5,9 @@ import { useAuth } from '@/components/layout/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { getRouteForRole } from '@/lib/role-routes';
 
+import ModuleSidebar from '@/components/layout/ModuleSidebar';
+import { LayoutDashboard, Settings, UserCircle, LogOut } from 'lucide-react';
+
 export default function AppLayout({
   children,
 }: {
@@ -85,23 +88,42 @@ export default function AppLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold text-gray-900">KAMLOG EM-ERP</h1>
-            <button
-              onClick={() => logout()}
-              className="text-sm text-gray-600 hover:text-gray-900 font-medium"
-            >
-              Déconnexion ({user.fullName || user.email})
-            </button>
+    <div className="min-h-screen bg-background text-on-background flex h-screen overflow-hidden antialiased font-body-base">
+      <ModuleSidebar />
+      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter">
+          <div className="flex items-center gap-6">
+            {/* The sidebar takes care of the logo, but we can put breadcrumbs or module name here later */}
+            <span className="font-title-sm text-title-sm text-on-surface font-black ml-10 lg:ml-0 md:hidden">KAMLOG EM-ERP</span>
           </div>
-        </div>
-      </header>
-      <main className="w-full">
-        {children}
-      </main>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 text-secondary">
+              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block">
+                <span className="material-symbols-outlined text-[20px]">notifications</span>
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20">
+                  {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden md:flex flex-col">
+                  <span className="text-sm font-semibold text-on-surface leading-tight">{user?.fullName || user?.email}</span>
+                  <span className="text-xs text-secondary capitalize leading-tight">{user?.role?.replace('_', ' ')}</span>
+                </div>
+                <button 
+                  onClick={() => logout()} 
+                  className="text-sm text-red-600 hover:text-red-800 font-medium ml-2 p-2 rounded-full hover:bg-red-50 transition-colors"
+                  title="Déconnexion"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 overflow-y-auto w-full">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

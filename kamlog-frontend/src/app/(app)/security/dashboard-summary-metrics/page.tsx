@@ -127,29 +127,11 @@ export default function DashboardSummaryMetricsPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      {/* TopNavBar */}
-      <nav className="bg-surface-container-highest border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop h-14 z-50 fixed top-0">
-        <div className="flex items-center gap-8">
-          <span className="font-headline-md text-headline-md font-bold text-primary">KAMLOG EM-ERP</span>
-          <div className="hidden md:flex gap-6 items-center">
-            <Link href="/dashboard" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">Dashboard</Link>
-            <Link href="/activity-log" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">Activity Log</Link>
-            <Link href="/user-audit" className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">User Audit</Link>
-            <Link href="/security/dashboard-summary-metrics" className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer active:opacity-80">Compliance</Link>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="relative group">
-            <span className="material-symbols-outlined text-primary text-xl cursor-pointer">security</span>
-          </div>
-          <span className="material-symbols-outlined text-on-surface-variant cursor-pointer">admin_panel_settings</span>
-          <span className="material-symbols-outlined text-on-surface-variant cursor-pointer">notifications</span>
-          <span className="material-symbols-outlined text-on-surface-variant cursor-pointer">account_circle</span>
-        </div>
-      </nav>
+    <div className="flex flex-col ">
+      
+      
 
-      {/* SideNavBar */}
+      
       <aside className="fixed left-0 top-0 h-full w-60 bg-surface-container-low flex flex-col pt-14 z-40">
         <div className="px-4 py-6 border-b border-outline-variant/30">
           <div className="flex items-center gap-3">
@@ -162,32 +144,7 @@ export default function DashboardSummaryMetricsPage() {
             </div>
           </div>
         </div>
-        <nav className="flex-1 py-4 space-y-1">
-          <Link href="/security/dashboard-summary-metrics" className="flex items-center text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 cursor-pointer">
-            <span className="material-symbols-outlined mr-3">shield</span>
-            <span className="font-title-md text-title-md">Security Overview</span>
-          </Link>
-          <Link href="/audit/event-viewer" className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-            <span className="material-symbols-outlined mr-3">list_alt</span>
-            <span className="font-label-md text-label-md">Event Viewer</span>
-          </Link>
-          <Link href="/audit/policy-manager" className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-            <span className="material-symbols-outlined mr-3">policy</span>
-            <span className="font-label-md text-label-md">Policy Manager</span>
-          </Link>
-          <Link href="/audit/key-vault" className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-            <span className="material-symbols-outlined mr-3">vpn_key</span>
-            <span className="font-label-md text-label-md">Key Vault</span>
-          </Link>
-          <Link href="/audit/system-integrity" className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-            <span className="material-symbols-outlined mr-3">verified_user</span>
-            <span className="font-label-md text-label-md">System Integrity</span>
-          </Link>
-          <Link href="/audit/audit-reports" className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-            <span className="material-symbols-outlined mr-3">analytics</span>
-            <span className="font-label-md text-label-md">Audit Reports</span>
-          </Link>
-        </nav>
+        
         <div className="px-4 py-4 space-y-4">
           <button className="w-full bg-secondary text-on-secondary font-label-md text-label-md py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
             <span className="material-symbols-outlined text-sm">analytics</span>
@@ -212,13 +169,7 @@ export default function DashboardSummaryMetricsPage() {
           {/* Header Section */}
           <div className="flex justify-between items-end">
             <div>
-              <nav aria-label="Breadcrumb" className="flex text-on-surface-variant/60 font-label-md text-label-md mb-1">
-                <ol className="inline-flex items-center space-x-1">
-                  <li>K-AUDIT</li>
-                  <li><span className="material-symbols-outlined text-xs mx-1">chevron_right</span></li>
-                  <li className="text-on-surface">Security Overview</li>
-                </ol>
-              </nav>
+              
               <h1 className="font-headline-lg text-headline-lg text-on-surface">Security Operations Center</h1>
             </div>
             <div className="flex gap-3">

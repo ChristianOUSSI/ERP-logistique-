@@ -51,27 +51,9 @@ export default function SecurityDashboard() {
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 10px; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface antialiased overflow-hidden">
-        {/* TopNavBar */}
-        <nav className="bg-surface-container-highest border-b border-outline-variant flex justify-between items-center w-full px-[1.5rem] h-14 z-50 fixed top-0">
-          <div className="flex items-center gap-8">
-            <span className="font-headline-md text-headline-md font-bold text-primary">KAMLOG EM-ERP</span>
-            <div className="hidden md:flex gap-6 items-center">
-              <span onClick={() => router.push('/dashboard')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">Dashboard</span>
-              <span onClick={() => router.push('/audit')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">Activity Log</span>
-              <span onClick={() => router.push('/security/audit')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer active:opacity-80 px-2 py-1">User Audit</span>
-              <span className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer active:opacity-80">Compliance</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative group">
-              <span onClick={() => router.push('/security')} className="material-symbols-outlined text-primary text-xl cursor-pointer">security</span>
-            </div>
-            <span onClick={() => router.push('/admin')} className="material-symbols-outlined text-on-surface-variant cursor-pointer">admin_panel_settings</span>
-            <span className="material-symbols-outlined text-on-surface-variant cursor-pointer">notifications</span>
-            <span onClick={() => router.push('/profile')} className="material-symbols-outlined text-on-surface-variant cursor-pointer">account_circle</span>
-          </div>
-        </nav>
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="fixed left-0 top-0 h-full w-60 bg-surface-container-low flex flex-col pt-14 z-40">
           <div className="px-4 py-6 border-b border-outline-variant/30">
             <div className="flex items-center gap-3">
@@ -84,32 +66,7 @@ export default function SecurityDashboard() {
               </div>
             </div>
           </div>
-          <nav className="flex-1 py-4 space-y-1">
-            <div onClick={() => router.push('/security/dashboard')} className="flex items-center text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 cursor-pointer">
-              <span className="material-symbols-outlined mr-3">shield</span>
-              <span className="font-title-md text-title-md">Security Overview</span>
-            </div>
-            <div onClick={() => router.push('/security/event-viewer')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-              <span className="material-symbols-outlined mr-3">list_alt</span>
-              <span className="font-label-md text-label-md">Event Viewer</span>
-            </div>
-            <div onClick={() => router.push('/security/policies')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-              <span className="material-symbols-outlined mr-3">policy</span>
-              <span className="font-label-md text-label-md">Policy Manager</span>
-            </div>
-            <div onClick={() => router.push('/security/key-vault')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-              <span className="material-symbols-outlined mr-3">vpn_key</span>
-              <span className="font-label-md text-label-md">Key Vault</span>
-            </div>
-            <div onClick={() => router.push('/security/integrity')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-              <span className="material-symbols-outlined mr-3">verified_user</span>
-              <span className="font-label-md text-label-md">System Integrity</span>
-            </div>
-            <div onClick={() => router.push('/security/reports')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all cursor-pointer">
-              <span className="material-symbols-outlined mr-3">analytics</span>
-              <span className="font-label-md text-label-md">Audit Reports</span>
-            </div>
-          </nav>
+          
           <div className="px-4 py-4 space-y-4">
             <button onClick={handleGenerateReport} className="w-full bg-secondary text-on-secondary font-label-md text-label-md py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
               <span className="material-symbols-outlined text-sm">analytics</span>
@@ -133,13 +90,7 @@ export default function SecurityDashboard() {
             {/* Header Section */}
             <div className="flex justify-between items-end">
               <div>
-                <nav aria-label="Breadcrumb" className="flex text-on-surface-variant/60 font-label-md text-label-md mb-1">
-                  <ol className="inline-flex items-center space-x-1">
-                    <li>K-AUDIT</li>
-                    <li><span className="material-symbols-outlined text-xs mx-1">chevron_right</span></li>
-                    <li className="text-on-surface">Security Overview</li>
-                  </ol>
-                </nav>
+                
                 <h1 className="font-headline-lg text-headline-lg text-on-surface">Security Operations Center</h1>
               </div>
               <div className="flex gap-3">

@@ -54,42 +54,8 @@ export default function RoleConfiguration() {
       `}</style>
       <div className="bg-background text-on-background font-body-md h-screen flex flex-col overflow-hidden">
         {/* Task-Focused Header */}
-        <header className="flex items-center justify-between px-[1.5rem] h-16 bg-surface border-b border-outline-variant flex-shrink-0 z-10 shadow-sm">
-          <div className="flex items-center gap-md">
-            <button 
-              onClick={() => router.push('/admin/roles')}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant group"
-            >
-              <span className="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">arrow_back</span>
-            </button>
-            <div className="flex flex-col">
-              <nav className="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-xxs">
-                <a onClick={() => router.push('/admin')} className="hover:text-primary transition-colors cursor-pointer">Admin</a>
-                <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                <a onClick={() => router.push('/admin/security')} className="hover:text-primary transition-colors cursor-pointer">Sécurité</a>
-                <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span className="text-on-surface">Rôles</span>
-              </nav>
-              <h1 className="font-title-lg text-title-lg text-on-surface">Configuration du Rôle</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-sm">
-            <button 
-              onClick={handleCancel}
-              className="px-4 py-2 rounded font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-colors bg-surface"
-            >
-              Annuler
-            </button>
-            <button 
-              onClick={handleSave}
-              className="px-4 py-2 rounded font-label-md text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-xs"
-            >
-              <span className="material-symbols-outlined text-[18px]">save</span>
-              Enregistrer
-            </button>
-          </div>
-        </header>
-        {/* Main Canvas */}
+        
+        
         <main className="flex-1 overflow-y-auto p-[1.5rem] custom-scrollbar">
           <div className="max-w-[1600px] mx-auto flex flex-col gap-lg">
             {/* Section 1: Informations Générales */}

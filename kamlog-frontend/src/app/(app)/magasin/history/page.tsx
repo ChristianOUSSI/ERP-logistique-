@@ -82,66 +82,18 @@ export default function KMagasinStockMovementHistory() {
             Nouvelle Opération
           </button>
           {/* Navigation */}
-          <nav className="flex-1 space-y-1">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer" onClick={() => router.push('/dashboard/global')}>
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer" onClick={() => router.push('/transport/control')}>
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="font-label-md text-label-md uppercase tracking-wider">Transport</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer" onClick={() => router.push('/finance/overview')}>
-              <span className="material-symbols-outlined">payments</span>
-              <span className="font-label-md text-label-md uppercase tracking-wider">Finances</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 cursor-pointer" onClick={() => router.push('/magasin/dashboard')}>
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="font-label-md text-label-md uppercase tracking-wider">Magasin</span>
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer" onClick={() => router.push('/settings/system/audit-health')}>
-              <span className="material-symbols-outlined">settings</span>
-              <span className="font-label-md text-label-md uppercase tracking-wider">Paramètres</span>
-            </a>
-          </nav>
+          
         </aside>
         
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 ml-[260px] flex flex-col min-w-0">
           {/* TopNavBar (Shared Component) */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-6">
-            <div className="flex items-center gap-8">
-              <div className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</div>
-              <nav className="hidden md:flex items-center gap-6 h-full pt-4">
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4 cursor-pointer" onClick={() => router.push('/master-data/article-creation')}>Articles</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4 cursor-pointer" onClick={() => router.push('/master-data/clients')}>Clients</a>
-                <a className="text-primary border-b-2 border-primary pb-3 font-body-base text-body-base font-medium cursor-pointer" onClick={() => router.push('/magasin/dashboard')}>Stocks</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4 cursor-pointer" onClick={() => router.push('/reports/custom')}>Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <TCodeSearch />
-              <div className="flex items-center gap-2 text-on-surface-variant">
-                <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-                <button onClick={() => router.push('/security/dashboard')} className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span className="material-symbols-outlined">verified_user</span></button>
-                <button onClick={() => router.push('/profile')} className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span className="material-symbols-outlined">account_circle</span></button>
-              </div>
-            </div>
-          </header>
           
-          {/* Main Canvas */}
+          
+          
           <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">
             {/* Breadcrumbs */}
-            <nav className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-4">
-              <a className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/dashboard/global')}>Accueil</a>
-              <span className="material-symbols-outlined text-sm">chevron_right</span>
-              <a className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/magasin/dashboard')}>Stocks</a>
-              <span className="material-symbols-outlined text-sm">chevron_right</span>
-              <span className="text-on-surface font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-error inline-block"></span>
-                K-Magasin
-              </span>
-            </nav>
+            
             
             {/* Page Header */}
             <div className="flex justify-between items-end mb-6">

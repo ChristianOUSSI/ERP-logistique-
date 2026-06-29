@@ -54,49 +54,10 @@ export default function KFinanceGatewayMonitor() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-md">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <div className="hidden md:flex gap-md ml-xl items-center">
-              <a className="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">Alerts</a>
-              <a className="text-on-surface-variant hover:bg-surface-container-high px-xs py-xxs transition-colors text-label-md font-label-md" href="#">MFA Status</a>
-              <a className="text-primary border-b-2 border-primary pb-1 font-bold text-label-md font-label-md" href="#">Modules</a>
-            </div>
-          </div>
-          <div className="flex items-center gap-md">
-            <div className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-              <input 
-                className="pl-10 pr-4 py-1.5 bg-surface-container-highest border-none rounded-lg text-body-md focus:ring-2 focus:ring-primary w-64 transition-all" 
-                placeholder="T-Code Search..." 
-                type="text"
-              />
-            </div>
-            <div className="flex items-center gap-xs">
-              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
-                <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-              </button>
-              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
-                <span className="material-symbols-outlined text-on-surface-variant">security</span>
-              </button>
-              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors">
-                <span className="material-symbols-outlined text-on-surface-variant">apps</span>
-              </button>
-            </div>
-            <img alt="User Profile Avatar" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdIrUZYGD7MxV0h8gyRyZ0qXpfutTKrDeyOPSzDvmQFs2qlDMQyQJPRUsrQ_OXmqcZ07xjwissbGHhXCru0i-22o3zKN5bHy335XuaGGO9-Y92iqbuoquJ2LZWUullca7KB-5y2k4BgvBWM3JlYAcCsmIGYlMWqZcLw_We0Pub0JhTszDsizhy6W-nsCc5Ihb2xT_NYK_nnePIJOMEH0VinSVuUZQ5TvAuDxVy7Gx_61rKnbIUROfXrJylVj5Auwjt-Pm4zn7az38"/>
-          </div>
-        </header>
+        
+        
         <div className="flex flex-1 pt-16 overflow-hidden">
-          {/* SideNavBar */}
+          
           <aside className="w-60 bg-surface-container border-r border-outline-variant flex flex-col pt-4 pb-md z-40">
             <div className="px-md mb-lg">
               <div className="flex items-center gap-sm mb-xs">
@@ -109,28 +70,7 @@ export default function KFinanceGatewayMonitor() {
                 </div>
               </div>
             </div>
-            <nav className="flex-1 space-y-1 px-xxs">
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/transport/control">
-                <span className="material-symbols-outlined">local_shipping</span>
-                <span>Transport</span>
-              </a>
-              <a className="flex items-center gap-md px-md py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all text-label-md font-label-md scale-[0.99]" href="/finance/overview">
-                <span className="material-symbols-outlined icon-filled">payments</span>
-                <span>Finance</span>
-              </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/parc/overview">
-                <span className="material-symbols-outlined">inventory_2</span>
-                <span>Parc</span>
-              </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/magasin/dashboard">
-                <span className="material-symbols-outlined">warehouse</span>
-                <span>Magasin</span>
-              </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/audit/dashboard/health">
-                <span className="material-symbols-outlined">history_edu</span>
-                <span>Audit</span>
-              </a>
-            </nav>
+            
             <div className="mt-auto px-xxs pt-4 border-t border-outline-variant">
               <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/settings/system/audit-health">
                 <span className="material-symbols-outlined">settings</span>
@@ -147,13 +87,7 @@ export default function KFinanceGatewayMonitor() {
             {/* Breadcrumbs & Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-md">
               <div className="space-y-xxs">
-                <nav className="flex text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
-                  <span>ERP CENTRAL</span>
-                  <span className="mx-2">/</span>
-                  <span>FINANCE</span>
-                  <span className="mx-2">/</span>
-                  <span className="text-primary">GATEWAY MONITOR</span>
-                </nav>
+                
                 <h1 className="text-headline-lg font-headline-lg text-on-surface">Financial Integration Gateway</h1>
               </div>
               <div className="flex gap-xs">

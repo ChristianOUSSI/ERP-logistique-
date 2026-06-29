@@ -64,19 +64,8 @@ export default function MFAVerification() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-xs">
-            <span className="text-primary font-bold text-title-lg tracking-tight">KAMLOG EM-ERP</span>
-          </div>
-          <div className="flex items-center gap-md">
-            <div className="flex flex-col items-end hidden md:flex">
-              <span className="text-label-md font-label-md text-primary uppercase tracking-widest">Secure Gateway</span>
-              <span className="text-label-sm font-label-sm text-on-surface-variant">Session: Pending MFA</span>
-            </div>
-            <span className="material-symbols-outlined text-outline">security</span>
-          </div>
-        </header>
+        
+        
         <main className="flex-grow flex items-center justify-center pt-16 px-md relative overflow-hidden">
           {/* Background Atmospheric Element */}
           <div className="absolute inset-0 z-0 opacity-40"></div>

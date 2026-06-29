@@ -46,48 +46,12 @@ export default function Permissions() {
       `}</style>
       <div className="bg-surface-container-low font-body-md text-on-surface min-h-screen flex flex-col">
         {/* Top Navigation Bar */}
-        <header className="sticky top-0 bg-surface border-b border-outline-variant z-40">
-          <div className="flex justify-between items-center h-[64px] px-[1.5rem]">
-            <div className="flex items-center gap-xl">
-              <span className="font-title-sm text-title-sm text-primary font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex items-center gap-lg">
-                <a className="text-on-surface-variant font-body-base hover:text-primary transition-all" href="/admin/user-management/listing">Utilisateurs</a>
-                <a className="text-primary font-body-base font-bold border-b-2 border-primary pb-1" href="/admin/permissions">Permissions</a>
-                <a className="text-on-surface-variant font-body-base hover:text-primary transition-all" href="/admin/journal">Journal d'Audit</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-md">
-              <div className={`relative group ${searchFocused ? 'ring-2 ring-primary rounded-lg' : ''}`}>
-                <input 
-                  className="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 w-64 focus:ring-0 transition-all text-body-sm" 
-                  placeholder="Rechercher T-Code" 
-                  type="text"
-                  onFocus={() => setSearchFocused(true)}
-                  onBlur={() => setSearchFocused(false)}
-                />
-                <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[20px]">search</span>
-              </div>
-              <div className="flex items-center gap-sm border-l border-outline-variant pl-md">
-                <button className="p-xs hover:bg-surface-container-high rounded-full transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button onClick={logout} className="p-xs hover:bg-surface-container-high rounded-full transition-colors text-error">
-                  <span className="material-symbols-outlined">logout</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        
         {/* Main Content Stage */}
         <main className="flex-1 p-[1.5rem]">
           {/* Breadcrumbs & Header */}
           <div className="mb-lg">
-            <nav className="flex items-center gap-xs text-on-surface-variant font-label-md mb-xs">
-              <span>Administration</span>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-              <span className="text-primary font-bold">Rôles & Permissions</span>
-            </nav>
+            
             <div className="flex justify-between items-end">
               <div>
                 <h2 className="font-headline-lg text-headline-lg text-on-surface">Matrice de Sécurité</h2>

@@ -75,29 +75,9 @@ export default function SecurityAlertMonitoring() {
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 2px; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full bg-surface-container-highest border-b border-outline-variant flex justify-between items-center px-[1.5rem] h-14 z-50">
-          <div className="flex items-center gap-8">
-            <span className="font-headline-md text-headline-md font-bold text-primary">KAMLOG EM-ERP</span>
-            <nav className="hidden md:flex gap-6">
-              <a onClick={() => router.push('/dashboard')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Dashboard</a>
-              <a onClick={() => router.push('/audit')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Activity Log</a>
-              <a onClick={() => router.push('/security/audit')} className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer">User Audit</a>
-              <a onClick={() => router.push('/compliance')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">Compliance</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="bg-surface-container flex items-center px-3 py-1.5 rounded border border-outline-variant w-64">
-              <span className="material-symbols-outlined text-[20px] text-on-surface-variant mr-2">search</span>
-              <input className="bg-transparent border-none focus:ring-0 text-label-md w-full" placeholder="Search T-Codes (e.g. K-SEC-01)" type="text"/>
-            </div>
-            <button onClick={() => router.push('/security')} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">security</button>
-            <button onClick={() => router.push('/admin')} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">admin_panel_settings</button>
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">notifications</button>
-            <button onClick={() => router.push('/profile')} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors">account_circle</button>
-          </div>
-        </header>
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="fixed left-0 top-0 h-full w-60 bg-surface-container-low flex flex-col pt-14 z-40">
           <div className="p-6 border-b border-outline-variant/30">
             <div className="flex items-center gap-3 mb-4">
@@ -109,32 +89,7 @@ export default function SecurityAlertMonitoring() {
             </div>
             <button onClick={handleGenerateReport} className="w-full bg-secondary text-on-secondary font-label-md text-label-md py-2 rounded shadow-sm hover:opacity-90 transition-all">Generate Forensic Report</button>
           </div>
-          <nav className="flex-1 py-4 overflow-y-auto custom-scrollbar">
-            <a onClick={() => router.push('/security/overview')} className="flex items-center px-4 py-3 text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">shield</span>
-              <span className="font-title-md text-title-md">Security Overview</span>
-            </a>
-            <a onClick={() => router.push('/security/event-viewer')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">list_alt</span>
-              <span className="font-label-md text-label-md">Event Viewer</span>
-            </a>
-            <a onClick={() => router.push('/security/policies')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">policy</span>
-              <span className="font-label-md text-label-md">Policy Manager</span>
-            </a>
-            <a onClick={() => router.push('/security/key-vault')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">vpn_key</span>
-              <span className="font-label-md text-label-md">Key Vault</span>
-            </a>
-            <a onClick={() => router.push('/security/integrity')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">verified_user</span>
-              <span className="font-label-md text-label-md">System Integrity</span>
-            </a>
-            <a onClick={() => router.push('/security/reports')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3">analytics</span>
-              <span className="font-label-md text-label-md">Audit Reports</span>
-            </a>
-          </nav>
+          
           <div className="p-4 border-t border-outline-variant/30">
             <a onClick={() => router.push('/settings')} className="flex items-center px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-all cursor-pointer">
               <span className="material-symbols-outlined mr-3">settings</span>
@@ -150,13 +105,7 @@ export default function SecurityAlertMonitoring() {
         <main className="ml-60 pt-14 min-h-screen">
           <div className="max-w-[1600px] mx-auto p-[1rem]">
             {/* Breadcrumbs */}
-            <nav className="flex items-center gap-2 mb-4 text-outline font-label-md text-label-md">
-              <a onClick={() => router.push('/dashboard')} className="hover:text-primary cursor-pointer">ERP Global</a>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-              <a onClick={() => router.push('/security')} className="hover:text-primary cursor-pointer">Audit & Security</a>
-              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-              <span className="text-on-surface">Security: Alert Monitoring Center</span>
-            </nav>
+            
             <div className="flex gap-[1rem]">
               {/* Filter Sidebar */}
               <aside className="w-64 flex-shrink-0 flex flex-col gap-4">

@@ -11,7 +11,7 @@ import {
 export default function KMagasinStockMovementHistory() {
   return (
     <div className="bg-surface-container-low text-on-surface antialiased min-h-screen flex">
-      {/* SideNavBar */}
+      
       <aside className="bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col h-screen p-4 z-50">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
@@ -31,29 +31,7 @@ export default function KMagasinStockMovementHistory() {
         </button>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1">
-          {/* Active Item */}
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150" href="/dashboard/global">
-            <LayoutDashboard size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Tableau de bord</span>
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-            <Truck size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Transport</span>
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-            <CreditCard size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Finances</span>
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-            <AlertTriangle size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Parc Automobile</span>
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-            <Settings size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Paramètres</span>
-          </a>
-        </nav>
+        
 
         {/* Footer */}
         <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
@@ -68,58 +46,15 @@ export default function KMagasinStockMovementHistory() {
         </div>
       </aside>
 
-      {/* Main Content Wrapper */}
+      
       <div className="flex-1 ml-[260px] flex flex-col min-w-0">
-        {/* TopNavBar */}
-        <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-          <div className="flex items-center gap-8">
-            <div className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</div>
-            <nav className="hidden md:flex items-center gap-6 h-full pt-4">
-              <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4" href="#">Articles</a>
-              <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4" href="#">Clients</a>
-              {/* Active State for Stocks */}
-              <a className="text-primary border-b-2 border-primary pb-3 font-body-base text-body-base font-medium" href="#">Stocks</a>
-              <a className="text-on-surface-variant hover:text-primary transition-all font-body-base text-body-base pb-4" href="#">Rapports</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Search */}
-            <div className="relative focus-within:ring-2 focus-within:ring-primary rounded hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline" size={16} />
-              <input 
-                className="pl-9 pr-4 py-1.5 bg-surface-container text-on-surface border-none rounded text-sm w-48 focus:outline-none placeholder-on-surface-variant" 
-                placeholder="Rechercher T-Code" 
-                type="text"
-              />
-            </div>
-            {/* Trailing Actions */}
-            <div className="flex items-center gap-2 text-on-surface-variant">
-              <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
-                <Bell size={20} />
-              </button>
-              <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
-                <ShieldCheck size={20} />
-              </button>
-              <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors">
-                <div className="w-8 h-8 rounded-full bg-outline-variant flex items-center justify-center text-xs font-bold text-primary">JD</div>
-              </button>
-            </div>
-          </div>
-        </header>
+        
+        
 
-        {/* Main Canvas */}
+        
         <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-4">
-            <a className="hover:text-primary transition-colors" href="#">Accueil</a>
-            <ChevronRight size={14} />
-            <a className="hover:text-primary transition-colors" href="#">Stocks</a>
-            <ChevronRight size={14} />
-            <span className="text-on-surface font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-error inline-block"></span>
-              K-Magasin
-            </span>
-          </nav>
+          
 
           {/* Page Header */}
           <div className="flex justify-between items-end mb-6">

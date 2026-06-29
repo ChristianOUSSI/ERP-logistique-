@@ -65,43 +65,14 @@ export default function UserManagementCreate() {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface selection:bg-primary-fixed-dim min-h-screen">
-        {/* Main Content Wrapper */}
+        
         <div className="flex flex-col min-h-screen">
           {/* TopNavBar Anchor */}
-          <header className="w-full h-16 bg-surface border-b border-outline-variant z-40 sticky top-0">
-            <div className="flex items-center justify-between px-[1.5rem] w-full max-w-[1600px] mx-auto h-full">
-              <div className="flex items-center gap-lg">
-                <span className="text-headline-sm font-headline-sm text-primary">KAMLOG EM-ERP</span>
-                <div className="h-6 w-[1px] bg-outline-variant mx-4"></div>
-                <nav className="hidden md:flex gap-6">
-                  <a className="font-body-base text-body-base text-primary border-b-2 border-primary pb-1 font-semibold" href="/admin/user-management/listing">Utilisateurs</a>
-                  <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="/admin/permissions">Permissions</a>
-                  <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="/admin/journal">Journal d'Audit</a>
-                </nav>
-              </div>
-              <div className="flex items-center gap-md">
-                <TCodeSearch />
-                <button className="p-xs hover:bg-surface-container-highest transition-colors rounded-full cursor-pointer">
-                  <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-                </button>
-                <button onClick={logout} className="p-xs hover:bg-surface-container-highest transition-colors rounded-full cursor-pointer text-error">
-                  <span className="material-symbols-outlined">logout</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
           {/* Main Content Area */}
           <main className="flex-1 p-[1.5rem] w-full max-w-[1600px] mx-auto bg-[#F8FAFC]">
             {/* Breadcrumbs */}
-            <nav className="mb-lg">
-              <ol className="flex items-center gap-xxs text-label-md font-label-md text-on-surface-variant">
-                <li><a className="hover:text-primary" href="/admin/user-management/listing">Admin</a></li>
-                <li><span className="material-symbols-outlined text-[14px]">chevron_right</span></li>
-                <li><a className="hover:text-primary" href="/admin/user-management/listing">User Management</a></li>
-                <li><span className="material-symbols-outlined text-[14px]">chevron_right</span></li>
-                <li className="text-primary font-bold">New User</li>
-              </ol>
-            </nav>
+            
             
             <form onSubmit={handleSubmit}>
               <div className="flex justify-between items-end mb-xl">

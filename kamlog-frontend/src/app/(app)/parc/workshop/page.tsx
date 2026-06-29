@@ -60,114 +60,15 @@ export default function ParcWorkshopPage() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-background font-body-md min-h-screen flex">
-        {/* SideNavBar */}
-        <nav className="hidden md:flex flex-col h-screen p-md bg-surface-container-lowest fixed left-0 top-0 w-[260px] border-r border-outline-variant shadow-sm z-50">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-8 px-2">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-primary icon-filled">minor_crash</span>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-none">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">Port Operations</p>
-            </div>
-          </div>
-          {/* Primary CTA */}
-          <button className="w-full bg-primary text-on-primary font-label-md text-label-md py-2 px-4 rounded flex items-center justify-center gap-2 mb-8 hover:bg-primary/90 transition-colors">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Navigation Links */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="font-label-caps text-label-caps text-on-surface-variant mb-2 px-2 uppercase text-[10px] tracking-wider font-semibold">Modules</div>
-            <ul className="space-y-1">
-              <li>
-                <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/dashboard/global">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  <span className="font-title-md text-title-md">Tableau de bord</span>
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/transport/control">
-                  <span className="material-symbols-outlined">local_shipping</span>
-                  <span className="font-title-md text-title-md">Transport</span>
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim" href="/finance/overview">
-                  <span className="material-symbols-outlined">payments</span>
-                  <span className="font-title-md text-title-md">Finances</span>
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-2 px-2 py-1 rounded text-primary bg-primary-container font-bold active:scale-95 duration-150 border-l-4 border-primary" href="/parc/overview">
-                  <span className="material-symbols-outlined icon-filled">minor_crash</span>
-                  <span className="font-title-md text-title-md">Parc Automobile</span>
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-secondary-fixed-dim mt-8" href="/settings/system/audit-health">
-                  <span className="material-symbols-outlined">settings</span>
-                  <span className="font-title-md text-title-md">Paramètres</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          {/* Footer Actions */}
-          <div className="mt-auto pt-4 border-t border-outline-variant space-y-1">
-            <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-md text-label-md" href="/support">
-              <span className="material-symbols-outlined text-[18px]">help_outline</span>
-              Support
-            </a>
-            <a className="flex items-center gap-2 px-2 py-1 rounded hover:bg-surface-container-high transition-colors text-error font-label-md text-label-md" href="/login">
-              <span className="material-symbols-outlined text-[18px]">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </nav>
+        
+        
 
         {/* Main Content Area Wrapper */}
         <div className="flex-1 flex flex-col md:ml-[260px] min-h-screen">
-          {/* TopNavBar */}
-          <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-8">
-            {/* Left: Module Title & Breadcrumbs */}
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col">
-                <div className="flex items-center text-[10px] text-on-surface-variant font-medium tracking-wide uppercase mb-1">
-                  <span>KAMLOG ERP</span>
-                  <span className="material-symbols-outlined text-[12px] mx-1">chevron_right</span>
-                  <span>K-Parc</span>
-                  <span className="material-symbols-outlined text-[12px] mx-1">chevron_right</span>
-                  <span className="text-primary font-bold">Atelier</span>
-                </div>
-                <div className="font-title-sm text-title-sm text-on-surface font-black">Maintenance Workshop</div>
-              </div>
-            </div>
-            {/* Center: Search */}
-            <div className="flex-1 max-w-md mx-4">
-              <div className="relative flex items-center w-full focus-within:ring-2 focus-within:ring-primary rounded bg-surface-container-low border border-outline-variant px-2 py-1.5 transition-all">
-                <span className="material-symbols-outlined text-outline text-[18px] mr-2">search</span>
-                <input className="w-full bg-transparent border-none p-0 text-body-sm font-body-sm focus:ring-0 text-on-surface placeholder:text-outline" placeholder="Rechercher T-Code ou ID Véhicule..." type="text"/>
-                <div className="bg-surface-variant text-on-surface-variant text-[10px] px-1.5 py-0.5 rounded font-mono ml-2 border border-outline-variant">⌘K</div>
-              </div>
-            </div>
-            {/* Right: Actions & Profile */}
-            <div className="flex items-center gap-2">
-              <button className="p-1 text-on-surface-variant hover:text-primary transition-all rounded hover:bg-surface-container-high">
-                <span className="material-symbols-outlined">notifications</span>
-              </button>
-              <button className="p-1 text-on-surface-variant hover:text-primary transition-all rounded hover:bg-surface-container-high">
-                <span className="material-symbols-outlined">verified_user</span>
-              </button>
-              <div className="w-px h-6 bg-outline-variant mx-1"></div>
-              <button className="flex items-center gap-2 hover:bg-surface-container-high p-1 pr-2 rounded transition-all border border-transparent hover:border-outline-variant">
-                <img alt="User profile with MFA status" className="w-8 h-8 rounded bg-surface-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCREtjIQMM7fVKsaXjhbPC0SUOAekei_nJbzjsy_EbKQd2vfX6lLd3ZozQ_tYzJYvqENPnvhmdOk8-W0CHuB2CRJy9-s6kUotJLO1W1SO9AWTP59qE0ThNYbMks3Rz5EHyPyNV600Av92_V1MrhOZdGGE-27MUlSp9CQYOC730g9oHrTmJjtZhHb-ss0DPNndPZG3DHcry1KqAtjttPTinNnMc_bbPTbrNWo_rydmu6P5UScuxCHjtYRP4Soeb5HkLMFpyaqdmtH9M"/>
-                <span className="material-symbols-outlined text-[16px] text-on-surface-variant">keyboard_arrow_down</span>
-              </button>
-            </div>
-          </header>
+          
+          
 
-          {/* Main Canvas */}
+          
           <main className="flex-1 p-8 max-w-[1600px] w-full mx-auto overflow-y-auto">
             {/* Bento Grid Layout for Workshop */}
             <div className="grid grid-cols-12 gap-8 h-full">

@@ -52,7 +52,7 @@ export default function GoodsDeclaration() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md antialiased overflow-hidden flex">
-        {/* SideNavBar */}
+        
         <aside className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-[1rem] z-50">
           <div className="p-4 border-b border-outline-variant flex items-center gap-3">
             <div className="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold">K</div>
@@ -67,41 +67,7 @@ export default function GoodsDeclaration() {
               Nouvelle Opération
             </button>
           </div>
-          <nav className="flex-1 overflow-y-auto py-2">
-            <ul className="space-y-1 px-2">
-              <li>
-                <a onClick={() => router.push('/dashboard')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Tableau de bord
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/transport')} className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold font-label-caps text-label-caps active:scale-95 duration-150 relative cursor-pointer">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-primary rounded-r-full"></div>
-                  <span className="material-symbols-outlined" data-weight="fill">local_shipping</span>
-                  Transport
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/finance')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined">payments</span>
-                  Finances
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/parc')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined">minor_crash</span>
-                  Parc Automobile
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/magasin')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                  <span className="material-symbols-outlined">warehouse</span>
-                  Magasin
-                </a>
-              </li>
-            </ul>
-          </nav>
+          
           <div className="mt-auto border-t border-outline-variant p-2">
             <ul className="space-y-1 px-2">
               <li>
@@ -120,29 +86,10 @@ export default function GoodsDeclaration() {
           </div>
         </aside>
 
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 flex flex-col ml-[260px] h-screen">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem] shrink-0">
-            <div className="flex items-center gap-6">
-              <span className="font-title-sm text-title-sm text-on-surface font-black tracking-tight">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex gap-6">
-                <a onClick={() => router.push('/transport')} className="text-on-surface-variant font-body-base text-body-base hover:text-primary transition-all cursor-pointer">Transport</a>
-                <a onClick={() => router.push('/transport/containers')} className="text-on-surface-variant font-body-base text-body-base hover:text-primary transition-all cursor-pointer">Opérations</a>
-                <span className="text-on-surface font-bold">Déclaration de Marchandises</span>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <TCodeSearch />
-              <div className="flex items-center gap-3 text-on-surface-variant">
-                <button className="hover:text-primary transition-colors"><span className="material-symbols-outlined">notifications</span></button>
-                <button onClick={() => router.push('/security')} className="hover:text-primary transition-colors"><span className="material-symbols-outlined">verified_user</span></button>
-                <div onClick={() => router.push('/profile')} className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center overflow-hidden border border-outline-variant cursor-pointer">
-                  <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd0RGFdOgK86gkkc_yA-0pmtg7UfB_cBJFXgfySVDP67sNmIpf6KvRYjz3vFuUIWR-LqgldQdm4DiIeAcpGDPcnrisGZF3wEV7v2DN04zo1rzJcoXME8dHrt9fCy7a2ityJu73k4CCp5aYK9kagrjZ-hg2WFVdewkcjf6aeVlfzzeXNtNL7m1c3J2jznBnjHBmjmjtsbF-93k_OMsNkCIA1j2u91ArMbL-rsDS8TWsBdIPqQlezb5u5YvP3th1PvcRbIzbyMDoZfbo"/>
-                </div>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Main Stage */}
           <main className="flex-1 overflow-y-auto p-[1rem] bg-surface-container-low flex flex-col gap-[1rem] max-w-[1600px] mx-auto w-full">

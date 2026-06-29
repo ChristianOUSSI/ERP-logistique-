@@ -119,27 +119,10 @@ export default function PhysicalInventory() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-lg antialiased">
-        {/* TopNavBar */}
-        <header className="sticky top-0 w-full z-40 bg-surface border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem] ml-[260px] max-w-[calc(100%-260px)]">
-          <div className="flex items-center gap-4">
-            <span className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</span>
-          </div>
-          <nav className="flex gap-6 h-full items-center">
-            <a onClick={() => router.push('/master-data')} className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all h-full flex items-center cursor-pointer">Articles</a>
-            <a onClick={() => router.push('/magasin')} className="font-body-base text-body-base text-primary border-b-2 border-primary pb-1 h-full flex items-center cursor-pointer">Stocks</a>
-            <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all h-full flex items-center cursor-pointer">Rapports</a>
-          </nav>
-          <div className="flex items-center gap-4">
-            <TCodeSearch />
-            <div className="flex items-center gap-3">
-              <button className="text-on-surface-variant hover:text-primary transition-all"><span className="material-symbols-outlined">notifications</span></button>
-              <button onClick={() => router.push('/security')} className="text-on-surface-variant hover:text-primary transition-all"><span className="material-symbols-outlined">verified_user</span></button>
-              <button onClick={() => router.push('/profile')} className="text-on-surface-variant hover:text-primary transition-all"><span className="material-symbols-outlined">account_circle</span></button>
-            </div>
-          </div>
-        </header>
         
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest text-primary font-label-caps text-label-caps border-r border-outline-variant shadow-sm flex flex-col h-screen p-[1rem] z-50">
           <div className="mb-8 flex items-center gap-3">
             <div className="w-10 h-10 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xl">K</div>
@@ -151,24 +134,7 @@ export default function PhysicalInventory() {
           <button onClick={() => router.push('/magasin')} className="w-full bg-primary text-on-primary py-2 rounded mb-6 font-bold flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
             <span className="material-symbols-outlined text-sm">add</span> Nouvelle Opération
           </button>
-          <nav className="flex-1 flex flex-col gap-2">
-            <a onClick={() => router.push('/dashboard')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">dashboard</span> Tableau de bord
-            </a>
-            <a onClick={() => router.push('/transport')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">local_shipping</span> Transport
-            </a>
-            <a onClick={() => router.push('/finance')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">payments</span> Finances
-            </a>
-            <a onClick={() => router.push('/magasin')} className="flex items-center gap-3 px-3 py-2 rounded text-primary bg-secondary-container font-bold relative active:scale-95 duration-150 cursor-pointer">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-error rounded-r"></div>
-              <span className="material-symbols-outlined" style={{fontVariationSettings: 'FILL 1'}}>warehouse</span> Magasin
-            </a>
-            <a onClick={() => router.push('/settings')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-              <span className="material-symbols-outlined">settings</span> Paramètres
-            </a>
-          </nav>
+          
         </aside>
         
         {/* Main Content Stage */}

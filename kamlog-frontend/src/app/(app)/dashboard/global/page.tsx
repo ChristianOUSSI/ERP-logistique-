@@ -28,38 +28,7 @@ export default function GlobalDashboard() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface">
         {/* TopAppBar Shell */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-xl">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <nav className="hidden md:flex items-center gap-md">
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">Alerts</a>
-              <a className="text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-sm py-xs" href="#">MFA Status</a>
-              <a className="text-label-md font-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Modules</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-md">
-            <button className="p-xs hover:bg-surface-container-high transition-colors rounded-full">
-              <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-            </button>
-            <button className="p-xs hover:bg-surface-container-high transition-colors rounded-full">
-              <span className="material-symbols-outlined text-on-surface-variant">security</span>
-            </button>
-            <button className="p-xs hover:bg-surface-container-high transition-colors rounded-full">
-              <span className="material-symbols-outlined text-on-surface-variant">apps</span>
-            </button>
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-outline-variant">
-              <img alt="User Profile Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlVGmjmhA1cMwRWovq_WLrw2YhDeovqVj5zlc62N7PTWlcRm0NlItJcbgP48oTZ3yDucvCUi2eBXx4-jMUY9gHt0rvrF78R3tCOps7BI5OTw8TYGpKFjj-18M2lOrWCuXzLO_8e0MpJyg3wc0cbm1JqXyvylrePXFUzLPjSoz05UB-pqlW2x30uvIK2pZH2zK8ebn1_aeYc46LdyiBjz23OKitO-HoYRwHQwcQDdW625aVqF-AzCWwo28S1TkehLQJx87bu-5YT3E"/>
-            </div>
-          </div>
-        </header>
+        
         {/* SideNavBar Shell */}
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
           <div className="px-md py-lg border-b border-outline-variant mb-md">
@@ -71,28 +40,7 @@ export default function GlobalDashboard() {
             </div>
             <p className="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</p>
           </div>
-          <nav className="flex-1 px-xs space-y-xxs overflow-y-auto custom-scrollbar">
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="text-label-md font-label-md">Transport</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              <span className="text-label-md font-label-md">Finance</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span className="text-label-md font-label-md">Parc</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="text-label-md font-label-md">Magasin</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/audit/dashboard/health">
-              <span className="material-symbols-outlined">history_edu</span>
-              <span className="text-label-md font-label-md">Audit</span>
-            </a>
-          </nav>
+          
           <div className="px-xs pt-md border-t border-outline-variant space-y-xxs">
             <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
               <span className="material-symbols-outlined">settings</span>
@@ -110,11 +58,7 @@ export default function GlobalDashboard() {
             {/* Global Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">
               <div>
-                <nav className="flex items-center gap-xxs text-label-sm font-label-sm text-on-surface-variant mb-xs">
-                  <span>Modules</span>
-                  <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-                  <span className="text-primary">Global Dashboard</span>
-                </nav>
+                
                 <h1 className="text-headline-lg font-headline-lg text-on-background">System Overview</h1>
               </div>
               <div className="flex items-center gap-sm">

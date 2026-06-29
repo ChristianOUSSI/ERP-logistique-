@@ -49,34 +49,9 @@ export default function SecurityNotifications() {
         ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 4px; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col">
-        {/* TopNavBar */}
-        <header className="bg-surface-container-highest flex justify-between items-center w-full px-[1.5rem] h-14 z-50 fixed top-0 border-b border-outline-variant">
-          <div className="flex items-center gap-8">
-            <span className="font-headline-md text-headline-md font-bold text-primary">KAMLOG EM-ERP</span>
-            <nav className="hidden md:flex gap-6">
-              <a onClick={() => router.push('/dashboard')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 cursor-pointer">Dashboard</a>
-              <a onClick={() => router.push('/audit')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 cursor-pointer">Activity Log</a>
-              <a onClick={() => router.push('/security/audit')} className="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 cursor-pointer">User Audit</a>
-              <a className="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 cursor-pointer">Compliance</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-              <input className="bg-surface-container-high border-none rounded-lg pl-10 pr-4 py-1 text-label-md w-64 focus:ring-2 focus:ring-primary" placeholder="T-Code or Search..." type="text"/>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => router.push('/security')} className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">security</span></button>
-              <button onClick={() => router.push('/admin')} className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">admin_panel_settings</span></button>
-              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-              </button>
-              <button onClick={() => router.push('/profile')} className="p-2 hover:bg-surface-container-high rounded-full transition-colors"><span className="material-symbols-outlined">account_circle</span></button>
-            </div>
-          </div>
-        </header>
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="fixed left-0 top-0 h-full w-60 bg-surface-container-low flex flex-col pt-14 z-40 border-r border-outline-variant">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-6">
@@ -88,28 +63,7 @@ export default function SecurityNotifications() {
                 <p className="font-label-sm text-label-sm text-outline">Module: Audit & Security</p>
               </div>
             </div>
-            <nav className="space-y-1">
-              <a onClick={() => router.push('/security/dashboard')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all cursor-pointer">
-                <span className="material-symbols-outlined mr-3">shield</span>
-                <span className="font-title-md text-title-md">Security Overview</span>
-              </a>
-              <a onClick={() => router.push('/security/event-viewer')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all cursor-pointer">
-                <span className="material-symbols-outlined mr-3">list_alt</span>
-                <span className="font-title-md text-title-md">Event Viewer</span>
-              </a>
-              <a className="flex items-center text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 cursor-pointer">
-                <span className="material-symbols-outlined mr-3">policy</span>
-                <span className="font-title-md text-title-md">Policy Manager</span>
-              </a>
-              <a onClick={() => router.push('/security/key-vault')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all cursor-pointer">
-                <span className="material-symbols-outlined mr-3">vpn_key</span>
-                <span className="font-title-md text-title-md">Key Vault</span>
-              </a>
-              <a onClick={() => router.push('/security/reports')} className="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-all cursor-pointer">
-                <span className="material-symbols-outlined mr-3">analytics</span>
-                <span className="font-title-md text-title-md">Audit Reports</span>
-              </a>
-            </nav>
+            
             <button onClick={() => router.push('/security/reports')} className="mt-8 w-full bg-secondary text-white py-3 rounded-lg font-label-md text-label-md hover:opacity-90 active:opacity-80 transition-opacity">
               Generate Forensic Report
             </button>
@@ -130,13 +84,7 @@ export default function SecurityNotifications() {
           <div className="max-w-[1600px] mx-auto p-[1rem]">
             {/* Breadcrumbs & Header */}
             <div className="mb-8">
-              <nav className="flex gap-2 text-outline font-label-sm text-label-sm mb-2">
-                <a onClick={() => router.push('/compliance')} className="hover:text-primary cursor-pointer">Compliance</a>
-                <span>/</span>
-                <a onClick={() => router.push('/security/policies')} className="hover:text-primary cursor-pointer">Security Policies</a>
-                <span>/</span>
-                <span className="text-on-surface">Notification Settings & Escalation</span>
-              </nav>
+              
               <div className="flex justify-between items-end">
                 <div>
                   <h1 className="font-headline-lg text-headline-lg text-on-background">Security: Notification Settings & Escalation</h1>

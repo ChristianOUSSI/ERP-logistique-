@@ -102,33 +102,10 @@ export default function TransportDispatchPage() {
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #F59E0B; border-radius: 10px; }
       `}</style>
       <div className="text-on-surface">
-        {/* TopNavBar */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <nav className="hidden md:flex gap-4">
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 text-label-md font-label-md" href="#">Alerts</a>
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors px-2 py-1 text-label-md font-label-md" href="#">MFA Status</a>
-              <a className="text-primary border-b-2 border-primary pb-1 font-bold text-label-md font-label-md" href="#">Modules</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">notifications</button>
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">security</button>
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-1 rounded-full">apps</button>
-            <img alt="User Profile Avatar" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA47c17Ec7rXp6CysyfuF14CCt-CyFivRD_ZcrnsSbE1SrAxqpKLxTszGzjg7IANwcGhw7Bbfmifnz0rDUSgyVWoZXCvW-NyAGCLaSfUtOFaPOTcxDJTWI_HYwGEP4iAKiitnm7dMY1O9wW9dN-YtC-oY8xKHb17b8TED6oJ2Vh5Nsjc9eOoId-zNaEd-hS8D0zd_FZqQecSVnaRE2S434faVlAihsIPqvNQTB29zYpaykqyAPUagNmZ0roYtH7PVEEh2kUI6k6MCA"/>
-          </div>
-        </header>
+        
+        
 
-        {/* SideNavBar */}
+        
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-4 z-40 bg-surface-container border-r border-outline-variant">
           <div className="p-4 border-b border-outline-variant mb-2">
             <div className="flex items-center gap-2">
@@ -139,29 +116,7 @@ export default function TransportDispatchPage() {
               </div>
             </div>
           </div>
-          <nav className="flex-1 overflow-y-auto py-2">
-            {/* Active: Transport */}
-            <a className="flex items-center gap-4 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-all duration-150 scale-[0.99]" href="/transport/control">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: 'FILL 1' }}>local_shipping</span>
-              <span className="text-label-md font-label-md">Transport</span>
-            </a>
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              <span className="text-label-md font-label-md">Finance</span>
-            </a>
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span className="text-label-md font-label-md">Parc</span>
-            </a>
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="text-label-md font-label-md">Magasin</span>
-            </a>
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="/audit/dashboard/health">
-              <span className="material-symbols-outlined">history_edu</span>
-              <span className="text-label-md font-label-md">Audit</span>
-            </a>
-          </nav>
+          
           <div className="px-4 mb-4">
             <button className="w-full bg-primary text-white py-2 text-label-md font-label-md rounded flex items-center justify-center gap-2 hover:opacity-90">
               <span className="material-symbols-outlined text-[18px]">search</span>
@@ -185,11 +140,7 @@ export default function TransportDispatchPage() {
           {/* Dashboard Header */}
           <div className="flex justify-between items-end mb-8">
             <div>
-              <nav className="flex text-label-sm font-label-sm text-outline mb-2">
-                <span>Operations</span>
-                <span className="mx-2">/</span>
-                <span className="text-primary">Dispatch Control Room</span>
-              </nav>
+              
               <h1 className="text-headline-md font-headline-md text-on-background">Dispatch Fleet Monitor</h1>
             </div>
             <div className="flex gap-4">

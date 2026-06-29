@@ -56,39 +56,7 @@ export default function AuditTrailOperationTracePage() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md overflow-hidden">
         {/* TopNavBar Implementation */}
-        <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
-          <div className="flex items-center gap-md">
-            <div className="flex items-center gap-2">
-              <span className="text-title-lg font-title-lg font-bold text-primary">KAMLOG EM-ERP</span>
-              <select className="hidden md:block bg-surface-container-high border border-outline-variant text-label-sm font-label-sm text-on-surface rounded px-2 py-1 outline-none focus:ring-1 focus:ring-primary ml-4 shadow-sm cursor-pointer hover:bg-surface-container-highest transition-colors">
-                <option>🇨🇲 Agence de Douala (HQ)</option>
-                <option>🇨🇮 Agence d'Abidjan</option>
-                <option>🇨🇲 Agence de Kribi</option>
-                <option>🇸🇳 Agence de Dakar</option>
-              </select>
-            </div>
-            <div className="h-8 w-px bg-outline-variant mx-xs"></div>
-            <nav className="hidden md:flex items-center gap-lg">
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">Alerts</a>
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">MFA Status</a>
-              <a className="text-on-surface-variant hover:bg-surface-container-high transition-colors text-label-md font-label-md px-2 py-1" href="#">Modules</a>
-            </nav>
-          </div>
-          {/* T-Code Search Bar - Critical Requirement */}
-          <div className="flex-1 max-w-md mx-xl hidden md:block">
-            <div className="relative t-code-focus group transition-all duration-200 bg-white border border-outline-variant rounded p-1 flex items-center">
-              <span className="material-symbols-outlined text-outline px-xs" style={{ fontSize: '20px' }}>terminal</span>
-              <input className="w-full border-none focus:ring-0 text-body-sm font-data-tabular bg-transparent" placeholder="Enter T-Code (e.g. KM24)" type="text" value="KM24"/>
-              <span className="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1">ACTIVE</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-md">
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors">notifications</button>
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors">security</button>
-            <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-xs rounded transition-colors">apps</button>
-            <img alt="User Profile Avatar" className="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2CFriw6FjN_IS0g8HuJsJN6IrruZOflxB_C3r5_z6uXM6qrnJ1xNSeGecI4kRKeJm6gVF3wVA9Eg3NgvT89hIppO9y9PLlZ7CJ22xMG1H_1v4Ksx5hzRb63FjMZKJp89ioZPtXI4_6t_eZyv0RT1w0MVDcDL4yncbYRVVGh3nq-EwiYJB-51otCBj78p1FNleatpsjKh68FX03VUGYLkr2Cw7TaKraejqGrz-MvEwKu9F7yTt-9737BrwU_ayXVd8guhcIz4yGcA"/>
-          </div>
-        </header>
+        
 
         {/* SideNavBar Implementation */}
         <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
@@ -138,13 +106,7 @@ export default function AuditTrailOperationTracePage() {
         <main className="ml-60 pt-16 h-screen overflow-y-auto bg-surface-container-low">
           <div className="max-w-[1600px] mx-auto p-lg">
             {/* Breadcrumbs */}
-            <nav className="flex items-center gap-xs text-label-sm font-label-sm text-outline mb-xs">
-              <a className="hover:text-primary" href="#">System Control</a>
-              <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-              <a className="hover:text-primary" href="/audit/dashboard/health">Audit Log</a>
-              <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-              <span className="text-on-surface font-semibold">OT Trace</span>
-            </nav>
+            
 
             {/* Header Section */}
             <div className="flex justify-between items-end mb-lg">

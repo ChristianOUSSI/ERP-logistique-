@@ -14,103 +14,14 @@ export default function MagasinCapacityPage() {
         ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #727785; }
       `}</style>
-      <div className="text-on-background flex h-screen overflow-hidden">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col h-screen p-stack-md fixed left-0 top-0 h-full w-[260px] z-50">
-          {/* Header */}
-          <div className="px-md py-lg mb-md">
-            <div className="flex items-center gap-xs mb-xs">
-              <img alt="KAMLOG Company Logo" className="w-8 h-8 rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0x4oRnQhZbBGE-oHDiwSSrbuIz0zEQiq1HxK-J9AhX8LkAwuOcKBMgc5o5w1eUjkuCU58hGIzrEUpBjVEIFbWWkyLTDJgseg66LL0jRH2_l-t5HUisqO9LMk9kVCpwW9cVMAYEHCqJEihoYsNwmfbGTWR78EpbHcVcRsluXcADFsGYo-0aybixVtBoy6ALAdhOqSkyCndErffHLzrqZjgYKpB5G_KJebYXcowYIfdu8l7Vpn3eZN_huvj3gg3h-yFGRdtga4is6I"/>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-            </div>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Port Operations</p>
-          </div>
-          {/* CTA */}
-          <div className="px-md mb-lg">
-            <button className="w-full bg-primary hover:bg-primary-fixed-dim text-on-primary font-title-sm text-title-sm py-xs px-md rounded flex justify-center items-center gap-xs transition-colors shadow-sm">
-              <span className="material-symbols-outlined">add</span>
-              Nouvelle Opération
-            </button>
-          </div>
-          {/* Main Nav */}
-          <div className="flex-1 overflow-y-auto px-xs space-y-xxs font-label-caps text-label-caps">
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/dashboard/global">
-              <span className="material-symbols-outlined">dashboard</span>
-              Tableau de bord
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              Transport
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              Finances
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/parc/overview">
-              <span className="material-symbols-outlined">minor_crash</span>
-              Parc Automobile
-            </a>
-            {/* K-Magasin (Active, mapped from intent) */}
-            <a className="flex items-center gap-sm px-md py-sm rounded text-primary bg-secondary-container font-bold active:scale-95 duration-150 relative" href="/magasin/dashboard">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-km-red rounded-l"></div>
-              <span className="material-symbols-outlined" style={{ color: '#EF4444' }}>warehouse</span>
-              <span style={{ color: '#EF4444' }}>Magasin (KM)</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              Paramètres
-            </a>
-          </div>
-          {/* Footer Nav */}
-          <div className="mt-auto px-xs pb-md pt-sm border-t border-outline-variant space-y-xxs font-label-caps text-label-caps">
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              Support
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </nav>
+      <div className="text-on-background flex flex-col">
+        
+        
 
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter border-b border-outline-variant">
-            <div className="flex items-center gap-lg">
-              <div className="font-title-sm text-title-sm text-on-surface font-black">
-                KAMLOG EM-ERP
-              </div>
-              <nav className="hidden md:flex gap-md font-body-base text-body-base h-full items-center">
-                <a className="text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Articles</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Clients</a>
-                <a className="text-primary border-b-2 border-primary pb-1 h-full flex items-center px-xs font-medium" href="#">Stocks</a>
-                <a className="text-on-surface-variant hover:text-primary transition-all h-full flex items-center px-xs" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-md">
-              {/* Search Bar (on_right) */}
-              <div className="relative flex items-center focus-within:ring-2 focus-within:ring-primary rounded bg-surface-container-low border border-outline-variant h-8 w-64">
-                <span className="material-symbols-outlined absolute left-2 text-outline text-[18px]">search</span>
-                <input className="w-full h-full pl-8 pr-2 bg-transparent border-none text-body-sm font-body-sm focus:ring-0 text-on-surface" placeholder="Rechercher T-Code" type="text"/>
-                <div className="absolute right-1 px-1 bg-surface-variant text-on-surface-variant rounded text-[10px] font-mono">⌘K</div>
-              </div>
-              {/* Trailing Icons */}
-              <div className="flex items-center gap-xs text-on-surface-variant">
-                <button className="p-xs hover:bg-surface-container-high rounded transition-colors relative">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-                <button className="p-xs hover:bg-surface-container-high rounded transition-colors">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <button className="p-xs hover:bg-surface-container-high rounded transition-colors">
-                  <span className="material-symbols-outlined">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
 
           {/* Canvas */}
           <main className="flex-1 overflow-auto p-gutter bg-surface-container-low">

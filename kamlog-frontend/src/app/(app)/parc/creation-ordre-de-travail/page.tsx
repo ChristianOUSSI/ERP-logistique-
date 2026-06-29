@@ -71,91 +71,13 @@ export default function CreationOrdreDeTravailPage() {
         .k-parc-ring-accent { --tw-ring-color: #00714d; }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
-        {/* SideNavBar */}
-        <nav className="fixed left-0 top-0 h-full flex flex-col z-40 w-[240px] flex-shrink-0 bg-surface-container-low border-r border-outline-variant">
-          <div className="p-4 border-b border-outline-variant">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded bg-primary text-on-primary flex items-center justify-center font-bold font-title-lg">
-                PA
-              </div>
-              <div>
-                <h1 className="font-title-lg text-title-lg font-bold text-on-surface">Port Ops</h1>
-                <p className="font-label-sm text-label-sm text-on-surface-variant">Terminal A1</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant" style={{fontSize: '18px'}}>search</span>
-              <input className="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow" placeholder="T-Code Search" type="text"/>
-            </div>
-          </div>
-          <ul className="flex-1 overflow-y-auto py-2">
-            <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/transport/control">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_shipping</span>
-                Transport
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/magasin/dashboard">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>inventory_2</span>
-                Magasin
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/finance/overview">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>payments</span>
-                Finance
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md transition-all duration-200 ease-in-out text-primary bg-surface-container-highest border-l-4 border-primary font-bold" href="/parc/overview">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>local_parking</span>
-                Parc
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/audit/dashboard/health">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>fact_check</span>
-                Audit
-              </a>
-            </li>
-          </ul>
-          <div className="border-t border-outline-variant py-2">
-            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/support">
-              <span className="material-symbols-outlined" style={{fontSize: '20px'}}>support_agent</span>
-              Support
-            </a>
-            <a className="flex items-center gap-3 px-6 py-3 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all duration-200 ease-in-out" href="/login">
-              <span className="material-symbols-outlined" style={{fontSize: '20px'}}>logout</span>
-              Log out
-            </a>
-          </div>
-        </nav>
+        
+        
 
         {/* Main Content Area */}
-        <main className="ml-[240px] flex-1 flex flex-col h-screen overflow-hidden">
+        <main className="ml-[240px] flex-1 flex flex-col ">
           {/* TopNavBar (Contextual for Main Area) */}
-          <header className="h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-margin-desktop w-full flex-shrink-0">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center text-sm text-on-surface-variant">
-                <span className="hover:text-primary cursor-pointer">K-Parc</span>
-                <span className="material-symbols-outlined mx-1" style={{fontSize: '16px'}}>chevron_right</span>
-                <span className="hover:text-primary cursor-pointer">Ordres de Travail</span>
-                <span className="material-symbols-outlined mx-1" style={{fontSize: '16px'}}>chevron_right</span>
-                <span className="font-medium text-on-surface">Création (OT-8492)</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
-                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>notifications</span>
-              </button>
-              <div className="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
-                <div className="w-full h-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs"> JD </div>
-              </div>
-            </div>
-          </header>
+          
 
           {/* Canvas */}
           <div className="flex-1 overflow-y-auto p-margin-desktop">

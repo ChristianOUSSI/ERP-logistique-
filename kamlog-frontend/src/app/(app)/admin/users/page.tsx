@@ -14,113 +14,14 @@ export default function AdminUserManagementRbac() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface h-screen flex overflow-hidden">
         {/* SideNavBar (JSON Component) */}
-        <nav className="bg-surface-container-lowest text-primary fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
-          {/* Header */}
-          <div className="mb-xl flex items-center gap-sm">
-            <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary-container" style={{ fontVariationSettings: 'FILL 1' }}>anchor</span>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button className="w-full bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md py-sm px-md rounded-lg mb-xl transition-colors flex items-center justify-center gap-xs active:scale-95 duration-150">
-            <span className="material-symbols-outlined">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Main Navigation */}
-          <div className="flex-1 overflow-y-auto">
-            <ul className="space-y-xs">
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/dashboard/global">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Tableau de bord
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/transport/control">
-                  <span className="material-symbols-outlined">local_shipping</span>
-                  Transport
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/finance/overview">
-                  <span className="material-symbols-outlined">payments</span>
-                  Finances
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/parc/overview">
-                  <span className="material-symbols-outlined">minor_crash</span>
-                  Parc Automobile
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-container font-bold font-label-md text-label-md active:scale-95 duration-150 relative" href="/settings/system/audit-health">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-2/3 bg-primary rounded-r-full"></div>
-                  <span className="material-symbols-outlined" style={{ fontVariationSettings: 'FILL 1' }}>settings</span>
-                  Paramètres
-                </a>
-              </li>
-            </ul>
-          </div>
-          {/* Footer Navigation */}
-          <div className="mt-auto pt-md border-t border-outline-variant">
-            <ul className="space-y-xs">
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/support">
-                  <span className="material-symbols-outlined">help_outline</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-label-md text-label-md active:scale-95 duration-150" href="/login">
-                  <span className="material-symbols-outlined">logout</span>
-                  Déconnexion
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+        
 
-        {/* Main Content Wrapper */}
+        
         <div className="flex-1 flex flex-col ml-[260px]">
           {/* TopNavBar (JSON Component) */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-gutter">
-            <div className="flex items-center gap-lg">
-              <span className="font-title-sm text-title-sm text-on-surface font-black uppercase tracking-wider">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex gap-md">
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-sm" href="#">Articles</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-sm" href="#">Clients</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-sm" href="#">Stocks</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all py-sm" href="#">Rapports</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-md">
-              {/* Search */}
-              <TCodeSearch />
-              {/* Trailing Primary Action */}
-              <button className="hidden lg:flex items-center gap-xs bg-surface-container-high hover:bg-surface-variant text-primary font-title-sm text-title-sm py-xs px-sm rounded-lg transition-colors border border-outline-variant">
-                Rechercher T-Code
-              </button>
-              {/* Icon Actions */}
-              <div className="flex items-center gap-xs">
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">notifications</span>
-                </button>
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </button>
-                <button className="p-xs text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-high">
-                  <span className="material-symbols-outlined">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
 
-          {/* Main Canvas */}
+          
           <main className="flex-1 overflow-y-auto p-margin-desktop bg-surface-container-low">
             {/* Breadcrumbs & Page Header */}
             <div className="mb-lg flex justify-between items-end">

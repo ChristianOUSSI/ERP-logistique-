@@ -86,105 +86,13 @@ export default function CustomReportBuilder() {
           background: #727785;
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface h-screen overflow-hidden flex">
-        {/* SideNavBar */}
-        <nav className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-[1rem] z-50">
-          <div className="mb-[2rem] flex items-center gap-[0.25rem]">
-            <span className="material-symbols-outlined text-primary text-3xl" style={{fontVariationSettings: 'FILL 1'}}>corporate_fare</span>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          <button className="bg-primary text-on-primary w-full py-[0.5rem] px-[1rem] rounded hover:bg-primary-fixed-variant transition-colors flex items-center justify-center gap-[0.25rem] mb-[1.5rem] active:scale-95 duration-150 shadow-sm">
-            <span className="material-symbols-outlined text-sm">add</span>
-            <span className="font-label-md text-label-md">Nouvelle Opération</span>
-          </button>
-          <ul className="flex-1 flex flex-col gap-[0.25rem]">
-            <li>
-              <a onClick={() => router.push('/dashboard')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">dashboard</span>
-                <span className="font-label-md text-label-md uppercase">Tableau de bord</span>
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/transport')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">local_shipping</span>
-                <span className="font-label-md text-label-md uppercase">Transport</span>
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/finance')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">payments</span>
-                <span className="font-label-md text-label-md uppercase">Finances</span>
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/parc')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">minor_crash</span>
-                <span className="font-label-md text-label-md uppercase">Parc Automobile</span>
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/settings')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">settings</span>
-                <span className="font-label-md text-label-md uppercase">Paramètres</span>
-              </a>
-            </li>
-          </ul>
-          <ul className="mt-auto flex flex-col gap-[0.25rem] pt-[1rem] border-t border-outline-variant">
-            <li>
-              <a onClick={() => router.push('/support')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">help_outline</span>
-                <span className="font-label-md text-label-md uppercase">Support</span>
-              </a>
-            </li>
-            <li>
-              <a onClick={() => router.push('/logout')} className="flex items-center gap-[0.5rem] px-[0.5rem] py-[0.25rem] rounded text-secondary hover:bg-surface-container-high transition-colors active:scale-95 duration-150 cursor-pointer">
-                <span className="material-symbols-outlined">logout</span>
-                <span className="font-label-md text-label-md uppercase">Déconnexion</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        {/* Main Content Wrapper */}
+      <div className="bg-surface-container-low text-on-surface  flex">
+        
+        
+        
         <div className="flex-1 flex flex-col ml-[260px] w-[calc(100%-260px)] h-full">
-          {/* TopNavBar */}
-          <header className="bg-surface sticky top-0 w-full z-40 border-b border-outline-variant flex justify-between items-center h-[64px] px-[1rem]">
-            <div className="flex items-center gap-[1rem] h-full">
-              <span className="font-title-md text-title-md text-on-surface font-black">KAMLOG EM-ERP</span>
-              <nav className="hidden md:flex h-full ml-[1rem]">
-                <ul className="flex items-center gap-[1rem] h-full">
-                  <li className="h-full flex items-center">
-                    <a onClick={() => router.push('/master-data/articles')} className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-[0.25rem] cursor-pointer">Articles</a>
-                  </li>
-                  <li className="h-full flex items-center">
-                    <a onClick={() => router.push('/master-data/clients')} className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-[0.25rem] cursor-pointer">Clients</a>
-                  </li>
-                  <li className="h-full flex items-center">
-                    <a onClick={() => router.push('/magasin')} className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all focus-within:ring-2 focus-within:ring-primary h-full flex items-center px-[0.25rem] cursor-pointer">Stocks</a>
-                  </li>
-                  <li className="h-full flex items-center">
-                    <a onClick={() => router.push('/reports')} className="font-body-md text-body-md text-primary border-b-2 border-primary h-full flex items-center px-[0.25rem] font-medium cursor-pointer">Rapports</a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div className="flex items-center gap-[1rem]">
-              <TCodeSearch />
-              <div className="flex items-center gap-[0.25rem] text-on-surface-variant">
-                <button className="p-[0.25rem] hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
-                  <span className="material-symbols-outlined text-md">notifications</span>
-                </button>
-                <button onClick={() => router.push('/security')} className="p-[0.25rem] hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
-                  <span className="material-symbols-outlined text-md">verified_user</span>
-                </button>
-                <button onClick={() => router.push('/profile')} className="p-[0.25rem] hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
-                  <span className="material-symbols-outlined text-md">account_circle</span>
-                </button>
-              </div>
-            </div>
-          </header>
+          
+          
           {/* Page Content Canvas */}
           <main className="flex-1 p-[1rem] flex flex-col gap-[1rem] overflow-hidden bg-surface-container-low relative">
             {/* Breadcrumbs & Header */}

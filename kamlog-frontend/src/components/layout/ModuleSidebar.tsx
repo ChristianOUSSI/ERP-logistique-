@@ -16,7 +16,6 @@ interface NavItem {
 }
 
 interface ModuleSidebarProps {
-  module: ModuleType;
   isCollapsed?: boolean;
   onToggle?: () => void;
 }
@@ -193,13 +192,19 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
 };
 
-export default function ModuleSidebar({ module, isCollapsed = false, onToggle }: ModuleSidebarProps) {
+export default function ModuleSidebar({ isCollapsed = false, onToggle }: ModuleSidebarProps) {
   const pathname = usePathname();
-  const items = NAVIGATION_CONFIG[module];
-  const { theme } = useModuleTheme(module); // Use the hook to get theme
+  const baseModule = pathname.split('/')[1] as ModuleType;
+  
+  // Si le module n'est pas dans NAVIGATION_CONFIG, on ne rend pas la sidebar (ou on affiche un fallback)
+  const items = NAVIGATION_CONFIG[baseModule] || [];
+  const validModule = NAVIGATION_CONFIG[baseModule] ? baseModule : 'magasin'; // fallback theme
+  const { theme } = useModuleTheme(validModule);
   const { language } = useSettings();
 
   const t = (key: string) => SIDEBAR_I18N[language][key] || key;
+  
+  if (!items.length) return null; // Ne pas afficher de sidebar sur les pages sans module (ex: dashboard)
 
   return (
     <aside
@@ -214,12 +219,12 @@ export default function ModuleSidebar({ module, isCollapsed = false, onToggle }:
               className="material-symbols-outlined text-white transition-all duration-300"
               style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
             >
-              {module === 'magasin' ? 'warehouse' : module === 'transport' ? 'conversion_path' : module === 'audit' ? 'shield' : 'rocket_launch'}
+              {baseModule === 'magasin' ? 'warehouse' : baseModule === 'transport' ? 'conversion_path' : baseModule === 'audit' ? 'shield' : 'rocket_launch'}
             </span>
           </div>
           {!isCollapsed && (
             <span className="font-bold text-white tracking-tight uppercase text-sm truncate">
-              {module}
+              {baseModule}
             </span>
           )}
         </div>

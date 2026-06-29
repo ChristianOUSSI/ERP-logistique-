@@ -61,38 +61,12 @@ export default function UserListing() {
         {/* Main Content Stage */}
         <main className="h-screen flex flex-col relative overflow-hidden bg-[#F8FAFC]">
           {/* Top Navbar */}
-          <header className="sticky top-0 w-full h-[64px] bg-surface border-b border-outline-variant px-[1rem] flex justify-between items-center z-40">
-            <div className="flex items-center gap-4">
-              <div className="font-title-sm text-title-sm text-on-surface font-black">KAMLOG EM-ERP</div>
-              <div className="h-6 w-[1px] bg-outline-variant"></div>
-              <nav className="hidden md:flex gap-6">
-                <a className="font-body-base text-body-base text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Utilisateurs</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="/admin/permissions">Permissions</a>
-                <a className="font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="/admin/journal">Journal d'Audit</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-6">
-              <TCodeSearch />
-              <div className="flex items-center gap-3">
-                <button className="material-symbols-outlined text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-all">notifications</button>
-                <div className="flex items-center gap-2 pl-2 border-l border-outline-variant">
-                  <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">AD</div>
-                  <div className="flex flex-col">
-                    <span className="text-label-sm font-label-sm leading-none">Admin</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
+          
           {/* User Management Content */}
           <section className="flex-1 p-6 overflow-hidden flex flex-col gap-6">
             <div className="flex justify-between items-end">
               <div>
-                <nav className="flex gap-2 text-[11px] font-medium text-outline mb-1">
-                  <a className="hover:text-primary transition-all" href="#">Administration</a>
-                  <span>/</span>
-                  <span className="text-on-surface">Gestion des Utilisateurs</span>
-                </nav>
+                
                 <h2 className="font-headline-md text-headline-md text-on-surface tracking-tight">Utilisateurs du Système</h2>
               </div>
               <div className="flex gap-2">

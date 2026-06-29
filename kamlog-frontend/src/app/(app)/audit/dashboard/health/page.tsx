@@ -30,43 +30,9 @@ export default function AuditHealthMonitor() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md h-screen flex overflow-hidden">
-        {/* TopNavBar */}
-        <header className="bg-surface-container-highest border-b border-outline-variant flex justify-between items-center w-full px-[1.5rem] h-14 z-50 fixed top-0 left-0">
-          <div className="flex items-center gap-[1rem]">
-            <div className="font-headline-md text-headline-md font-bold text-primary mr-[1.5rem]">
-              KAMLOG EM-ERP
-            </div>
-            {/* Navigation Links */}
-            <nav className="hidden md:flex items-center gap-[1.5rem] h-full">
-              <a onClick={() => router.push('/audit/dashboard')} className="font-headline-sm text-headline-sm text-primary border-b-2 border-primary pb-1 h-14 flex items-center mt-1 cursor-pointer">Dashboard</a>
-              <a onClick={() => router.push('/audit/activity')} className="font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container-high transition-colors h-14 flex items-center px-[0.5rem] cursor-pointer">Activity Log</a>
-              <a onClick={() => router.push('/audit/users')} className="font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container-high transition-colors h-14 flex items-center px-[0.5rem] cursor-pointer">User Audit</a>
-              <a onClick={() => router.push('/audit/compliance')} className="font-headline-sm text-headline-sm text-on-surface-variant hover:bg-surface-container-high transition-colors h-14 flex items-center px-[0.5rem] cursor-pointer">Compliance</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-[0.5rem]">
-            {/* Search Bar */}
-            <div className="relative hidden lg:block mr-[1rem]">
-              <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-              <input className="pl-8 pr-4 py-1.5 bg-surface-container-lowest border border-outline-variant rounded focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm w-64 placeholder-outline" placeholder="T-Code Search..." type="text"/>
-            </div>
-            {/* Trailing Icons */}
-            <button onClick={() => router.push('/security')} className="p-2 text-primary hover:bg-surface-container-high transition-colors rounded-full cursor-pointer active:opacity-80">
-              <span className="material-symbols-outlined">security</span>
-            </button>
-            <button onClick={() => router.push('/admin')} className="p-2 text-primary hover:bg-surface-container-high transition-colors rounded-full cursor-pointer active:opacity-80">
-              <span className="material-symbols-outlined">admin_panel_settings</span>
-            </button>
-            <button className="p-2 text-primary hover:bg-surface-container-high transition-colors rounded-full cursor-pointer active:opacity-80 relative">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
-            </button>
-            <button onClick={() => router.push('/profile')} className="p-2 text-primary hover:bg-surface-container-high transition-colors rounded-full cursor-pointer active:opacity-80">
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
-        {/* SideNavBar */}
+        
+        
+        
         <aside className="bg-surface-container-low fixed left-0 top-0 h-full flex flex-col pt-14 z-40 h-full w-60 border-r border-outline-variant hidden md:flex">
           {/* Header Profile Area */}
           <div className="p-4 border-b border-outline-variant flex items-center gap-3">
@@ -77,33 +43,7 @@ export default function AuditHealthMonitor() {
             </div>
           </div>
           {/* Main Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4 space-y-1">
-            <a onClick={() => router.push('/security')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px]">shield</span>
-              <span className="font-label-md text-label-md">Security Overview</span>
-            </a>
-            <a onClick={() => router.push('/audit/events')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px]">list_alt</span>
-              <span className="font-label-md text-label-md">Event Viewer</span>
-            </a>
-            <a onClick={() => router.push('/audit/policies')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px]">policy</span>
-              <span className="font-label-md text-label-md">Policy Manager</span>
-            </a>
-            <a onClick={() => router.push('/audit/keys')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px]">vpn_key</span>
-              <span className="font-label-md text-label-md">Key Vault</span>
-            </a>
-            <a onClick={() => router.push('/audit/integrity')} className="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px]">verified_user</span>
-              <span className="font-label-md text-label-md">System Integrity</span>
-            </a>
-            {/* Active Item */}
-            <a onClick={() => router.push('/audit/dashboard/health')} className="flex items-center text-secondary font-bold border-l-4 border-secondary bg-secondary-container/10 px-4 py-3 transition-all duration-150 ease-in-out cursor-pointer">
-              <span className="material-symbols-outlined mr-3 text-[20px] fill">analytics</span>
-              <span className="font-label-md text-label-md">Audit Reports</span>
-            </a>
-          </nav>
+          
           {/* CTA & Footer */}
           <div className="p-4 border-t border-outline-variant space-y-4">
             <button className="w-full bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary font-label-md text-label-md py-2 rounded transition-colors flex items-center justify-center gap-2">
@@ -129,13 +69,7 @@ export default function AuditHealthMonitor() {
             {/* Breadcrumbs & Page Header */}
             <div className="flex justify-between items-end mb-[1.5rem]">
               <div>
-                <nav className="flex text-on-surface-variant font-label-sm text-label-sm mb-[0.25rem]">
-                  <a onClick={() => router.push('/dashboard')} className="hover:text-primary transition-colors cursor-pointer">ERP Root</a>
-                  <span className="mx-2">/</span>
-                  <a onClick={() => router.push('/audit')} className="hover:text-primary transition-colors cursor-pointer">K-AUDIT</a>
-                  <span className="mx-2">/</span>
-                  <span className="text-on-surface">Dashboard</span>
-                </nav>
+                
                 <h1 className="font-headline-lg text-headline-lg text-on-surface">Forensic Audit Dashboard</h1>
               </div>
               <div className="flex gap-[0.5rem]">
