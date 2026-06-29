@@ -35,6 +35,18 @@ const ROLES_TEST = [
     password: 'gate123',
     color: 'border-gray-400 text-gray-600 hover:bg-gray-50'
   },
+  { 
+    label: 'Magasinier', 
+    email: 'magasin@kamlog.cm', 
+    password: 'magasin123',
+    color: 'border-purple-400 text-purple-600 hover:bg-purple-50'
+  },
+  { 
+    label: 'Auditeur', 
+    email: 'auditor@kamlog.cm', 
+    password: 'auditor123',
+    color: 'border-teal-400 text-teal-600 hover:bg-teal-50'
+  },
 ]
 
 export function RoleBadges({ onRoleSelect }: RoleBadgesProps) {

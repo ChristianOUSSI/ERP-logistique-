@@ -1,13 +1,12 @@
-// API Service for Admin Module
+import { apiClient } from '../api-client';
 
 export interface User {
-  id: string;
+  id: number;
   username: string;
   email: string;
   role: string;
-  status: 'active' | 'inactive' | 'locked';
-  mfaEnabled: boolean;
-  lastLogin: string;
+  is_active: boolean;
+  mfa_enabled: boolean;
 }
 
 export interface Role {
@@ -41,52 +40,34 @@ export interface SystemHealth {
   activeConnections: number;
 }
 
-class AdminAPI {
-  private baseUrl = '/api/admin';
+export const adminAPI = {
+  getUsers: async (): Promise<User[]> => {
+    const { data } = await apiClient.get('/api/admin/users');
+    return data;
+  },
 
-  async getUsers(): Promise<User[]> {
-    const response = await fetch(`${this.baseUrl}/users`);
-    if (!response.ok) throw new Error('Failed to fetch users');
-    return response.json();
+  getRoles: async (): Promise<Role[]> => {
+    const { data } = await apiClient.get('/api/admin/roles');
+    return data;
+  },
+
+  getAuditLogs: async (): Promise<AuditLog[]> => {
+    const { data } = await apiClient.get('/api/admin/audit-logs');
+    return data;
+  },
+
+  getSystemHealth: async (): Promise<SystemHealth> => {
+    const { data } = await apiClient.get('/api/admin/system-health');
+    return data;
+  },
+
+  createUser: async (user: { username: string; email: string; password: string; full_name: string; role: string; agency_id: number }): Promise<User> => {
+    const { data } = await apiClient.post('/api/admin/users', user);
+    return data;
+  },
+
+  createRole: async (role: Omit<Role, 'id'>): Promise<Role> => {
+    const { data } = await apiClient.post('/api/admin/roles', role);
+    return data;
   }
-
-  async getRoles(): Promise<Role[]> {
-    const response = await fetch(`${this.baseUrl}/roles`);
-    if (!response.ok) throw new Error('Failed to fetch roles');
-    return response.json();
-  }
-
-  async getAuditLogs(): Promise<AuditLog[]> {
-    const response = await fetch(`${this.baseUrl}/audit-logs`);
-    if (!response.ok) throw new Error('Failed to fetch audit logs');
-    return response.json();
-  }
-
-  async getSystemHealth(): Promise<SystemHealth> {
-    const response = await fetch(`${this.baseUrl}/system-health`);
-    if (!response.ok) throw new Error('Failed to fetch system health');
-    return response.json();
-  }
-
-  async createUser(user: Omit<User, 'id' | 'lastLogin'>): Promise<User> {
-    const response = await fetch(`${this.baseUrl}/users`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user),
-    });
-    if (!response.ok) throw new Error('Failed to create user');
-    return response.json();
-  }
-
-  async createRole(role: Omit<Role, 'id'>): Promise<Role> {
-    const response = await fetch(`${this.baseUrl}/roles`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(role),
-    });
-    if (!response.ok) throw new Error('Failed to create role');
-    return response.json();
-  }
-}
-
-export const adminAPI = new AdminAPI();
+};

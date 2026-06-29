@@ -1,6 +1,8 @@
 // src/app/(app)/finance/invoicing/create/page.tsx - K-Finance Mission de Facture Client - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -149,10 +151,7 @@ export default function InvoiceCreation() {
             {/* Right: Search & Actions */}
             <div className="flex items-center gap-4">
               {/* T-Code Search */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-lg k-finance-border">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input className="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface w-48 focus:outline-none focus:border-primary k-finance-border" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="h-6 w-px bg-outline-variant mx-2"></div>
               {/* Icon Actions */}
               <button className="text-on-surface-variant hover:text-primary transition-colors relative">
@@ -242,9 +241,9 @@ export default function InvoiceCreation() {
                     <div className="space-y-1">
                       <label className="font-label-md text-label-md text-on-surface-variant">Devise</label>
                       <select className="w-full px-3 py-1.5 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary k-finance-border">
-                        <option>XAF - Franc CFA</option>
-                        <option>EUR - Euro</option>
-                        <option>USD - US Dollar</option>
+                        <option>FCFA - Franc CFA</option>
+                        <option>FCFA - Euro</option>
+                        <option>FCFA - US Dollar</option>
                       </select>
                     </div>
                     <div className="flex justify-between items-center pt-2">
@@ -339,7 +338,7 @@ export default function InvoiceCreation() {
                   <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
                   <h3 className="font-title-md text-title-md text-on-surface mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px] text-on-surface-variant">calculate</span>
-                    Synthèse Financière (XAF)
+                    Synthèse Financière (FCFA)
                   </h3>
                   <div className="space-y-2 font-data-tabular text-data-tabular">
                     <div className="flex justify-between items-center py-1">

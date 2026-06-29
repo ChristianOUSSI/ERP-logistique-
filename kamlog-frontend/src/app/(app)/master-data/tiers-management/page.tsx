@@ -309,11 +309,11 @@ export default function MasterDataTiersManagement() {
                 <div className="grid grid-cols-2 gap-md">
                   <div>
                     <p className="text-[10px] text-on-surface-variant uppercase">Credit Limit</p>
-                    <p className="text-title-md font-bold text-on-surface">€ 1,250,000</p>
+                    <p className="text-title-md font-bold text-on-surface">FCFA 1,250,000</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-on-surface-variant uppercase">Exposure</p>
-                    <p className="text-title-md font-bold text-secondary">€ 422,100</p>
+                    <p className="text-title-md font-bold text-secondary">FCFA 422,100</p>
                   </div>
                   <div className="col-span-2">
                     <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">

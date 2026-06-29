@@ -1,6 +1,8 @@
 // src/app/(app)/admin/security/mfa/page.tsx - Security MFA Configuration - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function MfaConfigurationPage() {
   return (
     <>
@@ -87,10 +89,7 @@ export default function MfaConfigurationPage() {
               </nav>
             </div>
             <div className="flex items-center gap-md">
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded">
-                <span className="material-symbols-outlined absolute left-xs top-1/2 -translate-y-1/2 text-outline">search</span>
-                <input className="pl-xl pr-sm py-xs text-body-sm font-body-sm bg-surface-container-lowest border border-outline-variant rounded focus:outline-none w-48" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="flex items-center gap-sm text-on-surface-variant">
                 <button className="hover:text-primary transition-colors p-xs rounded-full hover:bg-surface-container-high"><span className="material-symbols-outlined">notifications</span></button>
                 <button className="hover:text-primary transition-colors p-xs rounded-full hover:bg-surface-container-high"><span className="material-symbols-outlined">verified_user</span></button>

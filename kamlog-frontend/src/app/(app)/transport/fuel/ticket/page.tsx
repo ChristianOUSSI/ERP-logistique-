@@ -217,7 +217,7 @@ export default function FuelTicket() {
                     <div className="relative">
                       <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">euro</span>
                       <input className="w-full pl-10 pr-12 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors text-right" step="0.001" type="number" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/>
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md">€/L</span>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md">FCFA/L</span>
                     </div>
                   </div>
                   {/* Total (Calculated) */}
@@ -227,7 +227,7 @@ export default function FuelTicket() {
                       <span className="font-body-sm text-body-sm text-on-surface-variant">Calcul automatique</span>
                     </div>
                     <div className="text-right">
-                      <span className="font-headline-sm text-headline-sm font-bold text-on-surface">{total} €</span>
+                      <span className="font-headline-sm text-headline-sm font-bold text-on-surface">{total} FCFA</span>
                     </div>
                   </div>
                   {/* Divider */}
@@ -296,7 +296,7 @@ export default function FuelTicket() {
                   <li className="p-[0.5rem] hover:bg-surface-container-lowest transition-colors cursor-pointer">
                     <div className="flex justify-between items-start mb-1">
                       <span className="font-label-md text-label-md text-on-surface">20 Oct 2023 - Total Energies</span>
-                      <span className="font-data-tabular text-label-md font-medium">850.20 €</span>
+                      <span className="font-data-tabular text-label-md font-medium">850.20 FCFA</span>
                     </div>
                     <div className="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
                       <span>144,850 km</span>
@@ -306,7 +306,7 @@ export default function FuelTicket() {
                   <li className="p-[0.5rem] hover:bg-surface-container-lowest transition-colors cursor-pointer">
                     <div className="flex justify-between items-start mb-1">
                       <span className="font-label-md text-label-md text-on-surface">15 Oct 2023 - AS24</span>
-                      <span className="font-data-tabular text-label-md font-medium">795.50 €</span>
+                      <span className="font-data-tabular text-label-md font-medium">795.50 FCFA</span>
                     </div>
                     <div className="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
                       <span>143,420 km</span>
@@ -316,7 +316,7 @@ export default function FuelTicket() {
                   <li className="p-[0.5rem] hover:bg-surface-container-lowest transition-colors cursor-pointer">
                     <div className="flex justify-between items-start mb-1">
                       <span className="font-label-md text-label-md text-on-surface">10 Oct 2023 - Shell</span>
-                      <span className="font-data-tabular text-label-md font-medium">810.00 €</span>
+                      <span className="font-data-tabular text-label-md font-medium">810.00 FCFA</span>
                     </div>
                     <div className="flex justify-between items-center text-on-surface-variant font-body-sm text-[11px]">
                       <span>142,050 km</span>

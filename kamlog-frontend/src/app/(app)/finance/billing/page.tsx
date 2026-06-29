@@ -1,6 +1,8 @@
 // src/app/(app)/finance/billing/page.tsx - K-Finance Billing Invoicing - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function KFinanceBillingInvoicing() {
   return (
     <>
@@ -100,10 +102,7 @@ export default function KFinanceBillingInvoicing() {
           </div>
           <div className="flex items-center gap-md">
             {/* T-Code Search */}
-            <div className="relative focus-within:ring-2 focus-within:ring-primary rounded">
-              <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-              <input className="pl-8 pr-3 py-1.5 bg-surface-container border border-outline-variant rounded text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none w-48 transition-all" placeholder="Rechercher T-Code" type="text"/>
-            </div>
+            <TCodeSearch />
             <div className="flex items-center gap-xs text-on-surface-variant border-l border-outline-variant pl-md">
               <button className="p-1.5 rounded-full hover:bg-surface-container-high transition-colors">
                 <span className="material-symbols-outlined">notifications</span>

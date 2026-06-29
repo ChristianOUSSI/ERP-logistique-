@@ -1,4 +1,4 @@
-// API Service for Master Data Module
+import { apiClient } from '../api-client';
 
 export interface Article {
   id: string;
@@ -80,72 +80,62 @@ export interface Supplier {
   date_modification: string;
 }
 
-class MasterDataAPI {
-  private baseUrl = '/api/master-data';
+export const masterDataAPI = {
+  getArticles: async (): Promise<Article[]> => {
+    const { data } = await apiClient.get('/api/master-data/articles');
+    return data;
+  },
 
-  async getArticles(): Promise<Article[]> {
-    const response = await fetch(`${this.baseUrl}/articles`);
-    if (!response.ok) throw new Error('Failed to fetch articles');
-    return response.json();
+  getTiers: async (): Promise<Tier[]> => {
+    const { data } = await apiClient.get('/api/master-data/tiers');
+    return data;
+  },
+
+  getClientProfiles: async (): Promise<ClientProfile[]> => {
+    const { data } = await apiClient.get('/api/master-data/client-profiles');
+    return data;
+  },
+
+  getSuppliers: async (): Promise<Supplier[]> => {
+    const { data } = await apiClient.get('/api/master-data/suppliers');
+    return data;
+  },
+
+  createArticle: async (article: Omit<Article, 'id'>): Promise<Article> => {
+    const { data } = await apiClient.post('/api/master-data/articles', article);
+    return data;
+  },
+
+  createTier: async (tier: any): Promise<any> => {
+    const { data } = await apiClient.post('/api/tiers/', tier);
+    return data;
+  },
+
+  createClientProfile: async (profile: any): Promise<any> => {
+    // Map ClientProfile to TiersCreate payload
+    const payload = {
+      code_tiers: `CLT-${Date.now().toString().slice(-6)}`,
+      raison_sociale: profile.companyName,
+      niu: profile.niu,
+      rccm: profile.rccm,
+      email: profile.email,
+      telephone: profile.phone,
+      adresse: profile.address,
+      ville: profile.city,
+      pays: 'Cameroun',
+      autorise_transport: true,
+      autorise_transit: true,
+      autorise_acconage: true,
+      autorise_magasinage: true,
+      compte_syscohada: null,
+      limite_credit_xaf: profile.creditLimit || 0
+    };
+    const { data } = await apiClient.post('/api/tiers/', payload);
+    return data;
+  },
+
+  createSupplier: async (supplier: Omit<Supplier, 'id' | 'code_fournisseur' | 'cree_par' | 'date_creation' | 'date_modification'>): Promise<Supplier> => {
+    const { data } = await apiClient.post('/api/master-data/suppliers', supplier);
+    return data;
   }
-
-  async getTiers(): Promise<Tier[]> {
-    const response = await fetch(`${this.baseUrl}/tiers`);
-    if (!response.ok) throw new Error('Failed to fetch tiers');
-    return response.json();
-  }
-
-  async getClientProfiles(): Promise<ClientProfile[]> {
-    const response = await fetch(`${this.baseUrl}/client-profiles`);
-    if (!response.ok) throw new Error('Failed to fetch client profiles');
-    return response.json();
-  }
-
-  async getSuppliers(): Promise<Supplier[]> {
-    const response = await fetch(`${this.baseUrl}/suppliers`);
-    if (!response.ok) throw new Error('Failed to fetch suppliers');
-    return response.json();
-  }
-
-  async createArticle(article: Omit<Article, 'id'>): Promise<Article> {
-    const response = await fetch(`${this.baseUrl}/articles`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(article),
-    });
-    if (!response.ok) throw new Error('Failed to create article');
-    return response.json();
-  }
-
-  async createTier(tier: Omit<Tier, 'id'>): Promise<Tier> {
-    const response = await fetch(`${this.baseUrl}/tiers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(tier),
-    });
-    if (!response.ok) throw new Error('Failed to create tier');
-    return response.json();
-  }
-
-  async createClientProfile(profile: Omit<ClientProfile, 'id'>): Promise<ClientProfile> {
-    const response = await fetch(`${this.baseUrl}/client-profiles`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profile),
-    });
-    if (!response.ok) throw new Error('Failed to create client profile');
-    return response.json();
-  }
-
-  async createSupplier(supplier: Omit<Supplier, 'id' | 'code_fournisseur' | 'cree_par' | 'date_creation' | 'date_modification'>): Promise<Supplier> {
-    const response = await fetch(`${this.baseUrl}/suppliers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(supplier),
-    });
-    if (!response.ok) throw new Error('Failed to create supplier');
-    return response.json();
-  }
-}
-
-export const masterDataAPI = new MasterDataAPI();
+};

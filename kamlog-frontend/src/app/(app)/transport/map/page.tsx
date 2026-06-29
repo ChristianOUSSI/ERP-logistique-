@@ -1,5 +1,7 @@
 // src/app/(app)/transport/map/page.tsx - K-Transport Terminal Map Control - Fidèle 100% au HTML original
 'use client'
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import React, { useState, useEffect } from 'react';
 
 export default function KTransportTerminalMapControl() {
@@ -115,10 +117,7 @@ export default function KTransportTerminalMapControl() {
               <span className="font-label-md text-label-md text-tertiary bg-tertiary-fixed px-2 py-0.5 rounded-sm">K-Transport Map</span>
             </div>
             {/* Global Search */}
-            <div className="relative flex-1 max-w-md mx-lg focus-within:ring-2 focus-within:ring-primary rounded-lg">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-              <input className="w-full h-10 pl-10 pr-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm focus:outline-none focus:border-primary transition-colors" placeholder="Rechercher T-Code ou N° Conteneur..." type="text"/>
-            </div>
+            <TCodeSearch />
             {/* Top Nav Links & Actions */}
             <div className="flex items-center gap-md">
               <nav className="hidden lg:flex items-center gap-sm">

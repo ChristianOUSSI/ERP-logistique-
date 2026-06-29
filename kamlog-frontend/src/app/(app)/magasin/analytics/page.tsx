@@ -191,7 +191,7 @@ export default function MagasinAnalyticsPage() {
                 </div>
                 <div className="col-span-3 bg-white border border-outline-variant rounded shadow-sm p-sm flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Valeur Stock (M€)</span>
+                    <span className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Valeur Stock (MFCFA)</span>
                     <span className="material-symbols-outlined text-secondary text-[20px]">euro_symbol</span>
                   </div>
                   <div className="flex items-end gap-xs">

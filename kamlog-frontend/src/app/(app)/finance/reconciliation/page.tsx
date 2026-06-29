@@ -177,15 +177,15 @@ export default function BankReconciliationPage() {
             <div className="grid grid-cols-4 gap-4 mb-4">
               <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 shadow-sm">
                 <p className="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Ledger Balance (End)</p>
-                <p className="font-headline-md text-headline-md text-on-background font-data-tabular">XOF 45,230,000</p>
+                <p className="font-headline-md text-headline-md text-on-background font-data-tabular">FCFA 45,230,000</p>
               </div>
               <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 shadow-sm">
                 <p className="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Statement Balance</p>
-                <p className="font-headline-md text-headline-md text-on-background font-data-tabular">XOF 45,150,000</p>
+                <p className="font-headline-md text-headline-md text-on-background font-data-tabular">FCFA 45,150,000</p>
               </div>
               <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 shadow-sm border-l-4 border-l-discrepancy bg-discrepancy-light/20">
                 <p className="font-label-sm text-label-sm text-discrepancy uppercase mb-1 font-bold">Unreconciled Difference</p>
-                <p className="font-headline-md text-headline-md text-discrepancy font-data-tabular font-bold">- XOF 80,000</p>
+                <p className="font-headline-md text-headline-md text-discrepancy font-data-tabular font-bold">- FCFA 80,000</p>
               </div>
               <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-3 shadow-sm flex flex-col justify-center">
                 <div className="flex justify-between items-center mb-1">
@@ -219,7 +219,7 @@ export default function BankReconciliationPage() {
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-10"></th>
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase">Date</th>
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase">Ref / Description</th>
-                        <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Amount (XOF)</th>
+                        <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Amount (FCFA)</th>
                       </tr>
                     </thead>
                     <tbody className="font-data-tabular text-data-tabular">
@@ -315,7 +315,7 @@ export default function BankReconciliationPage() {
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase w-10"></th>
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase">Date</th>
                         <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase">Bank Narrative</th>
-                        <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Amount (XOF)</th>
+                        <th className="py-2 px-3 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Amount (FCFA)</th>
                       </tr>
                     </thead>
                     <tbody className="font-data-tabular text-data-tabular">

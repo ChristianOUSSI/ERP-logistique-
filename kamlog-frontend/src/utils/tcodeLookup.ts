@@ -8,6 +8,7 @@ export enum UserRole {
   FINANCE = 'FINANCE',
   DOUANE = 'DOUANE',
   GATE = 'GATE',
+  GATE_AGENT = 'GATE_AGENT',
   PARC = 'PARC',
   MAGASIN = 'MAGASIN'
 }

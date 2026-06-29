@@ -138,7 +138,7 @@ export default function GlobalDashboard() {
                 </div>
                 <div>
                   <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Stock Value</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">$14,204,500</h2>
+                  <h2 className="text-headline-md font-headline-md text-on-background">14,204,500 FCFA</h2>
                 </div>
                 <div className="mt-md border-t border-outline-variant pt-sm">
                   <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-error">K-Magasin</span></p>
@@ -170,7 +170,7 @@ export default function GlobalDashboard() {
                 </div>
                 <div>
                   <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Total Revenue</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">$2.8M <span className="text-body-sm font-body-sm text-on-surface-variant">MTD</span></h2>
+                  <h2 className="text-headline-md font-headline-md text-on-background">2.8M FCFA <span className="text-body-sm font-body-sm text-on-surface-variant">MTD</span></h2>
                 </div>
                 <div className="mt-md border-t border-outline-variant pt-sm">
                   <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-[#8E24AA]">K-Finance</span></p>

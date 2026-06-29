@@ -7,6 +7,7 @@ from app.models.agency import Agency
 from app.models.user import User, Role
 from app.models.tiers import Tiers, StatutTiers
 from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule
+from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock
 from app.utils.security import get_password_hash
 
 
@@ -75,6 +76,20 @@ async def seed_users(agency_id: int):
                 "password": "gate123",
                 "full_name": "Agent Guérite",
                 "role": Role.GATE_AGENT,
+            },
+            {
+                "email": "magasin@kamlog.cm",
+                "username": "magasin",
+                "password": "magasin123",
+                "full_name": "Chef Magasinier",
+                "role": Role.MAGASIN,
+            },
+            {
+                "email": "auditor@kamlog.cm",
+                "username": "auditor",
+                "password": "auditor123",
+                "full_name": "Auditeur Interne",
+                "role": Role.AUDITOR,
             },
         ]
 
@@ -263,6 +278,110 @@ async def seed_chauffeurs():
         print(f"✅ Chauffeurs seeded: {created} created")
 
 
+async def seed_magasin():
+    """Crée les données pour le module K-Magasin (Magasin, Articles, Stocks). Idempotent."""
+    async with AsyncSessionLocal() as session:
+        # 1. Magasins
+        magasins_data = [
+            {
+                "code": "MAG-DLA-01",
+                "nom": "Magasin Principal Port",
+                "ville": "Douala",
+            },
+            {
+                "code": "MAG-DLA-02",
+                "nom": "Entrepôt Douane",
+                "ville": "Douala",
+            }
+        ]
+        
+        magasins_map = {}
+        for m in magasins_data:
+            result = await session.execute(select(Magasin).where(Magasin.code == m["code"]))
+            mag = result.scalar_one_or_none()
+            if not mag:
+                mag = Magasin(**m)
+                session.add(mag)
+                await session.flush()  # Pour avoir l'ID
+            magasins_map[m["code"]] = mag
+
+        # 2. Articles
+        articles_data = [
+            {
+                "code_article": "ART-001",
+                "nom": "Pièces de rechange Camion",
+                "categorie": CategorieArticle.PIECES_DETACHEES,
+                "unite_mesure": UniteMesure.UDB,
+                "poids_unitaire": 5.0,
+            },
+            {
+                "code_article": "ART-002",
+                "nom": "Equipement de Protection Individuelle (EPI)",
+                "categorie": CategorieArticle.EQUIPEMENT,
+                "unite_mesure": UniteMesure.UNITE,
+                "poids_unitaire": 1.5,
+            },
+            {
+                "code_article": "ART-003",
+                "nom": "Carburant Diesel (Fût)",
+                "categorie": CategorieArticle.MATIERES_PREMIERES,
+                "unite_mesure": UniteMesure.M3,
+                "volume_unitaire": 0.2,
+            }
+        ]
+
+        articles_map = {}
+        for a in articles_data:
+            result = await session.execute(select(Article).where(Article.code_article == a["code_article"]))
+            art = result.scalar_one_or_none()
+            if not art:
+                art = Article(**a)
+                session.add(art)
+                await session.flush()
+            articles_map[a["code_article"]] = art
+
+        # 3. Stocks (Magasin Principal)
+        mag_princ = magasins_map.get("MAG-DLA-01")
+        if mag_princ:
+            stocks_data = [
+                {
+                    "magasin_id": mag_princ.id,
+                    "article_id": articles_map["ART-001"].id,
+                    "quantite_disponible": 150,
+                    "quantite_udb": 150,
+                    "statut": StatutStock.NORMAL,
+                },
+                {
+                    "magasin_id": mag_princ.id,
+                    "article_id": articles_map["ART-002"].id,
+                    "quantite_disponible": 300,
+                    "quantite_udb": 300,
+                    "statut": StatutStock.NORMAL,
+                },
+                {
+                    "magasin_id": mag_princ.id,
+                    "article_id": articles_map["ART-003"].id,
+                    "quantite_disponible": 45,
+                    "quantite_udb": 45,
+                    "statut": StatutStock.NORMAL,
+                }
+            ]
+            
+            for s in stocks_data:
+                result = await session.execute(
+                    select(Stock).where(
+                        (Stock.magasin_id == s["magasin_id"]) & 
+                        (Stock.article_id == s["article_id"])
+                    )
+                )
+                stk = result.scalar_one_or_none()
+                if not stk:
+                    session.add(Stock(**s))
+
+        await session.commit()
+        print("✅ Magasins, Articles et Stocks seeded")
+
+
 async def main():
     """Exécute tous les seeds dans le bon ordre."""
     print("🌱 Starting seed data...")
@@ -276,6 +395,7 @@ async def main():
         await seed_tiers()
         await seed_camions()
         await seed_chauffeurs()
+        await seed_magasin()
         print("✅ All seed data completed successfully!")
     except Exception as e:
         print(f"❌ Error during seed: {e}")

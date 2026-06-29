@@ -1,6 +1,8 @@
 // src/app/(app)/transport/fuel/page.tsx - K-Transport Fuel Intelligence - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function TransportFuelPage() {
   return (
     <>
@@ -88,10 +90,7 @@ export default function TransportFuelPage() {
             </div>
             <div className="flex items-center gap-md">
               {/* Search T-Code */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded hidden lg:block" style={{ '--tw-ring-color': '#F59E0B' } as React.CSSProperties}>
-                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-                <input className="pl-[36px] pr-sm py-1.5 bg-surface-container-low border border-outline-variant rounded font-body-sm text-body-sm w-[200px] focus:outline-none" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               {/* Trailing Actions */}
               <div className="flex items-center gap-xs text-on-surface-variant">
                 <button className="p-xs hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
@@ -142,7 +141,7 @@ export default function TransportFuelPage() {
                   <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Dépense Carburant</span>
                   <span className="material-symbols-outlined text-outline">euro</span>
                 </div>
-                <div className="font-headline-md text-headline-md text-on-surface">21,375 €</div>
+                <div className="font-headline-md text-headline-md text-on-surface">21,375 FCFA</div>
                 <div className="font-body-sm text-body-sm text-error mt-xs flex items-center gap-xxs">
                   <span className="material-symbols-outlined text-[14px]">trending_up</span> +8.1% vs M-1
                 </div>

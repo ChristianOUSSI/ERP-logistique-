@@ -182,7 +182,7 @@ export default function KFinanceGatewayMonitor() {
                 <div className="flex justify-between items-start mb-lg">
                   <div>
                     <h2 className="text-title-md font-title-md text-on-surface">Revenue Projection by Module</h2>
-                    <p className="text-body-sm font-body-sm text-on-surface-variant">Live gateway processing throughput (EUR)</p>
+                    <p className="text-body-sm font-body-sm text-on-surface-variant">Live gateway processing throughput (FCFA)</p>
                   </div>
                   <div className="flex gap-xs">
                     <span className="flex items-center gap-xs text-label-sm font-label-sm"><span className="w-3 h-3 bg-primary rounded-full"></span>K-Parc</span>
@@ -203,11 +203,11 @@ export default function KFinanceGatewayMonitor() {
                   <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[60%]"></div>
                 </div>
                 <div className="grid grid-cols-5 mt-md border-t border-outline-variant pt-md">
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">€42k</span><span className="text-label-sm text-on-surface-variant">Mon</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">€68k</span><span className="text-label-sm text-on-surface-variant">Tue</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">€39k</span><span className="text-label-sm text-on-surface-variant">Wed</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">€92k</span><span className="text-label-sm text-on-surface-variant">Thu</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">€54k</span><span className="text-label-sm text-on-surface-variant">Fri</span></div>
+                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA42k</span><span className="text-label-sm text-on-surface-variant">Mon</span></div>
+                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA68k</span><span className="text-label-sm text-on-surface-variant">Tue</span></div>
+                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA39k</span><span className="text-label-sm text-on-surface-variant">Wed</span></div>
+                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA92k</span><span className="text-label-sm text-on-surface-variant">Thu</span></div>
+                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA54k</span><span className="text-label-sm text-on-surface-variant">Fri</span></div>
                 </div>
               </div>
               {/* Circular Gateway Status */}
@@ -279,7 +279,7 @@ export default function KFinanceGatewayMonitor() {
                       </td>
                       <td className="px-md py-3 text-body-md font-data-tabular">TR-9921-X</td>
                       <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-001</td>
-                      <td className="px-md py-3 font-bold text-on-surface">€12,450.00</td>
+                      <td className="px-md py-3 font-bold text-on-surface">FCFA12,450.00</td>
                       <td className="px-md py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
@@ -299,7 +299,7 @@ export default function KFinanceGatewayMonitor() {
                       </td>
                       <td className="px-md py-3 text-body-md font-data-tabular">MS-4412-K</td>
                       <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-002</td>
-                      <td className="px-md py-3 font-bold text-on-surface">€3,890.15</td>
+                      <td className="px-md py-3 font-bold text-on-surface">FCFA3,890.15</td>
                       <td className="px-md py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/40 text-on-error-container text-label-sm font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>
@@ -319,7 +319,7 @@ export default function KFinanceGatewayMonitor() {
                       </td>
                       <td className="px-md py-3 text-body-md font-data-tabular">TR-9945-Z</td>
                       <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-003</td>
-                      <td className="px-md py-3 font-bold text-on-surface">€45,000.00</td>
+                      <td className="px-md py-3 font-bold text-on-surface">FCFA45,000.00</td>
                       <td className="px-md py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-label-sm font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span>
@@ -339,7 +339,7 @@ export default function KFinanceGatewayMonitor() {
                       </td>
                       <td className="px-md py-3 text-body-md font-data-tabular">MS-4415-L</td>
                       <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-004</td>
-                      <td className="px-md py-3 font-bold text-on-surface">€1,120.00</td>
+                      <td className="px-md py-3 font-bold text-on-surface">FCFA1,120.00</td>
                       <td className="px-md py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
@@ -359,7 +359,7 @@ export default function KFinanceGatewayMonitor() {
                       </td>
                       <td className="px-md py-3 text-body-md font-data-tabular">TR-9948-M</td>
                       <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-005</td>
-                      <td className="px-md py-3 font-bold text-on-surface">€28,500.00</td>
+                      <td className="px-md py-3 font-bold text-on-surface">FCFA28,500.00</td>
                       <td className="px-md py-3">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
@@ -412,7 +412,7 @@ export default function KFinanceGatewayMonitor() {
                     <span className="text-label-md font-label-md opacity-80 uppercase tracking-widest">Gateway Cashflow (24h)</span>
                     <span className="material-symbols-outlined opacity-60">trending_up</span>
                   </div>
-                  <div className="text-headline-lg font-headline-lg leading-none">€ 482,904.55</div>
+                  <div className="text-headline-lg font-headline-lg leading-none">FCFA 482,904.55</div>
                   <div className="mt-xs text-label-sm flex items-center gap-xs">
                     <span className="material-symbols-outlined text-[14px]">arrow_upward</span>
                     <span>+12.4% vs previous period</span>
@@ -421,11 +421,11 @@ export default function KFinanceGatewayMonitor() {
                 <div className="pt-lg flex gap-md">
                   <div className="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
                     <div className="text-label-sm opacity-70">Tax Accrual</div>
-                    <div className="text-title-md font-bold">€ 91.5k</div>
+                    <div className="text-title-md font-bold">FCFA 91.5k</div>
                   </div>
                   <div className="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
                     <div className="text-label-sm opacity-70">Net Transfer</div>
-                    <div className="text-title-md font-bold">€ 391.4k</div>
+                    <div className="text-title-md font-bold">FCFA 391.4k</div>
                   </div>
                 </div>
               </div>
