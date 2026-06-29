@@ -200,10 +200,7 @@ export default function MissionDeFactureClientPage() {
             {/* Right: Search & Actions */}
             <div className="flex items-center gap-4">
               {/* T-Code Search */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-lg k-finance-border">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input className="pl-10 pr-4 py-1.5 bg-surface-container-low border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface w-48 focus:outline-none focus:border-primary k-finance-border" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="h-6 w-px bg-outline-variant mx-2"></div>
 
               {/* Icon Actions */}

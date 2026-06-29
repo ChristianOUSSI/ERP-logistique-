@@ -72,10 +72,7 @@ export default function MasterDataArticleCreation() {
             {/* Left: T-Code Search & Context */}
             <div className="flex items-center space-x-6 flex-1">
               <span className="font-title-sm text-title-sm text-on-surface font-black tracking-tight">KAMLOG EM-ERP</span>
-              <div className="relative w-64 focus-within:ring-2 focus-within:ring-primary rounded bg-surface-container-lowest border border-outline-variant flex items-center px-3 py-1.5 transition-all">
-                <span className="material-symbols-outlined text-outline text-[18px] mr-2">search</span>
-                <input className="w-full bg-transparent border-none focus:ring-0 p-0 font-body-sm text-body-sm text-on-surface placeholder-outline-variant outline-none" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <nav className="hidden lg:flex space-x-1">
                 <a className="px-3 py-4 font-body-base text-body-base text-primary border-b-2 border-primary pb-1" href="#">Articles</a>
                 <a className="px-3 py-4 font-body-base text-body-base text-on-surface-variant hover:text-primary transition-all" href="#">Clients</a>

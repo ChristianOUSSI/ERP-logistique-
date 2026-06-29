@@ -139,10 +139,7 @@ export default function ReportsLibrary() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-lg">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-              <input className="pl-9 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-lg font-body-sm text-body-sm focus:outline-none w-48 text-on-surface placeholder-on-surface-variant" placeholder="Rechercher T-Code" type="text"/>
-            </div>
+            <TCodeSearch />
             <div className="flex items-center gap-2 text-on-surface-variant border-l border-outline-variant pl-4">
               <button className="p-1 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
               <button onClick={() => router.push('/security')} className="p-1 hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">verified_user</span></button>

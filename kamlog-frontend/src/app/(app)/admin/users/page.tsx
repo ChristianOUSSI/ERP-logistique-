@@ -98,10 +98,7 @@ export default function AdminUserManagementRbac() {
             </div>
             <div className="flex items-center gap-md">
               {/* Search */}
-              <div className="relative hidden lg:block focus-within:ring-2 focus-within:ring-primary rounded-lg">
-                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                <input className="bg-surface-container-high border-none rounded-lg pl-xl pr-sm py-xs font-body-sm text-body-sm text-on-surface focus:ring-0 w-64 placeholder:text-on-surface-variant" placeholder="Rechercher T-Code..." type="text"/>
-              </div>
+              <TCodeSearch />
               {/* Trailing Primary Action */}
               <button className="hidden lg:flex items-center gap-xs bg-surface-container-high hover:bg-surface-variant text-primary font-title-sm text-title-sm py-xs px-sm rounded-lg transition-colors border border-outline-variant">
                 Rechercher T-Code

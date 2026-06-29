@@ -131,10 +131,7 @@ export default function GoodsDeclaration() {
               </nav>
             </div>
             <div className="flex items-center gap-4">
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded">
-                <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
-                <input className="pl-8 pr-3 py-1.5 bg-surface-container-high border-none rounded text-sm w-48 focus:outline-none focus:ring-0" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="flex items-center gap-3 text-on-surface-variant">
                 <button className="hover:text-primary transition-colors"><span className="material-symbols-outlined">notifications</span></button>
                 <button onClick={() => router.push('/security')} className="hover:text-primary transition-colors"><span className="material-symbols-outlined">verified_user</span></button>

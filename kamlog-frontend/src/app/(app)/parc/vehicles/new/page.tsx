@@ -131,10 +131,7 @@ export default function NewVehicle() {
           {/* Right: Actions & Profile */}
           <div className="flex items-center gap-[1rem]">
             {/* Search Bar (T-Code) */}
-            <div className="relative focus-within:ring-2 focus-within:ring-primary rounded-full transition-all">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-              <input className="pl-10 pr-4 py-1.5 bg-surface-container-high border-none rounded-full font-body-sm text-body-sm text-on-surface placeholder-outline focus:ring-0 w-48 transition-all" placeholder="Rechercher T-Code" type="text"/>
-            </div>
+            <TCodeSearch />
             <div className="flex items-center gap-[0.25rem] text-on-surface-variant">
               <button className="p-2 rounded-full hover:bg-surface-container-high transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined">notifications</span>

@@ -100,10 +100,7 @@ export default function UserListing() {
               </nav>
             </div>
             <div className="flex items-center gap-6">
-              <div className="relative group">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant text-[18px]">search</span>
-                <input className="pl-10 pr-4 py-1.5 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-body-sm font-body-sm w-48 transition-all focus:w-64" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="flex items-center gap-3">
                 <button className="material-symbols-outlined text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-all">notifications</button>
                 <button className="material-symbols-outlined text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container-high transition-all">verified_user</button>

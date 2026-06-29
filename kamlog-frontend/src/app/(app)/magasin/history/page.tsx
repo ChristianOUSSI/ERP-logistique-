@@ -95,10 +95,7 @@ export default function KMagasinStockMovementHistory() {
             </div>
             <div className="flex items-center gap-4">
               {/* Search */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded hidden md:block">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
-                <input className="pl-9 pr-4 py-1.5 bg-surface-container text-on-surface border-none rounded text-sm w-48 focus:outline-none placeholder-on-surface-variant" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               {/* Trailing Actions */}
               <div className="flex items-center gap-2 text-on-surface-variant">
                 <button className="p-1.5 hover:bg-surface-container-highest rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>

@@ -169,10 +169,7 @@ export default function CustomReportBuilder() {
               </nav>
             </div>
             <div className="flex items-center gap-[1rem]">
-              <div className="relative hidden lg:block">
-                <span className="material-symbols-outlined absolute left-[0.5rem] top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-                <input className="pl-[1rem] pr-[0.5rem] py-[0.25rem] bg-surface-container-highest border-none rounded text-body-sm focus:ring-2 focus:ring-primary w-48 transition-all" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               <div className="flex items-center gap-[0.25rem] text-on-surface-variant">
                 <button className="p-[0.25rem] hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
                   <span className="material-symbols-outlined text-md">notifications</span>

@@ -88,10 +88,7 @@ export default function TransportFuelPage() {
             </div>
             <div className="flex items-center gap-md">
               {/* Search T-Code */}
-              <div className="relative focus-within:ring-2 focus-within:ring-primary rounded hidden lg:block" style={{ '--tw-ring-color': '#F59E0B' } as React.CSSProperties}>
-                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-                <input className="pl-[36px] pr-sm py-1.5 bg-surface-container-low border border-outline-variant rounded font-body-sm text-body-sm w-[200px] focus:outline-none" placeholder="Rechercher T-Code" type="text"/>
-              </div>
+              <TCodeSearch />
               {/* Trailing Actions */}
               <div className="flex items-center gap-xs text-on-surface-variant">
                 <button className="p-xs hover:bg-surface-container rounded-full transition-colors"><span className="material-symbols-outlined">notifications</span></button>
