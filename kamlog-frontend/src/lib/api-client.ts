@@ -127,3 +127,17 @@ export const tiersAPI = {
   updateTiers: (id: number, data: unknown) =>
     apiClient.put(`/api/tiers/${id}`, data),
 };
+
+// ─── Service Magasin ──────────────────────────────────────
+export const magasinAPI = {
+  getMagasins: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/magasins', { params }),
+  getStocks: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/stocks', { params }),
+  getReceptions: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/receptions', { params }),
+  getDeclarations: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/declarations', { params }),
+  getCommandes: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/commandes', { params }),
+};
