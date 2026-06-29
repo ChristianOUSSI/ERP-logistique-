@@ -13,6 +13,14 @@ from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token
 from app.utils.security import verify_password, get_password_hash, create_access_token, create_refresh_token, decode_token
 from app.utils.mfa import generate_mfa_secret, generate_mfa_qr_code, verify_totp_token, generate_backup_codes, verify_backup_code, is_mfa_required_for_user
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+try:
+    from scripts.seed_data import seed_agency, seed_users
+except ImportError:
+    pass
+
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -44,6 +52,18 @@ async def get_current_user(
         raise credentials_exception
     
     return user
+
+
+@router.post("/force-seed")
+async def force_seed():
+    """Endpoint manuel pour forcer le seeding en production (Railway)."""
+    try:
+        from scripts.seed_data import seed_agency, seed_users
+        agency_id = await seed_agency()
+        await seed_users(agency_id)
+        return {"message": "Database seeded successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
