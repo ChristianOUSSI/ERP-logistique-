@@ -1,6 +1,8 @@
 // src/app/(app)/admin/audit/system-health/page.tsx - Audit System Health Monitor - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function SystemHealthMonitorPage() {
   return (
     <>

@@ -1,6 +1,8 @@
 // src/app/(app)/admin/security/mfa/page.tsx - Security MFA Configuration - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function MfaConfigurationPage() {
   return (
     <>

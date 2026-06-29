@@ -1,6 +1,8 @@
 // src/app/(app)/magasin/history/page.tsx - K-Magasin Stock Movement History - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function KMagasinStockMovementHistory() {
   return (
     <>

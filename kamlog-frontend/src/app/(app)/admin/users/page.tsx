@@ -1,6 +1,8 @@
 // src/app/(app)/admin/users/page.tsx - Admin User Management & RBAC - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function AdminUserManagementRbac() {
   return (
     <>

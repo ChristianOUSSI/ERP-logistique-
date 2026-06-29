@@ -1,6 +1,8 @@
 // src/app/(app)/finance/billing/page.tsx - K-Finance Billing Invoicing - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function KFinanceBillingInvoicing() {
   return (
     <>

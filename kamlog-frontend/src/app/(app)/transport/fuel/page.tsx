@@ -1,6 +1,8 @@
 // src/app/(app)/transport/fuel/page.tsx - K-Transport Fuel Intelligence - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function TransportFuelPage() {
   return (
     <>

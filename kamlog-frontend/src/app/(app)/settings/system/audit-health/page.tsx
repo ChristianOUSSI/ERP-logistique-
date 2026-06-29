@@ -1,6 +1,8 @@
 // src/app/(app)/settings/system/audit-health/page.tsx - Audit System Health Monitor 2 - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 

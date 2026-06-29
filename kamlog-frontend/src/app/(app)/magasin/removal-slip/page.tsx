@@ -1,6 +1,8 @@
 // src/app/(app)/magasin/removal-slip/page.tsx - Bon d'Enlèvement Mag3 vers autres magasins - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 

@@ -1,6 +1,8 @@
 // src/app/(app)/parc/vehicles/new/page.tsx - K-Parc Enregistrement Nouveau Véhicule - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 

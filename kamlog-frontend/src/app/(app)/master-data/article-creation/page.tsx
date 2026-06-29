@@ -1,6 +1,8 @@
 // src/app/(app)/master-data/article-creation/page.tsx - Master Data Article Creation (KA01) - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 export default function MasterDataArticleCreation() {
   return (
     <>

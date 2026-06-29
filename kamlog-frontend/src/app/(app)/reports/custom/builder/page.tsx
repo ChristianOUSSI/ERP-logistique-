@@ -1,6 +1,8 @@
 // src/app/(app)/reports/custom/builder/page.tsx - Rapports Générateur de Rapports Personnalisés - Fidèle 100% au HTML original
 'use client'
 
+
+import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
