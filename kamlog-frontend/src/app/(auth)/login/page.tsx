@@ -7,8 +7,26 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { signIn } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
 import { RoleBadges } from '@/components/auth/RoleBadges'
+
+// ── Redirection selon le rôle ────────────────────────────────
+function getRouteForRole(role: string | undefined | null): string {
+  switch (role) {
+    case 'admin':
+      return '/dashboard'
+    case 'dispatcher':
+      return '/transport'
+    case 'finance':
+      return '/finance/overview'
+    case 'douane':
+      return '/dashboard'
+    case 'gate_agent':
+      return '/parc'
+    default:
+      return '/dashboard'
+  }
+}
 
 // ── Schéma Zod ─────────────────────────────────────────────
 const loginSchema = z.object({
