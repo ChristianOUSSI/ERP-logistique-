@@ -52,6 +52,4 @@ class TiersResponse(TiersBase):
     limite_credit_xaf: Decimal
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

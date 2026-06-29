@@ -33,9 +33,7 @@ class LigneGoodsDeclarationResponse(LigneGoodsDeclarationBase):
     """Schema pour répondre avec une ligne de déclaration"""
     id: int
     declaration_id: int
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GoodsDeclarationBase(BaseModel):
@@ -83,6 +81,4 @@ class GoodsDeclarationResponse(GoodsDeclarationBase):
     date_creation: datetime
     date_modification: Optional[datetime] = None
     lignes: List[LigneGoodsDeclarationResponse] = []
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

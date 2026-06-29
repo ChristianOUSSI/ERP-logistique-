@@ -52,9 +52,7 @@ class Passerelle(PasserelleBase):
     date_creation: datetime
     date_traitement: Optional[datetime] = None
     traite_par: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ DTOs pour les passerelles spécifiques ============

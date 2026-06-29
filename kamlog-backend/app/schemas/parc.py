@@ -19,9 +19,7 @@ class ZoneParcCreate(ZoneParcBase):
 class ZoneParcResponse(ZoneParcBase):
     id: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EmplacementParcBase(BaseModel):
@@ -40,9 +38,7 @@ class EmplacementParcCreate(EmplacementParcBase):
 class EmplacementParcResponse(EmplacementParcBase):
     id: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StockPhysiqueParcBase(BaseModel):
@@ -62,9 +58,7 @@ class StockPhysiqueParcResponse(StockPhysiqueParcBase):
     id: int
     date_gate_out: datetime | None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GateInRequest(BaseModel):

@@ -1,13 +1,14 @@
 # app/schemas/auth.py  Schémas Authentification
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from datetime import datetime
+from typing import Optional
 from app.models.user import Role
 
 
 class UserBase(BaseModel):
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
-    full_name: str = Field(..., min_length=1, max_length=200)
+    full_name: Optional[str] = Field(None, max_length=200)
     role: Role = Role.GATE_AGENT
 
 
@@ -25,8 +26,7 @@ class UserResponse(UserBase):
     is_active: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):

@@ -33,6 +33,4 @@ class AgencyResponse(AgencyBase):
     id: int
     date_creation: datetime
     date_modification: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

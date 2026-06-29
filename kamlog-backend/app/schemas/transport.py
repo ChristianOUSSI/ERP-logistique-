@@ -40,9 +40,7 @@ class CamionResponse(CamionBase):
     statut: str
     actif: bool
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ChauffeurBase(BaseModel):
@@ -74,9 +72,7 @@ class ChauffeurResponse(ChauffeurBase):
     id: int
     actif: bool
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MissionBase(BaseModel):
@@ -107,6 +103,4 @@ class MissionResponse(MissionBase):
     dossier_id: int | None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

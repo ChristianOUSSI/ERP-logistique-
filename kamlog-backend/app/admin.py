@@ -60,9 +60,7 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
     mfa_enabled: bool
-    
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(BaseModel):
     username: str

@@ -44,9 +44,7 @@ class FactureResponse(FactureBase):
     mission_id: int | None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EncaissementBase(BaseModel):
@@ -80,9 +78,7 @@ class EncaissementResponse(EncaissementBase):
     facture_id: int | None
     lettree: bool
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class LigneTarifaireBase(BaseModel):
@@ -96,9 +92,7 @@ class LigneTarifaireCreate(LigneTarifaireBase):
 
 class LigneTarifaireResponse(LigneTarifaireBase):
     id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class GrilleTarifaireBase(BaseModel):
     code: str = Field(..., max_length=50)
@@ -131,9 +125,7 @@ class GrilleTarifaireResponse(GrilleTarifaireBase):
     date_creation: datetime
     date_modification: Optional[datetime] = None
     lignes: List[LigneTarifaireResponse] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EncoursResponse(BaseModel):
@@ -157,9 +149,7 @@ class ReconciliationMatchResponse(BaseModel):
     bank_entry: BankStatementEntry
     erp_match: Optional[EncaissementResponse] = None
     confidence: float
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AvoirBase(BaseModel):
@@ -182,6 +172,4 @@ class AvoirResponse(AvoirBase):
     date_emission: datetime
     est_utilise: bool
     cree_par: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

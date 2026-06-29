@@ -42,9 +42,7 @@ class NotificationResponse(NotificationBase):
     canal_envoye: Optional[str] = None
     date_envoi: Optional[datetime] = None
     tentatives_envoi: int = 0
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class NotificationStats(BaseModel):

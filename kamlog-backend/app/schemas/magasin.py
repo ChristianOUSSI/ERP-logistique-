@@ -114,9 +114,7 @@ class Magasin(MagasinBase):
     id: int
     date_creation: datetime
     date_modification: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ CLIENT MAGASIN ============
@@ -155,9 +153,7 @@ class ClientMagasin(ClientMagasinBase):
     id: int
     date_creation: datetime
     date_modification: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ ARTICLE ============
@@ -212,9 +208,7 @@ class Article(ArticleBase):
     id: int
     date_creation: datetime
     date_modification: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ LIGNE DECLARATION ============
@@ -233,9 +227,7 @@ class LigneDeclaration(LigneDeclarationBase):
     id: int
     declaration_id: int
     article: Optional[Article] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ DECLARATION ============
@@ -292,9 +284,7 @@ class Declaration(DeclarationBase):
     date_modification: Optional[datetime] = None
     client: Optional[ClientMagasin] = None
     lignes: List[LigneDeclaration] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ LIGNE RECEPTION ============
@@ -313,9 +303,7 @@ class LigneReception(LigneReceptionBase):
     id: int
     reception_id: int
     article: Optional[Article] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ RECEPTION ============
@@ -363,9 +351,7 @@ class Reception(ReceptionBase):
     declaration: Optional[Declaration] = None
     magasin: Optional[Magasin] = None
     lignes: List[LigneReception] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ STOCK ============
@@ -393,9 +379,7 @@ class Stock(StockBase):
     date_creation: datetime
     magasin: Optional[Magasin] = None
     article: Optional[Article] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ FILTRE STOCK ============
@@ -409,9 +393,7 @@ class StockFilter(BaseModel):
     statut: Optional[StatutStock] = None
     categorie: Optional[CategorieArticle] = None
     article: Optional[Article] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ LIGNE COMMANDE ============
@@ -431,9 +413,7 @@ class LigneCommande(LigneCommandeBase):
     id: int
     commande_id: int
     article: Optional[Article] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ COMMANDE ============
@@ -491,9 +471,7 @@ class Commande(CommandeBase):
     date_modification: Optional[datetime] = None
     client: Optional[ClientMagasin] = None
     lignes: List[LigneCommande] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ LIGNE BANDE LIVRAISON ============
@@ -510,9 +488,7 @@ class LigneBandeLivraisonCreate(LigneBandeLivraisonBase):
 class LigneBandeLivraison(LigneBandeLivraisonBase):
     id: int
     bande_id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ BANDE LIVRAISON ============
@@ -564,9 +540,7 @@ class BandeLivraison(BandeLivraisonBase):
     commande: Optional[Commande] = None
     magasin: Optional[Magasin] = None
     lignes_bande: List[LigneBandeLivraison] = []
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ INCOTERM ============
@@ -599,9 +573,7 @@ class IncotermUpdate(BaseModel):
 class Incoterm(IncotermBase):
     id: int
     date_creation: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ TYPE CONTENEUR ============
@@ -640,9 +612,7 @@ class TypeConteneurUpdate(BaseModel):
 class TypeConteneur(TypeConteneurBase):
     id: int
     date_creation: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ TRANSACTION ============
@@ -682,9 +652,7 @@ class Transaction(TransactionBase):
     id: int
     date_creation: datetime
     date_modification: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ OPERATION TRACE ============
@@ -718,9 +686,7 @@ class OperationTrace(OperationTraceBase):
     est_annule: bool
     date_annulation: Optional[datetime] = None
     annule_par: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============ ANNULATION OPERATION ============
