@@ -13,7 +13,7 @@ export default function MagasinAnalyticsPage() {
 
   useEffect(() => {
     Promise.all([
-      magasinAPI.getStocks().catch(() => []),
+      magasinAPI.getStocks().then(res => res.data).catch(() => []),
       magasinAPI.getHistory().catch(() => [])
     ]).then(([stocksData, historyData]) => {
       setStocks(stocksData)
