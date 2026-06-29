@@ -128,7 +128,7 @@ export const tiersAPI = {
     apiClient.put(`/api/tiers/${id}`, data),
 };
 
-// ─── Service Magasin ──────────────────────────────────────
+// ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
 export const magasinAPI = {
   getMagasins: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/magasins', { params }),
@@ -136,6 +136,8 @@ export const magasinAPI = {
     apiClient.get('/api/magasin/stocks', { params }),
   getReceptions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/receptions', { params }),
+  createReceptionMag3: (data: unknown) =>
+    apiClient.post('/api/magasin/receptions-mag3', data),
   getDeclarations: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/declarations', { params }),
   getCommandes: (params?: Record<string, unknown>) =>

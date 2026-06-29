@@ -1,18 +1,25 @@
-// src/app/(app)/magasin/reception-mag3/page.tsx - Réception Marchandises Mag3 vers autres magasins - Fidèle 100% au HTML original
+// src/app/(app)/magasin/reception-mag3/page.tsx
 'use client'
-
 
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { magasinAPI } from '@/lib/api-client'
 
 export default function ReceptionMag3Page() {
   const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
+
   const [receptionNumber, setReceptionNumber] = useState('')
   const [removalSlipNumber, setRemovalSlipNumber] = useState('')
+  const [removalSlipId, setRemovalSlipId] = useState<number | ''>('')
+  
   const [sourceWarehouse, setSourceWarehouse] = useState('MAG3')
   const [destinationWarehouse, setDestinationWarehouse] = useState('')
   const [articleCode, setArticleCode] = useState('')
+  const [articleId, setArticleId] = useState<number | ''>('')
   const [articleDescription, setArticleDescription] = useState('')
   const [expectedQuantity, setExpectedQuantity] = useState('')
   const [receivedQuantity, setReceivedQuantity] = useState('')
@@ -21,14 +28,16 @@ export default function ReceptionMag3Page() {
   const [receivedBy, setReceivedBy] = useState('')
   const [date, setDate] = useState('')
   const [observations, setObservations] = useState('')
-  const [status, setStatus] = useState<'pending' | 'partial' | 'complete'>('pending')
+  const [status, setStatus] = useState<'EN_ATTENTE' | 'EN_COURS' | 'COMPLETEE' | 'ANNULEE'>('EN_ATTENTE')
 
   const handleClear = () => {
     setReceptionNumber('')
     setRemovalSlipNumber('')
+    setRemovalSlipId('')
     setSourceWarehouse('MAG3')
     setDestinationWarehouse('')
     setArticleCode('')
+    setArticleId('')
     setArticleDescription('')
     setExpectedQuantity('')
     setReceivedQuantity('')
@@ -37,13 +46,65 @@ export default function ReceptionMag3Page() {
     setReceivedBy('')
     setDate('')
     setObservations('')
-    setStatus('pending')
+    setStatus('EN_ATTENTE')
+    setErrorMsg('')
+    setSuccessMsg('')
   }
 
-  const handleSave = () => {
-    // Save reception - will be connected to backend
-    // This reception happens when goods leave mag3 to DNW1 or DNW2
-    router.push('/magasin/reception')
+  // Simulating fetching a removal slip by its number
+  const handleSearchRemovalSlip = async () => {
+    // In a full implementation, you would query the backend: /api/magasin/removal-slips?numero_bon=...
+    // For now, we simulate finding the removal slip
+    if (removalSlipNumber) {
+      setRemovalSlipId(1) // Mock ID
+      setDestinationWarehouse('DNW1')
+      setArticleId(101)
+      setArticleCode('ART-101')
+      setArticleDescription('Test Article from Mag3')
+      setExpectedQuantity('100')
+      setUnit('Cartons')
+      setCustomsDeclaration('DOU-789')
+      setSuccessMsg(`Bon d'enlèvement ${removalSlipNumber} trouvé.`)
+      setTimeout(() => setSuccessMsg(''), 3000)
+    }
+  }
+
+  const handleSave = async () => {
+    setErrorMsg('')
+    setSuccessMsg('')
+    
+    if (!removalSlipId || !date || !receivedQuantity || !articleId || !destinationWarehouse) {
+      setErrorMsg("Veuillez remplir les champs obligatoires (ID Bon, Date, Quantité Reçue, Magasin Destination).")
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const payload = {
+        removal_slip_id: Number(removalSlipId),
+        magasin_source: 'MAG3',
+        magasin_destination: destinationWarehouse,
+        article_id: Number(articleId),
+        quantite_attendue: Number(expectedQuantity || 0),
+        quantite_recue: Number(receivedQuantity),
+        unite: unit || 'UNIT',
+        declaration_douaniere: customsDeclaration,
+        date_reception: new Date(date).toISOString(),
+        observations: observations,
+        statut: status,
+        recu_par: receivedBy
+      }
+
+      await magasinAPI.createReceptionMag3(payload)
+      setSuccessMsg("Réception Mag3 enregistrée avec succès.")
+      setTimeout(() => {
+        router.push('/magasin/history')
+      }, 2000)
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.detail || "Erreur lors de l'enregistrement de la réception.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -164,12 +225,27 @@ export default function ReceptionMag3Page() {
                   <button onClick={handleClear} className="px-3 py-1.5 border border-outline-variant rounded bg-surface text-body-sm font-body-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">refresh</span> Effacer
                   </button>
-                  <button onClick={handleSave} className="px-3 py-1.5 bg-error text-on-error rounded text-body-sm font-body-sm shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">save</span> Enregistrer
+                  <button disabled={isSubmitting} onClick={handleSave} className="px-3 py-1.5 bg-error text-on-error rounded text-body-sm font-body-sm shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center gap-2 disabled:opacity-50">
+                    <span className="material-symbols-outlined text-[18px]">save</span> 
+                    {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
                 </div>
               </div>
             </div>
+
+            {errorMsg && (
+              <div className="p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 flex items-center gap-2">
+                <span className="material-symbols-outlined">error</span>
+                {errorMsg}
+              </div>
+            )}
+            
+            {successMsg && (
+              <div className="p-4 bg-primary-container text-on-primary-container rounded-lg border border-primary/20 flex items-center gap-2">
+                <span className="material-symbols-outlined">check_circle</span>
+                {successMsg}
+              </div>
+            )}
 
             {/* Info Banner */}
             <div className="bg-primary-container border border-primary/20 rounded-lg p-4 flex items-start gap-3">
@@ -188,7 +264,7 @@ export default function ReceptionMag3Page() {
                   <label className="font-label-md font-label-md text-on-surface-variant block">Numéro de Réception</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Ex: REC-2023-001"
+                    placeholder="Auto-généré ou Ex: REC-2023-001"
                     type="text"
                     value={receptionNumber}
                     onChange={(e) => setReceptionNumber(e.target.value)}
@@ -197,7 +273,7 @@ export default function ReceptionMag3Page() {
 
                 {/* Removal Slip Number */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Numéro du Bon d'Enlèvement</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Numéro du Bon d'Enlèvement *</label>
                   <div className="relative">
                     <input 
                       className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
@@ -206,7 +282,7 @@ export default function ReceptionMag3Page() {
                       value={removalSlipNumber}
                       onChange={(e) => setRemovalSlipNumber(e.target.value)}
                     />
-                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-error hover:text-error-container transition-colors">
+                    <button onClick={handleSearchRemovalSlip} className="absolute right-2 top-1/2 -translate-y-1/2 text-error hover:text-error-container transition-colors">
                       <span className="material-symbols-outlined text-[20px]">search</span>
                     </button>
                   </div>
@@ -214,10 +290,10 @@ export default function ReceptionMag3Page() {
 
                 {/* Date */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Date de Réception</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Date de Réception *</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    type="date"
+                    type="datetime-local"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                   />
@@ -231,9 +307,10 @@ export default function ReceptionMag3Page() {
                     value={status}
                     onChange={(e) => setStatus(e.target.value as any)}
                   >
-                    <option value="pending">En attente</option>
-                    <option value="partial">Partielle</option>
-                    <option value="complete">Complète</option>
+                    <option value="EN_ATTENTE">En attente</option>
+                    <option value="EN_COURS">Partielle / En cours</option>
+                    <option value="COMPLETEE">Complète</option>
+                    <option value="ANNULEE">Annulée</option>
                   </select>
                 </div>
 
@@ -250,34 +327,48 @@ export default function ReceptionMag3Page() {
 
                 {/* Destination Warehouse */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Destination</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant cursor-not-allowed"
-                    type="text"
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Destination *</label>
+                  <select
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     value={destinationWarehouse}
-                    disabled
-                  />
+                    onChange={(e) => setDestinationWarehouse(e.target.value)}
+                  >
+                    <option value="">Sélectionner</option>
+                    <option value="DNW1">DNW1</option>
+                    <option value="DNW2">DNW2</option>
+                  </select>
                 </div>
 
                 {/* Article Code */}
                 <div className="space-y-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Code Article</label>
                   <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     type="text"
                     value={articleCode}
-                    disabled
+                    onChange={(e) => setArticleCode(e.target.value)}
+                  />
+                </div>
+
+                {/* Article ID (Hidden for UI, but let's show for dev) */}
+                <div className="space-y-2">
+                  <label className="font-label-md font-label-md text-on-surface-variant block">ID Article (Backend) *</label>
+                  <input 
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
+                    type="number"
+                    value={articleId}
+                    onChange={(e) => setArticleId(e.target.value ? Number(e.target.value) : '')}
                   />
                 </div>
 
                 {/* Article Description */}
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Description Article</label>
                   <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm text-on-surface-variant cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     type="text"
                     value={articleDescription}
-                    disabled
+                    onChange={(e) => setArticleDescription(e.target.value)}
                   />
                 </div>
 
@@ -285,16 +376,17 @@ export default function ReceptionMag3Page() {
                 <div className="space-y-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Quantité Attendue</label>
                   <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant cursor-not-allowed"
-                    type="text"
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
+                    type="number"
+                    step="0.01"
                     value={expectedQuantity}
-                    disabled
+                    onChange={(e) => setExpectedQuantity(e.target.value)}
                   />
                 </div>
 
                 {/* Received Quantity */}
                 <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Quantité Reçue</label>
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Quantité Reçue *</label>
                   <input 
                     className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     placeholder="0.00"
@@ -309,21 +401,21 @@ export default function ReceptionMag3Page() {
                 <div className="space-y-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Unité</label>
                   <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm text-on-surface-variant cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     type="text"
                     value={unit}
-                    disabled
+                    onChange={(e) => setUnit(e.target.value)}
                   />
                 </div>
 
                 {/* Customs Declaration */}
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
                   <label className="font-label-md font-label-md text-on-surface-variant block">Déclaration Douanière</label>
                   <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
                     type="text"
                     value={customsDeclaration}
-                    disabled
+                    onChange={(e) => setCustomsDeclaration(e.target.value)}
                   />
                 </div>
 
@@ -374,8 +466,8 @@ export default function ReceptionMag3Page() {
                 </div>
                 <div>
                   <span className="block text-on-error-container/70 text-[11px] uppercase tracking-wider">Statut</span>
-                  <span className={`font-data-tabular font-medium ${status === 'complete' ? 'text-primary' : status === 'partial' ? 'text-tertiary' : 'text-secondary'}`}>
-                    {status === 'complete' ? 'Complète' : status === 'partial' ? 'Partielle' : 'En attente'}
+                  <span className={`font-data-tabular font-medium ${status === 'COMPLETEE' ? 'text-primary' : status === 'EN_COURS' ? 'text-tertiary' : 'text-secondary'}`}>
+                    {status === 'COMPLETEE' ? 'Complète' : status === 'EN_COURS' ? 'Partielle' : 'En attente'}
                   </span>
                 </div>
               </div>
