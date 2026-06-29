@@ -9,24 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { signIn, getSession } from 'next-auth/react'
 import { RoleBadges } from '@/components/auth/RoleBadges'
-
-// ── Redirection selon le rôle ────────────────────────────────
-function getRouteForRole(role: string | undefined | null): string {
-  switch (role) {
-    case 'admin':
-      return '/dashboard'
-    case 'dispatcher':
-      return '/transport'
-    case 'finance':
-      return '/finance/overview'
-    case 'douane':
-      return '/dashboard'
-    case 'gate_agent':
-      return '/parc'
-    default:
-      return '/dashboard'
-  }
-}
+import { getRouteForRole } from '@/lib/role-routes'
 
 // ── Schéma Zod ─────────────────────────────────────────────
 const loginSchema = z.object({
@@ -100,9 +83,12 @@ export default function LoginPage() {
         const role = session?.user?.role
         router.push(getRouteForRole(role))
         router.refresh()
+        return
       }
     } catch {
       setErrorMessage('Une erreur est survenue. Réessayez.')
+      return
+    } finally {
       setIsLoading(false)
     }
   }

@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/layout/AuthProvider'
+import { getRouteForRole } from '@/lib/role-routes'
 
 export default function GlobalDashboard() {
   const { user, loading } = useAuth();
@@ -16,15 +17,12 @@ export default function GlobalDashboard() {
       if (!user) {
         router.push('/login');
       } else {
-        const role = user.role;
-        if (role === 'DISPATCHER') router.push('/transport/dispatch');
-        else if (role === 'FINANCE') router.push('/finance/overview');
-        else if (role === 'DOUANE') router.push('/transport/goods-declaration');
-        else if (role === 'GATE') router.push('/transport/control');
-        else if (role === 'PARC') router.push('/parc/overview');
-        else if (role === 'MAGASIN') router.push('/magasin/dashboard');
-        else if (role === 'AUDITOR') router.push('/audit/dashboard/health');
-        else setIsRedirecting(false); // ADMIN and others
+        const targetRoute = getRouteForRole(user.role);
+        if (targetRoute === '/dashboard') {
+          setIsRedirecting(false);
+        } else {
+          router.push(targetRoute);
+        }
       }
     }
   }, [user, loading, router]);
