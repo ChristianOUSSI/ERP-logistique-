@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends, HTTPException
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import logging
