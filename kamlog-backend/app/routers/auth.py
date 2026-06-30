@@ -66,7 +66,7 @@ async def force_seed():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 @limiter.limit("10/hour")
 async def register(
     request: Request,
@@ -104,7 +104,15 @@ async def register(
     await db.commit()
     await db.refresh(db_user)
     
-    return db_user
+    return {
+        "id": db_user.id,
+        "email": str(db_user.email),
+        "username": str(db_user.username),
+        "full_name": str(db_user.full_name) if db_user.full_name else None,
+        "role": str(db_user.role.value) if hasattr(db_user.role, 'value') else str(db_user.role),
+        "is_active": bool(db_user.is_active),
+        "created_at": db_user.created_at.isoformat() if db_user.created_at else None,
+    }
 
 
 @router.post("/login", response_model=Token)
@@ -207,10 +215,18 @@ async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
     }
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me")
 async def get_me(current_user: User = Depends(get_current_user)):
     """Retourne les informations de l'utilisateur courant."""
-    return current_user
+    return {
+        "id": current_user.id,
+        "email": str(current_user.email),
+        "username": str(current_user.username),
+        "full_name": str(current_user.full_name) if current_user.full_name else None,
+        "role": str(current_user.role.value) if hasattr(current_user.role, 'value') else str(current_user.role),
+        "is_active": bool(current_user.is_active),
+        "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
+    }
 
 
 # MFA Schemas
