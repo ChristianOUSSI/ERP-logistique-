@@ -1,5 +1,5 @@
 # app/schemas/parc.py  Schémas Parc
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from app.models.parc import StatutEmplacement
 

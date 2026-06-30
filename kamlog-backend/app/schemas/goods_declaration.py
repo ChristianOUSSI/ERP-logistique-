@@ -1,5 +1,5 @@
 # app/schemas/goods_declaration.py - Schemas pour les déclarations de marchandises
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal

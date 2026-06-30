@@ -1,5 +1,5 @@
 # app/schemas/tiers.py  Schémas Tiers
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from decimal import Decimal
 from datetime import datetime
 from app.models.tiers import StatutTiers

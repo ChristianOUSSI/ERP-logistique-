@@ -1,5 +1,5 @@
 # app/schemas/agency.py - Schémas Pydantic pour les agences
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 

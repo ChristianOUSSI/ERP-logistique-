@@ -1,5 +1,5 @@
 # app/schemas/removal_slip.py - Schemas pour les bons d'enlèvement
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal

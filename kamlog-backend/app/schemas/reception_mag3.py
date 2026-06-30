@@ -1,5 +1,5 @@
 # app/schemas/reception_mag3.py - Schemas pour les réceptions Mag3
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal

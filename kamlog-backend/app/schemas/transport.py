@@ -1,5 +1,5 @@
 # app/schemas/transport.py  Schémas Transport
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from decimal import Decimal
 from datetime import datetime
 from app.models.transport import TypeVehicule, StatutMission

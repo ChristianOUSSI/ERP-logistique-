@@ -1,5 +1,5 @@
 # app/schemas/shared.py - Schémas partagés entre modules pour les passerelles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
