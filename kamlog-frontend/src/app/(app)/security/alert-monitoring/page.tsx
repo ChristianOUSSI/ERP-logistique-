@@ -102,7 +102,7 @@ export default function SecurityAlertMonitoring() {
           </div>
         </aside>
         {/* Main Content Area */}
-        <main className="ml-60 pt-14 min-h-screen">
+        <main className="pt-14 min-h-screen">
           <div className="max-w-[1600px] mx-auto p-[1rem]">
             {/* Breadcrumbs */}
             

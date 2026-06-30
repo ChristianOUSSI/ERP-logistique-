@@ -75,7 +75,7 @@ export default function CreationOrdreDeTravailPage() {
         
 
         {/* Main Content Area */}
-        <main className="ml-[240px] flex-1 flex flex-col ">
+        <main className="ml-[240px] flex-1 flex flex-col">
           {/* TopNavBar (Contextual for Main Area) */}
           
 

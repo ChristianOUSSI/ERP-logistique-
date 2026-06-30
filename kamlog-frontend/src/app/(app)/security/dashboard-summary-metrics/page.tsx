@@ -127,7 +127,7 @@ export default function DashboardSummaryMetricsPage() {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       
       
 
@@ -164,7 +164,7 @@ export default function DashboardSummaryMetricsPage() {
       </aside>
 
       {/* Main Content Stage */}
-      <main className="ml-60 pt-14 h-screen overflow-y-auto custom-scrollbar">
+      <main className="pt-14 h-screen overflow-y-auto custom-scrollbar">
         <div className="max-w-max-width mx-auto p-margin-desktop space-y-6">
           {/* Header Section */}
           <div className="flex justify-between items-end">

@@ -12,42 +12,10 @@ export default function KMagasinStockMovementHistory() {
   return (
     <div className="bg-surface-container-low text-on-surface antialiased min-h-screen flex">
       
-      <aside className="bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col h-screen p-4 z-50">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
-            <Box className="text-on-primary-container" size={20} />
-          </div>
-          <div>
-            <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
-            <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <button className="w-full bg-primary text-on-primary font-title-md text-title-md py-2 px-4 rounded mb-6 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors">
-          <Plus size={18} />
-          Nouvelle Opération
-        </button>
-
-        {/* Navigation */}
-        
-
-        {/* Footer */}
-        <div className="mt-auto border-t border-outline-variant pt-4 space-y-1">
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-            <HelpCircle size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Support</span>
-          </a>
-          <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-            <LogOut size={20} />
-            <span className="font-label-md text-label-md uppercase tracking-wider">Déconnexion</span>
-          </a>
-        </div>
-      </aside>
+      
 
       
-      <div className="flex-1 ml-[260px] flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0">
         
         
 

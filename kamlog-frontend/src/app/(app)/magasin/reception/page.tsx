@@ -107,21 +107,10 @@ export default function KMagasinReception() {
         
         
         
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-4 z-40 bg-surface-container-low border-r border-outline-variant">
-          <div className="p-4 flex items-center gap-3">
-            <div className="bg-primary-container text-on-primary-container p-2 rounded-lg">
-              <span className="material-symbols-outlined">warehouse</span>
-            </div>
-            <div>
-              <div className="text-title-md font-title-md font-bold">KAMLOG ERP</div>
-              <div className="text-label-sm font-label-sm text-on-surface-variant">Operational Control</div>
-            </div>
-          </div>
-          
-        </aside>
+        
         
         {/* Main Stage */}
-        <main className="ml-60 pt-16 p-6 max-w-[1600px] mx-auto">
+        <main className="pt-16 p-6 max-w-[1600px] mx-auto">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mb-4">
             <span>K-Magasin</span>

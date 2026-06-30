@@ -58,7 +58,7 @@ export default function KTransportControl() {
       
 
       
-      <div className="flex-1  flex flex-col ">
+      <div className="flex-1 flex flex-col">
         
         
 

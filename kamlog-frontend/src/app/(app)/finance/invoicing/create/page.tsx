@@ -44,11 +44,11 @@ export default function InvoiceCreation() {
         .k-finance-border { border-color: #8B5CF6; }
         .bg-finance-surface { background-color: #faf5ff; }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased  flex">
+      <div className="bg-surface-container-low text-on-surface font-body-md antialiased flex">
         
         
         
-        <div className="flex-1 ml-[260px] flex flex-col h-full bg-finance-surface">
+        <div className="flex-1 flex flex-col h-full bg-finance-surface">
           
           
           

@@ -34,7 +34,7 @@ export default function KFinanceBillingInvoicing() {
       
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[260px] min-w-0">
+      <div className="flex-1 flex flex-col min-w-0">
         
         
 

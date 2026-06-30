@@ -91,7 +91,7 @@ export default function ReportsLibrary() {
         
         
         {/* Main Workspace */}
-        <div className="ml-[260px] p-[1rem] min-h-[calc(100vh-64px)] flex gap-[1rem] items-start max-w-[1600px]">
+        <div className="p-[1rem] min-h-[calc(100vh-64px)] flex gap-[1rem] items-start max-w-[1600px]">
           {/* Center Stage: Templates Library */}
           <main className="flex-1 flex flex-col gap-6">
             {/* Page Header */}

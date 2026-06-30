@@ -63,7 +63,7 @@ export default function TiersPage() {
         
 
         {/* Main Content Canvas */}
-        <div className="ml-[260px] flex-1 flex flex-col h-full bg-surface-container-lowest">
+        <div className="flex-1 flex flex-col h-full bg-surface-container-lowest">
           
           
 

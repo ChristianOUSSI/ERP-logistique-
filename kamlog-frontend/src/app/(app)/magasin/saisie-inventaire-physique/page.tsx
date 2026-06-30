@@ -142,30 +142,10 @@ export default function SaisieInventairePhysiquePage() {
         
 
         
-        <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest text-primary font-label-caps text-label-caps border-r border-outline-variant shadow-sm flex flex-col h-screen p-md z-50">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="w-10 h-10 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xl">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-              <p className="text-xs text-secondary">Port Operations</p>
-            </div>
-          </div>
-          <button className="w-full bg-primary text-on-primary py-2 rounded mb-6 font-bold flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
-            <span className="material-symbols-outlined text-sm">add</span> Nouvelle Opération
-          </button>
-          
-          <div className="mt-auto flex flex-col gap-2 pt-4 border-t border-outline-variant">
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-              <span className="material-symbols-outlined">help_outline</span> Support
-            </a>
-            <a className="flex items-center gap-3 px-3 py-2 rounded text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-              <span className="material-symbols-outlined">logout</span> Déconnexion
-            </a>
-          </div>
-        </aside>
+        
 
         {/* Main Content Stage */}
-        <main className="ml-[260px] p-gutter max-w-max-width mx-auto">
+        <main className="p-gutter max-w-max-width mx-auto">
           {/* Context Header */}
           <div className="mb-6 flex justify-between items-end">
             <div>

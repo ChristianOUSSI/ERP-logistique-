@@ -106,37 +106,10 @@ export default function TransportDispatchPage() {
         
 
         
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-4 z-40 bg-surface-container border-r border-outline-variant">
-          <div className="p-4 border-b border-outline-variant mb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-bold">K</div>
-              <div>
-                <div className="text-title-md font-title-md font-bold text-primary">KAMLOG ERP</div>
-                <div className="text-label-sm font-label-sm text-on-surface-variant">Operational Control</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="px-4 mb-4">
-            <button className="w-full bg-primary text-white py-2 text-label-md font-label-md rounded flex items-center justify-center gap-2 hover:opacity-90">
-              <span className="material-symbols-outlined text-[18px]">search</span>
-              T-Code Search
-            </button>
-          </div>
-          <div className="border-t border-outline-variant pt-2">
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-label-md font-label-md">Settings</span>
-            </a>
-            <a className="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="text-label-md font-label-md">Logout</span>
-            </a>
-          </div>
-        </aside>
+        
 
         {/* Main Content Stage */}
-        <main className="ml-60 pt-16 min-h-screen p-8">
+        <main className="pt-16 min-h-screen p-8">
           {/* Dashboard Header */}
           <div className="flex justify-between items-end mb-8">
             <div>

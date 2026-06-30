@@ -37,36 +37,9 @@ export default function Journal() {
       `}</style>
       <div className="bg-surface-container-low font-body-md text-on-surface antialiased overflow-hidden h-screen flex">
         
-        <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col h-screen p-[1.5rem] z-50">
-          <div className="mb-lg">
-            <div className="flex items-center gap-sm px-xs mb-md">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
-                <span className="material-symbols-outlined icon-fill">security</span>
-              </div>
-              <div>
-                <h1 className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</h1>
-                <p className="text-label-md text-outline">Port Operations</p>
-              </div>
-            </div>
-            <button className="w-full py-sm px-md bg-primary text-on-primary rounded-lg font-title-md flex items-center justify-center gap-sm hover:bg-primary-container transition-all active:scale-95 duration-150 shadow-md">
-              <span className="material-symbols-outlined text-[20px]">add_circle</span>
-              <span>Nouvelle Opération</span>
-            </button>
-          </div>
-          
-          <div className="mt-auto border-t border-outline-variant pt-md space-y-xxs">
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Support</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-caps text-label-caps uppercase tracking-wider">Déconnexion</span>
-            </a>
-          </div>
-        </aside>
+        
         {/* Main Content Area */}
-        <main className="ml-[260px] flex-1 flex flex-col min-h-screen relative overflow-hidden">
+        <main className="flex-1 flex flex-col min-h-screen relative overflow-hidden">
           
           
           {/* Activity Log Content Stage */}

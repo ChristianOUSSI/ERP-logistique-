@@ -61,7 +61,7 @@ export default function WorkOrderCreate() {
         
         
         {/* Main Content Area */}
-        <main className="ml-[240px] flex-1 flex flex-col ">
+        <main className="ml-[240px] flex-1 flex flex-col">
           
           
           {/* Canvas */}

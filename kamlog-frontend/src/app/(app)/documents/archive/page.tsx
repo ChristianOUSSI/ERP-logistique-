@@ -13,35 +13,12 @@ export default function DocumentsArchivePage() {
           font-variation-settings: 'FILL 1';
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface  flex">
+      <div className="bg-surface-container-low text-on-surface flex">
         
-        <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm flex flex-col p-md z-50">
-          <div className="flex items-center gap-sm mb-lg">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary font-bold">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          <button className="w-full bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md py-sm px-md rounded mb-lg transition-colors flex items-center justify-center gap-xs">
-            <span className="material-symbols-outlined fill">add</span>
-            Nouvelle Opération
-          </button>
-          
-          <div className="mt-auto pt-sm border-t border-outline-variant space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/support">
-              <span className="material-symbols-outlined">help_outline</span>
-              Support
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded font-label-caps text-label-caps text-secondary hover:bg-surface-container-high transition-colors" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </aside>
+        
 
         {/* Main Content Area */}
-        <main className="flex-1 ml-[260px] flex flex-col h-full bg-background overflow-hidden">
+        <main className="flex-1 flex flex-col h-full bg-background overflow-hidden">
           
           
 

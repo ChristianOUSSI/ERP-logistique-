@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useAuth } from '@/components/layout/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { getRouteForRole } from '@/lib/role-routes';
+import Link from 'next/link';
 
 import ModuleSidebar from '@/components/layout/ModuleSidebar';
 import { LayoutDashboard, Settings, UserCircle, LogOut } from 'lucide-react';
@@ -98,9 +99,9 @@ export default function AppLayout({
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-4 text-secondary">
-              <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block">
+              <Link href="/security/notifications" className="p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block" title="Notifications">
                 <span className="material-symbols-outlined text-[20px]">notifications</span>
-              </button>
+              </Link>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20">
                   {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}

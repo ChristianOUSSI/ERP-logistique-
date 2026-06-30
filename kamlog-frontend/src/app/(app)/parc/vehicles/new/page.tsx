@@ -77,7 +77,7 @@ export default function NewVehicle() {
         
         
         {/* Main Content Canvas */}
-        <main className="ml-[260px] p-[2rem] max-w-[1600px] mx-auto">
+        <main className="p-[2rem] max-w-[1600px] mx-auto">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 mb-[1rem] font-body-sm text-body-sm text-outline">
             <a onClick={() => router.push('/dashboard')} className="hover:text-primary transition-colors cursor-pointer">KAMLOG ERP</a>

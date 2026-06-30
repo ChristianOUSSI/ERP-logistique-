@@ -123,7 +123,7 @@ export default function AlertMonitoringCenterPage() {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       
       
 
@@ -155,7 +155,7 @@ export default function AlertMonitoringCenterPage() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="ml-60 pt-14 min-h-screen">
+      <main className="pt-14 min-h-screen">
         <div className="max-w-max-width mx-auto p-gutter">
           {/* Breadcrumbs */}
           

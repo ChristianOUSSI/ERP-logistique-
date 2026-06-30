@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.database import get_db
 from app.models.user import User, Role
-from app.core.security import get_password_hash
+from app.utils.security import get_password_hash
 
 router = APIRouter()
 logger = logging.getLogger("admin_audit")

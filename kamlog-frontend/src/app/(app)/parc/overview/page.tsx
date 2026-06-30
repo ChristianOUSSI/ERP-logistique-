@@ -1,6 +1,7 @@
 // src/app/(app)/parc/overview/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { transportAPI } from '@/lib/api-client'
 import { useAuth } from '@/components/layout/AuthProvider'
 
@@ -52,41 +53,21 @@ export default function KParcFleetManagementOverview() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen overflow-x-hidden antialiased">
       
-      <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest border-r border-outline-variant shadow-sm z-50 flex flex-col p-md">
-        {/* Brand / Header */}
-        <div className="flex items-center gap-sm mb-xl px-xs mt-16 md:mt-0">
-          <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-on-primary-container icon-filled text-[20px]">directions_boat</span>
-          </div>
-          <div>
-            <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
-            <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Port Operations</p>
-          </div>
-        </div>
-
-        {/* Primary CTA */}
-        <button className="w-full mb-lg bg-primary text-on-primary rounded-lg py-sm px-md flex items-center justify-center gap-xs font-title-sm hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-95 duration-150">
-          <span className="material-symbols-outlined text-[16px]">add</span>
-          Nouvelle Opération
-        </button>
-
-        {/* Navigation Links */}
-        
-      </aside>
+      
 
       
       
 
       {/* Main Content Canvas */}
-      <main className=" p-gutter max-w-max-width mx-auto">
+      <main className="p-gutter max-w-max-width mx-auto">
         <div className="mb-md">
           <div className="flex justify-between items-end">
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Gestion de Flotte</h2>
             <div className="flex gap-sm">
-              <button className="px-md py-sm bg-primary text-white rounded-lg flex items-center gap-xs hover:opacity-90 transition-opacity text-sm font-medium">
+              <Link href="/parc/vehicles/new" className="px-md py-sm bg-primary text-white rounded-lg flex items-center gap-xs hover:opacity-90 transition-opacity text-sm font-medium">
                 <span className="material-symbols-outlined text-sm">add</span>
                 Nouveau Véhicule
-              </button>
+              </Link>
             </div>
           </div>
         </div>

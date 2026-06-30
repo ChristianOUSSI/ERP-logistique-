@@ -80,7 +80,7 @@ export default function SecurityNotifications() {
           </div>
         </aside>
         {/* Main Content Stage */}
-        <main className="ml-60 pt-14 flex-1 overflow-y-auto bg-surface-container-low">
+        <main className="pt-14 flex-1 overflow-y-auto bg-surface-container-low">
           <div className="max-w-[1600px] mx-auto p-[1rem]">
             {/* Breadcrumbs & Header */}
             <div className="mb-8">

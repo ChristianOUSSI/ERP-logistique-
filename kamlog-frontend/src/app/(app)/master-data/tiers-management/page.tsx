@@ -30,41 +30,11 @@ export default function MasterDataTiersManagement() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface flex min-">
         
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
-          <div className="px-md py-lg flex flex-col gap-xs">
-            <div className="flex items-center gap-sm mb-lg">
-              <div className="w-10 h-10 rounded bg-primary flex items-center justify-center text-on-primary">
-                <span className="material-symbols-outlined icon-fill">terminal</span>
-              </div>
-              <div>
-                <h2 className="text-headline-sm font-headline-sm font-black text-primary leading-tight">KAMLOG ERP</h2>
-                <p className="text-label-sm font-label-sm text-on-surface-variant opacity-70">Operational Control</p>
-              </div>
-            </div>
-            {/* Navigation Links */}
-            
-            <div className="mt-xl pt-lg border-t border-outline-variant">
-              <button className="w-full flex items-center justify-between px-md py-xs bg-surface-container-highest rounded border border-outline-variant text-label-md font-label-md text-on-surface-variant">
-                <span>T-Code Search</span>
-                <span className="material-symbols-outlined text-sm">search</span>
-              </button>
-            </div>
-          </div>
-          <div className="mt-auto px-md flex flex-col gap-1">
-            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined text-title-md">settings</span>
-              <span className="text-label-md font-label-md">Settings</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/login">
-              <span className="material-symbols-outlined text-title-md">logout</span>
-              <span className="text-label-md font-label-md">Logout</span>
-            </a>
-          </div>
-        </aside>
+        
         
         
         {/* Main Content Stage */}
-        <main className="flex-1 ml-60 mt-16 flex overflow-hidden">
+        <main className="flex-1 mt-16 flex overflow-hidden">
           {/* Table Section */}
           <section className="flex-1 flex flex-col min-w-0 border-r border-outline-variant bg-surface-container-low">
             {/* Toolbar & Filters */}

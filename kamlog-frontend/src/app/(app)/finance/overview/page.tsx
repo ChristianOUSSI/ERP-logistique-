@@ -53,25 +53,10 @@ export default function KFinanceOverview() {
   return (
     <div className="bg-finance-background text-finance-on-background font-body-base antialiased min-h-screen flex">
       
-      <aside className="bg-finance-surface-container-lowest border-r border-finance-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-stack-md z-50">
-        <div className="mb-8 flex items-center gap-3 mt-16 md:mt-0">
-          <div className="w-10 h-10 rounded bg-finance-primary-container text-finance-on-primary-container flex items-center justify-center font-bold text-xl">K</div>
-          <div>
-            <h1 className="font-headline-md text-headline-md text-finance-primary font-bold">KAMLOG ERP</h1>
-            <p className="font-label-caps text-label-caps text-finance-secondary">Port Operations</p>
-          </div>
-        </div>
-
-        <button className="w-full bg-finance-primary text-finance-on-primary py-2 px-4 rounded-lg font-title-sm text-title-sm mb-6 hover:bg-finance-primary-container transition-colors flex items-center justify-center gap-2 shadow-sm text-white">
-          <span className="material-symbols-outlined">add</span>
-          Nouvelle Opération
-        </button>
-
-        
-      </aside>
+      
 
       {/* Main Content Area */}
-      <div className="flex-1  flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen">
         
 
         <main className="flex-1 p-container-margin overflow-y-auto bg-finance-background">

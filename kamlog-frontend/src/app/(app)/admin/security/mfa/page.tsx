@@ -14,12 +14,12 @@ export default function MfaConfigurationPage() {
           font-variation-settings: 'FILL 1';
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased  flex">
+      <div className="bg-surface-container-low text-on-surface font-body-md antialiased flex">
         
         
 
         {/* Main Content Area */}
-        <div className="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
           
           
 

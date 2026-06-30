@@ -46,33 +46,10 @@ export default function ParcPage() {
         
 
         
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
-          <div className="px-md py-lg">
-            <div className="flex items-center gap-sm mb-lg">
-              <div className="w-10 h-10 bg-secondary rounded flex items-center justify-center text-on-secondary">
-                <span className="material-symbols-outlined">inventory_2</span>
-              </div>
-              <div>
-                <div className="text-title-md font-title-md font-bold text-primary">KAMLOG ERP</div>
-                <div className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Operational Control</div>
-              </div>
-            </div>
-            
-          </div>
-          <div className="mt-auto px-md space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-label-md font-label-md">Settings</span>
-            </a>
-            <a className="flex items-center gap-sm px-sm py-xs rounded-sm text-on-surface-variant hover:bg-surface-container-high transition-all" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="text-label-md font-label-md">Logout</span>
-            </a>
-          </div>
-        </aside>
+        
 
         {/* Main Content Stage */}
-        <main className="ml-60 pt-16 min-h-screen">
+        <main className="pt-16 min-h-screen">
           <div className="p-lg max-w-[1600px] mx-auto space-y-lg">
             {/* Breadcrumbs & Title */}
             <div className="flex flex-col gap-xxs">

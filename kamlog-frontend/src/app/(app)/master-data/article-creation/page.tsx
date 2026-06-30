@@ -18,7 +18,7 @@ export default function MasterDataArticleCreation() {
         
         
         
-        <div className="flex-1 flex flex-col ml-[260px] w-[calc(100%-260px)] h-screen">
+        <div className="flex-1 flex flex-col w-[calc(100%-260px)] h-screen">
           
           
           {/* Stage (Main Content) */}

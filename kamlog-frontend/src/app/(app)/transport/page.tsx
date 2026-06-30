@@ -53,7 +53,7 @@ export default function TransportPage() {
         
 
         
-        <div className="flex-1 ml-[260px] flex flex-col ">
+        <div className="flex-1 flex flex-col">
           
           
 

@@ -70,27 +70,10 @@ export default function KMagasinDashboard() {
   return (
     <div className="flex h-screen bg-surface text-on-background font-body-base antialiased overflow-hidden">
       
-      <aside className="bg-surface-container-lowest text-on-surface flex flex-col h-screen p-stack-md fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm z-50">
-        <div className="mb-stack-lg flex items-center gap-3 px-3 mt-16 md:mt-0">
-          <div className="w-10 h-10 bg-primary text-on-primary rounded flex items-center justify-center font-bold font-title-sm">
-            K
-          </div>
-          <div>
-            <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Port Operations</p>
-          </div>
-        </div>
-        
-        <button className="w-full bg-primary text-on-primary rounded py-2 px-4 flex items-center justify-center gap-2 mb-stack-lg font-title-sm hover:opacity-90 active:scale-95 duration-150 shadow-sm">
-          <span className="material-symbols-outlined text-[20px]">add</span>
-          Nouvelle Opération
-        </button>
-        
-        
-      </aside>
+      
 
       {/* Main Content Area */}
-      <main className="flex-1 ml-[260px] flex flex-col h-screen bg-surface relative z-0">
+      <main className="flex-1 flex flex-col h-screen bg-surface relative z-0">
         
         
 

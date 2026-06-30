@@ -52,35 +52,8 @@ export default function ContainerDeclaration() {
         }
       `}</style>
       <div className="bg-surface-container-low text-on-surface antialiased flex overflow-hidden h-screen selection:bg-tertiary selection:text-on-tertiary">
-        <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest flex flex-col p-[1rem] border-r border-outline-variant shadow-sm z-50">
-          <div className="px-[1rem] py-[1.5rem] border-b border-outline-variant/50">
-            <div className="flex items-center gap-[0.5rem]">
-              <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary font-bold">K</div>
-              <div>
-                <h1 className="font-headline-md text-headline-md text-primary font-bold leading-none">KAMLOG ERP</h1>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-[0.25rem]">Port Operations</p>
-              </div>
-            </div>
-          </div>
-          <div className="px-[1rem] py-[1rem]">
-            <button className="w-full flex items-center justify-center gap-[0.25rem] bg-primary text-on-primary font-label-md text-label-md py-[0.5rem] rounded hover:bg-primary-fixed-variant transition-colors shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              Nouvelle Opération
-            </button>
-          </div>
-          
-          <div className="border-t border-outline-variant/50 p-[0.25rem] mt-auto font-label-caps text-label-caps">
-            <a onClick={() => router.push('/support')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-secondary hover:bg-surface-container-high transition-colors cursor-pointer">
-              <span className="material-symbols-outlined">help_outline</span>
-              Support
-            </a>
-            <a onClick={() => router.push('/logout')} className="flex items-center gap-[0.5rem] px-[1rem] py-[0.5rem] rounded text-error hover:bg-error-container transition-colors cursor-pointer">
-              <span className="material-symbols-outlined">logout</span>
-              Déconnexion
-            </a>
-          </div>
-        </aside>
-        <div className="flex-1 flex flex-col ml-[260px] min-w-0 h-full relative">
+        
+        <div className="flex-1 flex flex-col min-w-0 h-full relative">
           
           <main className="flex-1 overflow-y-auto p-[1rem] lg:p-[2rem] bg-surface-container-low">
             <div className="max-w-[1400px] mx-auto">

@@ -17,7 +17,7 @@ export default function AdminUserManagementRbac() {
         
 
         
-        <div className="flex-1 flex flex-col ml-[260px]">
+        <div className="flex-1 flex flex-col">
           {/* TopNavBar (JSON Component) */}
           
 

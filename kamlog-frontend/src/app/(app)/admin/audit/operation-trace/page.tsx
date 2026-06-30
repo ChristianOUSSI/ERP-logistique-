@@ -59,51 +59,10 @@ export default function AuditTrailOperationTracePage() {
         
 
         {/* SideNavBar Implementation */}
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container border-r border-outline-variant">
-          <div className="px-md py-lg">
-            <div className="flex flex-col gap-xxs">
-              <span className="text-headline-sm font-headline-sm font-black text-primary">KAMLOG ERP</span>
-              <span className="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</span>
-            </div>
-          </div>
-          <div className="flex-1 px-xs flex flex-col gap-1">
-            <div className="px-md py-xs text-label-sm font-label-sm text-outline uppercase tracking-wider">Main Modules</div>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/transport/control">
-              <span className="material-symbols-outlined">local_shipping</span>
-              <span className="text-label-md font-label-md">Transport</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/finance/overview">
-              <span className="material-symbols-outlined">payments</span>
-              <span className="text-label-md font-label-md">Finance</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/parc/overview">
-              <span className="material-symbols-outlined">inventory_2</span>
-              <span className="text-label-md font-label-md">Parc</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/magasin/dashboard">
-              <span className="material-symbols-outlined">warehouse</span>
-              <span className="text-label-md font-label-md">Magasin</span>
-            </a>
-            {/* Active State: Audit */}
-            <a className="flex items-center gap-md px-md py-2.5 text-primary font-bold border-l-4 border-primary bg-surface-container-highest scale-[0.99] transition-transform duration-150" href="/audit/dashboard/health">
-              <span className="material-symbols-outlined">history_edu</span>
-              <span className="text-label-md font-label-md">Audit</span>
-            </a>
-          </div>
-          <div className="mt-auto px-xs flex flex-col gap-1">
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-label-md font-label-md">Settings</span>
-            </a>
-            <a className="flex items-center gap-md px-md py-2.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-all" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="text-label-md font-label-md">Logout</span>
-            </a>
-          </div>
-        </aside>
+        
 
         {/* Main Content Canvas */}
-        <main className="ml-60 pt-16 h-screen overflow-y-auto bg-surface-container-low">
+        <main className="pt-16 h-screen overflow-y-auto bg-surface-container-low">
           <div className="max-w-[1600px] mx-auto p-lg">
             {/* Breadcrumbs */}
             

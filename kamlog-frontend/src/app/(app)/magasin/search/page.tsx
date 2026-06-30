@@ -53,7 +53,7 @@ export default function KMagasinAdvancedStockSearch() {
           </div>
         </aside>
         {/* Main Content Area */}
-        <main className="ml-60 pt-16 min-h-screen">
+        <main className="pt-16 min-h-screen">
           <div className="max-w-[1600px] mx-auto p-lg space-y-lg">
             {/* Breadcrumbs */}
             <div className="flex items-center gap-xs text-label-sm font-label-sm text-on-surface-variant opacity-60">
@@ -279,7 +279,7 @@ export default function KMagasinAdvancedStockSearch() {
           </div>
         </main>
         {/* Footer Identity */}
-        <footer className="ml-60 p-lg text-center text-label-md font-label-md text-on-surface-variant opacity-50">
+        <footer className="p-lg text-center text-label-md font-label-md text-on-surface-variant opacity-50">
           © 2023 KAMLOG ENTERPRISE LOGISTICS. Module: K-MAGASIN V4.2.1
         </footer>
       </div>

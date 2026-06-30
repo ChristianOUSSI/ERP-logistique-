@@ -93,41 +93,10 @@ export default function RemovalSlipPage() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md antialiased overflow-hidden flex">
         
-        <aside className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-[1rem] z-50">
-          <div className="p-4 border-b border-outline-variant flex items-center gap-3">
-            <div className="w-10 h-10 rounded bg-error flex items-center justify-center text-on-error font-headline-md font-bold">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-error font-bold leading-none">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">K-Magasin</p>
-            </div>
-          </div>
-          <div className="p-4">
-            <button onClick={() => router.push('/dashboard')} className="w-full bg-error text-on-error font-label-md text-label-md py-2 px-4 rounded shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined" style={{fontVariationSettings: 'FILL 1'}}>add</span>
-              Nouvelle Opération
-            </button>
-          </div>
-          
-          <div className="mt-auto border-t border-outline-variant p-2">
-            <ul className="space-y-1 px-2">
-              <li>
-                <a onClick={() => router.push('/support')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors cursor-pointer">
-                  <span className="material-symbols-outlined">help_outline</span>
-                  Support
-                </a>
-              </li>
-              <li>
-                <a onClick={() => router.push('/logout')} className="flex items-center gap-3 px-3 py-2 rounded text-secondary font-label-caps text-label-caps hover:bg-surface-container-high transition-colors cursor-pointer">
-                  <span className="material-symbols-outlined">logout</span>
-                  Déconnexion
-                </a>
-              </li>
-            </ul>
-          </div>
-        </aside>
+        
 
         
-        <div className="flex-1 flex flex-col ml-[260px] h-screen">
+        <div className="flex-1 flex flex-col h-screen">
           
           
 

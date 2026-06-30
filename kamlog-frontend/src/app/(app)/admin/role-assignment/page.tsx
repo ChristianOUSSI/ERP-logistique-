@@ -105,24 +105,8 @@ export default function RoleAssignment() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface">
         {/* SideNavBar Shell */}
-        <aside className="h-screen w-60 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col z-50">
-          <div className="px-lg py-xl">
-            <h1 className="font-headline-sm text-headline-sm font-bold text-primary">KAMLOG ERP</h1>
-            <p className="font-label-md text-label-md text-on-surface-variant opacity-70">Admin Suite</p>
-          </div>
-          
-          <div className="mt-auto border-t border-outline-variant py-md">
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">contact_support</span>
-              <span>Support</span>
-            </div>
-            <div className="flex items-center gap-md px-lg py-sm cursor-pointer hover:bg-surface-container-highest transition-all text-on-surface-variant font-label-md text-label-md">
-              <span className="material-symbols-outlined">logout</span>
-              <span>Logout</span>
-            </div>
-          </div>
-        </aside>
-        <div className="ml-60 flex flex-col min-h-screen">
+        
+        <div className="flex flex-col min-h-screen">
           {/* TopNavBar Shell */}
           
           {/* Main Content Canvas */}

@@ -71,7 +71,7 @@ export default function MagasinAnalyticsPage() {
         
 
         
-        <div className="flex-1 flex flex-col ml-[260px] ">
+        <div className="flex-1 flex flex-col">
           
           
 

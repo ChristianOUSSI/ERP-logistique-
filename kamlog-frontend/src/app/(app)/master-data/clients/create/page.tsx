@@ -73,7 +73,7 @@ export default function ClientCreate() {
       `}</style>
       <div className="text-on-background min-h-screen flex overflow-hidden">
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col ">
+        <div className="flex-1 flex flex-col">
           
           
           {/* Page Canvas */}

@@ -30,30 +30,9 @@ export default function GlobalDashboard() {
         {/* TopAppBar Shell */}
         
         {/* SideNavBar Shell */}
-        <aside className="fixed left-0 top-0 h-full w-60 flex flex-col pt-16 pb-md z-40 bg-surface-container-low border-r border-outline-variant">
-          <div className="px-md py-lg border-b border-outline-variant mb-md">
-            <div className="flex items-center gap-sm mb-xs">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
-                <span className="material-symbols-outlined">hub</span>
-              </div>
-              <span className="text-headline-sm font-headline-sm font-black text-primary">KAMLOG ERP</span>
-            </div>
-            <p className="text-label-md font-label-md text-on-surface-variant opacity-70">Operational Control</p>
-          </div>
-          
-          <div className="px-xs pt-md border-t border-outline-variant space-y-xxs">
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all" href="/settings/system/audit-health">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-label-md font-label-md">Settings</span>
-            </a>
-            <a className="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all text-error" href="/login">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="text-label-md font-label-md">Logout</span>
-            </a>
-          </div>
-        </aside>
+        
         {/* Main Content Area */}
-        <main className="ml-60 pt-16 min-h-screen">
+        <main className="pt-16 min-h-screen">
           <div className="p-lg max-w-max-width mx-auto">
             {/* Global Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">

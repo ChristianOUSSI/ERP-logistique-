@@ -62,28 +62,10 @@ export default function TransportFuelPage() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex antialiased">
         
-        <aside className="bg-surface-container-lowest border-r border-outline-variant shadow-sm fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-50">
-          {/* Brand */}
-          <div className="mb-xl flex items-center gap-sm px-xs mt-4">
-            <img alt="KAMLOG Company Logo" className="w-8 h-8 rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4mvikIpgmdL4JUbx12MEqOgxBxAjQ8nBeoeQM1-O35QorjdRcFAxHtCXfW5NnbhCYIhuA5wgMc_OIIpweJBfE6LThMJNKagBzpA0mp8xN-j7lqfLRZREA9pntGMhR6bdLQPbHTlr_PxoB-DsjatvAK5Nc8xwnsJXtCOtMNaA0ItE5gUwoE4qsQXAk_uI3NiALiVIg0YrflWiy99S0ptTYJNfo0CWZwD1sRfe6TGhNF6x1_VGcrKOqEfAvJGSXrad3ddwjQmsEkwc"/>
-            <div>
-              <div className="font-headline-md text-headline-md text-primary font-bold leading-tight">KAMLOG ERP</div>
-              <div className="font-label-sm text-label-sm text-secondary">Port Operations</div>
-            </div>
-          </div>
-          {/* Navigation Tabs */}
-          
-          {/* Footer Actions */}
-          <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-outline-variant">
-            <button className="w-full py-2 px-4 bg-primary text-on-primary rounded font-label-md text-label-md font-bold hover:bg-opacity-90 transition-colors shadow-sm" style={{ backgroundColor: '#F59E0B', color: 'white' }}>
-              Nouvelle Opération
-            </button>
-            
-          </div>
-        </aside>
+        
 
         
-        <div className="flex-1 ml-[260px] flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0">
           
           
 

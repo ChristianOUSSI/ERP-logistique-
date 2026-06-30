@@ -86,11 +86,11 @@ export default function CustomReportBuilder() {
           background: #727785;
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface  flex">
+      <div className="bg-surface-container-low text-on-surface flex">
         
         
         
-        <div className="flex-1 flex flex-col ml-[260px] w-[calc(100%-260px)] h-full">
+        <div className="flex-1 flex flex-col w-[calc(100%-260px)] h-full">
           
           
           {/* Page Content Canvas */}

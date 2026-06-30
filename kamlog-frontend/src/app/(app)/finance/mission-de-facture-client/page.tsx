@@ -90,12 +90,12 @@ export default function MissionDeFactureClientPage() {
           background-color: #faf5ff;
         }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased  flex">
+      <div className="bg-surface-container-low text-on-surface font-body-md antialiased flex">
         
         
 
         
-        <div className="flex-1 ml-[260px] flex flex-col h-full bg-finance-surface">
+        <div className="flex-1 flex flex-col h-full bg-finance-surface">
           
           
 

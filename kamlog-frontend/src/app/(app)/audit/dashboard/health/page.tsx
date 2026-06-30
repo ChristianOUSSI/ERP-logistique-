@@ -33,37 +33,9 @@ export default function AuditHealthMonitor() {
         
         
         
-        <aside className="bg-surface-container-low fixed left-0 top-0 h-full flex flex-col pt-14 z-40 h-full w-60 border-r border-outline-variant hidden md:flex">
-          {/* Header Profile Area */}
-          <div className="p-4 border-b border-outline-variant flex items-center gap-3">
-            <img alt="Audit Officer Avatar" className="w-10 h-10 rounded-full object-cover border-2 border-secondary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE53cMy-a4LsNY3roGazi5bhIzvs01R1p3ymXkobE6eWluBN76Hqw7AwvGpZNwz9fs4WI9qRgDtcttsclFjFgGlTTnJClYVErPMOUsVEGBpjYuJ7Vz6S4fuqIKQ2f0pigLOrrD6hJJA5YORjW0rCSNluuSJkTxAKlSgS_h_PNd_l3NfEDJHZsG96ujq1zbGCL7ArAj3LrIcRQC7kEdCOXk6XEFIoF3ktbct9tAGYyaNT9e0tBDAsGLbtM5lSKBSMgtxQaC0nXijyE"/>
-            <div>
-              <div className="font-title-md text-title-md text-on-surface">Audit & Security</div>
-              <div className="font-label-sm text-label-sm text-on-surface-variant">Module: K-AUDIT</div>
-            </div>
-          </div>
-          {/* Main Navigation */}
-          
-          {/* CTA & Footer */}
-          <div className="p-4 border-t border-outline-variant space-y-4">
-            <button className="w-full bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary font-label-md text-label-md py-2 rounded transition-colors flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">summarize</span>
-              Generate Forensic Report
-            </button>
-            <div className="space-y-1">
-              <a onClick={() => router.push('/settings')} className="flex items-center text-on-surface-variant px-2 py-2 hover:bg-surface-container transition-all duration-150 ease-in-out rounded cursor-pointer">
-                <span className="material-symbols-outlined mr-3 text-[18px]">settings</span>
-                <span className="font-label-md text-label-md">Settings</span>
-              </a>
-              <a onClick={() => router.push('/support')} className="flex items-center text-on-surface-variant px-2 py-2 hover:bg-surface-container transition-all duration-150 ease-in-out rounded cursor-pointer">
-                <span className="material-symbols-outlined mr-3 text-[18px]">help</span>
-                <span className="font-label-md text-label-md">Support</span>
-              </a>
-            </div>
-          </div>
-        </aside>
+        
         {/* Main Content Canvas */}
-        <main className="flex-1 ml-0 md:ml-60 mt-14 p-[1rem] overflow-y-auto bg-surface-container-low relative">
+        <main className="flex-1 ml-0 md: mt-14 p-[1rem] overflow-y-auto bg-surface-container-low relative">
           <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none z-0"></div>
           <div className="max-w-[1600px] mx-auto relative z-10 space-y-[1.5rem]">
             {/* Breadcrumbs & Page Header */}

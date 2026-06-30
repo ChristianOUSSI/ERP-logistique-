@@ -64,7 +64,7 @@ export default function ParcWorkshopPage() {
         
 
         {/* Main Content Area Wrapper */}
-        <div className="flex-1 flex flex-col md:ml-[260px] min-h-screen">
+        <div className="flex-1 flex flex-col md: min-h-screen">
           
           
 

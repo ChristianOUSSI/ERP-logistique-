@@ -123,22 +123,10 @@ export default function PhysicalInventory() {
         
         
         
-        <aside className="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest text-primary font-label-caps text-label-caps border-r border-outline-variant shadow-sm flex flex-col h-screen p-[1rem] z-50">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="w-10 h-10 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xl">K</div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold">KAMLOG ERP</h1>
-              <p className="text-xs text-secondary">Port Operations</p>
-            </div>
-          </div>
-          <button onClick={() => router.push('/magasin')} className="w-full bg-primary text-on-primary py-2 rounded mb-6 font-bold flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
-            <span className="material-symbols-outlined text-sm">add</span> Nouvelle Opération
-          </button>
-          
-        </aside>
+        
         
         {/* Main Content Stage */}
-        <main className="ml-[260px] p-[1rem] max-w-[1600px] mx-auto">
+        <main className="p-[1rem] max-w-[1600px] mx-auto">
           {/* Context Header */}
           <div className="mb-6 flex justify-between items-end">
             <div>

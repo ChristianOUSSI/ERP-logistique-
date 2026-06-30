@@ -44,7 +44,7 @@ export default function ConfigurationDesRolesRbacPage() {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       {/* Header */}
       
 

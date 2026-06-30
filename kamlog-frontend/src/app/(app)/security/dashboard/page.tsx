@@ -85,7 +85,7 @@ export default function SecurityDashboard() {
           </div>
         </aside>
         {/* Main Content Stage */}
-        <main className="ml-60 pt-14 h-screen overflow-y-auto custom-scrollbar">
+        <main className="pt-14 h-screen overflow-y-auto custom-scrollbar">
           <div className="max-w-[1600px] mx-auto p-[1.5rem] space-y-6">
             {/* Header Section */}
             <div className="flex justify-between items-end">

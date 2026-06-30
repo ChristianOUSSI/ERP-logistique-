@@ -65,28 +65,10 @@ export default function KMagasinStockMovementHistory() {
       `}</style>
       <div className="bg-surface-container-low text-on-surface antialiased min-h-screen flex">
         {/* SideNavBar (Shared Component) */}
-        <aside className="bg-surface-container-lowest fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-sm flex flex-col h-screen p-4 z-50">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded bg-primary-container flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-primary-container icon-fill">view_in_ar</span>
-            </div>
-            <div>
-              <h1 className="font-headline-md text-headline-md text-primary font-bold tracking-tight">KAMLOG ERP</h1>
-              <p className="font-label-sm text-label-sm text-on-surface-variant">Port Operations</p>
-            </div>
-          </div>
-          {/* CTA */}
-          <button onClick={() => router.push('/magasin')} className="w-full bg-primary text-on-primary font-title-md text-title-md py-2 px-4 rounded mb-6 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors">
-            <span className="material-symbols-outlined">add</span>
-            Nouvelle Opération
-          </button>
-          {/* Navigation */}
-          
-        </aside>
         
         
-        <div className="flex-1 ml-[260px] flex flex-col min-w-0">
+        
+        <div className="flex-1 flex flex-col min-w-0">
           {/* TopNavBar (Shared Component) */}
           
           
