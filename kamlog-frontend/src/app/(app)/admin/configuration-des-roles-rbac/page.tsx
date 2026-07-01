@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminAPI, DbRole, Permission } from '@/lib/api/admin';
 
 export default function ConfigurationDesRolesRbacPage() {
-  const [roles, setRoles] = useState<DbRole[]>([]);
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [selectedRole, setSelectedRole] = useState<DbRole | null>(null);
+  const queryClient = useQueryClient();
+  const [selectedRoleCode, setSelectedRoleCode] = useState<string | null>(null);
   
   // Form fields
   const [roleCode, setRoleCode] = useState('');
@@ -15,37 +15,30 @@ export default function ConfigurationDesRolesRbacPage() {
   const [roleDescription, setRoleDescription] = useState('');
   const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(new Set());
   
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { data: roles = [], isLoading: loadingRoles } = useQuery({
+    queryKey: ['admin-dbroles'],
+    queryFn: adminAPI.getDbRoles,
+  });
+
+  const { data: permissions = [], isLoading: loadingPerms } = useQuery({
+    queryKey: ['admin-permissions'],
+    queryFn: adminAPI.getPermissions,
+  });
+
+  const loading = loadingRoles || loadingPerms;
+  const selectedRole = roles.find(r => r.code === selectedRoleCode) || null;
+
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [rolesData, permsData] = await Promise.all([
-          adminAPI.getDbRoles(),
-          adminAPI.getPermissions()
-        ]);
-        setRoles(rolesData || []);
-        setPermissions(permsData || []);
-        
-        // Auto-select first role if available
-        if (rolesData && rolesData.length > 0) {
-          selectRole(rolesData[0]);
-        }
-      } catch (err) {
-        console.error('Error fetching RBAC configuration:', err);
-        setErrorMessage('Erreur lors du chargement des configurations de rôles');
-      } finally {
-        setLoading(false);
-      }
+    if (roles.length > 0 && selectedRoleCode === null) {
+      selectRole(roles[0]);
     }
-    fetchData();
-  }, []);
+  }, [roles, selectedRoleCode]);
 
   const selectRole = (role: DbRole) => {
-    setSelectedRole(role);
+    setSelectedRoleCode(role.code);
     setRoleCode(role.code);
     setRoleName(role.name);
     setRoleDescription(role.description || '');
@@ -55,7 +48,7 @@ export default function ConfigurationDesRolesRbacPage() {
   };
 
   const initNewRole = () => {
-    setSelectedRole(null);
+    setSelectedRoleCode(null);
     setRoleCode('');
     setRoleName('');
     setRoleDescription('');
@@ -74,7 +67,35 @@ export default function ConfigurationDesRolesRbacPage() {
     setSelectedPermissions(updated);
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ code, data }: { code: string, data: any }) => adminAPI.updateDbRole(code, data),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['admin-dbroles'], (old: DbRole[]) => 
+        old.map(r => r.code === updated.code ? updated : r)
+      );
+      selectRole(updated);
+      setSuccessMessage('Rôle mis à jour avec succès');
+    },
+    onError: (err: any) => {
+      console.error('Error saving role:', err);
+      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de la sauvegarde');
+    }
+  });
+
+  const createRoleMutation = useMutation({
+    mutationFn: (data: any) => adminAPI.createDbRole(data),
+    onSuccess: (created) => {
+      queryClient.setQueryData(['admin-dbroles'], (old: DbRole[]) => [...old, created]);
+      selectRole(created);
+      setSuccessMessage('Rôle créé avec succès');
+    },
+    onError: (err: any) => {
+      console.error('Error saving role:', err);
+      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de la sauvegarde');
+    }
+  });
+
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (!roleName.trim()) {
       setErrorMessage('Le nom du rôle est obligatoire');
@@ -85,38 +106,25 @@ export default function ConfigurationDesRolesRbacPage() {
       return;
     }
 
-    setSaving(true);
     setSuccessMessage('');
     setErrorMessage('');
 
-    try {
-      if (selectedRole) {
-        // Update existing role
-        const updated = await adminAPI.updateDbRole(selectedRole.code, {
+    if (selectedRole) {
+      updateRoleMutation.mutate({
+        code: selectedRole.code,
+        data: {
           name: roleName,
           description: roleDescription,
           permission_codes: Array.from(selectedPermissions)
-        });
-        setRoles(roles.map(r => r.code === selectedRole.code ? updated : r));
-        setSelectedRole(updated);
-        setSuccessMessage('Rôle mis à jour avec succès');
-      } else {
-        // Create new role
-        const created = await adminAPI.createDbRole({
-          code: roleCode.trim().toLowerCase(),
-          name: roleName,
-          description: roleDescription,
-          permission_codes: Array.from(selectedPermissions)
-        });
-        setRoles([...roles, created]);
-        setSelectedRole(created);
-        setSuccessMessage('Rôle créé avec succès');
-      }
-    } catch (err: any) {
-      console.error('Error saving role:', err);
-      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de la sauvegarde');
-    } finally {
-      setSaving(false);
+        }
+      });
+    } else {
+      createRoleMutation.mutate({
+        code: roleCode.trim().toLowerCase(),
+        name: roleName,
+        description: roleDescription,
+        permission_codes: Array.from(selectedPermissions)
+      });
     }
   };
 
@@ -193,10 +201,10 @@ export default function ConfigurationDesRolesRbacPage() {
                 </h2>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={updateRoleMutation.isPending || createRoleMutation.isPending}
                   className="px-xl py-sm bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container transition-all shadow-sm active:scale-95 disabled:opacity-50"
                 >
-                  {saving ? 'Sauvegarde...' : 'Enregistrer'}
+                  {(updateRoleMutation.isPending || createRoleMutation.isPending) ? 'Sauvegarde...' : 'Enregistrer'}
                 </button>
               </div>
 

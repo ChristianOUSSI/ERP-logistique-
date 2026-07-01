@@ -1,8 +1,8 @@
 # scripts/seed_data.py  Seed Data KAMLOG
-import asyncio
-from sqlalchemy.ext.asyncio import AsyncSession
+import os
+
 from sqlalchemy import select
-from app.database import AsyncSessionLocal, engine
+from app.database import SessionLocal, engine
 from app.models.agency import Agency
 from app.models.user import User, Role, RoleModel, PermissionModel
 from sqlalchemy.orm import selectinload
@@ -12,11 +12,11 @@ from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieAr
 from app.utils.security import get_password_hash
 
 
-async def seed_agency() -> int:
+def seed_agency() -> int:
     """Crée l'agence par défaut (multi-tenancy). Retourne son ID."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         # Vérifier si l'agence existe déjà
-        result = await session.execute(select(Agency).where(Agency.code == "KAM-DLA"))
+        result = session.execute(select(Agency).where(Agency.code == "KAM-DLA"))
         existing = result.scalar_one_or_none()
         if existing:
             print(f"✅ Agency already exists (id={existing.id}), skipping")
@@ -33,62 +33,62 @@ async def seed_agency() -> int:
             is_active=True,
         )
         session.add(agency)
-        await session.commit()
-        await session.refresh(agency)
+        session.commit()
+        session.refresh(agency)
         print(f"✅ Agency seeded successfully (id={agency.id})")
         return agency.id
 
 
-async def seed_users(agency_id: int):
+def seed_users(agency_id: int):
     """Crée les utilisateurs par défaut. Idempotent : ignore les doublons."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         users_data = [
             {
                 "email": "admin@kamlog.cm",
                 "username": "admin",
-                "password": "admin123",
+                "password": os.getenv("ADMIN123_PASSWORD", "admin123"),
                 "full_name": "Administrateur Système",
                 "role": Role.ADMIN,
             },
             {
                 "email": "dispatcher@kamlog.cm",
                 "username": "dispatcher",
-                "password": "dispatcher123",
+                "password": os.getenv("DISPATCHER123_PASSWORD", "dispatcher123"),
                 "full_name": "Chef Dispatch",
                 "role": Role.DISPATCHER,
             },
             {
                 "email": "finance@kamlog.cm",
                 "username": "finance",
-                "password": "finance123",
+                "password": os.getenv("FINANCE123_PASSWORD", "finance123"),
                 "full_name": "Comptable",
                 "role": Role.FINANCE,
             },
             {
                 "email": "douane@kamlog.cm",
                 "username": "douane",
-                "password": "douane123",
+                "password": os.getenv("DOUANE123_PASSWORD", "douane123"),
                 "full_name": "Agent Douane",
                 "role": Role.DOUANE,
             },
             {
                 "email": "gate@kamlog.cm",
                 "username": "gate",
-                "password": "gate123",
+                "password": os.getenv("GATE123_PASSWORD", "gate123"),
                 "full_name": "Agent Guérite",
                 "role": Role.GATE_AGENT,
             },
             {
                 "email": "magasin@kamlog.cm",
                 "username": "magasin",
-                "password": "magasin123",
+                "password": os.getenv("MAGASIN123_PASSWORD", "magasin123"),
                 "full_name": "Chef Magasinier",
                 "role": Role.MAGASIN,
             },
             {
                 "email": "auditor@kamlog.cm",
                 "username": "auditor",
-                "password": "auditor123",
+                "password": os.getenv("AUDITOR123_PASSWORD", "auditor123"),
                 "full_name": "Auditeur Interne",
                 "role": Role.AUDITOR,
             },
@@ -97,9 +97,16 @@ async def seed_users(agency_id: int):
         created = 0
         for u in users_data:
             # Vérifier si l'utilisateur existe déjà
-            result = await session.execute(select(User).where(User.email == u["email"]))
-            if result.scalar_one_or_none():
-                print(f"  → User {u['email']} already exists, skipping")
+            result = session.execute(select(User).options(selectinload(User.roles)).where(User.email == u["email"]))
+            user = result.scalar_one_or_none()
+            if user:
+                print(f"  → User {u['email']} already exists.")
+                # Assigner le rôle s'il n'en a pas
+                role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
+                role_db = role_result.scalar_one_or_none()
+                if role_db and role_db not in user.roles:
+                    user.roles.append(role_db)
+                    print(f"    → Role {u['role']} assigned to {u['email']}.")
                 continue
 
             user = User(
@@ -107,20 +114,26 @@ async def seed_users(agency_id: int):
                 username=u["username"],
                 password_hash=get_password_hash(u["password"]),
                 full_name=u["full_name"],
-                role=u["role"],
                 agency_id=agency_id,
                 is_active=True,
             )
+            
+            # Find the RoleModel and add it to user.roles
+            role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
+            role_db = role_result.scalar_one_or_none()
+            if role_db:
+                user.roles.append(role_db)
+                
             session.add(user)
             created += 1
 
-        await session.commit()
+        session.commit()
         print(f"✅ Users seeded: {created} created, {len(users_data) - created} already existed")
 
 
-async def seed_tiers():
+def seed_tiers():
     """Crée les clients de test. Idempotent."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         clients_data = [
             {
                 "code_tiers": "CLI001",
@@ -169,20 +182,20 @@ async def seed_tiers():
 
         created = 0
         for c in clients_data:
-            result = await session.execute(select(Tiers).where(Tiers.code_tiers == c["code_tiers"]))
+            result = session.execute(select(Tiers).where(Tiers.code_tiers == c["code_tiers"]))
             if result.scalar_one_or_none():
                 print(f"  → Tiers {c['code_tiers']} already exists, skipping")
                 continue
             session.add(Tiers(**c))
             created += 1
 
-        await session.commit()
+        session.commit()
         print(f"✅ Tiers seeded: {created} created")
 
 
-async def seed_camions():
+def seed_camions():
     """Crée la flotte de camions de test. Idempotent."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         camions_data = [
             {
                 "immatriculation": "CE 123 AB",
@@ -221,7 +234,7 @@ async def seed_camions():
 
         created = 0
         for c in camions_data:
-            result = await session.execute(
+            result = session.execute(
                 select(CamionFlotte).where(CamionFlotte.immatriculation == c["immatriculation"])
             )
             if result.scalar_one_or_none():
@@ -230,13 +243,13 @@ async def seed_camions():
             session.add(CamionFlotte(**c))
             created += 1
 
-        await session.commit()
+        session.commit()
         print(f"✅ Camions seeded: {created} created")
 
 
-async def seed_chauffeurs():
+def seed_chauffeurs():
     """Crée les chauffeurs de test. Idempotent."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         chauffeurs_data = [
             {
                 "nom": "Mbarga",
@@ -266,7 +279,7 @@ async def seed_chauffeurs():
 
         created = 0
         for c in chauffeurs_data:
-            result = await session.execute(
+            result = session.execute(
                 select(ChauffeurProfil).where(ChauffeurProfil.numero_permis == c["numero_permis"])
             )
             if result.scalar_one_or_none():
@@ -275,13 +288,13 @@ async def seed_chauffeurs():
             session.add(ChauffeurProfil(**c))
             created += 1
 
-        await session.commit()
+        session.commit()
         print(f"✅ Chauffeurs seeded: {created} created")
 
 
-async def seed_magasin():
+def seed_magasin():
     """Crée les données pour le module K-Magasin (Magasin, Articles, Stocks). Idempotent."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         # 1. Magasins
         magasins_data = [
             {
@@ -298,12 +311,12 @@ async def seed_magasin():
         
         magasins_map = {}
         for m in magasins_data:
-            result = await session.execute(select(Magasin).where(Magasin.code == m["code"]))
+            result = session.execute(select(Magasin).where(Magasin.code == m["code"]))
             mag = result.scalar_one_or_none()
             if not mag:
                 mag = Magasin(**m)
                 session.add(mag)
-                await session.flush()  # Pour avoir l'ID
+                session.flush()  # Pour avoir l'ID
             magasins_map[m["code"]] = mag
 
         # 2. Articles
@@ -333,12 +346,12 @@ async def seed_magasin():
 
         articles_map = {}
         for a in articles_data:
-            result = await session.execute(select(Article).where(Article.code_article == a["code_article"]))
+            result = session.execute(select(Article).where(Article.code_article == a["code_article"]))
             art = result.scalar_one_or_none()
             if not art:
                 art = Article(**a)
                 session.add(art)
-                await session.flush()
+                session.flush()
             articles_map[a["code_article"]] = art
 
         # 3. Stocks (Magasin Principal)
@@ -369,7 +382,7 @@ async def seed_magasin():
             ]
             
             for s in stocks_data:
-                result = await session.execute(
+                result = session.execute(
                     select(Stock).where(
                         (Stock.magasin_id == s["magasin_id"]) & 
                         (Stock.article_id == s["article_id"])
@@ -379,13 +392,13 @@ async def seed_magasin():
                 if not stk:
                     session.add(Stock(**s))
 
-        await session.commit()
+        session.commit()
         print("✅ Magasins, Articles et Stocks seeded")
 
 
-async def seed_rbac():
+def seed_rbac():
     """Crée les permissions et rôles par défaut. Idempotent."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         # 1. Définir toutes les permissions
         permissions_data = [
             # Parc
@@ -467,12 +480,12 @@ async def seed_rbac():
         # Insérer les permissions
         permissions_map = {}
         for code, name, module in permissions_data:
-            result = await session.execute(select(PermissionModel).where(PermissionModel.code == code))
+            result = session.execute(select(PermissionModel).where(PermissionModel.code == code))
             perm = result.scalar_one_or_none()
             if not perm:
                 perm = PermissionModel(code=code, name=name, module=module)
                 session.add(perm)
-                await session.flush()
+                session.flush()
             permissions_map[code] = perm
 
         # 2. Définir les rôles par défaut
@@ -512,7 +525,7 @@ async def seed_rbac():
         ]
 
         for code, name, desc, perm_codes in roles_data:
-            result = await session.execute(
+            result = session.execute(
                 select(RoleModel)
                 .options(selectinload(RoleModel.permissions))
                 .where(RoleModel.code == code)
@@ -530,26 +543,26 @@ async def seed_rbac():
             else:
                 role.permissions = role_perms
 
-        await session.commit()
+        session.commit()
         print("✅ Permissions and Roles seeded successfully")
 
 
-async def main():
+def main():
     """Exécute tous les seeds dans le bon ordre."""
     print("🌱 Starting seed data...")
 
     try:
         # 1. Agency DOIT être créée en premier (les users en dépendent)
-        agency_id = await seed_agency()
+        agency_id = seed_agency()
         # 2. Seed les permissions et les rôles dynamiques avant d'associer des users
-        await seed_rbac()
+        seed_rbac()
         # 3. Users (liés à l'agency)
-        await seed_users(agency_id)
+        seed_users(agency_id)
         # 4. Données métier (indépendantes)
-        await seed_tiers()
-        await seed_camions()
-        await seed_chauffeurs()
-        await seed_magasin()
+        seed_tiers()
+        seed_camions()
+        seed_chauffeurs()
+        seed_magasin()
         print("✅ All seed data completed successfully!")
     except Exception as e:
         print(f"❌ Error during seed: {e}")
@@ -557,8 +570,8 @@ async def main():
         traceback.print_exc()
         raise
     finally:
-        await engine.dispose()
+        engine.dispose()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

@@ -3,7 +3,7 @@ import enum
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import String, Numeric, Text, ForeignKey, Index, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
 
@@ -20,6 +20,7 @@ class Facture(BaseModel):
 
     numero_facture: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     tiers_id: Mapped[int] = mapped_column(ForeignKey('tiers.id'))
+    tiers = relationship("Tiers")
     dossier_id: Mapped[int | None] = mapped_column(ForeignKey('dossiers_operationnels.id'))
     mission_id: Mapped[int | None] = mapped_column(ForeignKey('missions_transport.id'))
 
@@ -40,7 +41,9 @@ class Encaissement(BaseModel):
 
     reference: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     tiers_id: Mapped[int] = mapped_column(ForeignKey('tiers.id'))
+    tiers = relationship("Tiers")
     facture_id: Mapped[int | None] = mapped_column(ForeignKey('factures.id'))
+    facture = relationship("Facture")
 
     montant_xaf: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
     mode_paiement: Mapped[str] = mapped_column(String(50))  # VIREMENT, ESPECES, MOBILE_MONEY

@@ -24,6 +24,15 @@ role_permissions = Table(
 )
 
 
+# Table d'association Many-to-Many entre Utilisateurs et Rôles
+user_roles = Table(
+    "user_roles",
+    BaseModel.metadata,
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True)
+)
+
+
 class PermissionModel(BaseModel):
     __tablename__ = "permissions"
     
@@ -44,7 +53,7 @@ class RoleModel(BaseModel):
     description: Mapped[str] = mapped_column(String(200), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
-    users = relationship("User", back_populates="role_rel")
+    users = relationship("User", secondary=user_roles, back_populates="roles")
     permissions = relationship("PermissionModel", secondary=role_permissions, back_populates="roles")
 
 
@@ -58,9 +67,8 @@ class User(BaseModel):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(200))
     
-    # Rôle (clé étrangère vers la table roles sur la colonne code pour assurer la compatibilité descendante)
-    role: Mapped[str] = mapped_column(String(50), ForeignKey("roles.code"), default="gate_agent")
-    role_rel = relationship("RoleModel", back_populates="users", foreign_keys=[role])
+    # Rôles (Relation Many-to-Many vers RoleModel)
+    roles = relationship("RoleModel", secondary=user_roles, back_populates="users", lazy="selectin")
     
     # Clé étrangère pour le multi-tenancy
     agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id"), nullable=False)

@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.database import get_db
@@ -58,7 +58,7 @@ class UserRoleUpdate(BaseModel):
     role: str
 
 @router.get("/roles", response_model=List[RoleSchema])
-async def get_roles(db: AsyncSession = Depends(get_db)):
+async def get_roles(db: Session = Depends(get_db)):
     """Retrieve all roles dynamically from database"""
     result = await db.execute(select(RoleModel).options(selectinload(RoleModel.permissions)))
     roles = result.scalars().all()
@@ -82,14 +82,14 @@ class UserCreate(BaseModel):
     agency_id: int
 
 @router.get("/users", response_model=List[UserResponse])
-async def get_all_users(db: AsyncSession = Depends(get_db)):
+async def get_all_users(db: Session = Depends(get_db)):
     """Retrieve all users"""
     result = await db.execute(select(User))
     users = result.scalars().all()
     return users
 
 @router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
+async def create_user(user_in: UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
     # Check if user exists
     result = await db.execute(select(User).where(User.username == user_in.username))
@@ -117,14 +117,14 @@ async def create_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/permissions", response_model=List[PermissionSchema])
-async def get_permissions(db: AsyncSession = Depends(get_db)):
+async def get_permissions(db: Session = Depends(get_db)):
     """Retrieve all system permissions"""
     result = await db.execute(select(PermissionModel))
     permissions = result.scalars().all()
     return permissions
 
 @router.post("/roles", response_model=RoleSchema, status_code=status.HTTP_201_CREATED)
-async def create_role(role_in: RoleCreate, db: AsyncSession = Depends(get_db)):
+async def create_role(role_in: RoleCreate, db: Session = Depends(get_db)):
     """Create a new role with its permissions"""
     result = await db.execute(select(RoleModel).where(RoleModel.code == role_in.code))
     if result.scalar_one_or_none():
@@ -154,7 +154,7 @@ async def create_role(role_in: RoleCreate, db: AsyncSession = Depends(get_db)):
     return result.scalar_one()
 
 @router.put("/roles/{role_code}", response_model=RoleSchema)
-async def update_role_permissions(role_code: str, role_in: RoleUpdate, db: AsyncSession = Depends(get_db)):
+async def update_role_permissions(role_code: str, role_in: RoleUpdate, db: Session = Depends(get_db)):
     """Update role permissions"""
     result = await db.execute(
         select(RoleModel)
@@ -177,7 +177,7 @@ async def update_role_permissions(role_code: str, role_in: RoleUpdate, db: Async
     return db_role
 
 @router.put("/users/{user_id}/role", response_model=UserResponse)
-async def update_user_role(user_id: int, user_role_in: UserRoleUpdate, db: AsyncSession = Depends(get_db)):
+async def update_user_role(user_id: int, user_role_in: UserRoleUpdate, db: Session = Depends(get_db)):
     """Assign role to a user"""
     role_result = await db.execute(select(RoleModel).where(RoleModel.code == user_role_in.role))
     if not role_result.scalar_one_or_none():

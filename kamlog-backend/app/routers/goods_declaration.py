@@ -43,7 +43,7 @@ def get_goods_declaration(declaration_id: int, db: Session = Depends(get_db), cu
 
 
 @router.post("/", response_model=GoodsDeclarationResponse)
-@limiter.limit("10/minute")
+
 @check_permission("transport:create")
 def create_goods_declaration(
     declaration: GoodsDeclarationCreate, 
@@ -55,7 +55,7 @@ def create_goods_declaration(
 
 
 @router.put("/{declaration_id}", response_model=GoodsDeclarationResponse)
-@limiter.limit("20/minute")
+
 @check_permission("transport:update")
 def update_goods_declaration(
     declaration_id: int, 
@@ -71,7 +71,7 @@ def update_goods_declaration(
 
 
 @router.delete("/{declaration_id}")
-@limiter.limit("10/minute")
+
 @check_permission("transport:delete")
 def delete_goods_declaration(
     declaration_id: int, 
@@ -87,7 +87,7 @@ def delete_goods_declaration(
 
 # ============ LIGNES GOODS DECLARATION ============
 @router.post("/{declaration_id}/lignes", response_model=LigneGoodsDeclarationResponse)
-@limiter.limit("10/minute")
+
 @check_permission("transport:create")
 def add_ligne_goods_declaration(
     declaration_id: int, 

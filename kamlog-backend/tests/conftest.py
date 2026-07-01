@@ -1,51 +1,63 @@
-# tests/conftest.py  Configuration pytest
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from app.database import Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from app.database import Base, get_db
 from app.models import *
 from httpx import AsyncClient
 from app.main import app
 
+# Configurer SQLAlchemy pour les tests avec une base en mémoire
+TEST_DATABASE_URL = "sqlite:///:memory:"
 
-# Engine de test
-TEST_DATABASE_URL = "postgresql+asyncpg://kamlog:kamlog_secret@localhost:5432/kamlog_erp_test"
-
-test_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
-TestSessionLocal = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
-
+from sqlalchemy.pool import StaticPool
+test_engine = create_engine(
+    TEST_DATABASE_URL, 
+    echo=False, 
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool
+)
+TestSessionLocal = sessionmaker(test_engine, class_=Session, expire_on_commit=False)
 
 @pytest.fixture(scope="function")
-async def db_session():
-    """Fixture pour une session de base de données de test."""
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+def db_session():
+    """Fixture pour une session de base de donnees de test."""
+    with test_engine.begin() as conn:
+        Base.metadata.drop_all(conn)
+        Base.metadata.create_all(conn)
     
-    async with TestSessionLocal() as session:
+    with TestSessionLocal() as session:
         yield session
-        await session.rollback()
-    
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-
+        session.rollback()
 
 @pytest.fixture(scope="function")
-async def client(db_session: AsyncSession):
+async def client(db_session: Session):
     """Fixture pour un client HTTP de test."""
-    async def override_get_db():
+    def override_get_db():
         yield db_session
     
     app.dependency_overrides[get_db] = override_get_db
     
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    # Disable rate limiting for tests
+    if hasattr(app.state, "limiter"):
+        app.state.limiter.enabled = False
+    
+    from httpx import ASGITransport
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
     
     app.dependency_overrides.clear()
 
-
 @pytest.fixture(scope="function")
-async def auth_headers(client: AsyncClient):
+async def auth_headers(client: AsyncClient, db_session: Session):
     """Fixture pour les headers d'authentification."""
-    # Créer un utilisateur de test
+    # Créer le rôle admin dans la base s'il n'existe pas
+    role_db = db_session.query(RoleModel).filter_by(code="admin").first()
+    if not role_db:
+        role_db = RoleModel(code="admin", name="Admin", description="Administrateur système", is_active=True)
+        db_session.add(role_db)
+        db_session.commit()
+
+    # Creer un utilisateur de test
     await client.post(
         "/api/auth/register",
         json={
@@ -53,7 +65,8 @@ async def auth_headers(client: AsyncClient):
             "username": "testuser",
             "password": "testpass123",
             "full_name": "Test User",
-            "role": "admin",
+            "roles": ["admin"],
+            "agency_id": "1",
         }
     )
     
@@ -66,5 +79,8 @@ async def auth_headers(client: AsyncClient):
         }
     )
     
+    if response.status_code != 200:
+        raise Exception(f"Login failed during setup: {response.status_code} - {response.text}")
+        
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

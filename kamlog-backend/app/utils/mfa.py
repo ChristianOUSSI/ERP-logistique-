@@ -103,14 +103,14 @@ def verify_backup_code(stored_codes_json: str, provided_code: str) -> tuple[bool
     return False, stored_codes_json
 
 
-def is_mfa_required_for_user(user_role: str) -> bool:
+def is_mfa_required_for_user(user_roles: List[str]) -> bool:
     """
-    Détermine si MFA est requis pour un rôle d'utilisateur.
+    Détermine si MFA est requis pour les rôles d'un utilisateur.
     
     Args:
-        user_role: Rôle de l'utilisateur
+        user_roles: Rôles de l'utilisateur
         
     Returns:
         True si MFA est requis
     """
-    return False # Temporarily disabled for testing (was: user_role == "admin")
+    return False # Temporarily disabled for testing (was: "admin" in user_roles)

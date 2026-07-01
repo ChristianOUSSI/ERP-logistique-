@@ -47,7 +47,7 @@ def get_reception_mag3(reception_id: int, db: Session = Depends(get_db), current
 
 
 @router.post("/", response_model=ReceptionMag3Response)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:create")
 def create_reception_mag3(
     reception: ReceptionMag3Create, 
@@ -59,7 +59,7 @@ def create_reception_mag3(
 
 
 @router.put("/{reception_id}", response_model=ReceptionMag3Response)
-@limiter.limit("20/minute")
+
 @check_permission("magasin:update")
 def update_reception_mag3(
     reception_id: int, 
@@ -75,7 +75,7 @@ def update_reception_mag3(
 
 
 @router.delete("/{reception_id}")
-@limiter.limit("10/minute")
+
 @check_permission("magasin:delete")
 def delete_reception_mag3(
     reception_id: int, 
@@ -90,7 +90,7 @@ def delete_reception_mag3(
 
 
 @router.post("/{reception_id}/valider", response_model=ReceptionMag3Response)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:validate")
 def validate_reception_mag3(
     reception_id: int, 
@@ -106,7 +106,7 @@ def validate_reception_mag3(
 
 # ============ WORKFLOW ENDPOINTS ============
 @router.post("/from-slip/{slip_id}", response_model=ReceptionMag3Response)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:create")
 def create_reception_from_slip(
     slip_id: int,
@@ -119,7 +119,7 @@ def create_reception_from_slip(
 
 
 @router.post("/{reception_id}/workflow-validate", response_model=ReceptionMag3Response)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:validate")
 def validate_reception_workflow(
     reception_id: int,

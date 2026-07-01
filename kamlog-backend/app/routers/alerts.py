@@ -1,6 +1,6 @@
 # app/routers/alerts.py  Router Alertes KAMLOG
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 from typing import List
 from datetime import datetime, timedelta
@@ -28,7 +28,7 @@ class AlertResponse(BaseModel):
 @router.get("/fuel-siphoning", response_model=List[AlertResponse])
 @require_role([User.Role.ADMIN, User.Role.DISPATCHER])
 async def check_fuel_siphoning_alerts(
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
@@ -38,7 +38,7 @@ async def check_fuel_siphoning_alerts(
     # Récupérer les missions en route ou livrées dans les 7 derniers jours
     date_limite = datetime.utcnow() - timedelta(days=7)
     
-    missions_result = await db.execute(
+    missions_result = db.execute(
         select(MissionTransport).where(
             MissionTransport.statut.in_([StatutMission.EN_ROUTE, StatutMission.LIVRE]),
             MissionTransport.updated_at >= date_limite
@@ -80,7 +80,7 @@ async def check_fuel_siphoning_alerts(
 @router.get("/credit-limit")
 @require_role([User.Role.ADMIN, User.Role.FINANCE])
 async def check_credit_limit_alerts(
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
@@ -89,7 +89,7 @@ async def check_credit_limit_alerts(
     from app.services.finance_service import calculer_encours_client
     from app.models.tiers import Tiers
     
-    tiers_result = await db.execute(select(Tiers).where(Tiers.statut == "ACTIF"))
+    tiers_result = db.execute(select(Tiers).where(Tiers.statut == "ACTIF"))
     all_tiers = tiers_result.scalars().all()
     
     alerts = []

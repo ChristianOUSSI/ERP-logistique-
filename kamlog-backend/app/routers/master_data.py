@@ -58,7 +58,7 @@ def get_article_by_code(code_article: str, db: Session = Depends(get_db), curren
 
 
 @router.post("/articles", response_model=Article)
-@limiter.limit("10/minute")
+
 @check_permission("article:create")
 def create_article(
     article: ArticleCreate, 
@@ -70,7 +70,7 @@ def create_article(
 
 
 @router.put("/articles/{article_id}", response_model=Article)
-@limiter.limit("20/minute")
+
 @check_permission("article:update")
 def update_article(
     article_id: int, 
@@ -86,7 +86,7 @@ def update_article(
 
 
 @router.delete("/articles/{article_id}")
-@limiter.limit("10/minute")
+
 @check_permission("article:delete")
 def delete_article(
     article_id: int, 
@@ -122,7 +122,7 @@ def get_incoterm(incoterm_id: int, db: Session = Depends(get_db), current_user =
 
 
 @router.post("/incoterms", response_model=Incoterm)
-@limiter.limit("10/minute")
+
 @check_permission("article:create")
 def create_incoterm(
     incoterm: IncotermCreate,
@@ -134,7 +134,7 @@ def create_incoterm(
 
 
 @router.put("/incoterms/{incoterm_id}", response_model=Incoterm)
-@limiter.limit("20/minute")
+
 @check_permission("article:update")
 def update_incoterm(
     incoterm_id: int,
@@ -150,7 +150,7 @@ def update_incoterm(
 
 
 @router.delete("/incoterms/{incoterm_id}")
-@limiter.limit("10/minute")
+
 @check_permission("article:delete")
 def delete_incoterm(
     incoterm_id: int,
@@ -186,7 +186,7 @@ def get_container_type(type_id: int, db: Session = Depends(get_db), current_user
 
 
 @router.post("/container-types", response_model=TypeConteneur)
-@limiter.limit("10/minute")
+
 @check_permission("article:create")
 def create_container_type(
     type_cont: TypeConteneurCreate,
@@ -198,7 +198,7 @@ def create_container_type(
 
 
 @router.put("/container-types/{type_id}", response_model=TypeConteneur)
-@limiter.limit("20/minute")
+
 @check_permission("article:update")
 def update_container_type(
     type_id: int,
@@ -214,7 +214,7 @@ def update_container_type(
 
 
 @router.delete("/container-types/{type_id}")
-@limiter.limit("10/minute")
+
 @check_permission("article:delete")
 def delete_container_type(
     type_id: int,

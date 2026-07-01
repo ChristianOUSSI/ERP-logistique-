@@ -85,9 +85,8 @@ class FactureService:
         montant_ttc = montant_ht + tva_xaf
         
         db_facture = Facture(
-            **facture.dict(exclude={'montant_ttc_xaf'}),
-            montant_ttc_xaf=montant_ttc,
-            cree_par=cree_par
+            **facture.model_dump(exclude={'montant_ttc_xaf'}),
+            montant_ttc_xaf=montant_ttc
         )
         db.add(db_facture)
         db.commit()
@@ -201,7 +200,7 @@ class EncaissementService:
 
     @staticmethod
     def create_encaissement(db: Session, encaissement: EncaissementCreate, cree_par: str) -> Encaissement:
-        db_encaissement = Encaissement(**encaissement.dict(), cree_par=cree_par)
+        db_encaissement = Encaissement(**encaissement.model_dump())
         db.add(db_encaissement)
         db.commit()
         db.refresh(db_encaissement)
@@ -217,7 +216,7 @@ class EncaissementService:
     def update_encaissement(db: Session, encaissement_id: int, encaissement: EncaissementUpdate) -> Optional[Encaissement]:
         db_encaissement = EncaissementService.get_encaissement(db, encaissement_id)
         if db_encaissement:
-            for field, value in encaissement.dict(exclude_unset=True).items():
+            for field, value in encaissement.model_dump(exclude_unset=True).items():
                 setattr(db_encaissement, field, value)
             db.commit()
             db.refresh(db_encaissement)

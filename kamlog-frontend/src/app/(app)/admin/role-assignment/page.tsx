@@ -1,75 +1,75 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminAPI, User, DbRole } from '@/lib/api/admin';
 
 export default function RoleAssignmentPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<DbRole[]>([]);
+  const queryClient = useQueryClient();
   
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [assignedRoleCode, setAssignedRoleCode] = useState<string>('');
   
   const [userFilterText, setUserFilterText] = useState('');
   const [roleFilterText, setRoleFilterText] = useState('');
   
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Fetch Users
+  const { data: users = [], isLoading: loadingUsers } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: adminAPI.getUsers,
+  });
+
+  // Fetch Roles
+  const { data: roles = [], isLoading: loadingRoles } = useQuery({
+    queryKey: ['admin-roles'],
+    queryFn: adminAPI.getDbRoles,
+  });
+
+  const loading = loadingUsers || loadingRoles;
+  const selectedUser = users.find(u => u.id === selectedUserId) || null;
+
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [usersData, rolesData] = await Promise.all([
-          adminAPI.getUsers(),
-          adminAPI.getDbRoles()
-        ]);
-        setUsers(usersData || []);
-        setRoles(rolesData || []);
-        
-        if (usersData && usersData.length > 0) {
-          selectUser(usersData[0]);
-        }
-      } catch (err) {
-        console.error('Error fetching role assignments:', err);
-        setErrorMessage('Erreur lors du chargement des données');
-      } finally {
-        setLoading(false);
-      }
+    if (users.length > 0 && selectedUserId === null) {
+      setSelectedUserId(users[0].id);
+      setAssignedRoleCode(users[0].role || '');
     }
-    fetchData();
-  }, []);
+  }, [users, selectedUserId]);
 
   const selectUser = (user: User) => {
-    setSelectedUser(user);
+    setSelectedUserId(user.id);
     setAssignedRoleCode(user.role || '');
     setSuccessMessage('');
     setErrorMessage('');
   };
 
-  const handleSave = async () => {
-    if (!selectedUser) return;
+  const updateUserRoleMutation = useMutation({
+    mutationFn: ({ userId, roleCode }: { userId: number, roleCode: string }) => 
+      adminAPI.updateUserRole(userId, roleCode),
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(['admin-users'], (old: User[]) => 
+        old.map(u => u.id === updatedUser.id ? updatedUser : u)
+      );
+      setSuccessMessage(`Rôle "${assignedRoleCode.toUpperCase()}" affecté avec succès à ${updatedUser.username}`);
+      setErrorMessage('');
+    },
+    onError: (err: any) => {
+      console.error('Error updating user role:', err);
+      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de l\'affectation');
+    }
+  });
+
+  const handleSave = () => {
+    if (!selectedUserId) return;
     if (!assignedRoleCode) {
       setErrorMessage('Veuillez sélectionner un rôle');
       return;
     }
-
-    setSaving(true);
     setSuccessMessage('');
     setErrorMessage('');
-
-    try {
-      const updatedUser = await adminAPI.updateUserRole(selectedUser.id, assignedRoleCode);
-      setUsers(users.map(u => u.id === selectedUser.id ? updatedUser : u));
-      setSelectedUser(updatedUser);
-      setSuccessMessage(`Rôle "${assignedRoleCode.toUpperCase()}" affecté avec succès à ${selectedUser.username}`);
-    } catch (err: any) {
-      console.error('Error updating user role:', err);
-      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de l\'affectation');
-    } finally {
-      setSaving(false);
-    }
+    updateUserRoleMutation.mutate({ userId: selectedUserId, roleCode: assignedRoleCode });
   };
 
   const getInitials = (name: string) => {
@@ -243,10 +243,10 @@ export default function RoleAssignmentPage() {
                 </button>
                 <button 
                   onClick={handleSave}
-                  disabled={saving || !selectedUser}
+                  disabled={updateUserRoleMutation.isPending || !selectedUser}
                   className="px-xl py-sm bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary-container transition-all shadow-sm active:scale-95 disabled:opacity-50"
                 >
-                  {saving ? 'Enregistrement...' : 'Confirmer l\'Affectation'}
+                  {updateUserRoleMutation.isPending ? 'Enregistrement...' : 'Confirmer l\'Affectation'}
                 </button>
               </div>
             </section>

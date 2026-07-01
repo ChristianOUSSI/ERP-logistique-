@@ -1,6 +1,6 @@
 # app/database.py  Database Engine & Session KAMLOG
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from app.config import settings
 
 
@@ -20,9 +20,9 @@ class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=naming_convention)
 
 
-# Engine async PostgreSQL avec connection pooling optimisé
-engine = create_async_engine(
-    settings.DATABASE_URL,
+# Engine PostgreSQL avec connection pooling optimisé
+engine = create_engine(
+    settings.DATABASE_URL.replace("+asyncpg", "").replace("+aiosqlite", ""),
     echo=settings.DEBUG,
     future=True,
     pool_size=20,  # Nombre de connexions permanentes dans le pool
@@ -31,31 +31,31 @@ engine = create_async_engine(
     pool_recycle=3600,  # Recycler les connexions après 1 heure
 )
 
-# Session factory async
-AsyncSessionLocal = async_sessionmaker(
-    engine,
-    class_=AsyncSession,
+# Session factory
+SessionLocal = sessionmaker(
+    bind=engine,
+    class_=Session,
     expire_on_commit=False,
 )
 
 
-async def get_db() -> AsyncSession:
+def get_db():
     """Dependency injection pour les sessions de base de données."""
-    async with AsyncSessionLocal() as session:
+    with SessionLocal() as session:
         try:
             yield session
-            await session.commit()
+            session.commit()
         except Exception:
-            await session.rollback()
+            session.rollback()
             raise
         finally:
-            await session.close()
+            session.close()
 
 
 from sqlalchemy import event
 import datetime
 
-@event.listens_for(engine.sync_engine, "connect")
+@event.listens_for(engine, "connect")
 def register_sqlite_now(dbapi_connection, connection_record):
     if hasattr(dbapi_connection, "create_function"):
         try:

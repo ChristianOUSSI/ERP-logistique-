@@ -5,20 +5,20 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import selectinload
-from typing import List, Optional
-from app.models.user import Role, User, RoleModel
+from typing import List, Optional, Set
+from app.models.user import User, RoleModel
 from app.database import get_db
 from app.config import settings
 
 security = HTTPBearer()
 
-async def get_current_user(
+def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ) -> User:
-    """Récupère l'utilisateur actuel à partir du token JWT de façon asynchrone."""
+    """Récupère l'utilisateur actuel à partir du token JWT."""
     try:
         token = credentials.credentials
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
@@ -29,11 +29,15 @@ async def get_current_user(
                 detail="Token invalide"
             )
         try:
-            user_id = int(user_id_str)
+            # Rétrocompatibilité : si sub est le nom d'utilisateur, on le cherche
+            if user_id_str.isdigit():
+                user = db.query(User).filter(User.id == int(user_id_str)).first()
+            else:
+                user = db.query(User).filter(User.username == user_id_str).first()
         except (ValueError, TypeError):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token invalide (subject non numérique)"
+                detail="Token invalide (subject invalide)"
             )
     except JWTError:
         raise HTTPException(
@@ -41,12 +45,6 @@ async def get_current_user(
             detail="Token invalide"
         )
     
-    result = await db.execute(
-        select(User)
-        .options(selectinload(User.role_rel).selectinload(RoleModel.permissions))
-        .where(User.id == user_id)
-    )
-    user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -56,123 +54,122 @@ async def get_current_user(
     return user
 
 
-def require_role(allowed_roles: list[Role]):
-    """Décorateur pour vérifier les rôles autorisés."""
+def get_user_permissions(user: User) -> Set[str]:
+    """Helper to extract all permissions from all roles."""
+    perms = set()
+    if user.roles:
+        for role in user.roles:
+            if role.permissions:
+                for p in role.permissions:
+                    perms.add(p.code)
+    return perms
+
+
+def _setup_signature(func, wrapper):
+    sig = inspect.signature(func)
+    if "current_user" not in sig.parameters:
+        new_params = list(sig.parameters.values())
+        new_params.append(
+            inspect.Parameter(
+                "current_user",
+                inspect.Parameter.KEYWORD_ONLY,
+                default=Depends(get_current_user),
+                annotation=User
+            )
+        )
+        wrapper.__signature__ = sig.replace(parameters=new_params)
+    else:
+        wrapper.__signature__ = sig
+    return wrapper
+
+def require_role(allowed_roles: list[str]):
     def decorator(func):
         if inspect.iscoroutinefunction(func):
             @wraps(func)
-            async def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-                if current_user.role not in allowed_roles:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Role {current_user.role} not authorized. Required: {allowed_roles}"
-                    )
-                return await func(*args, current_user=current_user, **kwargs)
-            return wrapper
+            async def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if not any(role in allowed_roles for role in user_role_codes) and "admin" not in user_role_codes:
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Roles not authorized.")
+                return await func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
         else:
             @wraps(func)
-            def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-                if current_user.role not in allowed_roles:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Role {current_user.role} not authorized. Required: {allowed_roles}"
-                    )
-                return func(*args, current_user=current_user, **kwargs)
-            return wrapper
+            def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if not any(role in allowed_roles for role in user_role_codes) and "admin" not in user_role_codes:
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Roles not authorized.")
+                return func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
     return decorator
 
 
 def require_permission(permission: str):
-    """Décorateur pour vérifier les permissions granulaires (UNIFIÉ)."""
     def decorator(func):
         if inspect.iscoroutinefunction(func):
             @wraps(func)
-            async def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
+            async def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
                 if not current_user:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Authentication required"
-                    )
-                
-                # Les admins ont toutes les permissions
-                if current_user.role == Role.ADMIN or current_user.role == "admin":
-                    return await func(*args, current_user=current_user, **kwargs)
-                
-                user_permissions = []
-                if current_user.role_rel and current_user.role_rel.permissions:
-                    user_permissions = [p.code for p in current_user.role_rel.permissions]
-                
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if "admin" in user_role_codes:
+                    return await func(*args, **kwargs)
+                user_permissions = get_user_permissions(current_user)
                 if "*" not in user_permissions and permission not in user_permissions:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Permission {permission} not granted to role {current_user.role}"
-                    )
-                
-                return await func(*args, current_user=current_user, **kwargs)
-            return wrapper
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Permission {permission} not granted")
+                return await func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
         else:
             @wraps(func)
-            def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
+            def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
                 if not current_user:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Authentication required"
-                    )
-                
-                # Les admins ont toutes les permissions
-                if current_user.role == Role.ADMIN or current_user.role == "admin":
-                    return func(*args, current_user=current_user, **kwargs)
-                
-                user_permissions = []
-                if current_user.role_rel and current_user.role_rel.permissions:
-                    user_permissions = [p.code for p in current_user.role_rel.permissions]
-                
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if "admin" in user_role_codes:
+                    return func(*args, **kwargs)
+                user_permissions = get_user_permissions(current_user)
                 if "*" not in user_permissions and permission not in user_permissions:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Permission {permission} not granted to role {current_user.role}"
-                    )
-                
-                return func(*args, current_user=current_user, **kwargs)
-            return wrapper
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Permission {permission} not granted")
+                return func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
     return decorator
 
 
-# Définition des permissions par module
-MODULE_PERMISSIONS = {
-    "tiers": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE, Role.MAGASIN],
-    "transport": [Role.ADMIN, Role.DISPATCHER, Role.AUDITOR],
-    "finance": [Role.ADMIN, Role.FINANCE, Role.AUDITOR],
-    "parc": [Role.ADMIN, Role.GATE_AGENT, Role.DISPATCHER, Role.AUDITOR],
-    "documents": [Role.ADMIN, Role.DISPATCHER, Role.FINANCE, Role.DOUANE, Role.MAGASIN, Role.AUDITOR],
-    "magasin": [Role.ADMIN, Role.MAGASIN, Role.DISPATCHER, Role.AUDITOR],
-    "audit": [Role.ADMIN, Role.AUDITOR],
-}
-
-
 def check_module_permission(module: str):
-    """Vérifie si l'utilisateur a accès à un module."""
     def decorator(func):
         if inspect.iscoroutinefunction(func):
             @wraps(func)
-            async def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-                allowed = MODULE_PERMISSIONS.get(module, [])
-                if current_user.role not in allowed:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Access denied to module {module}"
-                    )
-                return await func(*args, current_user=current_user, **kwargs)
-            return wrapper
+            async def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if "admin" in user_role_codes:
+                    return await func(*args, **kwargs)
+                user_permissions = get_user_permissions(current_user)
+                if "*" not in user_permissions and not any(p.startswith(f"{module}:") for p in user_permissions):
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Access denied to module {module}")
+                return await func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
         else:
             @wraps(func)
-            def wrapper(*args, current_user: User = Depends(get_current_user), **kwargs):
-                allowed = MODULE_PERMISSIONS.get(module, [])
-                if current_user.role not in allowed:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Access denied to module {module}"
-                    )
-                return func(*args, current_user=current_user, **kwargs)
-            return wrapper
+            def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
+                if "admin" in user_role_codes:
+                    return func(*args, **kwargs)
+                user_permissions = get_user_permissions(current_user)
+                if "*" not in user_permissions and not any(p.startswith(f"{module}:") for p in user_permissions):
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Access denied to module {module}")
+                return func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
     return decorator

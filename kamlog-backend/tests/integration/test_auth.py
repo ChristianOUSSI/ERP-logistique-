@@ -14,6 +14,7 @@ async def test_register_user(client: AsyncClient):
             "password": "testpass123",
             "full_name": "Test User",
             "role": "dispatcher",
+            "agency_id": "00000000-0000-0000-0000-000000000000"
         }
     )
     assert response.status_code == 201
@@ -34,6 +35,7 @@ async def test_login(client: AsyncClient):
             "password": "loginpass123",
             "full_name": "Login User",
             "role": "dispatcher",
+            "agency_id": "00000000-0000-0000-0000-000000000000"
         }
     )
     

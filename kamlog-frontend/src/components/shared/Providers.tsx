@@ -2,9 +2,11 @@
 'use client'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { Toaster } from '@/components/ui/sonner'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { AuthProvider as CustomAuthProvider } from '@/components/layout/AuthProvider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function AuthSync({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
@@ -46,14 +48,26 @@ function AuthSync({ children }: { children: React.ReactNode }) {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute par défaut
+        refetchOnWindowFocus: false,
+      },
+    },
+  }))
+
   return (
-    <SessionProvider>
-      <AuthSync>
-        <CustomAuthProvider>
-          {children}
-        </CustomAuthProvider>
-      </AuthSync>
-      <Toaster />
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <AuthSync>
+          <CustomAuthProvider>
+            {children}
+          </CustomAuthProvider>
+        </AuthSync>
+        <Toaster />
+      </SessionProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }

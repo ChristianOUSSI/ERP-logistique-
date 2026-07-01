@@ -1,7 +1,7 @@
 # app/routers/auth.py  Router Authentification
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -26,37 +26,7 @@ limiter = Limiter(key_func=get_remote_address)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
-async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(get_db)
-) -> User:
-    """Récupère l'utilisateur courant depuis le token JWT."""
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    payload = decode_token(token)
-    if payload is None:
-        raise credentials_exception
-    
-    user_id_str: str = payload.get("sub")
-    if user_id_str is None:
-        raise credentials_exception
-    
-    try:
-        user_id = int(user_id_str)
-    except (ValueError, TypeError):
-        raise credentials_exception
-        
-    result = await db.execute(select(User).where(User.id == user_id))
-    user = result.scalar_one_or_none()
-    
-    if user is None:
-        raise credentials_exception
-    
-    return user
+from app.utils.rbac import get_current_user
 
 
 @router.post("/force-seed")
@@ -72,15 +42,15 @@ async def force_seed():
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-@limiter.limit("10/hour")
+
 async def register(
     request: Request,
     user_data: UserCreate,
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """Enregistre un nouvel utilisateur."""
     # Vérifier si l'email existe déjà
-    result = await db.execute(select(User).where(User.email == user_data.email))
+    result = db.execute(select(User).where(User.email == user_data.email))
     if result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -88,7 +58,7 @@ async def register(
         )
     
     # Vérifier si le username existe déjà
-    result = await db.execute(select(User).where(User.username == user_data.username))
+    result = db.execute(select(User).where(User.username == user_data.username))
     if result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -102,34 +72,39 @@ async def register(
         username=user_data.username,
         password_hash=hashed_password,
         full_name=user_data.full_name,
-        role=user_data.role,
+        agency_id=getattr(user_data, "agency_id", None)
     )
     
+    # Assigner les rôles
+    from app.models.user import RoleModel
+    roles_db = db.query(RoleModel).filter(RoleModel.code.in_(user_data.roles)).all()
+    db_user.roles = roles_db
+    
     db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
+    db.commit()
+    db.refresh(db_user)
     
     return {
         "id": db_user.id,
         "email": str(db_user.email),
         "username": str(db_user.username),
         "full_name": str(db_user.full_name) if db_user.full_name else None,
-        "role": str(db_user.role.value) if hasattr(db_user.role, 'value') else str(db_user.role),
+        "roles": [r.code for r in db_user.roles],
         "is_active": bool(db_user.is_active),
         "created_at": db_user.created_at.isoformat() if db_user.created_at else None,
     }
 
 
 @router.post("/login", response_model=Token)
-@limiter.limit("5/minute")
+
 async def login(
     request: Request,
     credentials: UserLogin,
     mfa_token: str | None = None,
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     from sqlalchemy import or_
-    result = await db.execute(
+    result = db.execute(
         select(User).where(
             or_(
                 User.username == credentials.username,
@@ -153,7 +128,8 @@ async def login(
         )
     
     # Vérifier MFA si activé ou requis
-    mfa_required = is_mfa_required_for_user(user.role) or user.mfa_enabled
+    user_role_codes = [r.code for r in user.roles] if user.roles else []
+    mfa_required = is_mfa_required_for_user(user_role_codes) or user.mfa_enabled
     
     if mfa_required:
         if user.mfa_enabled:
@@ -190,7 +166,7 @@ async def login(
 
 
 @router.post("/refresh", response_model=Token)
-async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
+async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
     """Rafraîchit le access token avec le refresh token."""
     payload = decode_token(refresh_token)
     if payload is None:
@@ -207,7 +183,7 @@ async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token structure"
         )
-    result = await db.execute(select(User).where(User.id == user_id))
+    result = db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     
     if not user or not user.is_active:
@@ -235,7 +211,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
         "email": str(current_user.email),
         "username": str(current_user.username),
         "full_name": str(current_user.full_name) if current_user.full_name else None,
-        "role": str(current_user.role.value) if hasattr(current_user.role, 'value') else str(current_user.role),
+        "roles": [r.code for r in current_user.roles] if current_user.roles else [],
         "is_active": bool(current_user.is_active),
         "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
     }
@@ -259,12 +235,12 @@ class MFASetupResponse(BaseModel):
 
 
 @router.post("/mfa/setup", response_model=MFASetupResponse)
-@limiter.limit("3/hour")
+
 async def setup_mfa(
     request: Request,
     mfa_data: MFASetupRequest,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """
     Configure MFA pour l'utilisateur courant.
@@ -296,7 +272,7 @@ async def setup_mfa(
     # Stocker temporairement (ne pas activer encore)
     current_user.mfa_secret = secret
     current_user.mfa_backup_codes = backup_codes
-    await db.commit()
+    db.commit()
     
     return {
         "qr_code": qr_code,
@@ -305,12 +281,12 @@ async def setup_mfa(
 
 
 @router.post("/mfa/enable")
-@limiter.limit("5/hour")
+
 async def enable_mfa(
     request: Request,
     mfa_data: MFAVerifyRequest,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """
     Active MFA après vérification du token TOTP.
@@ -331,18 +307,18 @@ async def enable_mfa(
     
     # Activer MFA
     current_user.mfa_enabled = True
-    await db.commit()
+    db.commit()
     
     return {"message": "MFA enabled successfully"}
 
 
 @router.post("/mfa/disable")
-@limiter.limit("5/hour")
+
 async def disable_mfa(
     request: Request,
     password: str,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """
     Désactive MFA pour l'utilisateur courant.
@@ -365,18 +341,18 @@ async def disable_mfa(
     current_user.mfa_enabled = False
     current_user.mfa_secret = None
     current_user.mfa_backup_codes = None
-    await db.commit()
+    db.commit()
     
     return {"message": "MFA disabled successfully"}
 
 
 @router.post("/mfa/verify-backup")
-@limiter.limit("10/hour")
+
 async def verify_backup_code(
     request: Request,
     code: str,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     """
     Vérifie un code de secours MFA.
@@ -391,7 +367,7 @@ async def verify_backup_code(
     
     if is_valid:
         current_user.mfa_backup_codes = updated_codes
-        await db.commit()
+        db.commit()
         return {"message": "Backup code verified successfully"}
     else:
         raise HTTPException(
@@ -403,7 +379,8 @@ async def verify_backup_code(
 @router.get("/mfa/status")
 async def get_mfa_status(current_user: User = Depends(get_current_user)):
     """Retourne le statut MFA de l'utilisateur courant."""
+    user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
     return {
         "mfa_enabled": current_user.mfa_enabled,
-        "mfa_required": is_mfa_required_for_user(current_user.role)
+        "mfa_required": is_mfa_required_for_user(user_role_codes)
     }

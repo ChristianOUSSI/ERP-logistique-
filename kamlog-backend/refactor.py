@@ -1,0 +1,20 @@
+import os, re
+with open('scripts/seed_data.py', 'r', encoding='utf-8') as f:
+    content = f.read()
+content = content.replace('import asyncio', 'import os')
+content = content.replace('from sqlalchemy.ext.asyncio import AsyncSession', '')
+content = content.replace('from app.database import AsyncSessionLocal, engine', 'from app.database import SessionLocal, engine')
+content = content.replace('AsyncSessionLocal()', 'SessionLocal()')
+content = content.replace('async def ', 'def ')
+content = content.replace('async with ', 'with ')
+content = content.replace('await session.execute', 'session.execute')
+content = content.replace('await session.commit', 'session.commit')
+content = content.replace('await session.refresh', 'session.refresh')
+content = content.replace('await session.flush', 'session.flush')
+content = content.replace('await seed_', 'seed_')
+content = content.replace('await engine.dispose()', 'engine.dispose()')
+content = content.replace('asyncio.run(main())', 'main()')
+content = re.sub(r'"password": "(.*?)"', lambda m: f'"password": os.getenv("{m.group(1).upper()}_PASSWORD", "{m.group(1)}")', content)
+with open('scripts/seed_data.py', 'w', encoding='utf-8') as f:
+    f.write(content)
+print('Refactored seed_data.py')

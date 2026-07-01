@@ -19,10 +19,14 @@ async def test_create_facture(client: AsyncClient, auth_headers):
         "/api/finance/factures",
         headers=auth_headers,
         json={
+            "numero_facture": "TEST-FAC-001",
             "tiers_id": 1,
             "montant_ht_xaf": 100000,
-            "date_facture": "2026-06-09",
-            "description": "Test invoice"
+            "tva_xaf": 19250,
+            "montant_ttc_xaf": 119250,
+            "date_emission": "2026-06-09T00:00:00Z",
+            "date_echeance": "2026-07-09T00:00:00Z",
+            "notes": "Test invoice"
         }
     )
     assert response.status_code in [201, 402, 404]  # 402 si limite crédit dépassée, 404 si tiers inexistant
@@ -110,10 +114,14 @@ async def test_create_encaissement(client: AsyncClient, auth_headers):
         "/api/finance/encaissements",
         headers=auth_headers,
         json={
+            "reference": "ENC-2023-001",
+            "tiers_id": 1,
             "facture_id": 1,
             "montant_xaf": 119250,
             "mode_paiement": "VIREMENT",
-            "reference_paiement": "REF-123456"
+            "date_paiement": "2023-01-01T10:00:00Z",
+            "reference_paiement": "REF-123456",
+            "notes": "Paiement test"
         }
     )
     assert response.status_code in [201, 404]

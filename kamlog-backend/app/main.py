@@ -52,8 +52,7 @@ def patched_limit(self, *args, **kwargs):
 Limiter.limit = patched_limit
 
 from app.database import engine, Base
-from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
-from app import admin
+from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
 from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency
 from app.config import settings
 from app.utils.logger import setup_logger

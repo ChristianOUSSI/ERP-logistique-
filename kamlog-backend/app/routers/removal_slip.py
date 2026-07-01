@@ -47,7 +47,7 @@ def get_removal_slip(slip_id: int, db: Session = Depends(get_db), current_user =
 
 
 @router.post("/", response_model=RemovalSlipResponse)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:create")
 def create_removal_slip(
     slip: RemovalSlipCreate, 
@@ -59,7 +59,7 @@ def create_removal_slip(
 
 
 @router.put("/{slip_id}", response_model=RemovalSlipResponse)
-@limiter.limit("20/minute")
+
 @check_permission("magasin:update")
 def update_removal_slip(
     slip_id: int, 
@@ -75,7 +75,7 @@ def update_removal_slip(
 
 
 @router.delete("/{slip_id}")
-@limiter.limit("10/minute")
+
 @check_permission("magasin:delete")
 def delete_removal_slip(
     slip_id: int, 
@@ -90,7 +90,7 @@ def delete_removal_slip(
 
 
 @router.post("/{slip_id}/autoriser", response_model=RemovalSlipResponse)
-@limiter.limit("10/minute")
+
 @check_permission("magasin:authorize")
 def authorize_removal_slip(
     slip_id: int, 
@@ -116,7 +116,7 @@ def get_workflow_status(
 
 
 @router.post("/{slip_id}/workflow-create")
-@limiter.limit("10/minute")
+
 @check_permission("magasin:create")
 def create_removal_slip_workflow(
     slip: RemovalSlipCreate, 

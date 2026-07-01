@@ -64,7 +64,7 @@ def get_supplier_by_niu(niu: str, db: Session = Depends(get_db), current_user = 
 
 
 @router.post("/", response_model=SupplierResponse)
-@limiter.limit("10/minute")
+
 @check_permission("master-data:create")
 def create_supplier(
     supplier: SupplierCreate, 
@@ -76,7 +76,7 @@ def create_supplier(
 
 
 @router.put("/{supplier_id}", response_model=SupplierResponse)
-@limiter.limit("20/minute")
+
 @check_permission("master-data:update")
 def update_supplier(
     supplier_id: int, 
@@ -92,7 +92,7 @@ def update_supplier(
 
 
 @router.delete("/{supplier_id}")
-@limiter.limit("10/minute")
+
 @check_permission("master-data:delete")
 def delete_supplier(
     supplier_id: int, 
@@ -108,7 +108,7 @@ def delete_supplier(
 
 # ============ SUPPLIER PROFILES ============
 @router.post("/{supplier_id}/profiles", response_model=SupplierProfileResponse)
-@limiter.limit("10/minute")
+
 @check_permission("master-data:create")
 def create_supplier_profile(
     supplier_id: int,

@@ -47,9 +47,9 @@ echo "📋 Creating database tables..."
 python create_tables.py
 echo "✅ Tables created (or already exist)"
 
-# ─── Alembic stamp (marquer comme à jour si pas déjà fait) ───
-echo "📌 Stamping Alembic migrations..."
-alembic stamp head 2>/dev/null || echo "⚠️  Alembic stamp skipped (may already be stamped)"
+# ─── Alembic upgrade (appliquer les migrations) ───
+echo "📌 Running Alembic migrations..."
+alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
 
 # ─── Seeders si SEED_DATA=true ───────────────────────────────
 if [ "$SEED_DATA" = "true" ]; then
