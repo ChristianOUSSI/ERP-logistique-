@@ -1,92 +1,104 @@
-// src/app/(app)/admin/role-assignment/page.tsx - Role Assignment - Fidèle 100% au HTML original
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import { adminAPI, User, DbRole } from '@/lib/api/admin';
 
-interface PermissionMap {
-  [key: string]: {
-    ops: string[]
-    finance: string[]
-    system: string[]
-  }
-}
+export default function RoleAssignmentPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<DbRole[]>([]);
+  
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [assignedRoleCode, setAssignedRoleCode] = useState<string>('');
+  
+  const [userFilterText, setUserFilterText] = useState('');
+  const [roleFilterText, setRoleFilterText] = useState('');
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-export default function RoleAssignment() {
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(['Admin'])
-  const [filterText, setFilterText] = useState('')
-
-  const permissionMap: PermissionMap = {
-    'Admin': {
-      ops: ['Override Safety Protocols', 'Global Real-time Tracking'],
-      finance: ['View Global Balance Sheet', 'Audit Payroll Records'],
-      system: ['Create/Delete Users', 'Modify T-Code Routings', 'Security Log Access']
-    },
-    'Dispatcher': {
-      ops: ['Dock Assignment', 'Truck Queue Mgmt', 'Manifest Signing'],
-      finance: [],
-      system: ['View Operational Dashboards']
-    },
-    'Finance': {
-      ops: ['View Cargo Manifests'],
-      finance: ['Issue Invoices', 'Approve Petty Cash', 'VAT Reporting'],
-      system: []
-    },
-    'GateAgent': {
-      ops: ['Vehicle Entry Log', 'Weight Bridge Record', 'Visitor Pass Issuance'],
-      finance: [],
-      system: []
-    },
-    'Inventory': {
-      ops: ['Stock Adjustment', 'Bin Transfer', 'Cycle Counting'],
-      finance: ['Inventory Value Report'],
-      system: []
-    }
-  }
-
-  const roles = [
-    { id: 'Admin', name: 'System Administrator', icon: 'shield_person', description: 'Full read/write access to all modules including security and ERP configuration.', checked: true },
-    { id: 'Dispatcher', name: 'Terminal Dispatcher', icon: 'hub', description: 'Manage vehicle flow, assign loading docks, and supervise gate movements.', checked: false },
-    { id: 'Finance', name: 'Finance Specialist', icon: 'account_balance_wallet', description: 'Invoicing, expense auditing, and financial reporting across port activities.', checked: false },
-    { id: 'GateAgent', name: 'Gate Agent', icon: 'gate', description: 'Operational gate control, vehicle scanning, and basic entry data logging.', checked: false },
-    { id: 'Inventory', name: 'Inventory Controller', icon: 'warehouse', description: 'Warehouse auditing, stock level monitoring, and storage optimization.', checked: false }
-  ]
-
-  const handleRoleToggle = (roleId: string) => {
-    setSelectedRoles(prev => {
-      if (prev.includes(roleId)) {
-        return prev.filter(r => r !== roleId)
-      } else {
-        return [...prev, roleId]
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [usersData, rolesData] = await Promise.all([
+          adminAPI.getUsers(),
+          adminAPI.getDbRoles()
+        ]);
+        setUsers(usersData || []);
+        setRoles(rolesData || []);
+        
+        if (usersData && usersData.length > 0) {
+          selectUser(usersData[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching role assignments:', err);
+        setErrorMessage('Erreur lors du chargement des données');
+      } finally {
+        setLoading(false);
       }
-    })
-  }
-
-  const getAggregatePermissions = () => {
-    let opsSet = new Set<string>()
-    let financeSet = new Set<string>()
-    let systemSet = new Set<string>()
-
-    selectedRoles.forEach(role => {
-      if (permissionMap[role]) {
-        permissionMap[role].ops.forEach(p => opsSet.add(p))
-        permissionMap[role].finance.forEach(p => financeSet.add(p))
-        permissionMap[role].system.forEach(p => systemSet.add(p))
-      }
-    })
-
-    return {
-      ops: Array.from(opsSet),
-      finance: Array.from(financeSet),
-      system: Array.from(systemSet)
     }
-  }
+    fetchData();
+  }, []);
 
-  const permissions = getAggregatePermissions()
+  const selectUser = (user: User) => {
+    setSelectedUser(user);
+    setAssignedRoleCode(user.role || '');
+    setSuccessMessage('');
+    setErrorMessage('');
+  };
+
+  const handleSave = async () => {
+    if (!selectedUser) return;
+    if (!assignedRoleCode) {
+      setErrorMessage('Veuillez sélectionner un rôle');
+      return;
+    }
+
+    setSaving(true);
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    try {
+      const updatedUser = await adminAPI.updateUserRole(selectedUser.id, assignedRoleCode);
+      setUsers(users.map(u => u.id === selectedUser.id ? updatedUser : u));
+      setSelectedUser(updatedUser);
+      setSuccessMessage(`Rôle "${assignedRoleCode.toUpperCase()}" affecté avec succès à ${selectedUser.username}`);
+    } catch (err: any) {
+      console.error('Error updating user role:', err);
+      setErrorMessage(err.response?.data?.detail || 'Une erreur est survenue lors de l\'affectation');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
+  // Filtering
+  const filteredUsers = users.filter(user => 
+    user.username.toLowerCase().includes(userFilterText.toLowerCase()) ||
+    user.email.toLowerCase().includes(userFilterText.toLowerCase())
+  );
 
   const filteredRoles = roles.filter(role => 
-    role.name.toLowerCase().includes(filterText.toLowerCase()) ||
-    role.description.toLowerCase().includes(filterText.toLowerCase())
-  )
+    role.name.toLowerCase().includes(roleFilterText.toLowerCase()) ||
+    role.code.toLowerCase().includes(roleFilterText.toLowerCase())
+  );
+
+  // Selected role permissions list
+  const activeRoleData = roles.find(r => r.code === assignedRoleCode);
+  const permissionsList = activeRoleData ? activeRoleData.permissions : [];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-body-lg text-outline animate-pulse">Chargement de la gestion des affectations...</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -94,182 +106,182 @@ export default function RoleAssignment() {
         .material-symbols-outlined {
           font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
         }
-        .active-module-bar {
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 4px;
-          background-color: #0058be;
-        }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface">
-        {/* SideNavBar Shell */}
-        
-        <div className="flex flex-col min-h-screen">
-          {/* TopNavBar Shell */}
-          
-          {/* Main Content Canvas */}
-          <main className="p-lg space-y-lg max-w-[1600px] w-full mx-auto">
-            {/* Breadcrumbs & Header */}
-            <div className="space-y-xxs">
-              <div className="flex items-center gap-xs text-on-surface-variant text-label-sm font-label-sm uppercase tracking-wider">
-                <span>Admin</span>
-                <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-                <span>User Management</span>
-                <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-                <span className="text-primary font-bold">Role Assignment</span>
-              </div>
-              <h2 className="font-headline-md text-headline-md text-on-surface">Assign User Roles</h2>
+      <div className="bg-[#F8FAFC] text-on-surface min-h-screen">
+        <main className="p-lg space-y-lg max-w-[1600px] w-full mx-auto">
+          {/* Header */}
+          <div className="space-y-xxs">
+            <div className="flex items-center gap-xs text-on-surface-variant text-label-sm font-label-sm uppercase tracking-wider">
+              <span>Admin</span>
+              <span className="material-symbols-outlined text-[12px]">chevron_right</span>
+              <span>Gestion Utilisateurs</span>
+              <span className="material-symbols-outlined text-[12px]">chevron_right</span>
+              <span className="text-primary font-bold">Affectation des Rôles</span>
             </div>
-            {/* Role Assignment Grid */}
-            <div className="grid grid-cols-12 gap-[1rem] items-start">
-              {/* Left Panel: User Profile Summary */}
-              <section className="col-span-3 space-y-md">
-                <div className="bg-surface border border-outline-variant rounded p-lg space-y-lg">
-                  <div className="flex flex-col items-center text-center space-y-sm">
-                    <div className="w-24 h-24 rounded-full border-4 border-surface-container-high overflow-hidden">
-                      <img alt="User Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBrbdE7i_0rRRKGxVlkwpZeAdzdNNWgxqPzeduVnyzvEgBdsFLNCJmZI1aVCjgG8pNvf8lB1a73Rc59OTkiRXiCAKGvHh9vD-2nwWp0s5v33bP5ukX_Xu0LtzOFPwGjQfH-UFxFlG03MK37Ywu7bNYd6U4bn8_SAP8rbQbWJjD4d8o0zBwdwLCNhTTOb_6-WsAfQoSxCqRUDyLGeoHhMGvxWDCWB7tmYwSFFaKiKRhuY6Ph10WIWtw3yRwVw7jgG6CBf0-MEveOA"/>
+            <h2 className="font-headline-md text-headline-md text-on-surface">Affecter les Rôles Utilisateurs</h2>
+          </div>
+
+          {/* Grid Layout */}
+          <div className="grid grid-cols-12 gap-[1rem] items-start">
+            
+            {/* Left Column: User Selection List */}
+            <section className="col-span-12 md:col-span-3 bg-white border border-outline-variant rounded-xl p-md shadow-sm space-y-md flex flex-col max-h-[650px] overflow-hidden">
+              <h3 className="font-title-md text-title-md text-on-surface flex items-center gap-xs">
+                <span className="material-symbols-outlined text-primary">group</span>
+                Utilisateurs
+              </h3>
+              
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">search</span>
+                <input 
+                  className="w-full pl-xl pr-sm py-xxs rounded border border-outline-variant bg-[#F8FAFC] text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" 
+                  placeholder="Rechercher..." 
+                  type="text"
+                  value={userFilterText}
+                  onChange={(e) => setUserFilterText(e.target.value)}
+                />
+              </div>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar space-y-xxs pr-xxs">
+                {filteredUsers.map(user => (
+                  <button
+                    key={user.id}
+                    onClick={() => selectUser(user)}
+                    className={`w-full flex items-center gap-sm p-sm rounded-lg border transition-all text-left ${
+                      selectedUser?.id === user.id
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-transparent hover:bg-surface-container-low text-on-surface'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
+                      {getInitials(user.username)}
                     </div>
-                    <div className="space-y-xxs">
-                      <h3 className="font-title-lg text-title-lg text-on-surface">Marcus Vance</h3>
-                      <p className="font-body-sm text-body-sm text-on-surface-variant">mvance.kam@logistics.corp</p>
-                      <span className="inline-block bg-secondary-container text-on-secondary-container px-xs py-xxs rounded text-label-sm font-label-sm">Active Personnel</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-title-sm text-title-sm font-bold truncate">{user.username}</p>
+                      <p className="text-body-sm text-on-surface-variant truncate">{user.email}</p>
                     </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Center Column: User Details and Role Selection */}
+            <section className="col-span-12 md:col-span-6 bg-white border border-outline-variant rounded-xl shadow-sm flex flex-col min-h-[650px] overflow-hidden">
+              <div className="p-lg border-b border-outline-variant bg-surface-container-lowest">
+                <h3 className="font-title-md text-title-md text-on-surface">Sélection du Rôle</h3>
+                {selectedUser && (
+                  <p className="text-body-sm text-on-surface-variant mt-xxs">
+                    Modifier le rôle de <strong>{selectedUser.username}</strong>
+                  </p>
+                )}
+              </div>
+
+              <div className="flex-1 p-lg overflow-y-auto custom-scrollbar space-y-md">
+                {successMessage && (
+                  <div className="bg-secondary-container/20 text-secondary border border-secondary/20 p-md rounded-lg flex items-center gap-xs text-body-md font-semibold">
+                    <span className="material-symbols-outlined">check_circle</span>
+                    {successMessage}
                   </div>
-                  <hr className="border-outline-variant"/>
-                  <div className="space-y-md">
-                    <div>
-                      <p className="text-label-sm font-label-sm text-outline-variant uppercase">Department</p>
-                      <p className="text-body-md font-body-md text-on-surface">Terminal Operations</p>
-                    </div>
-                    <div>
-                      <p className="text-label-sm font-label-sm text-outline-variant uppercase">Employee ID</p>
-                      <p className="text-body-md font-body-md text-on-surface">#KAM-8820-T</p>
-                    </div>
-                    <div>
-                      <p className="text-label-sm font-label-sm text-outline-variant uppercase">Last Login</p>
-                      <p className="text-body-md font-body-md text-on-surface">Oct 24, 2023 - 08:14 AM</p>
-                    </div>
+                )}
+                {errorMessage && (
+                  <div className="bg-error-container text-error border border-error/20 p-md rounded-lg flex items-center gap-xs text-body-md font-semibold">
+                    <span className="material-symbols-outlined">error</span>
+                    {errorMessage}
                   </div>
+                )}
+
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">filter_list</span>
+                  <input 
+                    className="w-full pl-xl pr-sm py-xxs rounded border border-outline-variant bg-[#F8FAFC] text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" 
+                    placeholder="Filtrer les rôles..." 
+                    type="text"
+                    value={roleFilterText}
+                    onChange={(e) => setRoleFilterText(e.target.value)}
+                  />
                 </div>
-                <div className="bg-surface-container-low border border-outline-variant rounded p-md flex items-center gap-sm">
-                  <span className="material-symbols-outlined text-primary">info</span>
-                  <p className="text-label-md font-label-md text-on-surface-variant">Changes will take effect after the user re-authenticates.</p>
+
+                <div className="space-y-xs pr-xxs">
+                  {filteredRoles.map(role => (
+                    <label 
+                      key={role.code} 
+                      className={`group flex items-start gap-md p-md rounded border transition-all cursor-pointer ${
+                        assignedRoleCode === role.code
+                          ? 'border-primary bg-primary/5'
+                          : 'border-outline-variant hover:border-primary hover:bg-surface-container-low'
+                      }`}
+                    >
+                      <div className="mt-xxs">
+                        <input 
+                          type="radio" 
+                          name="assigned-role"
+                          checked={assignedRoleCode === role.code}
+                          onChange={() => setAssignedRoleCode(role.code)}
+                          className="w-4 h-4 text-primary focus:ring-primary"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-title-md text-title-md text-on-surface font-bold">{role.name}</span>
+                          <span className="font-mono text-xs uppercase bg-surface-variant px-xs rounded text-on-surface-variant">
+                            {role.code}
+                          </span>
+                        </div>
+                        <p className="text-body-sm font-body-sm text-on-surface-variant mt-xxs">{role.description || 'Aucune description disponible.'}</p>
+                      </div>
+                    </label>
+                  ))}
                 </div>
-              </section>
-              {/* Center Area: Role Selection */}
-              <section className="col-span-6">
-                <div className="bg-surface border border-outline-variant rounded flex flex-col min-h-[600px]">
-                  <div className="p-lg border-b border-outline-variant flex justify-between items-center">
-                    <h3 className="font-title-md text-title-md text-on-surface">Available System Roles</h3>
-                    <div className="relative w-48">
-                      <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">filter_list</span>
-                      <input 
-                        className="w-full pl-xl pr-sm py-xxs rounded border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" 
-                        placeholder="Filter roles..." 
-                        type="text"
-                        value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex-1 p-lg overflow-y-auto max-h-[500px] space-y-xs">
-                    {/* Role Items */}
-                    {filteredRoles.map(role => (
-                      <label key={role.id} className="group flex items-start gap-md p-md rounded border border-outline-variant hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer">
-                        <div className="mt-xxs">
-                          <input 
-                            checked={selectedRoles.includes(role.id)}
-                            className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" 
-                            type="checkbox"
-                            onChange={() => handleRoleToggle(role.id)}
-                          />
+              </div>
+
+              <div className="p-lg bg-surface-container-lowest border-t border-outline-variant flex items-center justify-end gap-md">
+                <button 
+                  onClick={() => setAssignedRoleCode(selectedUser?.role || '')}
+                  className="px-lg py-sm text-on-surface-variant hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors"
+                >
+                  Réinitialiser
+                </button>
+                <button 
+                  onClick={handleSave}
+                  disabled={saving || !selectedUser}
+                  className="px-xl py-sm bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary-container transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                >
+                  {saving ? 'Enregistrement...' : 'Confirmer l\'Affectation'}
+                </button>
+              </div>
+            </section>
+
+            {/* Right Column: Permission Preview */}
+            <section className="col-span-12 md:col-span-3 bg-white border border-outline-variant rounded-xl shadow-sm flex flex-col min-h-[650px] overflow-hidden">
+              <div className="p-lg border-b border-outline-variant bg-surface-container-lowest">
+                <h3 className="font-title-md text-title-md text-on-surface">Droits Associés</h3>
+                <p className="text-label-sm font-label-sm text-on-surface-variant mt-xxs">Aperçu en direct des permissions pour le rôle sélectionné</p>
+              </div>
+
+              <div className="p-lg flex-1 overflow-y-auto custom-scrollbar space-y-md">
+                {permissionsList.length === 0 ? (
+                  <p className="text-body-sm italic text-on-surface-variant opacity-60 text-center py-xl">
+                    Aucune permission associée à ce rôle.
+                  </p>
+                ) : (
+                  <div className="space-y-xxs">
+                    {permissionsList.map((perm) => (
+                      <div key={perm.code} className="flex items-start gap-xs text-body-sm font-body-sm text-on-surface py-xxs border-b border-outline-variant border-dotted last:border-0">
+                        <span className="material-symbols-outlined text-[16px] text-secondary mt-xxs">check_circle</span>
+                        <div>
+                          <div className="font-semibold">{perm.name}</div>
+                          <div className="text-[10px] font-mono text-outline">{perm.code}</div>
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="font-title-md text-title-md text-on-surface">{role.name}</span>
-                            <span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">{role.icon}</span>
-                          </div>
-                          <p className="text-body-sm font-body-sm text-on-surface-variant mt-xxs">{role.description}</p>
-                        </div>
-                      </label>
+                      </div>
                     ))}
                   </div>
-                  <div className="p-lg bg-surface-container-lowest border-t border-outline-variant flex items-center justify-end gap-md rounded-b">
-                    <button className="px-lg py-sm text-on-surface-variant hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors">Reset Selection</button>
-                    <button className="px-xl py-sm bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary-container transition-all shadow-sm active:scale-95">Confirm Assignments</button>
-                  </div>
-                </div>
-              </section>
-              {/* Right Panel: Permission Preview */}
-              <section className="col-span-3 space-y-[1rem]">
-                <div className="bg-surface border border-outline-variant rounded flex flex-col h-full min-h-[600px]">
-                  <div className="p-lg border-b border-outline-variant">
-                    <h3 className="font-title-md text-title-md text-on-surface">Permission Preview</h3>
-                    <p className="text-label-sm font-label-sm text-on-surface-variant mt-xxs">Live aggregate of selected role capabilities</p>
-                  </div>
-                  <div className="p-lg flex-1 space-y-lg overflow-y-auto">
-                    {/* Dynamic Content */}
-                    <div className="space-y-sm">
-                      <p className="text-label-sm font-label-sm text-outline uppercase tracking-wider">Operational Rights</p>
-                      <div className="space-y-xxs">
-                        {permissions.ops.length === 0 ? (
-                          <p className="text-body-sm italic text-on-surface-variant opacity-50">No permissions in this category.</p>
-                        ) : (
-                          permissions.ops.map((perm, idx) => (
-                            <div key={idx} className="flex items-center gap-xs text-body-sm font-body-sm text-on-surface py-xxs border-b border-outline-variant border-dotted last:border-0">
-                              <span className="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                              <span>{perm}</span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-sm">
-                      <p className="text-label-sm font-label-sm text-outline uppercase tracking-wider">Financial Access</p>
-                      <div className="space-y-xxs">
-                        {permissions.finance.length === 0 ? (
-                          <p className="text-body-sm italic text-on-surface-variant opacity-50">No permissions in this category.</p>
-                        ) : (
-                          permissions.finance.map((perm, idx) => (
-                            <div key={idx} className="flex items-center gap-xs text-body-sm font-body-sm text-on-surface py-xxs border-b border-outline-variant border-dotted last:border-0">
-                              <span className="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                              <span>{perm}</span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-sm">
-                      <p className="text-label-sm font-label-sm text-outline uppercase tracking-wider">System Privileges</p>
-                      <div className="space-y-xxs">
-                        {permissions.system.length === 0 ? (
-                          <p className="text-body-sm italic text-on-surface-variant opacity-50">No permissions in this category.</p>
-                        ) : (
-                          permissions.system.map((perm, idx) => (
-                            <div key={idx} className="flex items-center gap-xs text-body-sm font-body-sm text-on-surface py-xxs border-b border-outline-variant border-dotted last:border-0">
-                              <span className="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                              <span>{perm}</span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                    {/* Empty State Placeholder */}
-                    {selectedRoles.length === 0 && (
-                      <div className="h-full flex flex-col items-center justify-center text-center p-xl opacity-40">
-                        <span className="material-symbols-outlined text-[48px] mb-sm">lock_open</span>
-                        <p className="font-body-sm text-body-sm">Select one or more roles to see the effective permissions list.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </section>
-            </div>
-          </main>
-        </div>
+                )}
+              </div>
+            </section>
+
+          </div>
+        </main>
       </div>
     </>
-  )
+  );
 }

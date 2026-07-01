@@ -2,28 +2,33 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { adminAPI } from '@/lib/api/admin'
-import type { User } from '@/lib/api/admin'
+import { adminAPI, User, DbRole } from '@/lib/api/admin'
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 
 export default function UserListing() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [users, setUsers] = useState<User[]>([])
+  const [roles, setRoles] = useState<DbRole[]>([])
   const [loading, setLoading] = useState(true)
+  const [updatingRole, setUpdatingRole] = useState(false)
 
   useEffect(() => {
-    async function fetchUsers() {
+    async function fetchData() {
       try {
-        const data = await adminAPI.getUsers()
-        setUsers(data || [])
+        const [usersData, rolesData] = await Promise.all([
+          adminAPI.getUsers(),
+          adminAPI.getDbRoles()
+        ])
+        setUsers(usersData || [])
+        setRoles(rolesData || [])
       } catch (err) {
-        console.error('Error fetching users:', err)
+        console.error('Error fetching users/roles:', err)
       } finally {
         setLoading(false)
       }
     }
-    fetchUsers()
+    fetchData()
   }, [])
 
   const toggleDrawer = (isOpen: boolean, user: User | null = null) => {
@@ -34,6 +39,21 @@ export default function UserListing() {
       setDrawerOpen(false)
     }
   }
+
+  const handleRoleChange = async (newRoleCode: string) => {
+    if (!selectedUser) return;
+    setUpdatingRole(true);
+    try {
+      const updated = await adminAPI.updateUserRole(selectedUser.id, newRoleCode);
+      setUsers(users.map(u => u.id === selectedUser.id ? updated : u));
+      setSelectedUser(updated);
+    } catch (err) {
+      console.error('Error changing user role:', err);
+      alert('Erreur lors du changement de rôle');
+    } finally {
+      setUpdatingRole(false);
+    }
+  };
 
   const getInitials = (name: string) => {
     if (!name) return 'U'
@@ -60,13 +80,10 @@ export default function UserListing() {
       <div className="bg-surface-container-low text-on-surface antialiased overflow-hidden">
         {/* Main Content Stage */}
         <main className="h-screen flex flex-col relative overflow-hidden bg-[#F8FAFC]">
-          {/* Top Navbar */}
-          
           {/* User Management Content */}
           <section className="flex-1 p-6 overflow-hidden flex flex-col gap-6">
             <div className="flex justify-between items-end">
               <div>
-                
                 <h2 className="font-headline-md text-headline-md text-on-surface tracking-tight">Utilisateurs du Système</h2>
               </div>
               <div className="flex gap-2">
@@ -143,7 +160,7 @@ export default function UserListing() {
                     ) : (
                       users.map((user) => (
                         <tr key={user.id} className="hover:bg-primary-fixed/30 cursor-pointer group transition-all" onClick={() => toggleDrawer(true, user)}>
-                          <td className="px-6 py-3.5"><input className="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
+                          <td className="px-6 py-3.5" onClick={(e) => e.stopPropagation()}><input className="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/></td>
                           <td className="px-6 py-3.5">
                             <div className="flex items-center gap-3">
                               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">{getInitials(user.username)}</div>
@@ -182,20 +199,20 @@ export default function UserListing() {
           </section>
           {/* Right Side Permission Panel (Drawer) */}
           <div className={`fixed inset-0 bg-on-background/40 z-[60] ${drawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} transition-opacity duration-300`} onClick={() => toggleDrawer(false)}></div>
-          <aside className={`fixed right-0 top-0 h-full w-[420px] bg-surface shadow-2xl z-[70] drawer-transition flex flex-col border-l border-outline-variant ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <div className="p-6 border-b border-outline-variant flex justify-between items-center">
+          <aside className={`fixed right-0 top-0 h-full w-[420px] bg-white shadow-2xl z-[70] drawer-transition flex flex-col border-l border-outline-variant ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
               <div>
                 <h3 className="font-title-lg text-title-lg text-on-surface font-bold">Édition Utilisateur</h3>
-                <p className="text-body-sm font-body-sm text-outline">{(selectedUser as any)?.fullName || (selectedUser as any)?.username || (selectedUser as any)?.email || 'Chargement...'}</p>
+                <p className="text-body-sm font-body-sm text-outline">{(selectedUser as any)?.username || (selectedUser as any)?.email || 'Chargement...'}</p>
               </div>
               <button className="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant" onClick={() => toggleDrawer(false)}>
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             {selectedUser && (
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8 bg-white">
                 {/* User Profile Intro */}
-                <div className="flex items-center gap-4 bg-primary-fixed/20 p-4 rounded-xl">
+                <div className="flex items-center gap-4 bg-primary/5 p-4 rounded-xl border border-primary/10">
                   <div className="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center text-xl font-bold">{getInitials(selectedUser.username)}</div>
                   <div>
                     <div className="text-xs text-primary font-black uppercase tracking-wider mb-1">Détails Profil</div>
@@ -204,18 +221,35 @@ export default function UserListing() {
                   </div>
                 </div>
                 {/* Information and Roles */}
-                <div className="space-y-4">
-                  <h4 className="font-label-md text-label-md text-on-surface font-bold uppercase tracking-widest">Informations</h4>
-                  <div className="space-y-2">
-                    <p className="text-body-sm text-on-surface-variant"><strong>Rôle:</strong> {selectedUser.role.toUpperCase()}</p>
+                <div className="space-y-6">
+                  <h4 className="font-label-md text-label-md text-on-surface font-bold uppercase tracking-widest border-b border-outline-variant pb-2">Informations</h4>
+                  <div className="space-y-4">
+                    <div className="flex flex-col gap-xs">
+                      <label className="font-label-sm text-label-sm text-on-surface-variant font-bold" htmlFor="role-select">
+                        Rôle ERP
+                      </label>
+                      <select
+                        id="role-select"
+                        disabled={updatingRole}
+                        value={selectedUser.role}
+                        onChange={(e) => handleRoleChange(e.target.value)}
+                        className="w-full h-10 px-3 bg-white border border-outline-variant rounded focus:border-primary focus:ring-1 focus:ring-primary text-body-md text-on-surface font-body-md transition-shadow disabled:opacity-50"
+                      >
+                        {roles.map(r => (
+                          <option key={r.code} value={r.code}>
+                            {r.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <p className="text-body-sm text-on-surface-variant"><strong>MFA:</strong> {selectedUser.mfa_enabled ? 'Activé' : 'Désactivé'}</p>
                     <p className="text-body-sm text-on-surface-variant"><strong>Statut:</strong> {selectedUser.is_active ? 'Actif' : 'Inactif'}</p>
                   </div>
                 </div>
               </div>
             )}
-            <div className="p-6 border-t border-outline-variant bg-surface flex gap-3">
-              <button className="flex-1 py-2.5 px-4 bg-surface-container-lowest border border-outline-variant text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all" onClick={() => toggleDrawer(false)}>Fermer</button>
+            <div className="p-6 border-t border-outline-variant bg-surface-container-lowest flex gap-3">
+              <button className="flex-1 py-2.5 px-4 bg-white border border-outline-variant text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all" onClick={() => toggleDrawer(false)}>Fermer</button>
             </div>
           </aside>
         </main>

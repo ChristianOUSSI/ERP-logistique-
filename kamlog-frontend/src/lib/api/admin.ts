@@ -9,6 +9,20 @@ export interface User {
   mfa_enabled: boolean;
 }
 
+export interface Permission {
+  code: string;
+  name: string;
+  module: string;
+}
+
+export interface DbRole {
+  code: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  permissions: Permission[];
+}
+
 export interface Role {
   id: string;
   name: string;
@@ -51,6 +65,16 @@ export const adminAPI = {
     return data;
   },
 
+  getPermissions: async (): Promise<Permission[]> => {
+    const { data } = await apiClient.get('/api/admin/permissions');
+    return data;
+  },
+
+  getDbRoles: async (): Promise<DbRole[]> => {
+    const { data } = await apiClient.get('/api/admin/roles');
+    return data;
+  },
+
   getAuditLogs: async (): Promise<AuditLog[]> => {
     const { data } = await apiClient.get('/api/admin/audit-logs');
     return data;
@@ -68,6 +92,21 @@ export const adminAPI = {
 
   createRole: async (role: Omit<Role, 'id'>): Promise<Role> => {
     const { data } = await apiClient.post('/api/admin/roles', role);
+    return data;
+  },
+
+  createDbRole: async (role: { code: string; name: string; description?: string; permission_codes: string[] }): Promise<DbRole> => {
+    const { data } = await apiClient.post('/api/admin/roles', role);
+    return data;
+  },
+
+  updateDbRole: async (code: string, role: { name: string; description?: string; permission_codes: string[] }): Promise<DbRole> => {
+    const { data } = await apiClient.put(`/api/admin/roles/${code}`, role);
+    return data;
+  },
+
+  updateUserRole: async (userId: number, role: string): Promise<User> => {
+    const { data } = await apiClient.put(`/api/admin/users/${userId}/role`, { role });
     return data;
   }
 };
