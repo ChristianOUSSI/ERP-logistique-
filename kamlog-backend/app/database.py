@@ -4,9 +4,20 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 
+from sqlalchemy import MetaData
+
+naming_convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+
+
 class Base(DeclarativeBase):
     """Base déclarative SQLAlchemy 2.0."""
-    pass
+    metadata = MetaData(naming_convention=naming_convention)
 
 
 # Engine async PostgreSQL avec connection pooling optimisé
@@ -39,3 +50,15 @@ async def get_db() -> AsyncSession:
             raise
         finally:
             await session.close()
+
+
+from sqlalchemy import event
+import datetime
+
+@event.listens_for(engine.sync_engine, "connect")
+def register_sqlite_now(dbapi_connection, connection_record):
+    if hasattr(dbapi_connection, "create_function"):
+        try:
+            dbapi_connection.create_function("now", 0, lambda: datetime.datetime.utcnow().isoformat())
+        except Exception:
+            pass

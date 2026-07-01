@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import AsyncSessionLocal, engine
 from app.models.agency import Agency
-from app.models.user import User, Role
+from app.models.user import User, Role, RoleModel, PermissionModel
+from sqlalchemy.orm import selectinload
 from app.models.tiers import Tiers, StatutTiers
 from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule
 from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock
@@ -382,6 +383,157 @@ async def seed_magasin():
         print("✅ Magasins, Articles et Stocks seeded")
 
 
+async def seed_rbac():
+    """Crée les permissions et rôles par défaut. Idempotent."""
+    async with AsyncSessionLocal() as session:
+        # 1. Définir toutes les permissions
+        permissions_data = [
+            # Parc
+            ("parc:read", "Consulter le parc", "parc"),
+            ("parc:write", "Modifier le parc", "parc"),
+            ("parc:delete", "Supprimer du parc", "parc"),
+            ("parc:gate", "Gérer la guérite du parc", "parc"),
+            # Transport
+            ("transport:read", "Consulter les transports", "transport"),
+            ("transport:write", "Modifier les transports", "transport"),
+            ("transport:create", "Créer un transport", "transport"),
+            ("transport:update", "Modifier un transport", "transport"),
+            ("transport:delete", "Supprimer un transport", "transport"),
+            # Tiers
+            ("tiers:read", "Consulter les tiers", "tiers"),
+            ("tiers:write", "Modifier les tiers", "tiers"),
+            ("tiers:delete", "Supprimer les tiers", "tiers"),
+            # Magasin
+            ("magasin:read", "Consulter les magasins", "magasin"),
+            ("magasin:create", "Créer un magasin", "magasin"),
+            ("magasin:update", "Modifier un magasin", "magasin"),
+            ("magasin:delete", "Supprimer un magasin", "magasin"),
+            ("magasin:validate", "Valider les opérations magasin", "magasin"),
+            ("magasin:authorize", "Autoriser les sorties magasin", "magasin"),
+            # Articles
+            ("article:read", "Consulter les articles", "magasin"),
+            ("article:create", "Créer un article", "magasin"),
+            ("article:update", "Modifier un article", "magasin"),
+            ("article:delete", "Supprimer un article", "magasin"),
+            # Stock
+            ("stock:read", "Consulter le stock", "magasin"),
+            ("stock:write", "Gérer les mouvements de stock", "magasin"),
+            # Réception
+            ("reception:read", "Consulter les réceptions", "magasin"),
+            ("reception:create", "Créer une réception", "magasin"),
+            ("reception:update", "Modifier une réception", "magasin"),
+            # Déclaration
+            ("declaration:read", "Consulter les déclarations", "magasin"),
+            ("declaration:create", "Créer une déclaration", "magasin"),
+            ("declaration:update", "Modifier une déclaration", "magasin"),
+            # Commande
+            ("commande:read", "Consulter les commandes", "magasin"),
+            ("commande:create", "Créer une commande", "magasin"),
+            ("commande:update", "Modifier une commande", "magasin"),
+            # Bande
+            ("bande:read", "Consulter les bandes de livraison", "magasin"),
+            ("bande:create", "Créer une bande de livraison", "magasin"),
+            ("bande:update", "Modifier une bande de livraison", "magasin"),
+            # Documents
+            ("documents:read", "Consulter les documents", "documents"),
+            ("documents:write", "Modifier les documents", "documents"),
+            # Master data
+            ("master-data:read", "Consulter les données de référence", "master-data"),
+            ("master-data:create", "Créer des données de référence", "master-data"),
+            ("master-data:update", "Modifier des données de référence", "master-data"),
+            ("master-data:delete", "Supprimer des données de référence", "master-data"),
+            # Finance
+            ("finance:read", "Consulter les données financières", "finance"),
+            ("finance:write", "Modifier les données financières", "finance"),
+            ("finance:delete", "Supprimer les données financières", "finance"),
+            ("finance:validate", "Valider les transactions financières", "finance"),
+            # Purchase / Achats
+            ("purchase:read", "Consulter les fiches de besoin", "purchase"),
+            ("purchase:create", "Créer une fiche de besoin", "purchase"),
+            ("purchase:update", "Modifier une fiche de besoin", "purchase"),
+            ("purchase:delete", "Supprimer une fiche de besoin", "purchase"),
+            ("purchase:submit", "Soumettre une fiche de besoin", "purchase"),
+            ("purchase:approve", "Approuver une fiche de besoin", "purchase"),
+            # Audit
+            ("audit:read", "Consulter les traces d'audit", "audit"),
+            ("audit:write", "Gérer les traces d'audit", "audit"),
+            # Notifications
+            ("notifications:create", "Créer des notifications", "notifications"),
+            ("notifications:read_all", "Consulter toutes les notifications", "notifications"),
+            # Admin
+            ("admin", "Accès administration générale", "admin"),
+        ]
+
+        # Insérer les permissions
+        permissions_map = {}
+        for code, name, module in permissions_data:
+            result = await session.execute(select(PermissionModel).where(PermissionModel.code == code))
+            perm = result.scalar_one_or_none()
+            if not perm:
+                perm = PermissionModel(code=code, name=name, module=module)
+                session.add(perm)
+                await session.flush()
+            permissions_map[code] = perm
+
+        # 2. Définir les rôles par défaut
+        roles_data = [
+            ("admin", "Administrateur Système", "Accès total à tous les modules et configurations.", [
+                c for c, _, _ in permissions_data
+            ]),
+            ("dispatcher", "Chef Dispatch", "Gestion du flux de véhicules et affectation des quais.", [
+                "parc:read", "transport:read", "transport:write", "tiers:read", "magasin:create", "magasin:read", "magasin:update"
+            ]),
+            ("finance", "Comptable", "Facturation, dépenses et rapports financiers.", [
+                "finance:read", "finance:write", "tiers:read", "magasin:read"
+            ]),
+            ("douane", "Agent Douane", "Gestion et validation des documents douaniers.", [
+                "documents:read", "documents:write", "magasin:read"
+            ]),
+            ("gate_agent", "Agent Guérite", "Contrôle d'accès physique aux portes du parc.", [
+                "parc:read", "parc:gate", "magasin:read"
+            ]),
+            ("magasin", "Chef Magasinier", "Gestion des stocks, articles et inventaires.", [
+                "magasin:create", "magasin:read", "magasin:update", "magasin:delete",
+                "magasin:validate", "magasin:authorize",
+                "article:create", "article:read", "article:update", "article:delete",
+                "stock:read", "stock:write",
+                "reception:create", "reception:read", "reception:update",
+                "declaration:create", "declaration:read", "declaration:update",
+                "commande:create", "commande:read", "commande:update",
+                "bande:create", "bande:read", "bande:update",
+                "tiers:read", "documents:read", "master-data:read",
+            ]),
+            ("auditor", "Auditeur Interne", "Consultation globale et rapports d'audit.", [
+                "audit:read", "audit:write",
+                "magasin:read", "stock:read",
+                "finance:read", "transport:read", "tiers:read",
+                "documents:read", "parc:read",
+            ]),
+        ]
+
+        for code, name, desc, perm_codes in roles_data:
+            result = await session.execute(
+                select(RoleModel)
+                .options(selectinload(RoleModel.permissions))
+                .where(RoleModel.code == code)
+            )
+            role = result.scalar_one_or_none()
+
+            role_perms = []
+            for pc in perm_codes:
+                if pc in permissions_map:
+                    role_perms.append(permissions_map[pc])
+
+            if not role:
+                role = RoleModel(code=code, name=name, description=desc, is_active=True, permissions=role_perms)
+                session.add(role)
+            else:
+                role.permissions = role_perms
+
+        await session.commit()
+        print("✅ Permissions and Roles seeded successfully")
+
+
 async def main():
     """Exécute tous les seeds dans le bon ordre."""
     print("🌱 Starting seed data...")
@@ -389,9 +541,11 @@ async def main():
     try:
         # 1. Agency DOIT être créée en premier (les users en dépendent)
         agency_id = await seed_agency()
-        # 2. Users (liés à l'agency)
+        # 2. Seed les permissions et les rôles dynamiques avant d'associer des users
+        await seed_rbac()
+        # 3. Users (liés à l'agency)
         await seed_users(agency_id)
-        # 3. Données métier (indépendantes)
+        # 4. Données métier (indépendantes)
         await seed_tiers()
         await seed_camions()
         await seed_chauffeurs()
