@@ -160,8 +160,8 @@ export default function KParcFleetManagementOverview() {
                       camions.map((c, idx) => (
                         <tr key={idx} className="hover:bg-surface-container-lowest transition-colors bg-white">
                           <td className="py-3 px-4 font-bold">{c.immatriculation}</td>
-                          <td className="py-3 px-4">{c.marque} {c.modele} ({c.type_camion})</td>
-                          <td className="py-3 px-4">{c.capacite_tonnes} tonnes</td>
+                          <td className="py-3 px-4">{c.marque} {c.modele} ({c.type_vehicule})</td>
+                          <td className="py-3 px-4">{c.charge_utile_kg ? `${(parseFloat(c.charge_utile_kg) / 1000).toFixed(1)} t` : 'N/A'}</td>
                           <td className="py-3 px-4">
                             {c.actif ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-semibold">

@@ -142,7 +142,7 @@ export default function ParcWorkshopPage() {
                         ) : vehiclesInRepair.map((v, i) => (
                           <tr key={v.id} className={`hover:bg-surface-container-low transition-colors h-[40px] border-l-2 ${v.statut_reparation === 'Bloqué' ? 'border-error' : (v.statut_reparation === 'En cours' ? 'border-primary' : 'border-transparent')}`}>
                             <td className="px-4 py-1 font-medium">{v.immatriculation}</td>
-                            <td className="px-4 py-1 text-on-surface-variant">{v.type_camion}</td>
+                            <td className="px-4 py-1 text-on-surface-variant">{v.type_vehicule}</td>
                             <td className={`px-4 py-1 ${v.statut_reparation === 'Bloqué' ? 'text-error' : ''}`}>{v.probleme_signale}</td>
                             <td className="px-4 py-1 flex items-center gap-2">
                               <div className={`w-5 h-5 rounded-full flex items-center justify-center font-label-sm text-[9px] font-bold ${v.couleur}`}>{v.initiales}</div>

@@ -1,59 +1,72 @@
-// src/app/(app)/parc/vehicles/new/page.tsx - K-Parc Enregistrement Nouveau Véhicule - Fidèle 100% au HTML original
+// src/app/(app)/parc/vehicles/new/page.tsx
 'use client'
 
-
-import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { transportAPI } from '@/lib/api-client'
 
 export default function NewVehicle() {
   const router = useRouter()
-  const [plaque, setPlaque] = useState('')
-  const [typeVehicule, setTypeVehicule] = useState('')
-  const [chassis, setChassis] = useState('')
-  const [chauffeur, setChauffeur] = useState('')
-  const [pole, setPole] = useState('')
+  
+  // Real database CamionCreate fields
+  const [immatriculation, setImmatriculation] = useState('')
+  const [typeVehicule, setTypeVehicule] = useState('PORTE_CONTENEUR')
+  const [marque, setMarque] = useState('')
+  const [modele, setModele] = useState('')
+  const [chargeUtile, setChargeUtile] = useState('')
+  const [volumeReservoir, setVolumeReservoir] = useState('')
+  const [consoTheorique, setConsoTheorique] = useState('')
+  
+  // Chauffeurs list for assignment
+  const [chauffeurs, setChauffeurs] = useState<any[]>([])
+  const [selectedChauffeurId, setSelectedChauffeurId] = useState('')
+  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadChauffeurs() {
+      try {
+        const response = await transportAPI.getChauffeurs();
+        setChauffeurs(response.data || []);
+      } catch (err) {
+        console.error("Failed to load chauffeurs:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadChauffeurs();
+  }, []);
 
   const handleCancel = () => {
-    router.push('/parc/vehicles')
+    router.push('/parc/overview')
   }
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSave = async () => {
-    if (!plaque || !typeVehicule || !chassis) {
-      alert('Veuillez remplir les champs obligatoires.');
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!immatriculation.trim() || !typeVehicule || !marque.trim() || !modele.trim()) {
+      alert('Veuillez remplir les champs obligatoires (Plaque, Type, Marque, Modèle).');
       return;
     }
+
     try {
       setIsSubmitting(true);
-      const { transportAPI } = await import('@/lib/api-client');
       await transportAPI.createCamion({
-        immatriculation: plaque,
-        type_camion: typeVehicule,
-        chassis: chassis,
-        chauffeur_id: chauffeur ? parseInt(chauffeur) || null : null,
-        actif: true,
-        capacite_tonnes: 0,
-        marque: 'N/A',
-        modele: 'N/A',
-        annee: new Date().getFullYear(),
-        date_acquisition: new Date().toISOString()
+        immatriculation: immatriculation.trim().toUpperCase(),
+        type_vehicule: typeVehicule,
+        marque: marque.trim(),
+        modele: modele.trim(),
+        charge_utile_kg: parseFloat(chargeUtile) || 0,
+        volume_reservoir_litres: parseFloat(volumeReservoir) || 0,
+        conso_theorique_l_100: parseFloat(consoTheorique) || 0
       });
       alert('Véhicule créé avec succès !');
-      router.push('/parc/overview'); // Redirect back to parc overview
+      router.push('/parc/overview');
     } catch (error) {
       console.error("Failed to create vehicle", error);
       alert('Erreur lors de la création du véhicule.');
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  const handleChassisChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.toUpperCase()
-    if (value.length <= 17) {
-      setChassis(value)
     }
   }
 
@@ -67,25 +80,18 @@ export default function NewVehicle() {
           font-variation-settings: 'FILL 1';
         }
         .k-parc { color: #06b6d4; }
-        input[type="file"]::file-selector-button {
-          display: none;
-        }
       `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased min-h-screen">
-        
-        
-        
-        
-        {/* Main Content Canvas */}
+      <div className="bg-[#F8FAFC] text-on-surface font-body-md antialiased min-h-screen">
         <main className="p-[2rem] max-w-[1600px] mx-auto">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 mb-[1rem] font-body-sm text-body-sm text-outline">
-            <a onClick={() => router.push('/dashboard')} className="hover:text-primary transition-colors cursor-pointer">KAMLOG ERP</a>
+            <span className="cursor-pointer hover:text-primary transition-colors" onClick={() => router.push('/dashboard')}>KAMLOG ERP</span>
             <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-            <a onClick={() => router.push('/parc')} className="hover:text-k-parc transition-colors cursor-pointer">K-Parc</a>
+            <span className="cursor-pointer hover:text-k-parc transition-colors" onClick={() => router.push('/parc/overview')}>K-Parc</span>
             <span className="material-symbols-outlined text-[16px]">chevron_right</span>
             <span className="text-on-surface font-medium">Nouveau Véhicule</span>
           </div>
+
           {/* Page Header */}
           <div className="flex justify-between items-end mb-[1.5rem]">
             <div>
@@ -96,198 +102,176 @@ export default function NewVehicle() {
               <p className="font-body-md text-body-md text-on-surface-variant">Création d'une nouvelle fiche pour l'intégration d'une unité au parc automobile opérationnel.</p>
             </div>
             <div className="flex gap-[0.5rem]">
-              <button onClick={handleCancel} className="px-[1rem] py-2 border border-outline text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+              <button type="button" onClick={handleCancel} className="px-[1rem] py-2 border border-outline-variant bg-white text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors">
                 Annuler
               </button>
-              <button onClick={handleSave} disabled={isSubmitting} className="px-[1rem] py-2 bg-k-parc text-white rounded-lg font-label-md text-label-md hover:bg-[#0891b2] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50">
+              <button type="button" onClick={handleSave} disabled={isSubmitting} className="px-[1rem] py-2 bg-[#06b6d4] text-white rounded-lg font-label-md text-label-md hover:bg-[#0891b2] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50">
                 <span className="material-symbols-outlined text-[18px]">save</span>
                 {isSubmitting ? "Sauvegarde..." : "Sauvegarder l'unité"}
               </button>
             </div>
           </div>
-          {/* Form Layout (Bento-style Grid) */}
-          <form className="grid grid-cols-12 gap-[1rem]">
-            {/* Column 1: Core Details (8 cols) */}
-            <div className="col-span-12 lg:col-span-8 flex flex-col gap-[1rem]">
-              {/* Identification Card */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-[1.5rem] shadow-sm">
-                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-surface-container-highest flex items-center gap-2">
+
+          {/* Form Layout */}
+          <form onSubmit={handleSave} className="grid grid-cols-12 gap-[1.5rem]">
+            {/* Core Details */}
+            <div className="col-span-12 lg:col-span-8 flex flex-col gap-[1.5rem]">
+              <div className="bg-white border border-outline-variant rounded-xl p-[1.5rem] shadow-sm space-y-4">
+                <h3 className="font-title-lg text-title-lg text-on-surface pb-[0.5rem] border-b border-outline-variant flex items-center gap-2">
                   <span className="material-symbols-outlined text-outline text-[20px]">badge</span>
                   Identification de l'Unité
                 </h3>
-                <div className="grid grid-cols-2 gap-[1rem]">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[1rem]">
                   {/* Immatriculation */}
-                  <div className="col-span-2 sm:col-span-1">
+                  <div>
                     <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="plaque">Plaque d'Immatriculation *</label>
-                    <div className="relative">
-                      <input 
-                        className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc uppercase transition-all" 
-                        id="plaque" 
-                        name="plaque" 
-                        placeholder="Ex: AB-123-CD" 
-                        required 
-                        type="text"
-                        value={plaque}
-                        onChange={(e) => setPlaque(e.target.value.toUpperCase())}
-                      />
-                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">pin</span>
-                    </div>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc uppercase transition-all outline-none" 
+                      id="plaque" 
+                      placeholder="Ex: AB-123-CD" 
+                      required 
+                      type="text"
+                      value={immatriculation}
+                      onChange={(e) => setImmatriculation(e.target.value.toUpperCase())}
+                    />
                   </div>
+
                   {/* Type de Véhicule */}
-                  <div className="col-span-2 sm:col-span-1">
+                  <div>
                     <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="type_vehicule">Type d'Unité *</label>
-                    <div className="relative">
-                      <select 
-                        className="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-[1rem] pr-10 py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc appearance-none transition-all" 
-                        id="type_vehicule" 
-                        name="type_vehicule" 
-                        required
-                        value={typeVehicule}
-                        onChange={(e) => setTypeVehicule(e.target.value)}
-                      >
-                        <option disabled selected value="">Sélectionner le type...</option>
-                        <option value="tracteur">Tracteur Routier</option>
-                        <option value="remorque">Remorque / Plateau</option>
-                        <option value="utilitaire">Véhicule Utilitaire (VUL)</option>
-                        <option value="manutention">Engin de Manutention</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none text-[18px]">expand_more</span>
-                    </div>
+                    <select 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="type_vehicule" 
+                      required
+                      value={typeVehicule}
+                      onChange={(e) => setTypeVehicule(e.target.value)}
+                    >
+                      <option value="PORTE_CONTENEUR">Porte Conteneur</option>
+                      <option value="BENNE_VRAC">Benne Vrac</option>
+                      <option value="CITERNE">Citerne</option>
+                      <option value="FRIGORIFIQUE">Frigorifique</option>
+                      <option value="PLATEAU">Plateau</option>
+                    </select>
                   </div>
-                  {/* Numéro de Châssis (VIN) */}
-                  <div className="col-span-2">
-                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="chassis">Numéro de Châssis (VIN) *</label>
-                    <div className="relative">
-                      <input 
-                        className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc uppercase transition-all" 
-                        id="chassis" 
-                        maxLength={17} 
-                        name="chassis" 
-                        placeholder="17 caractères alphanumériques" 
-                        required 
-                        type="text"
-                        value={chassis}
-                        onChange={handleChassisChange}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                        <span className={`text-xs font-data-tabular ${chassis.length === 17 ? 'text-[#16a34a]' : 'text-outline-variant'}`}>{chassis.length}/17</span>
-                        <span className="material-symbols-outlined text-outline-variant text-[18px]">barcode_scanner</span>
-                      </div>
-                    </div>
+
+                  {/* Marque */}
+                  <div>
+                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="marque">Marque *</label>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="marque" 
+                      placeholder="Ex: Volvo, Mercedes" 
+                      required 
+                      type="text"
+                      value={marque}
+                      onChange={(e) => setMarque(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Modèle */}
+                  <div>
+                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="modele">Modèle *</label>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="modele" 
+                      placeholder="Ex: FH16, Actros" 
+                      required 
+                      type="text"
+                      value={modele}
+                      onChange={(e) => setModele(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
-              {/* Affectation Card */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-[1.5rem] shadow-sm">
-                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-surface-container-highest flex items-center gap-2">
-                  <span className="material-symbols-outlined text-outline text-[20px]">assignment_ind</span>
-                  Affectation Opérationnelle
+
+              {/* Technical Capacities */}
+              <div className="bg-white border border-outline-variant rounded-xl p-[1.5rem] shadow-sm space-y-4">
+                <h3 className="font-title-lg text-title-lg text-on-surface pb-[0.5rem] border-b border-outline-variant flex items-center gap-2">
+                  <span className="material-symbols-outlined text-outline text-[20px]">settings_suggest</span>
+                  Spécifications Techniques
                 </h3>
-                <div className="grid grid-cols-1 gap-[1rem]">
-                  {/* Chauffeur Assigné */}
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-[1rem]">
+                  {/* Charge Utile */}
                   <div>
-                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="chauffeur">Chauffeur Principal / Opérateur</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">search</span>
-                      <input 
-                        className="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-[1rem] py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all" 
-                        id="chauffeur" 
-                        name="chauffeur" 
-                        placeholder="Rechercher par nom ou matricule..." 
-                        type="text"
-                        value={chauffeur}
-                        onChange={(e) => setChauffeur(e.target.value)}
-                      />
-                    </div>
-                    <p className="mt-1 font-body-sm text-body-sm text-outline">Laissez vide si l'unité est mise en "Pool" (non assignée).</p>
+                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="charge">Charge Utile (kg)</label>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="charge" 
+                      placeholder="Ex: 25000" 
+                      type="number"
+                      value={chargeUtile}
+                      onChange={(e) => setChargeUtile(e.target.value)}
+                    />
                   </div>
-                  {/* Pôle d'activité */}
+
+                  {/* Volume Réservoir */}
                   <div>
-                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]">Pôle d'activité par défaut</label>
-                    <div className="flex flex-wrap gap-3">
-                      <label className="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-[#ecfeff] has-[:checked]:border-k-parc">
-                        <input className="text-k-parc focus:ring-k-parc" name="pole" type="radio" value="terminal" checked={pole === 'terminal'} onChange={() => setPole('terminal')}/>
-                        <span className="font-body-sm text-body-sm">Terminal Conteneurs</span>
-                      </label>
-                      <label className="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-[#ecfeff] has-[:checked]:border-k-parc">
-                        <input className="text-k-parc focus:ring-k-parc" name="pole" type="radio" value="vrac" checked={pole === 'vrac'} onChange={() => setPole('vrac')}/>
-                        <span className="font-body-sm text-body-sm">Quai Vrac</span>
-                      </label>
-                      <label className="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-[#ecfeff] has-[:checked]:border-k-parc">
-                        <input className="text-k-parc focus:ring-k-parc" name="pole" type="radio" value="livraison" checked={pole === 'livraison'} onChange={() => setPole('livraison')}/>
-                        <span className="font-body-sm text-body-sm">Livraison Externe</span>
-                      </label>
-                    </div>
+                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="reservoir">Volume Réservoir (L)</label>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="reservoir" 
+                      placeholder="Ex: 400" 
+                      type="number"
+                      value={volumeReservoir}
+                      onChange={(e) => setVolumeReservoir(e.target.value)}
+                    />
                   </div>
+
+                  {/* Consommation Théorique */}
+                  <div>
+                    <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="conso">Conso. Théorique (L/100)</label>
+                    <input 
+                      className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-data-tabular text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc transition-all outline-none" 
+                      id="conso" 
+                      placeholder="Ex: 32.5" 
+                      type="number"
+                      step="0.1"
+                      value={consoTheorique}
+                      onChange={(e) => setConsoTheorique(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Assignment (Optional Link UI) */}
+              <div className="bg-white border border-outline-variant rounded-xl p-[1.5rem] shadow-sm">
+                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-outline-variant flex items-center gap-2">
+                  <span className="material-symbols-outlined text-outline text-[20px]">assignment_ind</span>
+                  Affectation Opérationnelle (Chauffeur)
+                </h3>
+                <div>
+                  <label className="block font-label-md text-label-md text-on-surface-variant mb-[0.5rem]" htmlFor="chauffeur-select">Chauffeur Principal / Opérateur</label>
+                  <select 
+                    id="chauffeur-select"
+                    className="w-full bg-[#F8FAFC] border border-outline-variant rounded-lg px-[1rem] py-2.5 font-body-md text-body-md text-on-surface focus:border-k-parc focus:ring-1 focus:ring-k-parc outline-none"
+                    value={selectedChauffeurId}
+                    onChange={(e) => setSelectedChauffeurId(e.target.value)}
+                  >
+                    <option value="">-- Mettre en Pool (Non Assigné) --</option>
+                    {chauffeurs.map(ch => (
+                      <option key={ch.id} value={ch.id}>{ch.nom} {ch.prenom}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
-            {/* Column 2: Documents & Status (4 cols) */}
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-[1rem]">
-              {/* Status Preview Card */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-[1.5rem] shadow-sm">
-                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-surface-container-highest flex items-center gap-2">
+
+            {/* Sidebar Column: Info & Status */}
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-[1.5rem]">
+              <div className="bg-white border border-outline-variant rounded-xl p-[1.5rem] shadow-sm">
+                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-outline-variant flex items-center gap-2">
                   <span className="material-symbols-outlined text-outline text-[20px]">info</span>
                   Statut d'Enregistrement
                 </h3>
-                <div className="bg-surface-container-high rounded-lg p-[1rem] mb-[1rem] flex items-center gap-[1rem]">
-                  <div className="w-12 h-12 rounded-full bg-[#fef2f2] flex items-center justify-center shrink-0 border border-[#fecaca]">
-                    <span className="material-symbols-outlined text-[#ef4444] text-[24px]">pending_actions</span>
+                <div className="bg-[#F8FAFC] rounded-lg p-[1rem] flex items-center gap-[1rem] border border-outline-variant">
+                  <div className="w-12 h-12 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0 border border-secondary/20">
+                    <span className="material-symbols-outlined text-secondary text-[24px]">check_circle</span>
                   </div>
                   <div>
-                    <div className="font-label-md text-label-md text-on-surface mb-0.5">Brouillon Incomplet</div>
-                    <div className="font-body-sm text-body-sm text-outline">Documents obligatoires manquants</div>
-                  </div>
-                </div>
-              </div>
-              {/* Documentation Card */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-[1.5rem] shadow-sm flex-1">
-                <h3 className="font-title-lg text-title-lg text-on-surface mb-[1rem] pb-[0.5rem] border-b border-surface-container-highest flex items-center gap-2">
-                  <span className="material-symbols-outlined text-outline text-[20px]">folder_open</span>
-                  Dossier Réglementaire
-                </h3>
-                <div className="space-y-[1rem]">
-                  {/* Carte Grise Upload */}
-                  <div>
-                    <div className="flex justify-between items-center mb-[0.5rem]">
-                      <label className="font-label-md text-label-md text-on-surface-variant">Carte Grise *</label>
-                      <span className="text-[10px] uppercase font-bold text-[#ef4444] bg-[#fef2f2] px-1.5 py-0.5 rounded">Requis</span>
-                    </div>
-                    <div className="border-2 border-dashed border-outline-variant rounded-lg p-[1rem] text-center hover:bg-surface-container-low transition-colors cursor-pointer group relative">
-                      <input accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
-                      <span className="material-symbols-outlined text-outline group-hover:text-k-parc transition-colors text-[24px] mb-2 block">cloud_upload</span>
-                      <div className="font-body-sm text-body-sm text-on-surface">Glisser le fichier ou <span className="k-parc font-medium">Parcourir</span></div>
-                      <div className="font-label-sm text-label-sm text-outline mt-1">PDF, JPG (Max 5MB)</div>
-                    </div>
-                  </div>
-                  {/* Assurance Upload */}
-                  <div>
-                    <div className="flex justify-between items-center mb-[0.5rem]">
-                      <label className="font-label-md text-label-md text-on-surface-variant">Attestation d'Assurance *</label>
-                      <span className="text-[10px] uppercase font-bold text-[#ef4444] bg-[#fef2f2] px-1.5 py-0.5 rounded">Requis</span>
-                    </div>
-                    <div className="border-2 border-dashed border-outline-variant rounded-lg p-[1rem] text-center hover:bg-surface-container-low transition-colors cursor-pointer group relative">
-                      <input accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
-                      <span className="material-symbols-outlined text-outline group-hover:text-k-parc transition-colors text-[24px] mb-2 block">cloud_upload</span>
-                      <div className="font-body-sm text-body-sm text-on-surface">Glisser le fichier ou <span className="k-parc font-medium">Parcourir</span></div>
-                      <div className="font-label-sm text-label-sm text-outline mt-1">PDF, JPG (Max 5MB)</div>
-                    </div>
-                  </div>
-                  {/* Contrôle Technique Upload (Optional) */}
-                  <div>
-                    <div className="flex justify-between items-center mb-[0.5rem]">
-                      <label className="font-label-md text-label-md text-on-surface-variant">Contrôle Technique</label>
-                      <span className="text-[10px] uppercase font-bold text-outline bg-surface-container-high px-1.5 py-0.5 rounded">Optionnel</span>
-                    </div>
-                    <div className="border border-outline-variant rounded-lg p-3 flex items-center justify-between hover:border-k-parc transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-surface-container-low flex items-center justify-center border border-outline-variant group-hover:bg-[#ecfeff] group-hover:border-[#a5f3fc]">
-                          <span className="material-symbols-outlined text-outline group-hover:text-k-parc text-[16px]">attach_file</span>
-                        </div>
-                        <span className="font-body-sm text-body-sm text-outline">Ajouter un document...</span>
-                      </div>
-                      <button className="text-on-surface-variant hover:text-k-parc" type="button"><span className="material-symbols-outlined text-[20px]">add_circle</span></button>
-                    </div>
+                    <div className="font-label-md text-label-md text-on-surface mb-0.5">Prêt à l'enregistrement</div>
+                    <div className="font-body-sm text-body-sm text-outline">Champs obligatoires validés</div>
                   </div>
                 </div>
               </div>
