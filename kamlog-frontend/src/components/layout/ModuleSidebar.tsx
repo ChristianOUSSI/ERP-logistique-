@@ -180,7 +180,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'gate_in', href: '/parc/gate-in', icon: 'login' },
     { labelKey: 'gate_out', href: '/parc/gate-out', icon: 'logout' },
     { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
-    { labelKey: 'orders', href: '/parc/creation-ordre-de-travail', icon: 'handyman' },
+    { labelKey: 'orders', href: '/parc/work-orders/create', icon: 'handyman' },
   ],
   audit: [
     { labelKey: 'audit_health', href: '/audit/dashboard/health', icon: 'monitoring' },
