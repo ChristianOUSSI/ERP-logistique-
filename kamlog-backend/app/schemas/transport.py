@@ -103,4 +103,6 @@ class MissionResponse(MissionBase):
     dossier_id: int | None
     created_at: datetime
     updated_at: datetime
+    camion: CamionResponse | None = None
+    chauffeur: ChauffeurResponse | None = None
     model_config = ConfigDict(from_attributes=True)

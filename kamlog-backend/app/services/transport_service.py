@@ -233,7 +233,10 @@ class MissionTransportService:
         cached = cache_service.get(cache_key)
         if cached:
             return cached
-        result = db.query(MissionTransport).filter(MissionTransport.id == mission_id).first()
+        result = db.query(MissionTransport).options(
+            selectinload(MissionTransport.camion),
+            selectinload(MissionTransport.chauffeur)
+        ).filter(MissionTransport.id == mission_id).first()
         if result:
             cache_service.set(cache_key, result, expire=600)
         return result
@@ -254,7 +257,10 @@ class MissionTransportService:
         cached = cache_service.get(cache_key)
         if cached:
             return cached
-        result = db.query(MissionTransport).filter(
+        result = db.query(MissionTransport).options(
+            selectinload(MissionTransport.camion),
+            selectinload(MissionTransport.chauffeur)
+        ).filter(
             MissionTransport.statut.in_([
                 StatutMission.EN_CHARGEMENT,
                 StatutMission.EN_ROUTE,
