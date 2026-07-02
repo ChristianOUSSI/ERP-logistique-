@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { TrendingUp, TrendingDown, Package, ShieldAlert, CreditCard, Truck, Terminal, AlertTriangle, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getRouteFromTCode } from '@/utils/tcodeLookup'
+import { financeAPI, transportAPI, auditAPI, magasinAPI } from '@/lib/api-client'
 
 // Mock Data pour les graphiques
 const revenueDataWeek = [
@@ -37,14 +38,52 @@ export default function GlobalDashboard() {
   const [tcode, setTcode] = useState('')
   const [period, setPeriod] = useState('week')
   const [isSyncing, setIsSyncing] = useState(false)
-  const [lastSync, setLastSync] = useState('14:32:01')
+  const [lastSync, setLastSync] = useState(new Date().toLocaleTimeString())
+  
+  // States for real KPI data
+  const [stockValue, setStockValue] = useState('14.2M')
+  const [activeMissions, setActiveMissions] = useState('42')
+  const [monthlyRevenue, setMonthlyRevenue] = useState('2.8M')
+  const [activeVehicles, setActiveVehicles] = useState('156')
 
-  const handleSync = () => {
+  const fetchRealData = useCallback(async () => {
+    try {
+      // Parallel fetch for available APIs
+      const [finRes, transRes] = await Promise.allSettled([
+        financeAPI.getKpis(),
+        transportAPI.getKpis(),
+      ]);
+
+      if (finRes.status === 'fulfilled' && finRes.value.data) {
+        // e.g., finRes.value.data.revenue_mensuel
+        if (finRes.value.data.revenue_mensuel) {
+          setMonthlyRevenue((finRes.value.data.revenue_mensuel / 1000000).toFixed(1) + 'M')
+        }
+      }
+
+      if (transRes.status === 'fulfilled' && transRes.value.data) {
+        // e.g., transRes.value.data.vehicules_actifs
+        if (transRes.value.data.vehicules_actifs !== undefined) {
+          setActiveVehicles(transRes.value.data.vehicules_actifs.toString())
+        }
+      }
+
+    } catch (e) {
+      console.error("Failed to sync KPIs", e)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchRealData()
+  }, [fetchRealData])
+
+  const handleSync = async () => {
     setIsSyncing(true)
+    await fetchRealData()
     setTimeout(() => {
       setIsSyncing(false)
       setLastSync(new Date().toLocaleTimeString())
-    }, 1500)
+    }, 800) // Small visual delay
   }
 
   const handleTCodeSubmit = (e?: React.FormEvent) => {
@@ -107,7 +146,7 @@ export default function GlobalDashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Valeur des Stocks</p>
-              <h2 className="text-2xl font-black text-slate-800">14.2M <span className="text-sm font-bold text-slate-500">FCFA</span></h2>
+              <h2 className="text-2xl font-black text-slate-800">{stockValue} <span className="text-sm font-bold text-slate-500">FCFA</span></h2>
             </div>
           </div>
 
@@ -124,7 +163,7 @@ export default function GlobalDashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Missions Audit</p>
-              <h2 className="text-2xl font-black text-slate-800">42 <span className="text-sm font-bold text-slate-500">Actives</span></h2>
+              <h2 className="text-2xl font-black text-slate-800">{activeMissions} <span className="text-sm font-bold text-slate-500">Actives</span></h2>
             </div>
           </div>
 
@@ -141,7 +180,7 @@ export default function GlobalDashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Revenu Mensuel</p>
-              <h2 className="text-2xl font-black text-slate-800">2.8M <span className="text-sm font-bold text-slate-500">FCFA</span></h2>
+              <h2 className="text-2xl font-black text-slate-800">{monthlyRevenue} <span className="text-sm font-bold text-slate-500">FCFA</span></h2>
             </div>
           </div>
 
@@ -158,7 +197,7 @@ export default function GlobalDashboard() {
             </div>
             <div className="relative z-10">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Véhicules Actifs</p>
-              <h2 className="text-2xl font-black text-slate-800">156 <span className="text-sm font-bold text-slate-500">Unités</span></h2>
+              <h2 className="text-2xl font-black text-slate-800">{activeVehicles} <span className="text-sm font-bold text-slate-500">Unités</span></h2>
             </div>
           </div>
         </div>
