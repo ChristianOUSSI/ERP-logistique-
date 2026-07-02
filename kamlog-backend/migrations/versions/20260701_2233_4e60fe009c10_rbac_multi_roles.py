@@ -37,8 +37,15 @@ def upgrade() -> None:
             break
             
     if has_role:
+        fk_name = None
+        for fk in inspector.get_foreign_keys('users'):
+            if 'role' in fk['constrained_columns']:
+                fk_name = fk['name']
+                break
+                
         with op.batch_alter_table('users', schema=None) as batch_op:
-            batch_op.drop_constraint(batch_op.f('fk_users_role_roles'), type_='foreignkey')
+            if fk_name:
+                batch_op.drop_constraint(fk_name, type_='foreignkey')
             batch_op.drop_column('role')
 
     # ### end Alembic commands ###
