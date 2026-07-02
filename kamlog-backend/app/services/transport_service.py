@@ -323,18 +323,30 @@ class MissionTransportService:
     def valider_creation_mission(db: Session, data: MissionCreate) -> None:
         """
         Règles métier AVANT création mission :
-        1. Camion non déjà EN_ROUTE / EN_CHARGEMENT
+        1. Camion non déjà EN_ROUTE / EN_CHARGEMENT / BLOQUE_HSE / EN_MAINTENANCE
         2. Chauffeur non déjà assigné à une mission active
-        3. Cohérence type_camion / type_marchandise
+        3. Cohérence type_camion / nature_fret
+        4. Garde-fou (Conformité Légale): Vérification de validité des documents (Camion, Remorque, Chauffeur)
         """
-        # Règle 1 : camion disponible
+        from datetime import date
+        from app.models.transport import VehiculeDocument, ChauffeurDocument
+        today = date.today()
+
+        # Règle 1 : tracteur disponible et non bloqué
         camion = CamionFlotteService.get_camion(db, data.camion_id)
         if not camion:
-            raise ValueError("Camion introuvable")
-        if camion.statut in ('EN_ROUTE', 'EN_CHARGEMENT', 'EN_LIVRAISON'):
-            raise ValueError(
-                f"Camion {camion.immatriculation} déjà en mission - statut : {camion.statut}"
-            )
+            raise ValueError("Tracteur introuvable")
+        if camion.statut in (StatutCamion.EN_ROUTE, StatutCamion.EN_CHARGEMENT, StatutCamion.BLOQUE_HSE, StatutCamion.EN_MAINTENANCE):
+            raise ValueError(f"Tracteur {camion.immatriculation} indisponible - statut : {camion.statut}")
+
+        # Si remorque spécifiée, vérifier remorque
+        remorque = None
+        if data.remorque_id:
+            remorque = CamionFlotteService.get_camion(db, data.remorque_id)
+            if not remorque:
+                raise ValueError("Remorque introuvable")
+            if remorque.statut in (StatutCamion.EN_ROUTE, StatutCamion.EN_CHARGEMENT, StatutCamion.BLOQUE_HSE, StatutCamion.EN_MAINTENANCE):
+                raise ValueError(f"Remorque {remorque.immatriculation} indisponible - statut : {remorque.statut}")
 
         # Règle 2 : chauffeur disponible
         mission_active = db.query(MissionTransport).filter(
@@ -348,11 +360,40 @@ class MissionTransportService:
         if mission_active:
             raise ValueError("Chauffeur déjà affecté à une mission en cours")
 
-        # Règle 3 : cohérence type camion / marchandise
-        MissionTransportService._verifier_coherence_type(camion.type_vehicule, data.type_marchandise)
+        # Règle 3 : cohérence type
+        MissionTransportService._verifier_coherence_type(camion.type_vehicule, data.nature_fret)
+
+        # Règle 4 : GARDE-FOU LÉGAL (Documents)
+        # 4.a Documents Tracteur (Assurance, Visite Technique)
+        docs_tracteur = db.query(VehiculeDocument).filter(VehiculeDocument.vehicule_id == data.camion_id).all()
+        doc_types = [doc.type_document for doc in docs_tracteur]
+        if 'ASSURANCE' not in doc_types or 'VISITE_TECHNIQUE' not in doc_types:
+            raise ValueError(f"Le tracteur {camion.immatriculation} n'a pas tous les documents obligatoires enregistrés (ASSURANCE, VISITE_TECHNIQUE).")
+        for doc in docs_tracteur:
+            if doc.date_expiration < today:
+                raise ValueError(f"Garde-fou: Document {doc.type_document} expiré pour le tracteur {camion.immatriculation} depuis le {doc.date_expiration}.")
+
+        # 4.b Documents Remorque
+        if data.remorque_id and remorque:
+            docs_remorque = db.query(VehiculeDocument).filter(VehiculeDocument.vehicule_id == data.remorque_id).all()
+            doc_types_rem = [doc.type_document for doc in docs_remorque]
+            if 'ASSURANCE' not in doc_types_rem or 'VISITE_TECHNIQUE' not in doc_types_rem:
+                raise ValueError(f"La remorque {remorque.immatriculation} n'a pas tous les documents obligatoires enregistrés.")
+            for doc in docs_remorque:
+                if doc.date_expiration < today:
+                    raise ValueError(f"Garde-fou: Document {doc.type_document} expiré pour la remorque {remorque.immatriculation}.")
+
+        # 4.c Documents Chauffeur (Permis, FIMO)
+        docs_chauffeur = db.query(ChauffeurDocument).filter(ChauffeurDocument.chauffeur_id == data.chauffeur_id).all()
+        doc_types_chauffeur = [doc.type_document for doc in docs_chauffeur]
+        if 'PERMIS' not in doc_types_chauffeur or 'FIMO' not in doc_types_chauffeur:
+            raise ValueError("Le chauffeur n'a pas les documents obligatoires enregistrés (PERMIS, FIMO).")
+        for doc in docs_chauffeur:
+            if doc.date_expiration < today:
+                raise ValueError(f"Garde-fou: Document {doc.type_document} expiré pour le chauffeur depuis le {doc.date_expiration}.")
 
     @staticmethod
-    def _verifier_coherence_type(type_vehicule: str, type_marchandise: str) -> None:
+    def _verifier_coherence_type(type_vehicule: str, nature_fret: str) -> None:
         """Vérifie la compatibilité camion/marchandise selon les règles KAMLOG."""
         INCOMPATIBLES = {
             'BENNE_VRAC': {'CONTENEUR_20', 'CONTENEUR_40'},
@@ -360,9 +401,9 @@ class MissionTransportService:
             'CITERNE': {'CONTENEUR_20', 'CONTENEUR_40', 'VRAC_SOLIDE'},
         }
         interdits = INCOMPATIBLES.get(type_vehicule, set())
-        if type_marchandise in interdits:
+        if nature_fret in interdits:
             raise ValueError(
-                f'Incohérence : {type_vehicule} incompatible avec {type_marchandise}'
+                f'Incohérence : {type_vehicule} incompatible avec {nature_fret}'
             )
 
     @staticmethod

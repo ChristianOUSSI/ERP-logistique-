@@ -16,8 +16,12 @@ export default function TransportDispatchPage() {
   const [newMission, setNewMission] = useState({
     chauffeur_id: '',
     camion_id: '',
+    remorque_id: '',
     point_depart: '',
-    point_arrivee: ''
+    point_arrivee: '',
+    nature_fret: 'STANDARD',
+    volume_m3: '',
+    montant_fret: ''
   });
 
   useEffect(() => {
@@ -52,26 +56,31 @@ export default function TransportDispatchPage() {
   const handleCreateMission = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMission.chauffeur_id || !newMission.camion_id || !newMission.point_depart || !newMission.point_arrivee) {
-      alert("Veuillez remplir tous les champs !");
+      alert("Veuillez remplir tous les champs obligatoires !");
       return;
     }
     
     try {
-      await transportAPI.createMission({
+      const payload: any = {
         chauffeur_id: parseInt(newMission.chauffeur_id),
         camion_id: parseInt(newMission.camion_id),
         point_depart: newMission.point_depart,
         point_arrivee: newMission.point_arrivee,
         statut: 'PLANIFIEE',
         client_id: 1, // Defaulting for MVP
-        type_marchandise: 'STANDARD'
-      });
+        nature_fret: newMission.nature_fret,
+      };
+      if (newMission.remorque_id) payload.remorque_id = parseInt(newMission.remorque_id);
+      if (newMission.volume_m3) payload.volume_m3 = parseFloat(newMission.volume_m3);
+      if (newMission.montant_fret) payload.montant_fret = parseFloat(newMission.montant_fret);
+
+      await transportAPI.createMission(payload);
       alert("Mission créée avec succès !");
       loadData();
-      setNewMission({ chauffeur_id: '', camion_id: '', point_depart: '', point_arrivee: '' });
-    } catch (error) {
+      setNewMission({ chauffeur_id: '', camion_id: '', remorque_id: '', point_depart: '', point_arrivee: '', nature_fret: 'STANDARD', volume_m3: '', montant_fret: '' });
+    } catch (error: any) {
       console.error("Creation failed", error);
-      alert("Erreur lors de la création de la mission.");
+      alert("Erreur: " + (error.response?.data?.detail || "Échec de la création. Vérifiez les documents / Garde-Fou HSE."));
     }
   };
 
@@ -247,18 +256,33 @@ export default function TransportDispatchPage() {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-label-sm font-label-sm text-outline mb-1">Vehicle Assignment</label>
-                    <select 
-                      value={newMission.camion_id} 
-                      onChange={e => setNewMission({...newMission, camion_id: e.target.value})}
-                      className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
-                    >
-                      <option value="">-- Choisir un camion --</option>
-                      {camions.map(c => (
-                        <option key={c.id} value={c.id}>{c.immatriculation} - {c.statut}</option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-label-sm font-label-sm text-outline mb-1">Tracteur</label>
+                      <select 
+                        value={newMission.camion_id} 
+                        onChange={e => setNewMission({...newMission, camion_id: e.target.value})}
+                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
+                      >
+                        <option value="">-- Choisir Tracteur --</option>
+                        {camions.filter(c => c.type_materiel === 'TRACTEUR' || !c.type_materiel).map(c => (
+                          <option key={c.id} value={c.id}>{c.immatriculation} - {c.statut}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-label-sm font-label-sm text-outline mb-1">Remorque</label>
+                      <select 
+                        value={newMission.remorque_id} 
+                        onChange={e => setNewMission({...newMission, remorque_id: e.target.value})}
+                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
+                      >
+                        <option value="">-- Facultatif --</option>
+                        {camions.filter(c => c.type_materiel === 'REMORQUE' || c.type_materiel === 'SEMI_REMORQUE').map(c => (
+                          <option key={c.id} value={c.id}>{c.immatriculation} - {c.statut}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -276,6 +300,27 @@ export default function TransportDispatchPage() {
                         onChange={e => setNewMission({...newMission, point_arrivee: e.target.value})}
                         className="w-full border-outline-variant border rounded px-4 py-2 text-body-md outline-none focus:border-primary" placeholder="e.g. Quay 9" type="text"
                       />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-label-sm font-label-sm text-outline mb-1">Fret</label>
+                      <select value={newMission.nature_fret} onChange={e => setNewMission({...newMission, nature_fret: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none">
+                        <option value="CONTENEUR_20">CONTENEUR_20</option>
+                        <option value="CONTENEUR_40">CONTENEUR_40</option>
+                        <option value="VRAC_SOLIDE">VRAC_SOLIDE</option>
+                        <option value="VRAC_LIQUIDE">VRAC_LIQUIDE</option>
+                        <option value="CONVENTIONNEL">CONVENTIONNEL</option>
+                        <option value="STANDARD">STANDARD</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-label-sm font-label-sm text-outline mb-1">Volume</label>
+                      <input type="number" placeholder="m3/tonnes" value={newMission.volume_m3} onChange={e => setNewMission({...newMission, volume_m3: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-label-sm font-label-sm text-outline mb-1">Montant</label>
+                      <input type="number" placeholder="FCFA" value={newMission.montant_fret} onChange={e => setNewMission({...newMission, montant_fret: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none" />
                     </div>
                   </div>
                   <div className="pt-2">

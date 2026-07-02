@@ -4,12 +4,19 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models.transport import CamionFlotte, ChauffeurProfil, MissionTransport, TicketCarburant
+from app.models.transport import (
+    CamionFlotte, ChauffeurProfil, MissionTransport, TicketCarburant,
+    VehiculeDocument, ChauffeurDocument, PanneVehicule, ControleHSE,
+    StatutCamion, StatutPanne
+)
 from app.models.user import User
 from app.schemas.transport import (
     CamionFlotteCreate, CamionFlotteUpdate, CamionResponse,
     ChauffeurProfilCreate, ChauffeurProfilUpdate, ChauffeurResponse,
-    MissionCreate, MissionUpdate, MissionResponse
+    MissionCreate, MissionUpdate, MissionResponse,
+    VehiculeDocumentCreate, VehiculeDocumentResponse,
+    ChauffeurDocumentCreate, ChauffeurDocumentResponse,
+    PanneVehiculeCreate, PanneVehiculeResponse
 )
 from pydantic import BaseModel
 from decimal import Decimal
@@ -459,3 +466,76 @@ async def get_gps_positions(db: Session = Depends(get_db)):
             })
             
     return positions
+
+# ─── Documents Véhicule ────────────────────────────────────────
+
+@router.post("/camions/{camion_id}/documents", response_model=VehiculeDocumentResponse, status_code=status.HTTP_201_CREATED)
+@require_permission("transport:write")
+async def add_vehicule_document(camion_id: int, doc_data: VehiculeDocumentCreate, db: Session = Depends(get_db)):
+    doc = VehiculeDocument(**doc_data.model_dump(), cree_par="system")
+    db.add(doc)
+    db.commit()
+    db.refresh(doc)
+    return doc
+
+@router.get("/camions/{camion_id}/documents", response_model=List[VehiculeDocumentResponse])
+@require_permission("transport:read")
+async def get_vehicule_documents(camion_id: int, db: Session = Depends(get_db)):
+    return db.query(VehiculeDocument).filter(VehiculeDocument.vehicule_id == camion_id).all()
+
+# ─── Documents Chauffeur ───────────────────────────────────────
+
+@router.post("/chauffeurs/{chauffeur_id}/documents", response_model=ChauffeurDocumentResponse, status_code=status.HTTP_201_CREATED)
+@require_permission("transport:write")
+async def add_chauffeur_document(chauffeur_id: int, doc_data: ChauffeurDocumentCreate, db: Session = Depends(get_db)):
+    doc = ChauffeurDocument(**doc_data.model_dump(), cree_par="system")
+    db.add(doc)
+    db.commit()
+    db.refresh(doc)
+    return doc
+
+@router.get("/chauffeurs/{chauffeur_id}/documents", response_model=List[ChauffeurDocumentResponse])
+@require_permission("transport:read")
+async def get_chauffeur_documents(chauffeur_id: int, db: Session = Depends(get_db)):
+    return db.query(ChauffeurDocument).filter(ChauffeurDocument.chauffeur_id == chauffeur_id).all()
+
+# ─── Pannes & Maintenance ──────────────────────────────────────
+
+@router.post("/camions/{camion_id}/pannes", response_model=PanneVehiculeResponse, status_code=status.HTTP_201_CREATED)
+@require_permission("transport:write")
+async def declarer_panne(camion_id: int, panne_data: PanneVehiculeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    panne = PanneVehicule(**panne_data.model_dump(), declare_par=current_user.username, cree_par=current_user.username)
+    db.add(panne)
+    
+    # Bloquer le camion en maintenance
+    camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
+    if camion:
+        camion.statut = StatutCamion.EN_MAINTENANCE
+    
+    db.commit()
+    db.refresh(panne)
+    return panne
+
+@router.get("/camions/{camion_id}/pannes", response_model=List[PanneVehiculeResponse])
+@require_permission("transport:read")
+async def get_pannes(camion_id: int, db: Session = Depends(get_db)):
+    return db.query(PanneVehicule).filter(PanneVehicule.vehicule_id == camion_id).all()
+
+@router.post("/camions/{camion_id}/hse-block")
+@require_permission("transport:write")
+async def bloquer_hse(camion_id: int, motif: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
+    if not camion:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
+    
+    controle = ControleHSE(vehicule_id=camion_id, controleur=current_user.username, vehicule_bloque=True, motif_blocage=motif, cree_par=current_user.username)
+    db.add(controle)
+    
+    # Créer l'entrée Maintenance auto
+    panne = PanneVehicule(vehicule_id=camion_id, description=f"BLOCAGE HSE: {motif}", statut=StatutPanne.A_REPARER, declare_par=current_user.username, cree_par=current_user.username)
+    db.add(panne)
+    
+    # Bloquer camion
+    camion.statut = StatutCamion.BLOQUE_HSE
+    db.commit()
+    return {"message": "Véhicule bloqué et envoyé en maintenance avec succès"}
