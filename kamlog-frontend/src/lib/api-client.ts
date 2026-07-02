@@ -76,6 +76,12 @@ export const transportAPI = {
     apiClient.post(`/api/documents/bl`, { mission_id: missionId }),
   getFuel: () =>
     apiClient.get('/api/transport/fuel'),
+  getKPIs: () =>
+    apiClient.get('/api/transport/kpis'),
+  getKpis: () =>
+    apiClient.get('/api/transport/kpis'),
+  getGPS: () =>
+    apiClient.get('/api/transport/gps'),
 };
 
 // ─── Service Finance ──────────────────────────────────────

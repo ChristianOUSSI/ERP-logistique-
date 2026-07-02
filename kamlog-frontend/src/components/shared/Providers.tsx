@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { AuthProvider as CustomAuthProvider } from '@/components/layout/AuthProvider'
+import { SettingsProvider } from '@/components/layout/SettingsProvider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -33,7 +34,8 @@ function AuthSync({ children }: { children: React.ReactNode }) {
         email: session.user.email || '',
         nom: session.user.nom || '',
         prenom: session.user.prenom || '',
-        roles: session.user.roles || ['user'],
+        role: (session.user as any).role || '',
+        roles: (session.user as any).roles || ['user'],
         is_active: session.user.is_active ?? true,
       });
     } else {
@@ -62,7 +64,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <SessionProvider>
         <AuthSync>
           <CustomAuthProvider>
-            {children}
+            <SettingsProvider>
+              {children}
+            </SettingsProvider>
           </CustomAuthProvider>
         </AuthSync>
         <Toaster />

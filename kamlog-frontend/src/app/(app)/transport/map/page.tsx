@@ -1,6 +1,7 @@
 // src/app/(app)/transport/map/page.tsx - K-Transport Terminal Map Control - Fidèle 100% au HTML original
 'use client'
 
+import { useState, useEffect } from 'react';
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { transportAPI } from '@/lib/api-client';
 

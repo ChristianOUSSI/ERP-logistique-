@@ -57,6 +57,16 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
 
   const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false);
 
+  // Agency Selector (Multi-Tenancy)
+  const [selectedAgency, setSelectedAgency] = useState('Douala, CMR');
+  const [isAgencyMenuOpen, setIsAgencyMenuOpen] = useState(false);
+
+  const AGENCIES = [
+    { id: 'DLA', name: 'Douala, CMR', icon: 'domain' },
+    { id: 'ABJ', name: 'Abidjan, CIV', icon: 'domain' },
+    { id: 'DKR', name: 'Dakar, SEN', icon: 'domain' },
+  ];
+
   const MODULES_LIST: { id: ModuleType; label: string; icon: string; path: string }[] = [
     { id: 'transport', label: 'Logistique / Transport', icon: 'local_shipping', path: '/transport/control' },
     { id: 'finance', label: 'Comptabilité / Finance', icon: 'account_balance', path: '/finance/overview' },
@@ -176,12 +186,11 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
       catch (err) { console.error('Failed to load notifications'); }
     }
 
-    const demoCleanup = connect();
+    connect();
     
     return () => {
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
       socketRef.current?.close();
-      if (demoCleanup && typeof demoCleanup === 'function') demoCleanup();
     };
   }, [user, connect]);
 
@@ -236,8 +245,9 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
   }, []);
 
   const navigateToTCode = (code: string) => {
-    if (!canAccessTCode(user?.role, code)) {
-      toast.error(`Accès Interdit : Votre profil (${user?.role || 'INVITÉ'}) ne dispose pas des droits pour ${code}.`, { id: 'forbidden-tcode', icon: 'lock' });
+    const hasAccess = user?.roles?.some(r => canAccessTCode(r, code)) ?? false;
+    if (!hasAccess) {
+      toast.error(`Accès Interdit : Votre profil (${user?.roles?.join(', ') || 'INVITÉ'}) ne dispose pas des droits pour ${code}.`, { id: 'forbidden-tcode', icon: 'lock' });
       return;
     }
 
@@ -371,6 +381,47 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
                 )}
               </div>
             )}
+
+            {/* Agency Switcher (Multi-Tenancy) */}
+            <div className="relative">
+              <button
+                onClick={() => setIsAgencyMenuOpen(!isAgencyMenuOpen)}
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors shadow-sm"
+                title="Changer d'agence (Multi-Tenancy)"
+              >
+                <span className="material-symbols-outlined text-[16px] text-kamlog-primary">domain</span>
+                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-tight">{selectedAgency}</span>
+                <span className="material-symbols-outlined text-[16px] text-slate-400">arrow_drop_down</span>
+              </button>
+
+              {isAgencyMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsAgencyMenuOpen(false)} />
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 shadow-xl rounded-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="p-2 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Sélecteur d'Agence</span>
+                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded uppercase">Global</span>
+                    </div>
+                    <div className="py-1">
+                      {AGENCIES.map((agency) => (
+                        <button
+                          key={agency.id}
+                          onClick={() => {
+                            setSelectedAgency(agency.name);
+                            setIsAgencyMenuOpen(false);
+                            toast.success(`Agence basculée vers ${agency.name}`, { icon: '🏢' });
+                          }}
+                          className={`w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${selectedAgency === agency.name ? 'bg-slate-50 border-l-2 border-kamlog-primary' : 'border-l-2 border-transparent'}`}
+                        >
+                          <span className={`material-symbols-outlined text-[18px] ${selectedAgency === agency.name ? 'text-kamlog-primary' : 'text-slate-400'}`}>{agency.icon}</span>
+                          <span className={`text-xs font-medium ${selectedAgency === agency.name ? 'text-kamlog-primary font-bold' : 'text-slate-600'}`}>{agency.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Theme Switcher */}
             <button 

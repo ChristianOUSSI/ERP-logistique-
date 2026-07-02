@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-        token.roles = user.roles;
+        token.roles = (user as any).roles;
         token.nom = user.nom;
         token.prenom = user.prenom;
         token.is_active = user.is_active;

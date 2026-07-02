@@ -43,7 +43,7 @@ export default function GlobalDashboard() {
       try {
         const [magasinKpis, transportKpis, financeKpis, stocksRes] = await Promise.all([
           magasinAPI.getKpis().catch(() => ({ data: { totalStockValue: 0 } })),
-          transportAPI.getKPIs().catch(() => ({ data: { activeVehicles: 0 } })),
+          transportAPI.getKpis().catch(() => ({ data: { activeVehicles: 0 } })),
           financeAPI.getKpis().catch(() => ({ data: { chiffre_affaires: 0 } })),
           magasinAPI.getStocks().catch(() => ({ data: [] }))
         ]);

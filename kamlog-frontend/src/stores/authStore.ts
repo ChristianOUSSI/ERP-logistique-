@@ -8,6 +8,7 @@ interface User {
   nom: string
   prenom: string
   role: string
+  roles: string[]
   is_active: boolean
 }
 

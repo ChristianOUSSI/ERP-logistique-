@@ -10,7 +10,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { signIn, getSession } from 'next-auth/react'
-import { RoleBadges } from '@/components/auth/RoleBadges'
 import { getRouteForRole } from '@/lib/role-routes'
 
 // ── Schéma Zod ─────────────────────────────────────────────
@@ -98,13 +97,6 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
-
-  const handleRoleSelect = (email: string, password: string) => {
-    setValue('email', email)
-    setValue('password', password)
-    setErrorMessage(null)
-  }
-
   // ── Rendu — fidèle pixel-perfect au code.html ─────────────
   return (
     // body équivalent exact : bg-surface-container-low min-h-screen flex items-center justify-center overflow-y-auto relative
@@ -300,12 +292,6 @@ export default function LoginPage() {
             <a className="text-label-sm font-label-sm text-on-surface-variant hover:text-auth-blue" href="#">Support</a>
           </div>
         </div>
-
-        {/* ── RoleBadges (dev helper) — dans le flux, après le footer ── */}
-        <div className="mt-8 pb-0 flex justify-center w-full">
-          <RoleBadges onRoleSelect={handleRoleSelect} />
-        </div>
-
       </main>
 
       {/* ── Floating Decorative Elements — hidden xl:block opacity-20 ── */}

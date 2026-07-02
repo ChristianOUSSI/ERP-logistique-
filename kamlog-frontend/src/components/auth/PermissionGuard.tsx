@@ -25,7 +25,7 @@ export function PermissionGuard({ children, requiredRoles, tcode, fallback }: Pe
 
   let hasPermission = true;
 
-  if (requiredRoles && !user.roles?.some(r => requiredRoles.includes(r))) {
+  if (requiredRoles && !user.roles?.some(r => (requiredRoles as string[]).includes(r))) {
     hasPermission = false;
   }
 

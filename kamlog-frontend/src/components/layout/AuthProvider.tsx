@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({
         id: session.user.id || '',
         email: session.user.email || '',
-        roles: (session.user.roles as string[]) || [],
+        roles: ((session.user as any).roles as string[]) || [],
         fullName: session.user.nom || '',
         agencyId: 1, // Default fallback
       });
