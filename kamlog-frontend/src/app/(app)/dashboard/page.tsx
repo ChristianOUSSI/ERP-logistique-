@@ -15,6 +15,8 @@ export default function GlobalDashboard() {
   const [stockValue, setStockValue] = useState<number>(0);
   const [activeVehicles, setActiveVehicles] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
+  const [pendingMissions, setPendingMissions] = useState<number>(0);
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(true);
 
   // Redirection
@@ -23,7 +25,7 @@ export default function GlobalDashboard() {
       if (!user) {
         router.push('/login');
       } else {
-        const targetRoute = getRouteForRole(user.role);
+        const targetRoute = getRouteForRole(user.roles);
         if (targetRoute === '/dashboard' || targetRoute === '/dashboard/global') {
           setIsRedirecting(false);
         } else {
@@ -39,31 +41,25 @@ export default function GlobalDashboard() {
     
     async function fetchDashboardData() {
       try {
-        const [stocksRes, camionsRes, facturesRes] = await Promise.all([
-          magasinAPI.getStocks().catch(() => ({ data: [] })),
-          transportAPI.getCamions().catch(() => ({ data: [] })),
-          financeAPI.getFactures().catch(() => ({ data: [] }))
+        const [magasinKpis, transportKpis, financeKpis, stocksRes] = await Promise.all([
+          magasinAPI.getKpis().catch(() => ({ data: { totalStockValue: 0 } })),
+          transportAPI.getKpis().catch(() => ({ data: { activeVehicles: 0 } })),
+          financeAPI.getKpis().catch(() => ({ data: { chiffre_affaires: 0 } })),
+          magasinAPI.getStocks().catch(() => ({ data: [] }))
         ]);
 
-        // Calculate Stock Value
+        setStockValue(magasinKpis.data.totalStockValue || 0);
+        setActiveVehicles(transportKpis.data.activeVehicles || 0);
+        setTotalRevenue(financeKpis.data.chiffre_affaires || 0);
+        setPendingMissions(transportKpis.data.activeMissions || 0);
+        
+        // Mocking dynamic alerts for now based on low stock
         const stocks = stocksRes.data || [];
-        const value = stocks.reduce((acc: number, stock: any) => {
-          const qty = parseFloat(stock.quantite_udb) || 0;
-          return acc + (qty * 500); // Dummy multiplier for value
-        }, 0);
-        setStockValue(value);
-
-        // Calculate Active Vehicles
-        const camions = camionsRes.data || [];
-        const activeCount = camions.filter((c: any) => c.actif).length;
-        setActiveVehicles(activeCount);
-
-        // Calculate Total Revenue (Factures Payées)
-        const factures = facturesRes.data || [];
-        const revenue = factures
-          .filter((f: any) => f.statut === 'PAYEE')
-          .reduce((acc: number, f: any) => acc + (parseFloat(f.montant_ttc) || 0), 0);
-        setTotalRevenue(revenue);
+        setAlerts(stocks.filter((s: any) => parseFloat(s.quantite_udb) < 10).map((s: any) => ({
+          id: s.id || Math.random(),
+          message: `Stock faible pour l'article ${s.article_id || 'inconnu'}`,
+          type: 'warning'
+        })));
         
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
@@ -125,7 +121,7 @@ export default function GlobalDashboard() {
             </div>
 
             {/* Bento Layout Main Dashboard */}
-            <div className="grid grid-cols-12 gap-gutter">
+            <div className="grid grid-cols-12 gap-gutter animate-fade-in">
               {/* KPI CARDS (4 Modules) */}
               {/* Stock Value - Red (Magasin) */}
               <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
@@ -152,7 +148,7 @@ export default function GlobalDashboard() {
                 </div>
                 <div>
                   <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Pending Missions</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">N/A</h2>
+                  <h2 className="text-headline-md font-headline-md text-on-background">{pendingMissions}</h2>
                 </div>
                 <div className="mt-md border-t border-outline-variant pt-sm">
                   <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-tertiary">K-Audit</span></p>
@@ -200,11 +196,18 @@ export default function GlobalDashboard() {
                       Critical Alerts
                     </h3>
                   </div>
-                  <div className="flex-1 overflow-y-auto space-y-sm custom-scrollbar">
-                    {/* Placeholder until Notifications API is ready */}
-                    <div className="p-sm bg-surface-container-highest border-l-4 border-outline rounded-r-lg">
-                      <p className="text-body-sm font-body-sm text-on-surface text-center">Toutes les opérations sont normales. Aucune alerte critique pour le moment.</p>
-                    </div>
+                  <div className="flex-1 overflow-y-auto space-y-sm custom-scrollbar p-sm">
+                    {alerts.length === 0 ? (
+                      <div className="p-sm bg-surface-container-highest border-l-4 border-outline rounded-r-lg">
+                        <p className="text-body-sm font-body-sm text-on-surface text-center">Toutes les opérations sont normales. Aucune alerte critique pour le moment.</p>
+                      </div>
+                    ) : (
+                      alerts.map((alert: any) => (
+                        <div key={alert.id} className={`p-sm bg-${alert.type === 'error' ? 'error' : 'tertiary'}/10 border-l-4 border-${alert.type === 'error' ? 'error' : 'tertiary'} rounded-r-lg animate-slide-up`}>
+                          <p className={`text-body-sm font-body-sm text-${alert.type === 'error' ? 'error' : 'tertiary'} font-medium`}>{alert.message}</p>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>

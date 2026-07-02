@@ -34,20 +34,20 @@ export default function RoleAssignmentPage() {
   useEffect(() => {
     if (users.length > 0 && selectedUserId === null) {
       setSelectedUserId(users[0].id);
-      setAssignedRoleCode(users[0].role || '');
+      setAssignedRoleCode(users[0].roles?.[0] || '');
     }
   }, [users, selectedUserId]);
 
   const selectUser = (user: User) => {
     setSelectedUserId(user.id);
-    setAssignedRoleCode(user.role || '');
+    setAssignedRoleCode(user.roles?.[0] || '');
     setSuccessMessage('');
     setErrorMessage('');
   };
 
   const updateUserRoleMutation = useMutation({
     mutationFn: ({ userId, roleCode }: { userId: number, roleCode: string }) => 
-      adminAPI.updateUserRole(userId, roleCode),
+      adminAPI.updateUserRoles(userId, [roleCode]),
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['admin-users'], (old: User[]) => 
         old.map(u => u.id === updatedUser.id ? updatedUser : u)
@@ -236,7 +236,7 @@ export default function RoleAssignmentPage() {
 
               <div className="p-lg bg-surface-container-lowest border-t border-outline-variant flex items-center justify-end gap-md">
                 <button 
-                  onClick={() => setAssignedRoleCode(selectedUser?.role || '')}
+                  onClick={() => setAssignedRoleCode(selectedUser?.roles?.[0] || '')}
                   className="px-lg py-sm text-on-surface-variant hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors"
                 >
                   Réinitialiser

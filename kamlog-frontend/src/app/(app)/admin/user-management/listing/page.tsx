@@ -44,7 +44,7 @@ export default function UserListing() {
     if (!selectedUser) return;
     setUpdatingRole(true);
     try {
-      const updated = await adminAPI.updateUserRole(selectedUser.id, newRoleCode);
+      const updated = await adminAPI.updateUserRoles(selectedUser.id, [newRoleCode]);
       setUsers(users.map(u => u.id === selectedUser.id ? updated : u));
       setSelectedUser(updated);
     } catch (err) {
@@ -171,7 +171,7 @@ export default function UserListing() {
                             </div>
                           </td>
                           <td className="px-6 py-3.5">
-                            <span className="px-2 py-0.5 bg-on-primary-fixed/5 text-on-primary-fixed text-[11px] font-bold rounded border border-on-primary-fixed/10 uppercase">{user.role}</span>
+                            <span className="px-2 py-0.5 bg-on-primary-fixed/5 text-on-primary-fixed text-[11px] font-bold rounded border border-on-primary-fixed/10 uppercase">{user.roles?.join(', ')}</span>
                           </td>
                           <td className="px-6 py-3.5">
                             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-bold rounded-full ${user.is_active ? 'bg-secondary-container/20 text-secondary' : 'bg-error-container text-error'}`}>
@@ -231,7 +231,7 @@ export default function UserListing() {
                       <select
                         id="role-select"
                         disabled={updatingRole}
-                        value={selectedUser.role}
+                        value={selectedUser.roles?.[0] || ''}
                         onChange={(e) => handleRoleChange(e.target.value)}
                         className="w-full h-10 px-3 bg-white border border-outline-variant rounded focus:border-primary focus:ring-1 focus:ring-primary text-body-md text-on-surface font-body-md transition-shadow disabled:opacity-50"
                       >

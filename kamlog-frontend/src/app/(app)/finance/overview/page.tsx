@@ -8,13 +8,36 @@ import { useAuth } from '@/components/layout/AuthProvider'
 export default function KFinanceOverview() {
   const { user } = useAuth();
   const [factures, setFactures] = useState<any[]>([]);
+  const [kpis, setKpis] = useState<any>({
+    chiffre_affaires: 0,
+    impayes: 0,
+    impayes_count: 0,
+    depenses: 0,
+    tresorerie: 0
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const facturesRes = await financeAPI.getFactures().catch(() => ({ data: [] }));
+        const [facturesRes, kpisRes] = await Promise.all([
+          financeAPI.getFactures().catch(() => ({ data: [] })),
+          financeAPI.getKpis().catch(() => ({ data: {
+            chiffre_affaires: 0,
+            impayes: 0,
+            impayes_count: 0,
+            depenses: 0,
+            tresorerie: 0
+          } }))
+        ]);
         setFactures(facturesRes.data || []);
+        setKpis(kpisRes.data || {
+          chiffre_affaires: 0,
+          impayes: 0,
+          impayes_count: 0,
+          depenses: 0,
+          tresorerie: 0
+        });
       } catch (err) {
         console.error("Failed to fetch finance data:", err);
       } finally {
@@ -23,21 +46,6 @@ export default function KFinanceOverview() {
     }
     fetchData();
   }, []);
-
-  // Compute KPIs
-  const caMois = factures
-    .filter(f => f.statut === 'PAYEE')
-    .reduce((acc, f) => acc + (parseFloat(f.montant_ttc) || 0), 0);
-  
-  const impayes = factures
-    .filter(f => f.statut === 'IMPAYEE' || f.statut === 'EN_ATTENTE')
-    .reduce((acc, f) => acc + (parseFloat(f.montant_ttc) || 0), 0);
-    
-  const impayesCount = factures.filter(f => f.statut === 'IMPAYEE' || f.statut === 'EN_ATTENTE').length;
-  
-  // Dummy data for others
-  const depenses = caMois * 0.3; // Dummy 30% of CA
-  const tresorerie = caMois - depenses;
 
   const recentFactures = [...factures].sort((a, b) => new Date(b.date_creation).getTime() - new Date(a.date_creation).getTime()).slice(0, 5);
 
@@ -61,7 +69,7 @@ export default function KFinanceOverview() {
 
         <main className="flex-1 p-container-margin overflow-y-auto bg-finance-background">
           <div className="flex justify-between items-end mb-8">
-            <div>
+            <div className="animate-fade-in">
               <h2 className="font-display-lg text-display-lg text-finance-on-surface mb-2">K-Finance Overview</h2>
               <p className="font-body-base text-body-base text-finance-secondary">Aperçu global de la santé financière et des opérations en cours.</p>
             </div>
@@ -78,7 +86,7 @@ export default function KFinanceOverview() {
                <span className="text-finance-primary font-bold">Chargement des données financières...</span>
              </div>
           ) : (
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-6 animate-fade-in">
               {/* KPIs (Bento style) */}
               <div className="col-span-12 grid grid-cols-1 md:grid-cols-4 gap-6 mb-2">
                 <div className="bg-finance-surface-container-lowest rounded-xl p-5 border border-finance-outline-variant shadow-sm flex flex-col justify-between">
@@ -89,7 +97,7 @@ export default function KFinanceOverview() {
                     </div>
                   </div>
                   <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{caMois.toLocaleString()} FCFA</div>
+                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.chiffre_affaires.toLocaleString()} FCFA</div>
                   </div>
                 </div>
 
@@ -101,7 +109,7 @@ export default function KFinanceOverview() {
                     </div>
                   </div>
                   <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{depenses.toLocaleString()} FCFA</div>
+                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.depenses.toLocaleString()} FCFA</div>
                   </div>
                 </div>
 
@@ -113,8 +121,8 @@ export default function KFinanceOverview() {
                     </div>
                   </div>
                   <div>
-                    <div className="font-display-lg text-[28px] font-bold text-red-600">{impayes.toLocaleString()} FCFA</div>
-                    <div className="font-body-sm text-body-sm text-red-500 mt-1">{impayesCount} factures échues ou en attente.</div>
+                    <div className="font-display-lg text-[28px] font-bold text-red-600">{kpis.impayes.toLocaleString()} FCFA</div>
+                    <div className="font-body-sm text-body-sm text-red-500 mt-1">{kpis.impayes_count} factures échues ou en attente.</div>
                   </div>
                 </div>
 
@@ -126,13 +134,13 @@ export default function KFinanceOverview() {
                     </div>
                   </div>
                   <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{tresorerie.toLocaleString()} FCFA</div>
+                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.tresorerie.toLocaleString()} FCFA</div>
                   </div>
                 </div>
               </div>
 
               {/* Main Content Left Column */}
-              <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+              <div className="col-span-12 lg:col-span-8 flex flex-col gap-6 animate-slide-up">
                 <div className="bg-finance-surface-container-lowest rounded-xl border border-finance-outline-variant shadow-sm overflow-hidden">
                   <div className="p-5 border-b border-finance-outline-variant flex justify-between items-center">
                     <h3 className="font-title-sm text-title-sm text-finance-on-surface">Factures Récentes</h3>
@@ -169,7 +177,7 @@ export default function KFinanceOverview() {
               </div>
 
               {/* Right Column (Notifications & Alerts) */}
-              <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+              <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 animate-slide-up">
                 {/* Gateway Notifications */}
                 <div className="bg-finance-surface-container-lowest rounded-xl border border-finance-outline-variant shadow-sm overflow-hidden">
                   <div className="p-4 border-b border-finance-outline-variant bg-finance-surface-container-low flex items-center gap-2">

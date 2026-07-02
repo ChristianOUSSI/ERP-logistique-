@@ -27,8 +27,8 @@ export default function AppLayout({
   // Route Guard Logic
   const isAuthorized = () => {
     if (!user) return false;
-    const role = user.role.toUpperCase();
-    if (role === 'ADMIN' || role === 'MANAGER') return true; // Admin has full access
+    const userRoles = user.roles.map(r => r.toUpperCase());
+    if (userRoles.includes('ADMIN') || userRoles.includes('MANAGER')) return true; // Admin has full access
 
     // Extract base module from pathname (e.g. '/magasin/dashboard' -> 'magasin')
     const baseModule = pathname.split('/')[1];
@@ -37,26 +37,28 @@ export default function AppLayout({
     const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings'];
     if (commonPages.includes(baseModule)) return true;
 
-    switch (role) {
-      case 'MAGASINIER':
-      case 'MAGASIN':
-        return ['magasin', 'master-data', 'reports', 'documents'].includes(baseModule);
-      case 'FINANCE':
-        return ['finance', 'reports', 'documents', 'tiers'].includes(baseModule);
-      case 'TRANSPORT':
-      case 'DISPATCHER':
-        return ['transport', 'magasin', 'tiers', 'reports', 'documents', 'master-data'].includes(baseModule);
-      case 'PARC':
-      case 'GATE':
-      case 'GATE_AGENT':
-        return ['parc', 'magasin'].includes(baseModule);
-      case 'DOUANE':
-        return ['documents', 'magasin', 'tiers'].includes(baseModule);
-      case 'AUDITOR':
-        return ['audit', 'security', 'reports', 'admin', 'magasin', 'finance', 'transport', 'parc', 'documents', 'tiers'].includes(baseModule);
-      default:
-        return false;
-    }
+    return userRoles.some(role => {
+      switch (role) {
+        case 'MAGASINIER':
+        case 'MAGASIN':
+          return ['magasin', 'master-data', 'reports', 'documents'].includes(baseModule);
+        case 'FINANCE':
+          return ['finance', 'reports', 'documents', 'tiers'].includes(baseModule);
+        case 'TRANSPORT':
+        case 'DISPATCHER':
+          return ['transport', 'magasin', 'tiers', 'reports', 'documents', 'master-data'].includes(baseModule);
+        case 'PARC':
+        case 'GATE':
+        case 'GATE_AGENT':
+          return ['parc', 'magasin'].includes(baseModule);
+        case 'DOUANE':
+          return ['documents', 'magasin', 'tiers'].includes(baseModule);
+        case 'AUDITOR':
+          return ['audit', 'security', 'reports', 'admin', 'magasin', 'finance', 'transport', 'parc', 'documents', 'tiers'].includes(baseModule);
+        default:
+          return false;
+      }
+    });
   };
 
   // Show nothing or a loader while checking authentication
@@ -77,9 +79,9 @@ export default function AppLayout({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-900 gap-4">
         <h2 className="text-2xl font-bold text-red-600">Accès Refusé</h2>
-        <p>Votre rôle ({user.role}) ne vous permet pas d'accéder à ce module.</p>
+        <p>Votre profil ({user.roles?.join(', ')}) ne vous permet pas d'accéder à ce module.</p>
         <button 
-          onClick={() => router.push(getRouteForRole(user.role))}
+          onClick={() => router.push(getRouteForRole(user.roles))}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           Retourner à mon espace
@@ -108,7 +110,7 @@ export default function AppLayout({
                 </div>
                 <div className="hidden md:flex flex-col">
                   <span className="text-sm font-semibold text-on-surface leading-tight">{user?.fullName || user?.email}</span>
-                  <span className="text-xs text-secondary capitalize leading-tight">{user?.role?.replace('_', ' ')}</span>
+                  <span className="text-xs text-secondary capitalize leading-tight">{user?.roles?.join(', ')?.replace(/_/g, ' ')}</span>
                 </div>
                 <button 
                   onClick={() => logout()} 

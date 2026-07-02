@@ -112,46 +112,7 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
   const connect = useCallback(() => {
     if (!user) return;
     
-    // Mode Démo Vercel / Standalone : Émulation asynchrone des alertes logistiques
-    if (process.env.NEXT_PUBLIC_MOCK_AUTH === 'true') {
-      setWsStatus('connected');
-      const mockAlerts = [
-        { message: "🚨 ALERTE CRITIQUE: Détection de siphonnage de carburant suspect sur le camion LT-982-CH (Mission #1204) !", severity: 'CRITICAL' },
-        { message: "⚠️ ATTENTION: Le Bon d'Enlèvement Mag3 #RS-2026-004 est en attente d'autorisation depuis plus de 2 heures.", severity: 'WARNING' },
-        { message: "🚨 ALERTE CRITIQUE: Anomalie thermique détectée sur le conteneur frigorifique MSCU-88219 (Zone Parc B3).", severity: 'CRITICAL' },
-        { message: "ℹ️ INFO: Nouveau manifeste maritime douanier (CAMCIS) reçu pour l'agent Bolloré.", severity: 'INFO' },
-        { message: "⚠️ ATTENTION: Seuil de stock minimum franchi pour l'article MAT-054 (Rupture proche).", severity: 'WARNING' }
-      ];
-
-      const interval = setInterval(() => {
-        const randomAlert = mockAlerts[Math.floor(Math.random() * mockAlerts.length)];
-        const newNotif: ERPNotification = {
-          id: Math.random().toString(36).substring(2, 11),
-          message: randomAlert.message,
-          severity: randomAlert.severity as 'CRITICAL' | 'WARNING' | 'INFO',
-          read: false,
-          timestamp: new Date().toISOString(),
-        };
-        
-        setNotifications((prev) => [newNotif, ...prev]);
-        
-        if (randomAlert.severity === 'CRITICAL' && soundEnabledRef.current) {
-          triggerSoundBadge();
-          const audio = new Audio('/assets/sounds/critical-alert.mp3');
-          audio.volume = 0.4;
-          audio.play().catch(() => console.warn('Lecture audio bloquée par le navigateur en mode démo.'));
-        }
-
-        toast(randomAlert.message, {
-          icon: randomAlert.severity === 'CRITICAL' ? '🚨' : '⚠️',
-          duration: 5000,
-        });
-      }, 20000); // Émet une alerte portuaire fictive toutes les 20 secondes
-
-      return () => clearInterval(interval);
-    }
-
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws/alerts';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/alerts/ws/alerts';
     const socket = new WebSocket(`${wsUrl}?token=${user.id}`);
     socketRef.current = socket;
     setWsStatus('connecting');

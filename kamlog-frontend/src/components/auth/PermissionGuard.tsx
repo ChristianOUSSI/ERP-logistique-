@@ -25,11 +25,11 @@ export function PermissionGuard({ children, requiredRoles, tcode, fallback }: Pe
 
   let hasPermission = true;
 
-  if (requiredRoles && !requiredRoles.includes(user.role)) {
+  if (requiredRoles && !user.roles?.some(r => requiredRoles.includes(r))) {
     hasPermission = false;
   }
 
-  if (tcode && !canAccessTCode(user.role, tcode)) {
+  if (tcode && !user.roles?.some(r => canAccessTCode(r, tcode))) {
     hasPermission = false;
   }
 
@@ -39,7 +39,7 @@ export function PermissionGuard({ children, requiredRoles, tcode, fallback }: Pe
         <span className="material-symbols-outlined text-red-500 text-5xl mb-4">lock_person</span>
         <h3 className="text-xl font-bold text-slate-900 mb-2">Accès Non Autorisé</h3>
         <p className="text-slate-600 max-w-md">
-          Votre profil ({user.role}) ne possède pas les privilèges requis pour accéder à cette transaction ou ce module.
+          Votre profil ({user.roles?.join(', ')}) ne possède pas les privilèges requis pour accéder à cette transaction ou ce module.
         </p>
       </div>
     );

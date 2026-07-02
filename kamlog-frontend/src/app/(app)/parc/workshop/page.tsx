@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { transportAPI } from '@/lib/api-client'
+import { transportAPI, parcAPI } from '@/lib/api-client'
 
 export default function ParcWorkshopPage() {
   const [vehiclesInRepair, setVehiclesInRepair] = useState<any[]>([]);
@@ -11,20 +11,22 @@ export default function ParcWorkshopPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await transportAPI.getCamions().catch(() => ({ data: [] }));
-        const camions = res.data || [];
+        const res = await parcAPI.getWorkshopRepairs().catch(() => ({ data: [] }));
+        const repairs = res.data || [];
         
-        // Mock repair data for vehicles that are not active
-        const inRepair = camions.filter((c: any) => !c.actif).map((c: any, index: number) => ({
-          ...c,
-          probleme_signale: ['Fuite hydraulique', 'Remplacement batterie', 'Panne moteur', 'Révision 50k KM', 'Changement pneus'][index % 5],
-          mecanicien: ['M. Kouamé', 'S. Diarrassouba', 'A. Touré', 'J. Ndiaye'][index % 4],
-          initiales: ['MK', 'SD', 'AT', 'JN'][index % 4],
-          couleur: ['bg-primary-container text-on-primary-container', 'bg-secondary-container text-on-secondary-container', 'bg-tertiary-container text-on-tertiary-container', 'bg-error-container text-on-error-container'][index % 4],
-          statut_reparation: index % 3 === 0 ? 'Bloqué' : (index % 2 === 0 ? 'Terminé (Test)' : 'En cours')
+        // Mappers to the UI
+        const mappedRepairs = repairs.map((r: any) => ({
+          id: r.id,
+          immatriculation: `CAM-${r.camion_id}`,
+          type_vehicule: 'Camion',
+          probleme_signale: r.description || r.type_intervention,
+          mecanicien: r.mecanicien_en_charge || 'Non Assigné',
+          initiales: (r.mecanicien_en_charge || 'NA').substring(0, 2).toUpperCase(),
+          couleur: 'bg-secondary-container text-on-secondary-container',
+          statut_reparation: r.statut === 'EN_ATTENTE' ? 'Bloqué' : (r.statut === 'TERMINEE' ? 'Terminé' : 'En cours')
         }));
         
-        setVehiclesInRepair(inRepair);
+        setVehiclesInRepair(mappedRepairs);
       } catch (error) {
         console.error("Failed to load workshop data", error);
       } finally {

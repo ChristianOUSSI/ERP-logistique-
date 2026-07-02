@@ -5,7 +5,7 @@ import { authAPI, apiClient } from './api-client';
 
 export const authOptions: NextAuthOptions = {
   debug: true,
-  secret: process.env.NEXTAUTH_SECRET || "k9M+3L/7jBvW4zTqRcX8yF2pE5aH1nD6vK9M+3L/7jBv=",
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
             email: userData.email,
             accessToken: access_token,
             refreshToken: refresh_token,
-            role: userData.role,
+            roles: userData.roles || [],
             nom: userData.full_name || '',
             prenom: '',
             is_active: userData.is_active ?? true,
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-        token.role = user.role;
+        token.roles = user.roles;
         token.nom = user.nom;
         token.prenom = user.prenom;
         token.is_active = user.is_active;
@@ -78,7 +78,7 @@ export const authOptions: NextAuthOptions = {
       // @ts-ignore
       session.user.refreshToken = token.refreshToken as string;
       // @ts-ignore
-      session.user.role = token.role as string;
+      session.user.roles = token.roles as string[];
       // @ts-ignore
       session.user.nom = token.nom as string;
       // @ts-ignore
@@ -92,7 +92,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 12 * 60 * 60, // 12 heures par défaut
+    maxAge: parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE || '43200', 10), // 12 heures par défaut
   },
   pages: {
     signIn: '/login',

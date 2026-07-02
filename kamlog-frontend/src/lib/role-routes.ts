@@ -30,12 +30,13 @@ const ROLE_ALIASES: Record<string, string> = {
   auditor: 'AUDITOR',
 };
 
-export function normalizeRole(role?: string | null): string {
+export function normalizeRole(role?: string | string[] | null): string {
   if (!role) {
     return 'USER';
   }
 
-  const trimmedRole = role.trim();
+  const roleStr = Array.isArray(role) ? (role[0] || '') : role;
+  const trimmedRole = roleStr.trim();
   if (!trimmedRole) {
     return 'USER';
   }
@@ -44,7 +45,15 @@ export function normalizeRole(role?: string | null): string {
   return ROLE_ALIASES[normalizedKey] ?? trimmedRole.toUpperCase();
 }
 
-export function getRouteForRole(role?: string | null): string {
-  const normalizedRole = normalizeRole(role);
+export function getRouteForRole(role?: string | string[] | null): string {
+  if (Array.isArray(role) && role.length > 0) {
+    // If admin is in the roles, return global dashboard
+    if (role.some(r => r.toLowerCase() === 'admin')) return ROLE_ROUTES['ADMIN'];
+    // Otherwise return route for first role
+    const normalizedRole = normalizeRole(role[0]);
+    return ROLE_ROUTES[normalizedRole] ?? '/dashboard';
+  }
+  
+  const normalizedRole = normalizeRole(role as string | null);
   return ROLE_ROUTES[normalizedRole] ?? '/dashboard';
 }

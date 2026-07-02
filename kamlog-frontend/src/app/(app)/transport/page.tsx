@@ -1,9 +1,31 @@
 // src/app/(app)/transport/page.tsx - K-Transport Mission Control - Fidèle 100% au HTML original
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { transportAPI } from '@/lib/api-client'
 
 export default function TransportPage() {
+  const [camions, setCamions] = useState<any[]>([])
+  const [missions, setMissions] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [camionsRes, missionsRes] = await Promise.all([
+          transportAPI.getCamions().catch(() => ({ data: [] })),
+          transportAPI.getMissions().catch(() => ({ data: [] }))
+        ]);
+        setCamions(camionsRes.data || []);
+        setMissions(missionsRes.data || []);
+      } catch (err) {
+        console.error("Erreur de chargement", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
   // ── Micro-interactions JavaScript fidèles au HTML original ─────────
   useEffect(() => {
     // Add hover scale effect to cards
@@ -86,17 +108,17 @@ export default function TransportPage() {
                 </div>
                 <div className="flex gap-8">
                   <div className="text-center">
-                    <span className="block font-display-lg text-display-lg text-on-surface">25</span>
+                    <span className="block font-display-lg text-display-lg text-on-surface">{camions.filter(c => c.statut === 'EN_ROUTE').length}</span>
                     <span className="font-label-caps text-label-caps text-secondary flex items-center justify-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> On Road</span>
                   </div>
                   <div className="w-px h-10 bg-outline-variant"></div>
                   <div className="text-center">
-                    <span className="block font-display-lg text-display-lg text-on-surface">12</span>
+                    <span className="block font-display-lg text-display-lg text-on-surface">{camions.filter(c => c.statut === 'DISPONIBLE').length}</span>
                     <span className="font-label-caps text-label-caps text-secondary flex items-center justify-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span> Available</span>
                   </div>
                   <div className="w-px h-10 bg-outline-variant"></div>
                   <div className="text-center">
-                    <span className="block font-display-lg text-display-lg text-on-surface">3</span>
+                    <span className="block font-display-lg text-display-lg text-on-surface">{camions.filter(c => c.statut === 'MAINTENANCE').length}</span>
                     <span className="font-label-caps text-label-caps text-secondary flex items-center justify-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> Maintenance</span>
                   </div>
                 </div>
@@ -109,33 +131,21 @@ export default function TransportPage() {
                   <span className="font-label-caps text-label-caps text-secondary">TODAY</span>
                 </div>
                 <div className="flex-1 overflow-y-auto space-y-3 pr-2">
-                  {/* Item 1 */}
-                  <div className="p-3 border border-outline-variant rounded-DEFAULT hover:border-[#F59E0B] transition-colors cursor-pointer group">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-mono-data text-mono-data text-on-surface group-hover:text-[#F59E0B]">DLV-8821</span>
-                      <span className="font-label-caps text-label-caps bg-surface-container-high px-2 py-1 rounded text-secondary">14:30</span>
+                  {missions.filter(m => m.statut !== 'LIVREE' && m.statut !== 'TERMINEE').slice(0, 3).map((m: any, idx) => (
+                    <div key={idx} className="p-3 border border-outline-variant rounded-DEFAULT hover:border-[#F59E0B] transition-colors cursor-pointer group animate-fade-in">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-mono-data text-mono-data text-on-surface group-hover:text-[#F59E0B]">{m.reference || `MSN-${m.id}`}</span>
+                        <span className="font-label-caps text-label-caps bg-surface-container-high px-2 py-1 rounded text-secondary">
+                          {m.date_prevue ? new Date(m.date_prevue).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}
+                        </span>
+                      </div>
+                      <p className="font-body-sm text-body-sm text-on-surface font-medium truncate">{m.destination || 'Destination non spécifiée'}</p>
+                      <p className="font-body-sm text-body-sm text-secondary truncate">Client: {m.client_id || 'Interne'}</p>
                     </div>
-                    <p className="font-body-sm text-body-sm text-on-surface font-medium truncate">Port Terminal B</p>
-                    <p className="font-body-sm text-body-sm text-secondary truncate">Client: Maersk Logistics</p>
-                  </div>
-                  {/* Item 2 */}
-                  <div className="p-3 border border-outline-variant rounded-DEFAULT hover:border-[#F59E0B] transition-colors cursor-pointer group">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-mono-data text-mono-data text-on-surface group-hover:text-[#F59E0B]">DLV-8822</span>
-                      <span className="font-label-caps text-label-caps bg-surface-container-high px-2 py-1 rounded text-secondary">15:15</span>
-                    </div>
-                    <p className="font-body-sm text-body-sm text-on-surface font-medium truncate">Warehouse Alpha</p>
-                    <p className="font-body-sm text-body-sm text-secondary truncate">Client: CMA CGM</p>
-                  </div>
-                  {/* Item 3 */}
-                  <div className="p-3 border border-outline-variant rounded-DEFAULT hover:border-[#F59E0B] transition-colors cursor-pointer group">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-mono-data text-mono-data text-on-surface group-hover:text-[#F59E0B]">DLV-8823</span>
-                      <span className="font-label-caps text-label-caps bg-surface-container-high px-2 py-1 rounded text-secondary">16:45</span>
-                    </div>
-                    <p className="font-body-sm text-body-sm text-on-surface font-medium truncate">Zone Industrielle Sud</p>
-                    <p className="font-body-sm text-body-sm text-secondary truncate">Client: Bolloré Transports</p>
-                  </div>
+                  ))}
+                  {missions.filter(m => m.statut !== 'LIVREE' && m.statut !== 'TERMINEE').length === 0 && (
+                    <p className="text-sm text-secondary text-center py-4">Aucune livraison en cours</p>
+                  )}
                 </div>
                 <button className="mt-4 w-full text-center text-[#F59E0B] font-body-sm text-body-sm hover:underline">View All Schedule</button>
               </div>
@@ -160,41 +170,23 @@ export default function TransportPage() {
                       </tr>
                     </thead>
                     <tbody className="font-body-sm text-body-sm">
-                      <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
-                        <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-901</td>
-                        <td className="py-2 px-4 text-on-surface">Amadou Diallo</td>
-                        <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port -&gt; ZI Dakar</td>
-                        <td className="py-2 px-4 text-on-surface">VOL-FR-45</td>
-                        <td className="py-2 px-4"><span className="status-transit px-2 py-1 rounded font-label-caps text-label-caps">In Transit</span></td>
-                      </tr>
-                      <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group bg-surface-bright">
-                        <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-902</td>
-                        <td className="py-2 px-4 text-on-surface">Jean Dupont</td>
-                        <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Whse 1 -&gt; Port Term</td>
-                        <td className="py-2 px-4 text-on-surface">MER-AX-12</td>
-                        <td className="py-2 px-4"><span className="status-loading px-2 py-1 rounded font-label-caps text-label-caps">Loading</span></td>
-                      </tr>
-                      <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
-                        <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-903</td>
-                        <td className="py-2 px-4 text-on-surface">Sarah Koné</td>
-                        <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Dakar -&gt; Thies</td>
-                        <td className="py-2 px-4 text-on-surface">SCA-R-09</td>
-                        <td className="py-2 px-4"><span className="status-delivered px-2 py-1 rounded font-label-caps text-label-caps">Delivered</span></td>
-                      </tr>
-                      <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group bg-surface-bright">
-                        <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-904</td>
-                        <td className="py-2 px-4 text-on-surface">Moussa Sow</td>
-                        <td className="py-2 px-4 text-secondary truncate max-w-[150px]">ZI Sud -&gt; Port Term</td>
-                        <td className="py-2 px-4 text-on-surface">MAN-TG-88</td>
-                        <td className="py-2 px-4"><span className="status-transit px-2 py-1 rounded font-label-caps text-label-caps">In Transit</span></td>
-                      </tr>
-                      <tr className="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group">
-                        <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">TRN-905</td>
-                        <td className="py-2 px-4 text-on-surface">Oumar Fall</td>
-                        <td className="py-2 px-4 text-secondary truncate max-w-[150px]">Port -&gt; Whse 3</td>
-                        <td className="py-2 px-4 text-on-surface">VOL-FR-42</td>
-                        <td className="py-2 px-4"><span className="status-loading px-2 py-1 rounded font-label-caps text-label-caps">Loading</span></td>
-                      </tr>
+                      {loading ? (
+                        <tr><td colSpan={5} className="py-4 text-center">Chargement...</td></tr>
+                      ) : missions.length === 0 ? (
+                        <tr><td colSpan={5} className="py-4 text-center">Aucune mission active.</td></tr>
+                      ) : missions.map((m: any, idx) => (
+                        <tr key={idx} className={`border-b border-outline-variant hover:bg-surface-container-lowest transition-colors h-[grid-row-height] group ${idx % 2 === 1 ? 'bg-surface-bright' : ''}`}>
+                          <td className="py-2 px-4 font-mono-data text-mono-data text-on-surface">{m.reference || `TRN-${m.id}`}</td>
+                          <td className="py-2 px-4 text-on-surface">{m.chauffeur_id ? `Chauffeur #${m.chauffeur_id}` : 'Non assigné'}</td>
+                          <td className="py-2 px-4 text-secondary truncate max-w-[150px]">{m.origine || '?'} -&gt; {m.destination || '?'}</td>
+                          <td className="py-2 px-4 text-on-surface">{m.camion_id ? `Camion #${m.camion_id}` : 'N/A'}</td>
+                          <td className="py-2 px-4">
+                            <span className={`px-2 py-1 rounded font-label-caps text-label-caps ${m.statut === 'EN_COURS' ? 'status-transit' : m.statut === 'PLANIFIE' ? 'status-loading' : 'bg-outline-variant'}`}>
+                              {m.statut || 'INCONNU'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

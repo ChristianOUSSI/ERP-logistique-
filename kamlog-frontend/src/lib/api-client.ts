@@ -10,56 +10,44 @@ export const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
+  withCredentials: true,
 });
 
-// Intercepteur REQUEST  injecte le JWT
+// Intercepteur REQUEST
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Intercepteur RESPONSE  refresh auto si 401
+// Intercepteur RESPONSE
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
-      original._retry = true;
-      if (typeof window !== 'undefined') {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (refreshToken) {
-          try {
-            const { data } = await axios.post(`${BASE_URL}/api/auth/refresh`, {
-              refresh_token: refreshToken,
-            });
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
-            original.headers.Authorization = `Bearer ${data.access_token}`;
-            return apiClient(original);
-          } catch {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = '/login';
-          }
-        }
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);
   }
 );
 
+// ─── Service Admin ────────────────────────────────────────
+export const adminAPI = {
+  getUsers: () => apiClient.get('/api/admin/users'),
+  createUser: (data: any) => apiClient.post('/api/admin/users', data),
+  getRoles: () => apiClient.get('/api/admin/roles'),
+  createRole: (data: any) => apiClient.post('/api/admin/roles', data),
+  getAuditLogs: () => apiClient.get('/api/admin/audit-logs'),
+};
+
 // ─── Service Auth ─────────────────────────────────────────
 export const authAPI = {
   login: (data: { username: string; password: string }) =>
     apiClient.post('/api/auth/login', data),
+  logout: () => apiClient.post('/api/auth/logout'),
   register: (data: unknown) =>
     apiClient.post('/api/auth/register', data),
   getMe: () =>
@@ -86,6 +74,8 @@ export const transportAPI = {
     apiClient.post('/api/transport/chauffeurs', data),
   genererBL: (missionId: number) =>
     apiClient.post(`/api/documents/bl`, { mission_id: missionId }),
+  getFuel: () =>
+    apiClient.get('/api/transport/fuel'),
 };
 
 // ─── Service Finance ──────────────────────────────────────
@@ -102,6 +92,8 @@ export const financeAPI = {
     apiClient.get('/api/finance/tarifs', { params }),
   createTarif: (data: unknown) =>
     apiClient.post('/api/finance/tarifs', data),
+  getKpis: () =>
+    apiClient.get('/api/finance/kpis'),
 };
 
 // ─── Service Parc ─────────────────────────────────────────
@@ -114,6 +106,8 @@ export const parcAPI = {
     apiClient.get('/api/parc/stock', { params }),
   gateIn: (data: unknown) => apiClient.post('/api/parc/gate-in', data),
   gateOut: (data: unknown) => apiClient.post('/api/parc/gate-out', data),
+  getWorkshopRepairs: () =>
+    apiClient.get('/api/parc/workshop'),
 };
 
 // ─── Service Tiers ────────────────────────────────────────
@@ -134,6 +128,8 @@ export const magasinAPI = {
     apiClient.get('/api/magasin/magasins', { params }),
   getStocks: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/stocks', { params }),
+  getKpis: () =>
+    apiClient.get('/api/magasin/kpis'),
   getReceptions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/receptions', { params }),
   createReception: async (data: any) => {

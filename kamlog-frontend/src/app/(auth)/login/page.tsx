@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { authAPI } from '@/lib/api-client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -68,6 +69,10 @@ export default function LoginPage() {
     setIsLoading(true)
     setErrorMessage(null)
     try {
+      // 1. Set backend HTTPOnly cookies directly from browser
+      await authAPI.login({ username: formData.email, password: formData.password });
+
+      // 2. Setup NextAuth session
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,

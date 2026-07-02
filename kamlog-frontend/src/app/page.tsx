@@ -6,7 +6,7 @@ import { getRouteForRole } from '@/lib/role-routes'
 export default async function Home() {
   const session = await auth()
   if (session?.user) {
-    redirect(getRouteForRole(session.user.role))
+    redirect(getRouteForRole(session.user.roles))
   } else {
     redirect('/login')
   }

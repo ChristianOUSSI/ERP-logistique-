@@ -3,11 +3,12 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { UserRole } from '@/utils/tcodeLookup';
 import { useSession, signOut } from 'next-auth/react';
+import { authAPI } from '@/lib/api-client';
 
 interface User {
   id: string;
   email: string;
-  role: UserRole;
+  roles: string[];
   fullName: string;
   agencyId: number;
 }
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({
         id: session.user.id || '',
         email: session.user.email || '',
-        role: ((session.user.role as string)?.toUpperCase() as UserRole) || UserRole.USER,
+        roles: (session.user.roles as string[]) || [],
         fullName: session.user.nom || '',
         agencyId: 1, // Default fallback
       });
@@ -55,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [session, status]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setUser(null);
     setSessionExpiresAt(null);
     setSessionExpired(false);
@@ -65,6 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('kamlog_token');
     localStorage.removeItem('refresh_token');
     
+    // Nettoyer les cookies backend
+    try {
+      await authAPI.logout();
+    } catch (e) {
+      console.error("Backend logout failed", e);
+    }
+
     // Déconnexion NextAuth
     signOut({ callbackUrl: '/login' });
   }, []);

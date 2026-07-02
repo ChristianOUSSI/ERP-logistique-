@@ -4,7 +4,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  role: string;
+  roles: string[];
   is_active: boolean;
   mfa_enabled: boolean;
 }
@@ -85,7 +85,7 @@ export const adminAPI = {
     return data;
   },
 
-  createUser: async (user: { username: string; email: string; password: string; full_name: string; role: string; agency_id: number }): Promise<User> => {
+  createUser: async (user: { username: string; email: string; password: string; full_name: string; roles: string[]; agency_id: number }): Promise<User> => {
     const { data } = await apiClient.post('/api/admin/users', user);
     return data;
   },
@@ -105,8 +105,8 @@ export const adminAPI = {
     return data;
   },
 
-  updateUserRole: async (userId: number, role: string): Promise<User> => {
-    const { data } = await apiClient.put(`/api/admin/users/${userId}/role`, { role });
+  updateUserRoles: async (userId: number, roles: string[]): Promise<User> => {
+    const { data } = await apiClient.put(`/api/admin/users/${userId}/roles`, { roles });
     return data;
   }
 };

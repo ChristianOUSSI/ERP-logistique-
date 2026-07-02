@@ -33,7 +33,7 @@ function AuthSync({ children }: { children: React.ReactNode }) {
         email: session.user.email || '',
         nom: session.user.nom || '',
         prenom: session.user.prenom || '',
-        role: session.user.role || 'user',
+        roles: session.user.roles || ['user'],
         is_active: session.user.is_active ?? true,
       });
     } else {

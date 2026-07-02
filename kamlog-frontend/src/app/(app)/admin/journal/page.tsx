@@ -1,10 +1,28 @@
 // src/app/(app)/admin/journal/page.tsx - Journal d'Activité Administrative - Fidèle 100% au HTML original
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { adminAPI } from '@/lib/api-client'
+import { Skeleton } from '@/components/ui/SkeletonLoader'
 
 export default function Journal() {
   const [inputFocused, setInputFocused] = useState<string | null>(null)
+  const [logs, setLogs] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadLogs() {
+      try {
+        const res = await adminAPI.getAuditLogs();
+        setLogs(res.data || []);
+      } catch (err) {
+        console.error('Erreur chargement logs audit', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadLogs();
+  }, [])
 
   const handleInputFocus = (id: string) => {
     setInputFocused(id)
@@ -176,122 +194,47 @@ export default function Journal() {
                     </tr>
                   </thead>
                   <tbody className="text-body-sm">
-                    {/* Entry 1: Critical */}
-                    <tr className="border-b border-outline-variant">
-                      <td className="px-lg py-md font-data-tabular">2023-11-24 14:22:05</td>
-                      <td className="px-lg py-md">
-                        <span className="px-xs py-0.5 rounded-full text-[10px] font-bold uppercase severity-critical border border-error">Critical</span>
-                      </td>
-                      <td className="px-lg py-md">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-[18px]">lock</span>
-                          <span>Account Lockout (3 Failed MFA)</span>
-                        </div>
-                      </td>
-                      <td className="px-lg py-md">System_Daemon</td>
-                      <td className="px-lg py-md font-bold">kam_transport_04</td>
-                      <td className="px-lg py-md text-right">
-                        <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary">
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </td>
-                    </tr>
-                    {/* Entry 2: Warning */}
-                    <tr className="border-b border-outline-variant">
-                      <td className="px-lg py-md font-data-tabular">2023-11-24 13:45:12</td>
-                      <td className="px-lg py-md">
-                        <span className="px-xs py-0.5 rounded-full text-[10px] font-bold uppercase severity-warning border border-tertiary">Warning</span>
-                      </td>
-                      <td className="px-lg py-md">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
-                          <span>Role Escalation (Admin)</span>
-                        </div>
-                      </td>
-                      <td className="px-lg py-md">Admin_SYSTEM</td>
-                      <td className="px-lg py-md font-bold">j.marcel@kamlog.cm</td>
-                      <td className="px-lg py-md text-right">
-                        <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary">
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </td>
-                    </tr>
-                    {/* Entry 3: Info */}
-                    <tr className="border-b border-outline-variant">
-                      <td className="px-lg py-md font-data-tabular">2023-11-24 13:02:44</td>
-                      <td className="px-lg py-md">
-                        <span className="px-xs py-0.5 rounded-full text-[10px] font-bold uppercase severity-info border border-primary">Info</span>
-                      </td>
-                      <td className="px-lg py-md">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-[18px]">password</span>
-                          <span>Password Reset Requested</span>
-                        </div>
-                      </td>
-                      <td className="px-lg py-md">Self-Service</td>
-                      <td className="px-lg py-md font-bold">k.loic@kamlog.cm</td>
-                      <td className="px-lg py-md text-right">
-                        <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary">
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </td>
-                    </tr>
-                    {/* Entry 4: Info */}
-                    <tr className="border-b border-outline-variant">
-                      <td className="px-lg py-md font-data-tabular">2023-11-24 12:40:18</td>
-                      <td className="px-lg py-md">
-                        <span className="px-xs py-0.5 rounded-full text-[10px] font-bold uppercase severity-info border border-primary">Info</span>
-                      </td>
-                      <td className="px-lg py-md">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-[18px]">domain_verification</span>
-                          <span>MFA Activation Success</span>
-                        </div>
-                      </td>
-                      <td className="px-lg py-md">Audit_User_01</td>
-                      <td className="px-lg py-md font-bold">a.ndoumbe@kamlog.cm</td>
-                      <td className="px-lg py-md text-right">
-                        <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary">
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </td>
-                    </tr>
-                    {/* Entry 5: Critical */}
-                    <tr className="border-b border-outline-variant">
-                      <td className="px-lg py-md font-data-tabular">2023-11-24 11:15:30</td>
-                      <td className="px-lg py-md">
-                        <span className="px-xs py-0.5 rounded-full text-[10px] font-bold uppercase severity-critical border border-error">Critical</span>
-                      </td>
-                      <td className="px-lg py-md">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-[18px]">dangerous</span>
-                          <span>Manual Account Suspension</span>
-                        </div>
-                      </td>
-                      <td className="px-lg py-md">Admin_SYSTEM</td>
-                      <td className="px-lg py-md font-bold">external_vendor_88</td>
-                      <td className="px-lg py-md text-right">
-                        <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary">
-                          <span className="material-symbols-outlined">visibility</span>
-                        </button>
-                      </td>
-                    </tr>
+                    {loading ? (
+                      <tr><td colSpan={6} className="text-center py-8"><Skeleton type="text" className="w-1/2 h-4 mx-auto" /></td></tr>
+                    ) : logs.length === 0 ? (
+                      <tr><td colSpan={6} className="text-center py-8 text-outline">Aucun journal d'audit disponible.</td></tr>
+                    ) : (
+                      logs.map((log) => (
+                        <tr key={log.id} className="border-b border-outline-variant">
+                          <td className="px-lg py-md font-data-tabular">{new Date(log.horodatage).toLocaleString()}</td>
+                          <td className="px-lg py-md">
+                            <span className={`px-xs py-0.5 rounded-full text-[10px] font-bold uppercase border ${log.severite === 'CRITIQUE' ? 'severity-critical border-error' : (log.severite === 'WARNING' ? 'severity-warning border-tertiary' : 'severity-info border-primary')}`}>
+                              {log.severite}
+                            </span>
+                          </td>
+                          <td className="px-lg py-md">
+                            <div className="flex items-center gap-xs">
+                              <span className="material-symbols-outlined text-[18px]">info</span>
+                              <span>{log.evenement}</span>
+                            </div>
+                          </td>
+                          <td className="px-lg py-md">{log.admin_id}</td>
+                          <td className="px-lg py-md font-bold">{log.cible}</td>
+                          <td className="px-lg py-md text-right">
+                            <button className="p-xs hover:bg-surface-container-high rounded-lg text-primary" title={log.details}>
+                              <span className="material-symbols-outlined">visibility</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
               {/* Pagination */}
               <div className="p-md bg-surface border-t border-outline-variant flex justify-between items-center">
-                <p className="text-label-sm text-outline">Affichage de 1-5 sur 482 entrées</p>
+                <p className="text-label-sm text-outline">Affichage de {logs.length ? '1' : '0'}-{logs.length} sur {logs.length} entrées</p>
                 <div className="flex items-center gap-xs">
                   <button className="p-xs rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50" disabled>
                     <span className="material-symbols-outlined">chevron_left</span>
                   </button>
                   <button className="w-8 h-8 bg-primary text-on-primary rounded font-bold text-label-md">1</button>
-                  <button className="w-8 h-8 hover:bg-surface-container-high rounded font-bold text-label-md">2</button>
-                  <button className="w-8 h-8 hover:bg-surface-container-high rounded font-bold text-label-md">3</button>
-                  <span className="px-xs text-outline">...</span>
-                  <button className="w-8 h-8 hover:bg-surface-container-high rounded font-bold text-label-md">97</button>
-                  <button className="p-xs rounded border border-outline-variant hover:bg-surface-container-high">
+                  <button className="p-xs rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50" disabled>
                     <span className="material-symbols-outlined">chevron_right</span>
                   </button>
                 </div>

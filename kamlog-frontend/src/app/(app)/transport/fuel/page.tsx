@@ -6,36 +6,43 @@ import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { transportAPI } from '@/lib/api-client'
 
 export default function TransportFuelPage() {
-  const [camions, setCamions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [fuelData, setFuelData] = useState<any[]>([]);
+  const [camions, setCamions] = useState<any[]>([])
+  const [fuelData, setFuelData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadData() {
+    async function fetchData() {
       try {
-        const response = await transportAPI.getCamions();
-        const camionsData = response.data || [];
+        const [camionsRes, fuelRes] = await Promise.all([
+          transportAPI.getCamions().catch(() => ({ data: [] })),
+          transportAPI.getFuel().catch(() => ({ data: [] }))
+        ]);
+        const camionsData = camionsRes.data || [];
         setCamions(camionsData);
-        
-        // Mock fuel data for the vehicles since backend doesn't have fuel endpoint yet
-        const mockedFuel = camionsData.map((c: any, i: number) => {
-          const isAnomaly = i % 4 === 1; // Arbitrary anomaly for demo
+        const tickets = fuelRes.data || [];
+        const enrichedFuelData = camionsData.map((c: any) => {
+          const cTickets = tickets.filter((t: any) => t.camion_id === c.id);
+          const lastTicket = cTickets.length > 0 ? cTickets.sort((a: any, b: any) => new Date(b.date_plein).getTime() - new Date(a.date_plein).getTime())[0] : null;
+          
           return {
-            ...c,
-            dernier_plein: new Date(Date.now() - Math.random() * 1000000000).toLocaleDateString() + ', ' + new Date(Date.now() - Math.random() * 1000000000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            volume_ajoute: Math.floor(Math.random() * 300) + 100,
-            conso_moy: (Math.random() * 20 + 15).toFixed(1),
-            statut_niveau: isAnomaly ? 'CHUTE -' + (Math.floor(Math.random() * 10) + 5) + '%' : 'NORMAL'
+            id: c.id,
+            immatriculation: c.immatriculation,
+            marque: c.marque,
+            modele: c.modele,
+            dernier_plein: lastTicket ? new Date(lastTicket.date_plein).toLocaleDateString() : 'N/A',
+            volume_ajoute: lastTicket ? lastTicket.quantite_litres : 0,
+            conso_moy: lastTicket ? '15.5' : '0.0', // Approximate for now
+            statut_niveau: 'NORMAL'
           };
         });
-        setFuelData(mockedFuel);
-      } catch (error) {
-        console.error("Failed to load camions for fuel page", error);
+        setFuelData(enrichedFuelData);
+      } catch (err) {
+        console.error("Erreur de chargement", err);
       } finally {
         setLoading(false);
       }
     }
-    loadData();
+    fetchData();
   }, []);
 
   const totalVolume = fuelData.reduce((acc, curr) => acc + curr.volume_ajoute, 0);
