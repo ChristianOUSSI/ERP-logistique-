@@ -40,7 +40,7 @@ export default function UserManagementCreate() {
         email: formData.email,
         password: formData.password,
         full_name: `${formData.firstName} ${formData.lastName}`,
-        role: formData.role,
+        roles: formData.role ? [formData.role] : [],
         agency_id: Number(formData.agency_id)
       }
       await adminAPI.createUser(payload)
