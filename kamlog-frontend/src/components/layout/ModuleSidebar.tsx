@@ -131,7 +131,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'roles', href: '/admin/configuration-des-roles-rbac', icon: 'verified_user' },
     { labelKey: 'health', href: '/admin/audit/system-health', icon: 'monitoring' },
     { labelKey: 'audit', href: '/admin/audit/operation-trace', icon: 'history' },
-    { labelKey: 'security', href: '/admin/security/mfa', icon: 'enhanced_encryption' },
+    // { labelKey: 'security', href: '/admin/security/mfa', icon: 'enhanced_encryption' }, // TODO: Implement MFA page
   ],
   'master-data': [
     { labelKey: 'tiers', href: '/master-data/tiers', icon: 'hub' },
@@ -143,51 +143,51 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   transport: [
     { labelKey: 'fleet', href: '/transport/control', icon: 'local_shipping' },
-    { labelKey: 'dispatch', href: '/transport/dispatch', icon: 'route' },
-    { labelKey: 'goods', href: '/transport/goods-declaration', icon: 'description' },
+    // { labelKey: 'dispatch', href: '/transport/dispatch', icon: 'route' }, // TODO: Implement dispatch
+    // { labelKey: 'goods', href: '/transport/goods-declaration', icon: 'description' }, // TODO
     { labelKey: 'drivers', href: '/transport/drivers/new', icon: 'person_add' },
     { labelKey: 'fuel', href: '/transport/fuel/ticket', icon: 'gas_meter' },
-    { labelKey: 'map', href: '/transport/map', icon: 'map' },
+    // { labelKey: 'map', href: '/transport/map', icon: 'map' }, // TODO: Implement map
   ],
   finance: [
     { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },
     { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' },
-    { labelKey: 'billing', href: '/finance/billing', icon: 'receipt_long' },
+    { labelKey: 'billing', href: '/finance/factures', icon: 'receipt_long' }, // Changed billing href to factures
     { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
-    { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },
-    { labelKey: 'transactions', href: '/finance/saisie-transaction-bancaire', icon: 'add_card' },
+    // { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },
+    // { labelKey: 'transactions', href: '/finance/saisie-transaction-bancaire', icon: 'add_card' },
   ],
   magasin: [
     { labelKey: 'overview', href: '/magasin/dashboard', icon: 'dashboard' },
-    { labelKey: 'mag_articles', href: '/magasin/articles', icon: 'category' },
-    { labelKey: 'mag_clients', href: '/magasin/clients', icon: 'people' },
-    { labelKey: 'mag_commandes', href: '/magasin/commandes', icon: 'shopping_cart' },
-    { labelKey: 'mag_declarations', href: '/magasin/declarations', icon: 'description' },
-    { labelKey: 'receptions_list', href: '/magasin/receptions', icon: 'move_to_inbox' },
-    { labelKey: 'stock', href: '/magasin/stocks', icon: 'inventory' },
-    { labelKey: 'mag_stocks_search', href: '/magasin/search', icon: 'search' },
+    // { labelKey: 'mag_articles', href: '/magasin/articles', icon: 'category' },
+    // { labelKey: 'mag_clients', href: '/magasin/clients', icon: 'people' },
+    // { labelKey: 'mag_commandes', href: '/magasin/commandes', icon: 'shopping_cart' },
+    // { labelKey: 'mag_declarations', href: '/magasin/declarations', icon: 'description' },
+    // { labelKey: 'receptions_list', href: '/magasin/receptions', icon: 'move_to_inbox' },
+    // { labelKey: 'stock', href: '/magasin/stocks', icon: 'inventory' },
+    // { labelKey: 'mag_stocks_search', href: '/magasin/search', icon: 'search' },
     { labelKey: 'reception', href: '/magasin/reception-mag3', icon: 'download_done', badge: 'Mag3' },
     { labelKey: 'removal', href: '/magasin/removal-slip', icon: 'assignment_return', badge: 'Mag3' },
-    { labelKey: 'inventory', href: '/magasin/inventory/physical', icon: 'checklist' },
+    // { labelKey: 'inventory', href: '/magasin/inventory/physical', icon: 'checklist' },
     { labelKey: 'manual', href: '/magasin/mouvement-de-stock-manuel', icon: 'sync_alt' },
-    { labelKey: 'mag_capacity', href: '/magasin/capacity', icon: 'warehouse' },
-    { labelKey: 'mag_history', href: '/magasin/history', icon: 'history' },
-    { labelKey: 'mag_transactions', href: '/magasin/transactions', icon: 'receipt_long' },
-    { labelKey: 'analytics', href: '/magasin/analytics', icon: 'analytics' },
+    // { labelKey: 'mag_capacity', href: '/magasin/capacity', icon: 'warehouse' },
+    // { labelKey: 'mag_history', href: '/magasin/history', icon: 'history' },
+    // { labelKey: 'mag_transactions', href: '/magasin/transactions', icon: 'receipt_long' },
+    // { labelKey: 'analytics', href: '/magasin/analytics', icon: 'analytics' },
   ],
   parc: [
     { labelKey: 'overview', href: '/parc/overview', icon: 'directions_car' },
-    { labelKey: 'gate_in', href: '/parc/gate-in', icon: 'login' },
-    { labelKey: 'gate_out', href: '/parc/gate-out', icon: 'logout' },
+    // { labelKey: 'gate_in', href: '/parc/gate-in', icon: 'login' },
+    // { labelKey: 'gate_out', href: '/parc/gate-out', icon: 'logout' },
     { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
-    { labelKey: 'orders', href: '/parc/work-orders/create', icon: 'handyman' },
+    // { labelKey: 'orders', href: '/parc/work-orders/create', icon: 'handyman' },
   ],
   audit: [
     { labelKey: 'audit_health', href: '/audit/dashboard/health', icon: 'monitoring' },
     { labelKey: 'audit_trace', href: '/admin/audit/operation-trace', icon: 'history' },
     { labelKey: 'audit_alerts', href: '/security/alert-monitoring', icon: 'security' },
     { labelKey: 'audit_notifications', href: '/security/notifications', icon: 'notifications' },
-    { labelKey: 'audit_reports', href: '/reports/custom', icon: 'assessment' },
+    { labelKey: 'audit_reports', href: '/security/reports', icon: 'assessment' },
     { labelKey: 'audit_settings', href: '/settings/system/audit-health', icon: 'settings' },
   ],
 };
@@ -208,8 +208,8 @@ export default function ModuleSidebar({ isCollapsed = false, onToggle }: ModuleS
 
   return (
     <aside
-      className="layout-sidebar flex flex-col transition-all duration-300 overflow-hidden"
-      style={{ width: 'var(--sidebar-width)' } as React.CSSProperties}
+      className={`layout-sidebar flex flex-col transition-all duration-300 overflow-hidden bg-slate-900`}
+      style={{ width: isCollapsed ? '80px' : '260px' } as React.CSSProperties}
     >
       {/* Brand Logo Area */}
       <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between">

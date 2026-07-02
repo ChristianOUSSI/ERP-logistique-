@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/layout/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { getRouteForRole } from '@/lib/role-routes';
@@ -17,6 +17,7 @@ export default function AppLayout({
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,7 +35,7 @@ export default function AppLayout({
     const baseModule = pathname.split('/')[1];
 
     // Pages accessibles à tous les rôles authentifiés
-    const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings'];
+    const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings', 'chauffeur'];
     if (commonPages.includes(baseModule)) return true;
 
     return userRoles.some(role => {
@@ -92,7 +93,10 @@ export default function AppLayout({
 
   return (
     <div className="min-h-screen bg-background text-on-background flex h-screen overflow-hidden antialiased font-body-base">
-      <ModuleSidebar />
+      <ModuleSidebar 
+        isCollapsed={isSidebarCollapsed} 
+        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+      />
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
         <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter">
           <div className="flex items-center gap-6">

@@ -85,8 +85,8 @@ export default function LoginPage() {
       }
       if (result?.ok) {
         const session = await getSession()
-        const role = session?.user?.role
-        router.push(getRouteForRole(role))
+        const roles = (session?.user as any)?.roles || [(session?.user as any)?.role];
+        router.push(getRouteForRole(roles))
         router.refresh()
         return
       }
