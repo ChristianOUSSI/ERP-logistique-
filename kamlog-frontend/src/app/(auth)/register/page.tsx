@@ -89,11 +89,11 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex items-center justify-center overflow-y-auto relative p-md"
+      className="bg-surface-container-low text-on-surface font-body-md h-screen w-full flex items-center justify-center overflow-hidden relative p-md"
       style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
     >
       {/* ── Grande carte 2 colonnes — exactement comme le design ERP ── */}
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+      <div className="max-w-6xl w-full max-h-[95vh] flex flex-col md:grid md:grid-cols-2 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
 
         {/* ══════ Left Panel: Brand/Hero ══════ */}
         <div
@@ -123,8 +123,8 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* ══════ Right Panel: Registration Form ══════ */}
-        <div className="p-xl flex flex-col justify-center bg-surface-container-lowest">
+        {/* ══════ Right Panel: Form ══════ */}
+        <div className="p-lg sm:p-xl flex flex-col justify-center overflow-y-auto bg-surface-container-lowest">
           <div className="max-w-sm w-full mx-auto">
 
             <div className="mb-lg">

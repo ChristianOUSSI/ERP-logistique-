@@ -91,17 +91,36 @@ export default function AppLayout({
     );
   }
 
+  // Responsive sidebar handling
+  // On mobile, the sidebar acts as a drawer. When isSidebarCollapsed=true, it's hidden. When false, it's open.
+  // We'll pass a mobile flag or just handle it via CSS in the sidebar. We do need the overlay here though.
+
   return (
-    <div className="min-h-screen bg-background text-on-background flex h-screen overflow-hidden antialiased font-body-base">
+    <div className="min-h-screen bg-background text-on-background flex h-screen overflow-hidden antialiased font-body-base relative">
+      
+      {/* Mobile Overlay */}
+      {!isSidebarCollapsed && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity" 
+          onClick={() => setIsSidebarCollapsed(true)}
+        />
+      )}
+
       <ModuleSidebar 
         isCollapsed={isSidebarCollapsed} 
         onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
       />
-      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-        <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-[64px] px-gutter">
-          <div className="flex items-center gap-6">
-            {/* The sidebar takes care of the logo, but we can put breadcrumbs or module name here later */}
-            <span className="font-title-sm text-title-sm text-on-surface font-black ml-10 lg:ml-0 md:hidden">KAMLOG EM-ERP</span>
+      
+      <div className="flex-1 flex flex-col h-screen overflow-hidden relative min-w-0">
+        <header className="bg-surface border-b border-outline-variant sticky top-0 w-full z-30 flex justify-between items-center h-[64px] px-gutter shrink-0">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="md:hidden p-1 hover:bg-slate-100 rounded-md text-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[24px]">menu</span>
+            </button>
+            <span className="font-title-sm text-title-sm text-on-surface font-black md:hidden truncate">KAMLOG EM-ERP</span>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-4 text-secondary">
@@ -109,12 +128,12 @@ export default function AppLayout({
                 <span className="material-symbols-outlined text-[20px]">notifications</span>
               </Link>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20 shrink-0">
                   {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden md:flex flex-col">
-                  <span className="text-sm font-semibold text-on-surface leading-tight">{user?.fullName || user?.email}</span>
-                  <span className="text-xs text-secondary capitalize leading-tight">{user?.roles?.join(', ')?.replace(/_/g, ' ')}</span>
+                  <span className="text-sm font-semibold text-on-surface leading-tight truncate max-w-[120px]">{user?.fullName || user?.email}</span>
+                  <span className="text-xs text-secondary capitalize leading-tight truncate max-w-[120px]">{user?.roles?.join(', ')?.replace(/_/g, ' ')}</span>
                 </div>
                 <button 
                   onClick={() => logout()} 
@@ -127,7 +146,7 @@ export default function AppLayout({
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto w-full">
+        <main className="flex-1 overflow-y-auto w-full bg-slate-50/30 relative">
           {children}
         </main>
       </div>

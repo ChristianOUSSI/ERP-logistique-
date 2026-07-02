@@ -208,11 +208,12 @@ export default function ModuleSidebar({ isCollapsed = false, onToggle }: ModuleS
 
   return (
     <aside
-      className={`layout-sidebar flex flex-col transition-all duration-300 overflow-hidden bg-slate-900`}
-      style={{ width: isCollapsed ? '80px' : '260px' } as React.CSSProperties}
+      className={`layout-sidebar flex flex-col transition-all duration-300 overflow-hidden bg-slate-900 absolute md:relative z-50 h-full ${
+        !isCollapsed ? 'translate-x-0 w-[260px]' : '-translate-x-full w-[260px] md:translate-x-0 md:w-[80px]'
+      }`}
     >
       {/* Brand Logo Area */}
-      <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between">
+      <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between shrink-0">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className={`w-8 h-8 rounded-lg ${theme.sidebar.brandIconBg} ${theme.sidebar.brandIconText} flex items-center justify-center`}>
             <span 

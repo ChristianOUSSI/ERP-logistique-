@@ -99,9 +99,9 @@ export default function LoginPage() {
   }
   // ── Rendu — fidèle pixel-perfect au code.html ─────────────
   return (
-    // body équivalent exact : bg-surface-container-low min-h-screen flex items-center justify-center overflow-y-auto relative
+    // body équivalent exact : bg-surface-container-low h-screen flex items-center justify-center overflow-hidden relative
     <div
-      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center overflow-y-auto relative py-12"
+      className="bg-surface-container-low text-on-surface font-body-md h-screen w-full flex flex-col items-center justify-center overflow-hidden relative"
       style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
     >
       {/* ── Background Layer ── */}
@@ -121,8 +121,8 @@ export default function LoginPage() {
       </div>
 
       {/* ── Main Content Container — max-w-md px-md comme le HTML ── */}
-      <main className="relative z-10 w-full max-w-md px-md">
-
+      <main className="relative z-10 w-full max-w-md px-md max-h-[100dvh] overflow-y-auto py-8">
+        
         {/* ── Header / Branding — mb-xl ── */}
         <div className="text-center mb-xl">
           <div className="inline-flex items-center justify-center p-xs bg-white rounded-lg shadow-sm border border-outline-variant mb-md">
