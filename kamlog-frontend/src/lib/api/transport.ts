@@ -120,6 +120,19 @@ class TransportAPI {
     if (!response.ok) throw new Error('Failed to create goods declaration');
     return response.json();
   }
+
+  async livrerMission(missionId: string | number, signature: string, nom_receptionnaire: string): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/missions/${missionId}/livrer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ signature, nom_receptionnaire }),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to deliver mission');
+    }
+    return response.json();
+  }
 }
 
 export const transportAPI = new TransportAPI();

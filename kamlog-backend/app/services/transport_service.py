@@ -433,30 +433,57 @@ class MissionTransportService:
         db_mission = MissionTransportService.get_mission(db, mission_id)
         if db_mission:
             db_mission.statut = StatutMission.TERMINEE
-            db_mission.date_arrivee = datetime.now()
-            
             # Mettre le camion disponible
             camion = CamionFlotteService.get_camion(db, db_mission.camion_id)
             if camion:
                 camion.statut = StatutCamion.DISPONIBLE
-            
             db.commit()
             db.refresh(db_mission)
-            
-            # Invalider le cache
             invalidate_cache_pattern("transport:missions:*")
             invalidate_cache_pattern("transport:camions:*")
             invalidate_cache_pattern("transport:chauffeurs:*")
+        return db_mission
 
-            # Notification
-            try:
-                from app.utils.notifications import NotificationService
-                NotificationService.trigger_transport_alert(
-                    mission_id=mission_id,
-                    message=f"La mission {db_mission.reference} est maintenant TERMINEE."
-                )
-            except Exception as e:
-                logger.error(f"Failed to send notification: {e}")
+    @staticmethod
+    def valider_livraison(db: Session, mission_id: int, signature: str, nom_receptionnaire: str) -> Optional[MissionTransport]:
+        """E-POD: Valider la livraison et déclencher la facturation."""
+        from app.services.finance_service import FactureService
+        
+        db_mission = MissionTransportService.get_mission(db, mission_id)
+        if not db_mission:
+            raise ValueError("Mission introuvable.")
+            
+        if db_mission.statut in [StatutMission.LIVRE, StatutMission.FACTURE]:
+            raise ValueError("Cette mission a déjà été livrée.")
+
+        db_mission.statut = StatutMission.LIVRE
+        db_mission.preuve_livraison_signature = signature
+        db_mission.nom_receptionnaire = nom_receptionnaire
+        db_mission.date_livraison_reelle = datetime.now()
+        
+        # Libérer les ressources
+        camion = CamionFlotteService.get_camion(db, db_mission.camion_id)
+        if camion:
+            camion.statut = StatutCamion.DISPONIBLE
+        
+        # Générer automatiquement la facture (K-Finance)
+        try:
+            FactureService.generer_facture_transport(db, db_mission)
+        except Exception as e:
+            # On logge l'erreur mais on ne bloque pas l'EPOD
+            from app.utils.logger import get_logger
+            logger = get_logger(__name__)
+            logger.error(f"Echec facturation auto pour mission {mission_id}: {str(e)}")
+
+        db.commit()
+        db.refresh(db_mission)
+        
+        invalidate_cache_pattern("transport:missions:*")
+        invalidate_cache_pattern("transport:camions:*")
+        invalidate_cache_pattern("transport:chauffeurs:*")
+        
+        return db_mission
+        
         return db_mission
 
 

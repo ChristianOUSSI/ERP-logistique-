@@ -186,6 +186,11 @@ class MissionTransport(BaseModel):
     date_chargement_prevue: Mapped[datetime | None] = mapped_column(DateTime)
     date_livraison_souhaitee: Mapped[datetime | None] = mapped_column(DateTime)
     
+    # E-POD (Proof of Delivery)
+    preuve_livraison_signature: Mapped[str | None] = mapped_column(Text)
+    nom_receptionnaire: Mapped[str | None] = mapped_column(String(100))
+    date_livraison_reelle: Mapped[datetime | None] = mapped_column(DateTime)
+    
     # Bloc "Volet Financier & Administratif"
     montant_fret: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     frais_peage: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), default=0)

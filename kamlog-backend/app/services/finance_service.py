@@ -151,6 +151,45 @@ class FactureService:
             invalidate_cache_pattern("finance:factures:*")
         return db_facture
 
+    @staticmethod
+    def generer_facture_transport(db: Session, mission: any) -> Facture:
+        """Génère automatiquement une facture à partir d'une mission de transport livrée."""
+        from datetime import datetime, timezone
+        
+        montant_ht = (mission.montant_fret or Decimal('0')) + (mission.frais_peage or Decimal('0')) + (mission.frais_annexes or Decimal('0'))
+        
+        if montant_ht <= 0:
+            raise ValueError("Le montant de la mission doit être supérieur à 0 pour facturer.")
+
+        tva_xaf = (montant_ht * TVA_CAMEROUN).quantize(Decimal('1'))
+        montant_ttc = montant_ht + tva_xaf
+        
+        # Générer un numéro de facture unique (ex: FAC-TR-2026-0001)
+        prefix = f"FAC-TR-{datetime.now().year}"
+        count = db.query(Facture).filter(Facture.numero_facture.like(f"{prefix}%")).count()
+        numero = f"{prefix}-{(count + 1):04d}"
+        
+        db_facture = Facture(
+            numero_facture=numero,
+            tiers_id=mission.tiers_id,
+            dossier_id=mission.dossier_id,
+            mission_id=mission.id,
+            montant_ht_xaf=montant_ht,
+            tva_xaf=tva_xaf,
+            montant_ttc_xaf=montant_ttc,
+            date_emission=datetime.now(timezone.utc),
+            date_echeance=datetime.now(timezone.utc), # A adapter selon conditions de paiement
+            statut=StatutFacture.BROUILLON,
+            notes=f"Facture automatique générée suite à la livraison de la mission {mission.reference}."
+        )
+        db.add(db_facture)
+        db.commit()
+        db.refresh(db_facture)
+        
+        invalidate_cache_pattern("finance:factures:*")
+        logger.info(f"Facture auto générée: {numero} pour mission {mission.id}")
+        return db_facture
+
 
 class EncaissementService:
     """Service pour la gestion des encaissements"""

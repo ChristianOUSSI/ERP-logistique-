@@ -539,3 +539,19 @@ async def bloquer_hse(camion_id: int, motif: str, db: Session = Depends(get_db),
     camion.statut = StatutCamion.BLOQUE_HSE
     db.commit()
     return {"message": "Véhicule bloqué et envoyé en maintenance avec succès"}
+
+from pydantic import BaseModel as PydanticBaseModel
+
+class LivrerMissionPayload(PydanticBaseModel):
+    signature: str
+    nom_receptionnaire: str
+
+@router.post("/missions/{mission_id}/livrer")
+@require_permission("transport:write")
+async def livrer_mission(mission_id: int, payload: LivrerMissionPayload, db: Session = Depends(get_db)):
+    """E-POD: Valide la livraison et déclenche la facturation automatique."""
+    try:
+        mission = MissionTransportService.valider_livraison(db, mission_id, payload.signature, payload.nom_receptionnaire)
+        return {"message": "Livraison validée, facture générée automatiquement.", "mission_id": mission.id}
+    except ValueError as e:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
