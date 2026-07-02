@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.database import get_db
-from app.models.user import User, Role, RoleModel, PermissionModel
+from app.models.user import User, RoleModel, PermissionModel
 from app.utils.security import get_password_hash
 
 router = APIRouter()

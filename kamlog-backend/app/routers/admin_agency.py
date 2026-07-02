@@ -6,7 +6,6 @@ from app.services.agency_service import AgencyService
 from app.schemas.agency import AgencyResponse, AgencyCreate, AgencyUpdate
 from app.utils.permissions import check_permission, get_current_user
 from app.utils.rbac import require_role
-from app.models.user import Role
 
 router = APIRouter()
 agency_service = AgencyService()
