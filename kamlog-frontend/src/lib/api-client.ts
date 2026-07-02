@@ -13,9 +13,19 @@ export const apiClient: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Intercepteur REQUEST
+// Token storage: set by AuthProvider after login
+let _authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  _authToken = token;
+}
+
+// Intercepteur REQUEST - inject Bearer token from NextAuth session
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    if (_authToken && !config.headers['Authorization']) {
+      config.headers['Authorization'] = `Bearer ${_authToken}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -33,6 +43,7 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 // ─── Service Admin ────────────────────────────────────────
 export const adminAPI = {
@@ -160,4 +171,18 @@ export const magasinAPI = {
       return [] // Fallback since history endpoint might not exist yet
     }
   }
+};
+
+// ─── Service Notifications ───────────────────────────────
+export const notificationsAPI = {
+  getMyNotifications: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/notifications/', { params }),
+  getStats: () =>
+    apiClient.get('/api/notifications/stats'),
+  markAsRead: (id: number) =>
+    apiClient.put(`/api/notifications/${id}/mark-read`),
+  markAllAsRead: () =>
+    apiClient.put('/api/notifications/mark-all-read'),
+  deleteRead: () =>
+    apiClient.delete('/api/notifications/read'),
 };

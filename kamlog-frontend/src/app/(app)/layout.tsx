@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/components/layout/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { getRouteForRole } from '@/lib/role-routes';
@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 import ModuleSidebar from '@/components/layout/ModuleSidebar';
 import { FullScreenLoader } from '@/components/ui/Loaders';
-import { LayoutDashboard, Settings, UserCircle, LogOut } from 'lucide-react';
+import { notificationsAPI } from '@/lib/api-client';
 
 export default function AppLayout({
   children,
@@ -19,12 +19,42 @@ export default function AppLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifCount, setNotifCount] = useState(0);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  // Fetch notification count dynamically
+  useEffect(() => {
+    if (!user) return;
+    const fetchNotifCount = async () => {
+      try {
+        const res = await notificationsAPI.getStats();
+        setNotifCount(res.data?.total_unread ?? 0);
+      } catch {
+        // Silently fail — not critical
+      }
+    };
+    fetchNotifCount();
+    const interval = setInterval(fetchNotifCount, 30000); // refresh every 30s
+    return () => clearInterval(interval);
+  }, [user]);
+
+  // Close user menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Route Guard Logic
   const isAuthorized = () => {
@@ -63,12 +93,10 @@ export default function AppLayout({
     });
   };
 
-  // Show nothing or a loader while checking authentication
   if (loading) {
     return <FullScreenLoader />;
   }
 
-  // If not loading and no user, we are redirecting
   if (!user) {
     return null; 
   }
@@ -88,9 +116,9 @@ export default function AppLayout({
     );
   }
 
-  // Responsive sidebar handling
-  // On mobile, the sidebar acts as a drawer. When isSidebarCollapsed=true, it's hidden. When false, it's open.
-  // We'll pass a mobile flag or just handle it via CSS in the sidebar. We do need the overlay here though.
+  const userInitial = (user?.fullName || user?.email || 'U').charAt(0).toUpperCase();
+  const displayRole = user?.roles?.join(', ')?.replace(/_/g, ' ') || '';
+  const isAdmin = user?.roles?.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'MANAGER');
 
   return (
     <div className="min-h-screen bg-background text-on-background flex h-screen overflow-hidden antialiased font-body-base relative">
@@ -119,27 +147,87 @@ export default function AppLayout({
             </button>
             <span className="font-title-sm text-title-sm text-on-surface font-black md:hidden truncate">KAMLOG EM-ERP</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4 text-secondary">
-              <Link href="/security/notifications" className="p-2 hover:bg-surface-container-high rounded-full transition-colors hidden sm:block" title="Notifications">
-                <span className="material-symbols-outlined text-[20px]">notifications</span>
-              </Link>
-              <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            {/* Notification Bell with dynamic badge */}
+            <Link href="/security/notifications" className="relative p-2 hover:bg-surface-container-high rounded-full transition-colors text-secondary hidden sm:flex items-center justify-center" title="Notifications">
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              {notifCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none shadow-sm">
+                  {notifCount > 99 ? '99+' : notifCount}
+                </span>
+              )}
+            </Link>
+
+            {/* User Menu Dropdown */}
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors group"
+              >
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20 shrink-0">
-                  {(user?.fullName || user?.email || 'U').charAt(0).toUpperCase()}
+                  {userInitial}
                 </div>
-                <div className="hidden md:flex flex-col">
+                <div className="hidden md:flex flex-col items-start">
                   <span className="text-sm font-semibold text-on-surface leading-tight truncate max-w-[120px]">{user?.fullName || user?.email}</span>
-                  <span className="text-xs text-secondary capitalize leading-tight truncate max-w-[120px]">{user?.roles?.join(', ')?.replace(/_/g, ' ')}</span>
+                  <span className="text-xs text-secondary capitalize leading-tight truncate max-w-[120px]">{displayRole}</span>
                 </div>
-                <button 
-                  onClick={() => logout()} 
-                  className="text-sm text-red-600 hover:text-red-800 font-medium ml-2 p-2 rounded-full hover:bg-red-50 transition-colors"
-                  title="Déconnexion"
-                >
-                  <LogOut size={18} />
-                </button>
-              </div>
+                <span className={`material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200 hidden md:block ${userMenuOpen ? 'rotate-180' : ''}`}>
+                  expand_more
+                </span>
+              </button>
+
+              {/* Dropdown Panel */}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* User Info Header */}
+                  <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/50 border-b border-slate-100">
+                    <p className="text-sm font-bold text-slate-900 truncate">{user?.fullName || user?.email}</p>
+                    <p className="text-xs text-slate-500 capitalize truncate">{displayRole}</p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-1.5">
+                    <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                      <span className="material-symbols-outlined text-[18px] text-slate-400">account_circle</span>
+                      Mon Profil
+                    </Link>
+                    <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                      <span className="material-symbols-outlined text-[18px] text-slate-400">settings</span>
+                      Paramètres
+                    </Link>
+                    <Link href="/security/notifications" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                      <span className="material-symbols-outlined text-[18px] text-slate-400">notifications</span>
+                      <span className="flex-1">Notifications</span>
+                      {notifCount > 0 && (
+                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">{notifCount}</span>
+                      )}
+                    </Link>
+                    {isAdmin && (
+                      <Link href="/dashboard/global" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                        <span className="material-symbols-outlined text-[18px] text-slate-400">dashboard</span>
+                        Dashboard Global
+                      </Link>
+                    )}
+                    {isAdmin && (
+                      <Link href="/admin/user-management/listing" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                        <span className="material-symbols-outlined text-[18px] text-slate-400">manage_accounts</span>
+                        Administration
+                      </Link>
+                    )}
+                  </div>
+
+                  {/* Separator + Logout */}
+                  <div className="border-t border-slate-100 py-1.5">
+                    <button
+                      onClick={() => { setUserMenuOpen(false); logout(); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">logout</span>
+                      Déconnexion
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -150,3 +238,5 @@ export default function AppLayout({
     </div>
   );
 }
+
+

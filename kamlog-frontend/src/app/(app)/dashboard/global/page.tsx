@@ -1,11 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts'
-import { TrendingUp, TrendingDown, Package, ShieldAlert, CreditCard, Truck, Terminal, AlertTriangle, ArrowRight } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
+import { TrendingUp, TrendingDown, Package, ShieldAlert, CreditCard, Truck, Terminal, AlertTriangle, ArrowRight, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { getRouteFromTCode } from '@/utils/tcodeLookup'
 
 // Mock Data pour les graphiques
-const revenueData = [
+const revenueDataWeek = [
   { name: 'Lun', value: 4000 },
   { name: 'Mar', value: 3000 },
   { name: 'Mer', value: 2000 },
@@ -15,6 +18,13 @@ const revenueData = [
   { name: 'Dim', value: 3490 },
 ]
 
+const revenueDataMonth = [
+  { name: 'Sem 1', value: 12000 },
+  { name: 'Sem 2', value: 15500 },
+  { name: 'Sem 3', value: 10200 },
+  { name: 'Sem 4', value: 18900 },
+]
+
 const fleetData = [
   { name: 'En Route', value: 85, fill: '#00ACC1' },
   { name: 'Maintenance', value: 15, fill: '#f59e0b' },
@@ -22,8 +32,27 @@ const fleetData = [
 ]
 
 export default function GlobalDashboard() {
+  const router = useRouter()
   const [tcodeFocused, setTcodeFocused] = useState(false)
   const [tcode, setTcode] = useState('')
+  const [period, setPeriod] = useState('week')
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [lastSync, setLastSync] = useState('14:32:01')
+
+  const handleSync = () => {
+    setIsSyncing(true)
+    setTimeout(() => {
+      setIsSyncing(false)
+      setLastSync(new Date().toLocaleTimeString())
+    }, 1500)
+  }
+
+  const handleTCodeSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (tcode.trim()) {
+      router.push(getRouteFromTCode(tcode.trim()))
+    }
+  }
 
   return (
     <>
@@ -50,10 +79,14 @@ export default function GlobalDashboard() {
             <p className="text-sm text-slate-500 mt-1">Plateforme ERP d'opérations intégrées • <span className="font-mono text-xs">v2.0.4-stable</span></p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-slate-500 hidden sm:inline-block">Dernière synchro: 14:32:01</span>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm shadow-blue-200 transition-all active:scale-95">
-              <span className="material-symbols-outlined text-[20px]">sync</span>
-              Synchroniser
+            <span className="text-sm font-medium text-slate-500 hidden sm:inline-block">Dernière synchro: {lastSync}</span>
+            <button 
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm shadow-blue-200 transition-all active:scale-95 disabled:opacity-70"
+            >
+              {isSyncing ? <Loader2 className="w-5 h-5 animate-spin" /> : <span className="material-symbols-outlined text-[20px]">sync</span>}
+              {isSyncing ? 'Synchronisation...' : 'Synchroniser'}
             </button>
           </div>
         </div>
@@ -140,14 +173,18 @@ export default function GlobalDashboard() {
                 <h3 className="text-lg font-bold text-slate-800">Évolution des Revenus</h3>
                 <p className="text-sm text-slate-500">7 derniers jours</p>
               </div>
-              <select className="text-sm border-slate-200 rounded-lg text-slate-600 focus:ring-purple-500 focus:border-purple-500 py-1.5 pl-3 pr-8">
-                <option>Cette semaine</option>
-                <option>Ce mois</option>
+              <select 
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="text-sm border-slate-200 rounded-lg text-slate-600 focus:ring-purple-500 focus:border-purple-500 py-1.5 pl-3 pr-8"
+              >
+                <option value="week">Cette semaine</option>
+                <option value="month">Ce mois</option>
               </select>
             </div>
             <div className="flex-1 w-full min-h-0">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={period === 'week' ? revenueDataWeek : revenueDataMonth} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#9333ea" stopOpacity={0.3}/>
@@ -184,9 +221,9 @@ export default function GlobalDashboard() {
               </ResponsiveContainer>
             </div>
             <div className="mt-4 pt-4 border-t border-slate-100">
-              <button className="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium text-sm rounded-lg transition-colors flex items-center justify-center gap-2">
+              <Link href="/parc/overview" className="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium text-sm rounded-lg transition-colors flex items-center justify-center gap-2">
                 Voir le détail du parc <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -204,13 +241,13 @@ export default function GlobalDashboard() {
               </h3>
               <kbd className="hidden sm:inline-flex px-2 py-1 bg-slate-100 border border-slate-200 rounded text-xs font-mono text-slate-500 font-bold">CMD + K</kbd>
             </div>
-            <div className="relative mb-6 group">
+            <form onSubmit={handleTCodeSubmit} className="relative mb-6 group">
               <input 
-                className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-16 text-base font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none group-hover:bg-white" 
-                placeholder="Entrez un code de transaction (ex: KFIN_01, KTRN_EXPL)..." 
+                className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-16 text-base font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none group-hover:bg-white uppercase" 
+                placeholder="Entrez un code de transaction (ex: KFIN_TAX, KTRN_RTE)..." 
                 type="text"
                 value={tcode}
-                onChange={(e) => setTcode(e.target.value)}
+                onChange={(e) => setTcode(e.target.value.toUpperCase())}
                 onFocus={() => setTcodeFocused(true)}
                 onBlur={() => setTcodeFocused(false)}
               />
@@ -218,11 +255,11 @@ export default function GlobalDashboard() {
                 <span className="material-symbols-outlined text-slate-400">search</span>
               </div>
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <button className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${tcode.length > 0 ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}>
+                <button type="submit" className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${tcode.length > 0 ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}>
                   ALLER
                 </button>
               </div>
-            </div>
+            </form>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { code: 'KMAG_INV', icon: 'inventory_2', label: 'Inventaire' },
@@ -230,7 +267,11 @@ export default function GlobalDashboard() {
                 { code: 'KTRN_RTE', icon: 'route', label: 'Routes' },
                 { code: 'KAUD_LOG', icon: 'verified_user', label: 'Logs Audit' }
               ].map((shortcut) => (
-                <button key={shortcut.code} className="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-100 hover:border-blue-500 hover:bg-blue-50 hover:shadow-sm transition-all group">
+                <button 
+                  key={shortcut.code} 
+                  onClick={() => router.push(getRouteFromTCode(shortcut.code))}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-100 hover:border-blue-500 hover:bg-blue-50 hover:shadow-sm transition-all group"
+                >
                   <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">{shortcut.icon}</span>
                   <span className="text-xs font-mono font-bold text-slate-500 group-hover:text-blue-700 transition-colors">{shortcut.code}</span>
                 </button>
@@ -245,7 +286,7 @@ export default function GlobalDashboard() {
                 <AlertTriangle className="w-5 h-5 text-red-500" />
                 Alertes
               </h3>
-              <button className="text-xs font-bold text-blue-600 hover:underline">Tout voir</button>
+              <Link href="/security/alert-monitoring" className="text-xs font-bold text-blue-600 hover:underline">Tout voir</Link>
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
               <div className="p-3 bg-red-50/50 border border-red-100 rounded-xl relative overflow-hidden group hover:bg-red-50 transition-colors cursor-pointer">

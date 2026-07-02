@@ -3,7 +3,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { UserRole } from '@/utils/tcodeLookup';
 import { useSession, signOut } from 'next-auth/react';
-import { authAPI } from '@/lib/api-client';
+import { authAPI, setAuthToken } from '@/lib/api-client';
 
 interface User {
   id: string;
@@ -38,19 +38,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (session?.user) {
+      const accessToken = (session.user as any).accessToken as string | null;
+      
+      // 🔑 CRITICAL FIX: Inject the Bearer token into all axios calls
+      // This fixes non-admin roles being auto-disconnected after login
+      setAuthToken(accessToken || null);
+
       setUser({
-        id: session.user.id || '',
+        id: (session.user as any).id || '',
         email: session.user.email || '',
         roles: ((session.user as any).roles as string[]) || [],
-        fullName: session.user.nom || '',
+        fullName: (session.user as any).nom || '',
         agencyId: 1, // Default fallback
       });
       // La durée de session est gérée par NextAuth (12h).
-      // On met un timer local de 12h pour correspondre.
       setSessionExpiresAt(new Date(Date.now() + 12 * 3600 * 1000));
       setSessionExpired(false);
       setLoading(false);
     } else {
+      // Clear token when session ends
+      setAuthToken(null);
       setUser(null);
       setLoading(false);
     }
@@ -60,6 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSessionExpiresAt(null);
     setSessionExpired(false);
+    
+    // Clear the axios bearer token
+    setAuthToken(null);
     
     // Nettoyer le localStorage
     localStorage.removeItem('access_token');
@@ -111,4 +121,4 @@ export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
-};
+};

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useModuleTheme } from '../../hooks/useModuleTheme';
 import { useSettings } from './SettingsProvider';
 
-export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc' | 'audit';
+export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc' | 'audit' | 'dashboard';
 
 interface NavItem {
   labelKey: string;
@@ -22,6 +22,14 @@ interface ModuleSidebarProps {
 
 const SIDEBAR_I18N: Record<string, Record<string, string>> = {
   fr: {
+    global_overview: 'Vue d\'Ensemble',
+    transport_module: 'K-Transport',
+    finance_module: 'K-Finance',
+    magasin_module: 'K-Magasin',
+    parc_module: 'K-Parc',
+    audit_module: 'K-Audit',
+    master_data: 'Master Data',
+    admin_module: 'Administration',
     users: 'Utilisateurs',
     roles: 'Rôles & Permissions',
     health: 'Santé Système',
@@ -73,6 +81,14 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit_settings: 'Paramètres Audit'
   },
   en: {
+    global_overview: 'System Overview',
+    transport_module: 'K-Transport',
+    finance_module: 'K-Finance',
+    magasin_module: 'K-Magasin',
+    parc_module: 'K-Parc',
+    audit_module: 'K-Audit',
+    master_data: 'Master Data',
+    admin_module: 'Administration',
     users: 'User Management',
     roles: 'Roles & Permissions',
     health: 'System Health',
@@ -126,6 +142,16 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
 };
 
 const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
+  dashboard: [
+    { labelKey: 'global_overview', href: '/dashboard/global', icon: 'dashboard' },
+    { labelKey: 'transport_module', href: '/transport/control', icon: 'local_shipping' },
+    { labelKey: 'finance_module', href: '/finance/overview', icon: 'account_balance' },
+    { labelKey: 'magasin_module', href: '/magasin/dashboard', icon: 'warehouse' },
+    { labelKey: 'parc_module', href: '/parc/overview', icon: 'directions_car' },
+    { labelKey: 'audit_module', href: '/audit/dashboard/health', icon: 'shield' },
+    { labelKey: 'master_data', href: '/master-data/tiers', icon: 'category' },
+    { labelKey: 'admin_module', href: '/admin/user-management/listing', icon: 'manage_accounts' },
+  ],
   admin: [
     { labelKey: 'users', href: '/admin/user-management/listing', icon: 'group' },
     { labelKey: 'roles', href: '/admin/configuration-des-roles-rbac', icon: 'verified_user' },
@@ -204,7 +230,7 @@ export default function ModuleSidebar({ isCollapsed = false, onToggle }: ModuleS
 
   const t = (key: string) => SIDEBAR_I18N[language][key] || key;
   
-  if (!items.length) return null; // Ne pas afficher de sidebar sur les pages sans module (ex: dashboard)
+  if (!items.length) return null; // Ne pas afficher de sidebar sur les pages sans module
 
   return (
     <aside
