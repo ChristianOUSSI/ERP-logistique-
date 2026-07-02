@@ -430,3 +430,32 @@ async def calculer_ecart_carburant_endpoint(
         "ecart_taux": float(ecart),
         "alerte_siphonnage": ecart > Decimal('0.10')
     }
+
+@router.get("/gps")
+@require_permission("transport:read")
+async def get_gps_positions(db: Session = Depends(get_db)):
+    """Retourne les dernières positions GPS connues des camions."""
+    # In a real app this would query a PostGIS database or an external telematics provider.
+    # For now, we return dynamic simulated data so the frontend map is not hardcoded.
+    import random
+    
+    camions = db.query(CamionFlotte).all()
+    positions = []
+    
+    # Base coordinate (Douala, Cameroon)
+    base_lat = 4.0511
+    base_lng = 9.7679
+    
+    for c in camions:
+        if c.actif:
+            positions.append({
+                "camion_id": c.id,
+                "immatriculation": c.immatriculation,
+                "statut": c.statut,
+                "latitude": base_lat + (random.random() - 0.5) * 0.1,
+                "longitude": base_lng + (random.random() - 0.5) * 0.1,
+                "vitesse_kmh": random.randint(0, 80) if c.statut == "EN_ROUTE" else 0,
+                "derniere_mise_a_jour": "Il y a quelques instants"
+            })
+            
+    return positions

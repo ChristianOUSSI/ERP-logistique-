@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { magasinAPI } from '@/lib/api-client'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
 export default function KMagasinDashboard() {
   const [stocks, setStocks] = useState<any[]>([])
@@ -199,8 +200,29 @@ export default function KMagasinDashboard() {
               {/* Chart */}
               <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col items-center justify-center relative min-h-[300px] animate-slide-up">
                 <h4 className="font-title-sm text-title-sm text-on-surface absolute top-4 left-4 w-full text-left">Occupation Magasin</h4>
-                <div className="relative w-48 h-48 rounded-full flex items-center justify-center mt-6" style={{ background: `conic-gradient(#EF4444 0% ${kpis.occupationRate}%, #e1e2ec ${kpis.occupationRate}% 100%)` }}>
-                  <div className="absolute inset-0 m-4 bg-surface-container-lowest rounded-full flex flex-col items-center justify-center shadow-inner">
+                <div className="w-full h-full min-h-[200px] mt-6 relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Utilisé', value: kpis.occupationRate },
+                          { name: 'Libre', value: 100 - kpis.occupationRate }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        startAngle={90}
+                        endAngle={-270}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        <Cell key="cell-0" fill="#EF4444" />
+                        <Cell key="cell-1" fill="#e1e2ec" />
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
                     <span className="font-display-lg text-display-lg text-on-surface">{kpis.occupationRate}%</span>
                     <span className="font-label-caps text-label-caps text-secondary">Utilisé</span>
                   </div>

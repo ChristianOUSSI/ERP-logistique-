@@ -2,18 +2,43 @@
 'use client'
 
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import React, { useState, useEffect } from 'react';
+import { transportAPI } from '@/lib/api-client';
 
 export default function KTransportTerminalMapControl() {
   const [truckPos, setTruckPos] = useState(10);
   const [iotActive, setIotActive] = useState(true);
+  const [vehicles, setVehicles] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!iotActive) return;
-    const interval = setInterval(() => {
-      setTruckPos((prev) => (prev + 0.5) % 100);
-    }, 100);
-    return () => clearInterval(interval);
+    let interval: NodeJS.Timeout;
+    
+    const fetchGps = async () => {
+      try {
+        const res = await transportAPI.getGPS();
+        if (res.data) {
+          setVehicles(res.data);
+          // Just use the first vehicle's longitude to simulate movement for demo
+          if (res.data.length > 0) {
+            const simulatedPos = (Math.abs(res.data[0].longitude) * 100) % 100;
+            setTruckPos(simulatedPos);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch GPS", err);
+      }
+    };
+
+    if (iotActive) {
+      fetchGps();
+      interval = setInterval(() => {
+        fetchGps();
+        setTruckPos((prev) => (prev + 0.5) % 100);
+      }, 3000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [iotActive]);
 
   return (
@@ -118,17 +143,27 @@ export default function KTransportTerminalMapControl() {
                       <div className="bg-surface-dim border border-outline-variant rounded-sm h-full w-full"></div>
                     </div>
                   </div>
-                  {/* Transport Lane */}
                   <div className="col-span-3 h-12 bg-surface-container border-y-2 border-dashed border-outline-variant flex items-center px-lg mt-auto relative overflow-hidden">
                     <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest z-10 bg-surface-container/80 px-2 rounded">Main Transport Arterial</span>
-                    {/* Moving truck */}
-                    <div 
-                      className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
-                      style={{ left: `${truckPos}%` }}
-                    >
-                      <span className="material-symbols-outlined">local_shipping</span>
-                      <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">Unit 402</span>
-                    </div>
+                    {/* Moving trucks */}
+                    {vehicles.length > 0 ? vehicles.map((v, i) => (
+                      <div 
+                        key={v.camion_id}
+                        className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
+                        style={{ left: `${(truckPos + (i * 20)) % 100}%` }}
+                      >
+                        <span className="material-symbols-outlined">local_shipping</span>
+                        <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">{v.immatriculation}</span>
+                      </div>
+                    )) : (
+                      <div 
+                        className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
+                        style={{ left: `${truckPos}%` }}
+                      >
+                        <span className="material-symbols-outlined">local_shipping</span>
+                        <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">Unit 402</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

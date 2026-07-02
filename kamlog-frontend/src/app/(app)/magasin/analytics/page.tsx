@@ -29,17 +29,29 @@ export default function MagasinAnalyticsPage() {
     return m.date_mouvement && m.date_mouvement.startsWith(today)
   }).length
 
-  // Articles à rotation lente (mock calculation based on stock array length just to show data)
-  const slowMovingArticles = stocks.map((s: any) => ({
-    code: s.article?.code_article || 'N/A',
-    description: s.article?.nom || 'Inconnu',
-    qte: s.quantite_disponible,
-    jours: Math.floor(Math.random() * 200) + 30, // Mock days since last movement
-    zone: `Z1-A${Math.floor(Math.random() * 5)}-E${Math.floor(Math.random() * 5)}`,
-  })).sort((a, b) => b.jours - a.jours).slice(0, 10)
+  // Calculate slow-moving from real history if available
+  const slowMovingArticles = stocks.map((s: any) => {
+    // Find last movement for this article
+    const articleMoves = mouvements.filter((m: any) => m.article_id === s.article_id);
+    let jours = 999;
+    if (articleMoves.length > 0) {
+      // Sort descending
+      articleMoves.sort((a, b) => new Date(b.date_mouvement).getTime() - new Date(a.date_mouvement).getTime());
+      const lastMoveDate = new Date(articleMoves[0].date_mouvement);
+      jours = Math.floor((new Date().getTime() - lastMoveDate.getTime()) / (1000 * 3600 * 24));
+    }
+
+    return {
+      code: s.article?.code_article || 'N/A',
+      description: s.article?.nom || 'Inconnu',
+      qte: s.quantite_disponible,
+      jours,
+      zone: s.emplacement || 'Z1-A1',
+    };
+  }).sort((a, b) => b.jours - a.jours).slice(0, 10)
 
   const occupationRate = stocks.length > 0 ? Math.min(100, 45 + (stocks.length * 2)) : 0
-  const stockValue = stocks.reduce((acc, s) => acc + (Number(s.quantite_disponible) * 0.05), 0)
+  const stockValue = stocks.reduce((acc, s) => acc + (Number(s.quantite_disponible) * (s.article?.prix_unitaire || 0)), 0)
 
   return (
     <>

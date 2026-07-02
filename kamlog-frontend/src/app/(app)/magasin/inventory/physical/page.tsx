@@ -22,7 +22,7 @@ export default function PhysicalInventory() {
       const mappedItems = (response.data || []).map((stock: any, index: number) => ({
         id: stock.id || index + 1,
         status: 'pending',
-        empl: `A-12-0${(index % 9) + 1}`, // Mock emplacement for UI
+        empl: stock.emplacement || `Z1-A${(index % 9) + 1}`, // Real emplacement if available
         code: stock.article?.code_article || 'N/A',
         description: stock.article?.nom || 'Article Inconnu',
         uom: stock.article?.unite_mesure || 'UDB',
