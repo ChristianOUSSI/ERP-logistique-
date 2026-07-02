@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { magasinAPI } from '@/lib/api-client'
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { CardSkeletonLoader } from '@/components/ui/Loaders'
 
 export default function KMagasinDashboard() {
   const [stocks, setStocks] = useState<any[]>([])
@@ -60,178 +61,246 @@ export default function KMagasinDashboard() {
   ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 5);
 
   const getStatusColor = (status: string) => {
-    if (status === 'COMPLETEE' || status === 'VALIDEE') return 'bg-green-100 text-green-800 border-green-200';
+    if (status === 'COMPLETEE' || status === 'VALIDEE') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
     if (status === 'EN_COURS') return 'bg-blue-100 text-blue-800 border-blue-200';
-    if (status === 'ANNULEE') return 'bg-error-container text-on-error-container border-error';
-    return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (status === 'ANNULEE') return 'bg-rose-100 text-rose-800 border-rose-200';
+    return 'bg-amber-100 text-amber-800 border-amber-200';
   }
 
+  // Premium Custom Tooltip for Recharts
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-xl shadow-2xl border border-slate-700/50">
+          <p className="font-semibold text-sm mb-1">{payload[0].name}</p>
+          <p className="text-xl font-bold text-blue-400">
+            {payload[0].value}%
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="flex h-screen bg-surface text-on-background font-body-base antialiased overflow-hidden">
-      
-      
+    <div className="p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+            K-Magasin
+            <span className="bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full border border-blue-200">
+              Warehouse Overview
+            </span>
+          </h1>
+          <p className="text-slate-500 mt-2 text-lg">Supervision des stocks et des opérations d'entrepôt</p>
+        </div>
+      </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen bg-surface relative z-0">
-        
-        
-
-        {/* Canvas / Dashboard Content */}
-        <div className="flex-1 overflow-y-auto p-container-margin">
-          <div className="flex justify-between items-end mb-stack-lg">
-            <div>
-              <h3 className="font-display-lg text-display-lg text-on-surface mb-1">K-Magasin</h3>
-              <p className="font-body-base text-body-base text-on-surface-variant">Warehouse Management Overview</p>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {[...Array(4)].map((_, i) => <CardSkeletonLoader key={i} />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* KPI Cards (Bento Grid Style) */}
+          <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* KPI 1: Valeur Stock */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Valeur Stock (Est.)</span>
+                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined text-indigo-600">account_balance_wallet</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-slate-900 tracking-tight">
+                  FCFA {kpis.totalStockValue.toLocaleString()}
+                </div>
+              </div>
+            </div>
+            
+            {/* KPI 2: Occupation */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Occupation</span>
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined text-emerald-600">warehouse</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-slate-900 tracking-tight mb-3">
+                  {kpis.occupationRate}%
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out relative" 
+                    style={{ width: `${kpis.occupationRate}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* KPI 3: Réceptions en attente */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Réceptions en attente</span>
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined text-blue-600">input</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-slate-900 tracking-tight">{pendingReceptions}</div>
+              </div>
+            </div>
+            
+            {/* KPI 4: Déclarations Actives */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Déclarations Actives</span>
+                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined text-amber-600">description</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-slate-900 tracking-tight">{activeDeclarations}</div>
+              </div>
             </div>
           </div>
 
-          {loading ? (
-             <div className="flex justify-center items-center h-64">
-               <span className="text-primary font-bold">Chargement des données...</span>
-             </div>
-          ) : (
-            <div className="grid grid-cols-12 gap-stack-md animate-fade-in">
-              {/* KPI Cards */}
-              <div className="col-span-12 lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-stack-md">
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-label-caps text-label-caps text-secondary">Valeur Stock (Est.)</span>
-                    <span className="material-symbols-outlined text-outline text-[20px]">account_balance_wallet</span>
-                  </div>
-                  <div>
-                    <div className="font-headline-md text-headline-md text-on-surface">FCFA {kpis.totalStockValue.toLocaleString()}</div>
-                  </div>
-                </div>
-                
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-label-caps text-label-caps text-secondary">Occupation</span>
-                    <span className="material-symbols-outlined text-outline text-[20px]">warehouse</span>
-                  </div>
-                  <div>
-                    <div className="font-headline-md text-headline-md text-on-surface">{kpis.occupationRate}%</div>
-                    <div className="w-full bg-surface-container-highest rounded-full h-1.5 mt-2">
-                      <div className="bg-primary h-1.5 rounded-full" style={{ width: `${kpis.occupationRate}%` }}></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-label-caps text-label-caps text-secondary">Réceptions en attente</span>
-                    <span className="material-symbols-outlined text-outline text-[20px]">input</span>
-                  </div>
-                  <div>
-                    <div className="font-headline-md text-headline-md text-on-surface">{pendingReceptions}</div>
-                  </div>
-                </div>
-                
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-label-caps text-label-caps text-secondary">Déclarations Actives</span>
-                    <span className="material-symbols-outlined text-outline text-[20px]">description</span>
-                  </div>
-                  <div>
-                    <div className="font-headline-md text-headline-md text-on-surface">{activeDeclarations}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm">
-                <h4 className="font-label-caps text-label-caps text-secondary mb-3 border-b border-outline-variant pb-2">Actions Rapides</h4>
-                <div className="flex flex-col gap-2">
-                  <Link href="/magasin/reception-mag3" className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary text-[16px]">add</span>
-                      <span className="font-body-base text-sm font-medium text-on-surface">Nouvelle Réception</span>
-                    </div>
-                  </Link>
-                  <Link href="/magasin/search" className="w-full text-left px-3 py-2 rounded bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-between border border-transparent hover:border-outline-variant">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary text-[16px]">search</span>
-                      <span className="font-body-base text-sm font-medium text-on-surface">Recherche Stock</span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Recent Operation Trace Table */}
-              <div className="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden flex flex-col animate-slide-up">
-                <div className="p-4 border-b border-outline-variant flex justify-between items-center">
-                  <h4 className="font-title-sm text-title-sm text-on-surface">Opérations Récentes</h4>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-surface-container-highest border-b border-outline-variant">
-                        <th className="px-4 py-2 font-label-caps text-label-caps text-secondary">Référence</th>
-                        <th className="px-4 py-2 font-label-caps text-label-caps text-secondary">Type</th>
-                        <th className="px-4 py-2 font-label-caps text-label-caps text-secondary">Date</th>
-                        <th className="px-4 py-2 font-label-caps text-label-caps text-secondary">Utilisateur</th>
-                        <th className="px-4 py-2 font-label-caps text-label-caps text-secondary">Statut</th>
-                      </tr>
-                    </thead>
-                    <tbody className="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant">
-                      {recentOperations.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} className="px-4 py-4 text-center text-on-surface-variant">Aucune opération récente trouvée.</td>
-                        </tr>
-                      ) : (
-                        recentOperations.map((op, idx) => (
-                          <tr key={idx} className="hover:bg-surface-container-low transition-colors group">
-                            <td className="px-4 py-2 font-mono-data font-bold">{op.id}</td>
-                            <td className="px-4 py-2">{op.type}</td>
-                            <td className="px-4 py-2">{op.date.toLocaleDateString()}</td>
-                            <td className="px-4 py-2">{op.user}</td>
-                            <td className="px-4 py-2">
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${getStatusColor(op.status)}`}>
-                                {op.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Chart */}
-              <div className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col items-center justify-center relative min-h-[300px] animate-slide-up">
-                <h4 className="font-title-sm text-title-sm text-on-surface absolute top-4 left-4 w-full text-left">Occupation Magasin</h4>
-                <div className="w-full h-full min-h-[200px] mt-6 relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Utilisé', value: kpis.occupationRate },
-                          { name: 'Libre', value: 100 - kpis.occupationRate }
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        startAngle={90}
-                        endAngle={-270}
-                        dataKey="value"
-                        stroke="none"
-                      >
-                        <Cell key="cell-0" fill="#EF4444" />
-                        <Cell key="cell-1" fill="#e1e2ec" />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
-                    <span className="font-display-lg text-display-lg text-on-surface">{kpis.occupationRate}%</span>
-                    <span className="font-label-caps text-label-caps text-secondary">Utilisé</span>
-                  </div>
+          {/* Quick Actions & Chart */}
+          <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+            {/* Chart */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex-1 relative flex flex-col min-h-[300px]">
+              <h4 className="text-lg font-bold text-slate-900 mb-2">Occupation Magasin</h4>
+              <p className="text-sm text-slate-500 mb-4">Répartition de l'espace de stockage</p>
+              
+              <div className="flex-1 w-full relative min-h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <defs>
+                      <linearGradient id="colorUtilise" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#059669" stopOpacity={1}/>
+                      </linearGradient>
+                    </defs>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Pie
+                      data={[
+                        { name: 'Utilisé', value: kpis.occupationRate },
+                        { name: 'Libre', value: 100 - kpis.occupationRate }
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={70}
+                      outerRadius={95}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                      animationBegin={200}
+                      animationDuration={1200}
+                    >
+                      <Cell key="cell-0" fill="url(#colorUtilise)" className="drop-shadow-md" />
+                      <Cell key="cell-1" fill="#f1f5f9" />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center Text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-2">
+                  <span className="text-3xl font-bold text-slate-800">{kpis.occupationRate}%</span>
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Utilisé</span>
                 </div>
               </div>
             </div>
-          )}
+
+            {/* Actions Rapides */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+              <h4 className="text-lg font-bold text-slate-900 mb-4">Actions Rapides</h4>
+              <div className="flex flex-col gap-3">
+                <Link href="/magasin/reception-mag3" className="w-full text-left px-4 py-3 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-3 border border-slate-100 hover:border-blue-200 group">
+                  <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">add_box</span>
+                  <span className="font-semibold text-sm">Nouvelle Réception</span>
+                </Link>
+                <Link href="/magasin/search" className="w-full text-left px-4 py-3 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-3 border border-slate-100 hover:border-blue-200 group">
+                  <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors">search</span>
+                  <span className="font-semibold text-sm">Recherche Stock</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Operations Table */}
+          <div className="col-span-12 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+              <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span className="material-symbols-outlined text-slate-400">history</span>
+                Opérations Récentes
+              </h4>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white border-b border-slate-200">
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Référence</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Utilisateur</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Statut</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {recentOperations.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center text-slate-500 bg-slate-50/30">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="material-symbols-outlined text-4xl text-slate-300">inbox</span>
+                          <p>Aucune opération récente trouvée.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    recentOperations.map((op, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50 transition-colors group">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="font-mono font-semibold text-slate-700">{op.id}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`material-symbols-outlined text-[18px] ${op.type === 'Reception' ? 'text-blue-500' : 'text-amber-500'}`}>
+                              {op.type === 'Reception' ? 'download' : 'description'}
+                            </span>
+                            <span className="text-sm font-medium text-slate-700">{op.type}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                          {op.date.toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                            {op.user.substring(0, 2).toUpperCase()}
+                          </div>
+                          {op.user}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(op.status)}`}>
+                            {op.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
         </div>
-      </main>
+      )}
     </div>
   )
 }
+
