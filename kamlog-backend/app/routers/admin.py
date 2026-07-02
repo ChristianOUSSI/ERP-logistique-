@@ -1,12 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
-from pydantic import BaseModel
+from sqlalchemy.orm import Session, selectinload
+from typing import List, Optional
+from datetime import datetime
+from pydantic import BaseModel, field_validator
 from app.database import get_db
 from app.models.user import User, RoleModel, PermissionModel
 from app.utils.rbac import get_current_user, require_role
 
 router = APIRouter()
+
+
+class AuditLogResponse(BaseModel):
+    id: int
+    horodatage: datetime
+    severite: str
+    evenement: str
+    admin_id: str
+    cible: str
+    details: Optional[str] = None
+
+
+@router.get("/audit-logs", response_model=List[AuditLogResponse])
+@require_role(["admin", "super_admin"])
+async def get_audit_logs(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """
+    Returns the system audit logs. 
+    Currently returns empty list as AuditMiddleware is disabled due to missing DB models.
+    """
+    # TODO: Implement real DB fetching once AuditLog model is ready.
+    return []
 
 
 class RoleResponse(BaseModel):

@@ -159,4 +159,4 @@ class AuditService:
         if action:
             query = query.filter(AuditLog.action == action)
         
-        return query.order_by(AuditLog.timestamp.desc()).offset(skip).limit(limit).all()
+        return query.order_by(AuditLog.created_at.desc()).offset(skip).limit(limit).all()

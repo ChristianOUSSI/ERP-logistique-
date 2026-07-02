@@ -4,11 +4,12 @@ import os
 from sqlalchemy import select
 from app.database import SessionLocal, engine
 from app.models.agency import Agency
-from app.models.user import User, Role, RoleModel, PermissionModel
+from app.models.user import User, RoleModel, PermissionModel
 from sqlalchemy.orm import selectinload
 from app.models.tiers import Tiers, StatutTiers
 from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule
 from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock
+import secrets
 from app.utils.security import get_password_hash
 
 
@@ -46,51 +47,51 @@ def seed_users(agency_id: int):
             {
                 "email": "admin@kamlog.cm",
                 "username": "admin",
-                "password": os.getenv("ADMIN123_PASSWORD", "admin123"),
+                "password": os.getenv("ADMIN_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Administrateur Système",
-                "role": Role.ADMIN,
+                "role": "admin",
             },
             {
                 "email": "dispatcher@kamlog.cm",
                 "username": "dispatcher",
-                "password": os.getenv("DISPATCHER123_PASSWORD", "dispatcher123"),
+                "password": os.getenv("DISPATCHER_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Chef Dispatch",
-                "role": Role.DISPATCHER,
+                "role": "dispatcher",
             },
             {
                 "email": "finance@kamlog.cm",
                 "username": "finance",
-                "password": os.getenv("FINANCE123_PASSWORD", "finance123"),
+                "password": os.getenv("FINANCE_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Comptable",
-                "role": Role.FINANCE,
+                "role": "finance",
             },
             {
                 "email": "douane@kamlog.cm",
                 "username": "douane",
-                "password": os.getenv("DOUANE123_PASSWORD", "douane123"),
+                "password": os.getenv("DOUANE_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Agent Douane",
-                "role": Role.DOUANE,
+                "role": "douane",
             },
             {
                 "email": "gate@kamlog.cm",
                 "username": "gate",
-                "password": os.getenv("GATE123_PASSWORD", "gate123"),
+                "password": os.getenv("GATE_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Agent Guérite",
-                "role": Role.GATE_AGENT,
+                "role": "gate_agent",
             },
             {
                 "email": "magasin@kamlog.cm",
                 "username": "magasin",
-                "password": os.getenv("MAGASIN123_PASSWORD", "magasin123"),
+                "password": os.getenv("MAGASIN_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Chef Magasinier",
-                "role": Role.MAGASIN,
+                "role": "magasin",
             },
             {
                 "email": "auditor@kamlog.cm",
                 "username": "auditor",
-                "password": os.getenv("AUDITOR123_PASSWORD", "auditor123"),
+                "password": os.getenv("AUDITOR_PASSWORD", secrets.token_urlsafe(12)),
                 "full_name": "Auditeur Interne",
-                "role": Role.AUDITOR,
+                "role": "auditor",
             },
         ]
 
@@ -109,6 +110,7 @@ def seed_users(agency_id: int):
                     print(f"    → Role {u['role']} assigned to {u['email']}.")
                 continue
 
+            print(f"  → Creating User {u['email']} with password: {u['password']} (SAVE THIS!)")
             user = User(
                 email=u["email"],
                 username=u["username"],

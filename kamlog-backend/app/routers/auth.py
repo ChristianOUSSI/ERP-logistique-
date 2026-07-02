@@ -1,5 +1,5 @@
 # app/routers/auth.py  Router Authentification
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -13,13 +13,7 @@ from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token
 from app.utils.security import verify_password, get_password_hash, create_access_token, create_refresh_token, decode_token
 from app.utils.mfa import generate_mfa_secret, generate_mfa_qr_code, verify_totp_token, generate_backup_codes, verify_backup_code, is_mfa_required_for_user
 
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-try:
-    from scripts.seed_data import seed_agency, seed_users
-except ImportError:
-    pass
+# Imports for seed data removed for security
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
@@ -29,18 +23,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 from app.utils.rbac import get_current_user
 
 
-@router.post("/force-seed")
-async def force_seed():
-    """Endpoint manuel pour forcer le seeding en production (Railway)."""
-    try:
-        from scripts.seed_data import seed_agency, seed_users
-        agency_id = await seed_agency()
-        await seed_users(agency_id)
-        return {"message": "Database seeded successfully!"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
+# /force-seed endpoint removed for security
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 
 async def register(
@@ -99,6 +82,7 @@ async def register(
 
 async def login(
     request: Request,
+    response: Response,
     credentials: UserLogin,
     mfa_token: str | None = None,
     db: Session = Depends(get_db)
@@ -157,6 +141,24 @@ async def login(
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
     
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True, # Should be True in prod (HTTPS)
+        samesite="lax",
+        max_age=30 * 60 # 30 minutes
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60 # 7 jours
+    )
+    
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -166,9 +168,16 @@ async def login(
 
 
 @router.post("/refresh", response_model=Token)
-async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
-    """Rafraîchit le access token avec le refresh token."""
-    payload = decode_token(refresh_token)
+async def refresh_token(response: Response, request: Request, refresh_token: str | None = None, db: Session = Depends(get_db)):
+    """Rafraîchit le access token avec le refresh token (soit dans le body, soit via cookie)."""
+    token_to_use = refresh_token or request.cookies.get("refresh_token")
+    if not token_to_use:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token missing"
+        )
+        
+    payload = decode_token(token_to_use)
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -195,6 +204,24 @@ async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": str(user.id)})
     new_refresh_token = create_refresh_token(data={"sub": str(user.id)})
     
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=30 * 60
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60
+    )
+    
     return {
         "access_token": access_token,
         "refresh_token": new_refresh_token,
@@ -204,7 +231,7 @@ async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
 
 
 @router.get("/me")
-async def get_me(current_user: User = Depends(get_current_user)):
+async def get_me(request: Request, current_user: User = Depends(get_current_user)):
     """Retourne les informations de l'utilisateur courant."""
     return {
         "id": current_user.id,
@@ -215,6 +242,13 @@ async def get_me(current_user: User = Depends(get_current_user)):
         "is_active": bool(current_user.is_active),
         "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
     }
+
+@router.post("/logout")
+async def logout(response: Response):
+    """Déconnecte l'utilisateur en supprimant les cookies."""
+    response.delete_cookie(key="access_token", httponly=True, secure=True, samesite="lax")
+    response.delete_cookie(key="refresh_token", httponly=True, secure=True, samesite="lax")
+    return {"message": "Logged out successfully"}
 
 
 # MFA Schemas

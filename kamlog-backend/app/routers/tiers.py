@@ -98,7 +98,7 @@ async def get_tiers_by_service(
 
 
 @router.post("/", response_model=TiersResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER, User.Role.FINANCE])
+@require_role(["admin", "dispatcher", "finance"])
 @require_permission("tiers:write")
 async def create_tiers(
     tiers_data: TiersCreate,
@@ -113,7 +113,7 @@ async def create_tiers(
 
 
 @router.put("/{tiers_id}", response_model=TiersResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER, User.Role.FINANCE])
+@require_role(["admin", "dispatcher", "finance"])
 @require_permission("tiers:write")
 async def update_tiers(
     tiers_id: int,
@@ -134,7 +134,7 @@ async def update_tiers(
 
 
 @router.delete("/{tiers_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:delete")
 async def delete_tiers(
     tiers_id: int,
@@ -154,7 +154,7 @@ async def delete_tiers(
 
 
 @router.post("/{tiers_id}/activer", response_model=TiersResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:write")
 async def activer_tiers(
     tiers_id: int,
@@ -174,7 +174,7 @@ async def activer_tiers(
 
 
 @router.post("/{tiers_id}/bloquer", response_model=TiersResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:write")
 async def bloquer_tiers(
     tiers_id: int,
@@ -194,7 +194,7 @@ async def bloquer_tiers(
 
 
 @router.post("/{tiers_id}/desactiver", response_model=TiersResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:write")
 async def desactiver_tiers(
     tiers_id: int,
@@ -214,7 +214,7 @@ async def desactiver_tiers(
 
 
 @router.post("/{tiers_id}/autoriser/{service}", response_model=TiersResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:write")
 async def autoriser_service(
     tiers_id: int,
@@ -235,7 +235,7 @@ async def autoriser_service(
 
 
 @router.post("/{tiers_id}/revoquer/{service}", response_model=TiersResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("tiers:write")
 async def revoquer_service(
     tiers_id: int,
@@ -256,7 +256,7 @@ async def revoquer_service(
 
 
 @router.post("/{tiers_id}/limite-credit", response_model=TiersResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("tiers:write")
 async def mettre_a_jour_limite_credit(
     tiers_id: int,

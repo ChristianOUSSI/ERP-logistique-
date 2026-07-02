@@ -12,6 +12,27 @@ from app.schemas.parc import (
     StockPhysiqueParcCreate, StockPhysiqueParcResponse,
     GateInRequest, GateOutRequest
 )
+from pydantic import BaseModel
+from app.models.parc import ReparationAtelier
+
+class ReparationAtelierBase(BaseModel):
+    reference: str
+    camion_id: int
+    type_intervention: str
+    description: str
+    statut: str = "EN_ATTENTE"
+    cout_estime: int | None = None
+    date_entree: str
+    date_sortie_prevue: str | None = None
+    mecanicien_en_charge: str | None = None
+
+class ReparationAtelierCreate(ReparationAtelierBase):
+    pass
+
+class ReparationAtelierResponse(ReparationAtelierBase):
+    id: int
+    class Config:
+        from_attributes = True
 from app.routers.auth import get_current_user
 from app.utils.rbac import require_role, require_permission
 from app.services.parc_service import (
@@ -49,7 +70,7 @@ async def get_zone(
 
 
 @router.post("/zones", response_model=ZoneParcResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:write")
 async def create_zone(
     zone_data: ZoneParcCreate,
@@ -61,7 +82,7 @@ async def create_zone(
 
 
 @router.put("/zones/{zone_id}", response_model=ZoneParcResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:write")
 async def update_zone(
     zone_id: int,
@@ -77,7 +98,7 @@ async def update_zone(
 
 
 @router.delete("/zones/{zone_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:delete")
 async def delete_zone(
     zone_id: int,
@@ -124,7 +145,7 @@ async def get_emplacement(
 
 
 @router.post("/emplacements", response_model=EmplacementParcResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:write")
 async def create_emplacement(
     emplacement_data: EmplacementParcCreate,
@@ -136,7 +157,7 @@ async def create_emplacement(
 
 
 @router.put("/emplacements/{emplacement_id}", response_model=EmplacementParcResponse)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:write")
 async def update_emplacement(
     emplacement_id: int,
@@ -152,7 +173,7 @@ async def update_emplacement(
 
 
 @router.delete("/emplacements/{emplacement_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("parc:delete")
 async def delete_emplacement(
     emplacement_id: int,
@@ -203,7 +224,7 @@ async def list_stock_actifs(
 
 
 @router.post("/gate-in")
-@require_role([User.Role.ADMIN, User.Role.GATE_AGENT])
+@require_role(["admin", "gate_agent"])
 @require_permission("parc:gate")
 async def gate_in(
     gate_in_data: GateInRequest,
@@ -219,7 +240,7 @@ async def gate_in(
 
 
 @router.post("/gate-out")
-@require_role([User.Role.ADMIN, User.Role.GATE_AGENT])
+@require_role(["admin", "gate_agent"])
 @require_permission("parc:gate")
 async def gate_out(
     gate_out_data: GateOutRequest,
@@ -232,3 +253,20 @@ async def gate_out(
         return result
     except ValueError as e:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
+
+# ─── Workshop ───────────────────────────────────────────────
+@router.get("/workshop", response_model=List[ReparationAtelierResponse])
+@require_permission("parc:read")
+async def get_workshop_repairs(db: Session = Depends(get_db)):
+    """Récupère les réparations de l'atelier"""
+    return db.query(ReparationAtelier).all()
+
+@router.post("/workshop", response_model=ReparationAtelierResponse, status_code=status.HTTP_201_CREATED)
+@require_permission("parc:write")
+async def create_workshop_repair(repair: ReparationAtelierCreate, db: Session = Depends(get_db)):
+    """Créer une réparation d'atelier"""
+    db_repair = ReparationAtelier(**repair.dict())
+    db.add(db_repair)
+    db.commit()
+    db.refresh(db_repair)
+    return db_repair

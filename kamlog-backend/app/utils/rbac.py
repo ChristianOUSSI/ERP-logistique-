@@ -12,15 +12,30 @@ from app.models.user import User, RoleModel
 from app.database import get_db
 from app.config import settings
 
-security = HTTPBearer()
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Request
+
+security = HTTPBearer(auto_error=False)
 
 def get_current_user(
+    request: Request,
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
-    """Récupère l'utilisateur actuel à partir du token JWT."""
+    """Récupère l'utilisateur actuel à partir du token JWT (Cookie ou Header)."""
     try:
-        token = credentials.credentials
+        token = None
+        if credentials:
+            token = credentials.credentials
+        elif "access_token" in request.cookies:
+            token = request.cookies.get("access_token")
+            
+        if not token:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Non authentifié (token manquant)"
+            )
+            
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         user_id_str = payload.get("sub")
         if user_id_str is None:

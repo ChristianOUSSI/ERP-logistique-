@@ -28,6 +28,45 @@ from app.services.finance_service import (
 router = APIRouter()
 
 
+@router.get("/kpis")
+@require_permission("finance:read")
+async def get_finance_kpis(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Calcule les KPIs financiers côté serveur pour éviter de télécharger toutes les factures côté client."""
+    from sqlalchemy import func
+    
+    # Chiffre d'affaires (CA) = factures payées
+    ca_mois = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+        Facture.statut == StatutFacture.PAYEE
+    ).scalar() or Decimal('0')
+    
+    # Impayés = factures impayées ou en attente
+    impayes = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+        Facture.statut.in_([StatutFacture.IMPAYEE, StatutFacture.EN_ATTENTE])
+    ).scalar() or Decimal('0')
+    
+    impayes_count = db.query(func.count(Facture.id)).filter(
+        Facture.statut.in_([StatutFacture.IMPAYEE, StatutFacture.EN_ATTENTE])
+    ).scalar() or 0
+    
+    # Dépenses = factures de type ACHAT ou DEPENSE
+    depenses = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+        Facture.type.in_(["ACHAT", "DEPENSE"])
+    ).scalar() or Decimal('0')
+    
+    tresorerie = ca_mois - depenses
+    
+    return {
+        "chiffre_affaires": float(ca_mois),
+        "impayes": float(impayes),
+        "impayes_count": impayes_count,
+        "depenses": float(depenses),
+        "tresorerie": float(tresorerie)
+    }
+
+
 @router.get("/factures", response_model=List[FactureResponse])
 @require_permission("finance:read")
 async def list_factures(
@@ -70,7 +109,7 @@ async def get_factures_by_tiers(
 
 
 @router.post("/factures", response_model=FactureResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def create_facture(
     facture_data: FactureCreate,
@@ -88,7 +127,7 @@ async def create_facture(
 
 
 @router.put("/factures/{facture_id}", response_model=FactureResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def update_facture(
     facture_id: int,
@@ -104,7 +143,7 @@ async def update_facture(
 
 
 @router.delete("/factures/{facture_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("finance:delete")
 async def delete_facture(
     facture_id: int,
@@ -119,7 +158,7 @@ async def delete_facture(
 
 
 @router.post("/factures/{facture_id}/valider", response_model=FactureResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:validate")
 async def valider_facture(
     facture_id: int,
@@ -134,7 +173,7 @@ async def valider_facture(
 
 
 @router.post("/factures/{facture_id}/annuler", response_model=FactureResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:validate")
 async def annuler_facture(
     facture_id: int,
@@ -196,7 +235,7 @@ async def get_encaissements_non_lettrés(
 
 
 @router.post("/encaissements", response_model=EncaissementResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def create_encaissement(
     encaissement_data: EncaissementCreate,
@@ -208,7 +247,7 @@ async def create_encaissement(
 
 
 @router.put("/encaissements/{encaissement_id}", response_model=EncaissementResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def update_encaissement(
     encaissement_id: int,
@@ -224,7 +263,7 @@ async def update_encaissement(
 
 
 @router.delete("/encaissements/{encaissement_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("finance:delete")
 async def delete_encaissement(
     encaissement_id: int,
@@ -239,7 +278,7 @@ async def delete_encaissement(
 
 
 @router.post("/encaissements/{encaissement_id}/lettrer/{facture_id}", response_model=EncaissementResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def lettrer_encaissement(
     encaissement_id: int,
@@ -299,7 +338,7 @@ async def get_tarif(
 avoir_service = AvoirService()
 
 @router.post("/avoirs", response_model=AvoirResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def create_avoir(
     avoir_data: AvoirCreate,
@@ -343,7 +382,7 @@ async def get_avoir(
     
 
 @router.post("/avoirs/{avoir_id}/mark-used", response_model=AvoirResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def mark_avoir_as_used(
     avoir_id: int,
@@ -383,7 +422,7 @@ async def get_tarif_active(
 
 
 @router.post("/tarifs", response_model=GrilleTarifaireResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def create_tarif(
     tarif_data: GrilleTarifaireCreate,
@@ -395,7 +434,7 @@ async def create_tarif(
 
 
 @router.put("/tarifs/{grille_id}", response_model=GrilleTarifaireResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def update_tarif(
     grille_id: int,
@@ -411,7 +450,7 @@ async def update_tarif(
 
 
 @router.delete("/tarifs/{grille_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("finance:delete")
 async def delete_tarif(
     grille_id: int,
@@ -426,7 +465,7 @@ async def delete_tarif(
 
 
 @router.post("/tarifs/{grille_id}/activer", response_model=GrilleTarifaireResponse)
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 @require_permission("finance:write")
 async def activer_tarif(
     grille_id: int,

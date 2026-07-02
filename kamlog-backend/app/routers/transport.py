@@ -4,13 +4,35 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models.transport import CamionFlotte, ChauffeurProfil, MissionTransport
+from app.models.transport import CamionFlotte, ChauffeurProfil, MissionTransport, TicketCarburant
 from app.models.user import User
 from app.schemas.transport import (
     CamionFlotteCreate, CamionFlotteUpdate, CamionResponse,
     ChauffeurProfilCreate, ChauffeurProfilUpdate, ChauffeurResponse,
     MissionCreate, MissionUpdate, MissionResponse
 )
+from pydantic import BaseModel
+from decimal import Decimal
+
+class TicketCarburantBase(BaseModel):
+    camion_id: int
+    chauffeur_id: int
+    quantite_litres: float
+    prix_unitaire: float
+    montant_total: float
+    date_plein: str
+    kilometrage: int
+    station_service: str | None = None
+    notes: str | None = None
+
+class TicketCarburantCreate(TicketCarburantBase):
+    pass
+
+class TicketCarburantResponse(TicketCarburantBase):
+    id: int
+    class Config:
+        from_attributes = True
+
 from app.routers.auth import get_current_user
 from app.utils.rbac import require_role, require_permission
 from app.services.transport_service import (
@@ -19,6 +41,52 @@ from app.services.transport_service import (
 )
 
 router = APIRouter(tags=["Transport"])
+
+
+@router.get("/kpis")
+@require_permission("transport:read")
+async def get_transport_kpis(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Calcule les KPIs de transport côté serveur."""
+    from sqlalchemy import func
+    
+    camions = db.query(CamionFlotte).all()
+    active_vehicles = sum(1 for c in camions if c.actif)
+    in_maintenance = sum(1 for c in camions if c.statut == "EN_MAINTENANCE")
+    
+    missions = db.query(MissionTransport).all()
+    active_missions = sum(1 for m in missions if m.statut == "EN_ROUTE")
+    completed_missions = sum(1 for m in missions if m.statut == "TERMINEE")
+    
+    # Simuler le carburant consommé pour le dashboard si l'API fuel n'est pas encore faite
+    total_fuel_consumed = 0
+    
+    return {
+        "activeVehicles": active_vehicles,
+        "inMaintenance": in_maintenance,
+        "activeMissions": active_missions,
+        "completedMissions": completed_missions,
+        "totalFuelConsumed": float(total_fuel_consumed)
+    }
+
+# ─── Fuel ───────────────────────────────────────────────
+@router.get("/fuel", response_model=List[TicketCarburantResponse])
+@require_permission("transport:read")
+async def get_fuel_tickets(db: Session = Depends(get_db)):
+    """Récupère les tickets de carburant"""
+    return db.query(TicketCarburant).all()
+
+@router.post("/fuel", response_model=TicketCarburantResponse, status_code=status.HTTP_201_CREATED)
+@require_permission("transport:write")
+async def create_fuel_ticket(ticket: TicketCarburantCreate, db: Session = Depends(get_db)):
+    """Créer un ticket de carburant"""
+    db_ticket = TicketCarburant(**ticket.dict())
+    db.add(db_ticket)
+    db.commit()
+    db.refresh(db_ticket)
+    return db_ticket
 
 
 # ─── Camions ─────────────────────────────────────────────
@@ -52,7 +120,7 @@ async def get_camion(
 
 
 @router.post("/camions", response_model=CamionResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def create_camion(
     camion_data: CamionFlotteCreate,
@@ -73,7 +141,7 @@ async def create_camion(
 
 
 @router.put("/camions/{camion_id}", response_model=CamionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def update_camion(
     camion_id: int,
@@ -89,7 +157,7 @@ async def update_camion(
 
 
 @router.delete("/camions/{camion_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("transport:delete")
 async def delete_camion(
     camion_id: int,
@@ -104,7 +172,7 @@ async def delete_camion(
 
 
 @router.post("/camions/{camion_id}/maintenance", response_model=CamionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def mettre_en_maintenance(
     camion_id: int,
@@ -119,7 +187,7 @@ async def mettre_en_maintenance(
 
 
 @router.post("/camions/{camion_id}/disponible", response_model=CamionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def mettre_disponible(
     camion_id: int,
@@ -171,7 +239,7 @@ async def list_chauffeurs_disponibles(
 
 
 @router.post("/chauffeurs", response_model=ChauffeurResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def create_chauffeur(
     chauffeur_data: ChauffeurProfilCreate,
@@ -192,7 +260,7 @@ async def create_chauffeur(
 
 
 @router.put("/chauffeurs/{chauffeur_id}", response_model=ChauffeurResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def update_chauffeur(
     chauffeur_id: int,
@@ -208,7 +276,7 @@ async def update_chauffeur(
 
 
 @router.delete("/chauffeurs/{chauffeur_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("transport:delete")
 async def delete_chauffeur(
     chauffeur_id: int,
@@ -269,7 +337,7 @@ async def get_missions_by_chauffeur(
 
 
 @router.post("/missions", response_model=MissionResponse, status_code=status.HTTP_201_CREATED)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def create_mission(
     mission_data: MissionCreate,
@@ -284,7 +352,7 @@ async def create_mission(
 
 
 @router.put("/missions/{mission_id}", response_model=MissionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def update_mission(
     mission_id: int,
@@ -300,7 +368,7 @@ async def update_mission(
 
 
 @router.delete("/missions/{mission_id}", status_code=status.HTTP_204_NO_CONTENT)
-@require_role([User.Role.ADMIN])
+@require_role(["admin"])
 @require_permission("transport:delete")
 async def delete_mission(
     mission_id: int,
@@ -315,7 +383,7 @@ async def delete_mission(
 
 
 @router.post("/missions/{mission_id}/demarrer", response_model=MissionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def demarrer_mission(
     mission_id: int,
@@ -330,7 +398,7 @@ async def demarrer_mission(
 
 
 @router.post("/missions/{mission_id}/terminer", response_model=MissionResponse)
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
 async def terminer_mission(
     mission_id: int,

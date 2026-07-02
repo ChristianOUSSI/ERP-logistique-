@@ -1,8 +1,8 @@
 # app/routers/alerts.py  Router Alertes KAMLOG
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from typing import List
+from typing import List, Dict
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 
@@ -15,6 +15,47 @@ from app.services.transport_service import calculer_ecart_carburant, SEUIL_ECART
 
 router = APIRouter()
 
+# Store active connections
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@router.websocket("/ws/alerts")
+async def websocket_endpoint(websocket: WebSocket, token: str = None):
+    # In a real app we'd validate the token here.
+    await manager.connect(websocket)
+    import json
+    import asyncio
+    try:
+        # Mock initial notifications on connect
+        await websocket.send_text(json.dumps({
+            "message": "Bienvenue sur le système d'alertes",
+            "severity": "INFO",
+            "timestamp": datetime.utcnow().isoformat()
+        }))
+        while True:
+            # Keep connection alive
+            await asyncio.sleep(20)
+            await websocket.send_text(json.dumps({
+                "message": "System ping",
+                "severity": "INFO",
+                "timestamp": datetime.utcnow().isoformat()
+            }))
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
 
 class AlertResponse(BaseModel):
     mission_id: int
@@ -26,7 +67,7 @@ class AlertResponse(BaseModel):
 
 
 @router.get("/fuel-siphoning", response_model=List[AlertResponse])
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER])
+@require_role(["admin", "dispatcher"])
 async def check_fuel_siphoning_alerts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -78,7 +119,7 @@ async def check_fuel_siphoning_alerts(
 
 
 @router.get("/credit-limit")
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 async def check_credit_limit_alerts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)

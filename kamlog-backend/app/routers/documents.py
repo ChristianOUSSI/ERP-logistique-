@@ -21,7 +21,7 @@ class GenerateBLRequest(BaseModel):
 
 
 @router.post("/bl")
-@require_role([User.Role.ADMIN, User.Role.DISPATCHER, User.Role.FINANCE])
+@require_role(["admin", "dispatcher", "finance"])
 async def generate_bl(
     request: GenerateBLRequest,
     db: Session = Depends(get_db),
@@ -52,7 +52,7 @@ async def generate_bl(
 
 
 @router.post("/interchange")
-@require_role([User.Role.ADMIN, User.Role.GATE_AGENT])
+@require_role(["admin", "gate_agent"])
 async def generate_interchange(
     conteneur_id: int,
     db: Session = Depends(get_db),
@@ -67,7 +67,7 @@ async def generate_interchange(
 
 
 @router.post("/facture/{facture_id}")
-@require_role([User.Role.ADMIN, User.Role.FINANCE])
+@require_role(["admin", "finance"])
 async def generate_facture_pdf(
     facture_id: int,
     db: Session = Depends(get_db),
