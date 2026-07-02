@@ -43,9 +43,9 @@ done
 echo "✅ PostgreSQL is ready!"
 
 # ─── Créer les tables via SQLAlchemy ─────────────────────────
-echo "📋 Creating database tables..."
-python create_tables.py
-echo "✅ Tables created (or already exist)"
+# Désactivé: Alembic doit gérer le schéma pour éviter DuplicateTableError
+# python create_tables.py
+# echo "✅ Tables created (or already exist)"
 
 # ─── Alembic upgrade (appliquer les migrations) ───
 echo "📌 Running Alembic migrations..."
