@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { authAPI } from '@/lib/api-client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -244,6 +245,16 @@ export default function LoginPage() {
                 </>
               )}
             </button>
+
+            {/* Create Account Link */}
+            <div className="mt-4 text-center">
+              <p className="text-body-sm font-body-sm text-on-surface-variant">
+                Vous n'avez pas de compte ?{' '}
+                <Link href="/register" className="text-auth-blue font-medium hover:underline transition-all">
+                  Créer un compte
+                </Link>
+              </p>
+            </div>
           </form>
 
           {/* Error Message */}
