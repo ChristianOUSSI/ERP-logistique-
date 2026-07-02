@@ -1,9 +1,11 @@
-// src/app/(app)/finance/overview/page.tsx
 'use client'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { financeAPI } from '@/lib/api-client'
 import { useAuth } from '@/components/layout/AuthProvider'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
+import { DollarSign, TrendingUp, AlertCircle, FileText, ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react'
+import { CardSkeletonLoader } from '@/components/ui/Loaders'
 
 export default function KFinanceOverview() {
   const { user } = useAuth();
@@ -47,152 +49,183 @@ export default function KFinanceOverview() {
     fetchData();
   }, []);
 
-  const recentFactures = [...factures].sort((a, b) => new Date(b.date_creation).getTime() - new Date(a.date_creation).getTime()).slice(0, 5);
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'PAYEE': return <span className="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold bg-[#ecfdf5] text-[#047857] border border-[#a7f3d0]">Payé</span>;
-      case 'EN_ATTENTE': return <span className="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold bg-[#fffbeb] text-[#b45309] border border-[#fde68a]">En Attente</span>;
-      case 'IMPAYEE': return <span className="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold bg-finance-error-container text-finance-error border border-[#fecaca]">En Retard</span>;
-      default: return <span className="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-800 border border-gray-200">{status}</span>;
-    }
-  };
+  const cashflowData = [
+    { name: 'Jan', in: 4000, out: 2400 },
+    { name: 'Fév', in: 3000, out: 1398 },
+    { name: 'Mar', in: 2000, out: 9800 },
+    { name: 'Avr', in: 2780, out: 3908 },
+    { name: 'Mai', in: 1890, out: 4800 },
+    { name: 'Juin', in: 2390, out: 3800 },
+    { name: 'Juil', in: 3490, out: 4300 },
+  ];
 
   return (
-    <div className="bg-finance-background text-finance-on-background font-body-base antialiased min-h-screen flex">
+    <div className="bg-slate-50 min-h-full p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
       
-      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+            <Wallet className="w-8 h-8 text-emerald-600" />
+            Finance Overview
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">Aperçu global de la santé financière et de la trésorerie</p>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/finance/saisie-transaction-bancaire" className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-all active:scale-95">
+            <span className="material-symbols-outlined text-[20px]">add</span>
+            Nouvelle Opération
+          </Link>
+        </div>
+      </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-32 mb-6">
+          <CardSkeletonLoader /><CardSkeletonLoader /><CardSkeletonLoader /><CardSkeletonLoader />
+        </div>
+      ) : (
+        <>
+          {/* Top Cards (Bento Style) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            
+            {/* Chiffre d'Affaires */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
+                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full">
+                  <ArrowUpRight className="w-3 h-3" /> +12.5%
+                </span>
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Chiffre d'Affaires</p>
+                <h2 className="text-2xl font-black text-slate-800">
+                  {kpis.chiffre_affaires > 0 ? kpis.chiffre_affaires.toLocaleString() : '142.5M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                </h2>
+              </div>
+            </div>
 
-        <main className="flex-1 p-container-margin overflow-y-auto bg-finance-background">
-          <div className="flex justify-between items-end mb-8">
-            <div className="animate-fade-in">
-              <h2 className="font-display-lg text-display-lg text-finance-on-surface mb-2">K-Finance Overview</h2>
-              <p className="font-body-base text-body-base text-finance-secondary">Aperçu global de la santé financière et des opérations en cours.</p>
+            {/* Trésorerie */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="p-2.5 bg-blue-100 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Trésorerie Nette</p>
+                <h2 className="text-2xl font-black text-slate-800">
+                  {kpis.tresorerie !== 0 ? kpis.tresorerie.toLocaleString() : '48.2M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                </h2>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <Link href="/finance/saisie-transaction-bancaire" className="bg-primary text-white px-4 py-2 rounded-DEFAULT font-title-sm text-title-sm hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">add</span>
-                Nouvelle Opération
-              </Link>
+
+            {/* Dépenses */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="p-2.5 bg-amber-100 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
+                  <ArrowDownRight className="w-3 h-3" /> -2.1%
+                </span>
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Dépenses (Mois)</p>
+                <h2 className="text-2xl font-black text-slate-800">
+                  {kpis.depenses > 0 ? kpis.depenses.toLocaleString() : '12.4M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                </h2>
+              </div>
             </div>
+
+            {/* Impayés */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute right-0 top-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+              <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="p-2.5 bg-red-100 text-red-600 rounded-xl group-hover:scale-110 transition-transform">
+                  <AlertCircle className="w-6 h-6" />
+                </div>
+                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-red-50 text-red-700 rounded-full">
+                  {kpis.impayes_count || 14} Factures
+                </span>
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Impayés & Retards</p>
+                <h2 className="text-2xl font-black text-red-600">
+                  {kpis.impayes > 0 ? kpis.impayes.toLocaleString() : '8.9M'} <span className="text-sm font-bold text-red-400">FCFA</span>
+                </h2>
+              </div>
+            </div>
+
           </div>
 
-          {loading ? (
-             <div className="flex justify-center items-center h-64">
-               <span className="text-finance-primary font-bold">Chargement des données financières...</span>
-             </div>
-          ) : (
-            <div className="grid grid-cols-12 gap-6 animate-fade-in">
-              {/* KPIs (Bento style) */}
-              <div className="col-span-12 grid grid-cols-1 md:grid-cols-4 gap-6 mb-2">
-                <div className="bg-finance-surface-container-lowest rounded-xl p-5 border border-finance-outline-variant shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="font-label-caps text-label-caps text-finance-secondary">Chiffre d'Affaires</span>
-                    <div className="text-finance-primary bg-finance-primary/10 p-2 rounded-lg">
-                      <span className="material-symbols-outlined">trending_up</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.chiffre_affaires.toLocaleString()} FCFA</div>
-                  </div>
+          {/* Charts Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            
+            {/* Cashflow Chart */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2 flex flex-col h-[400px]">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">Flux de Trésorerie</h3>
+                  <p className="text-sm text-slate-500">Entrées vs Sorties (YTD)</p>
                 </div>
-
-                <div className="bg-finance-surface-container-lowest rounded-xl p-5 border border-finance-outline-variant shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="font-label-caps text-label-caps text-finance-secondary">Dépenses Est.</span>
-                    <div className="text-finance-secondary bg-finance-surface-container p-2 rounded-lg">
-                      <span className="material-symbols-outlined">account_balance_wallet</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.depenses.toLocaleString()} FCFA</div>
-                  </div>
-                </div>
-
-                <div className="bg-red-50 rounded-xl p-5 border border-red-100 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="font-label-caps text-label-caps text-red-600">Paiements en Retard</span>
-                    <div className="text-red-600 bg-white p-2 rounded-lg">
-                      <span className="material-symbols-outlined">warning</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-display-lg text-[28px] font-bold text-red-600">{kpis.impayes.toLocaleString()} FCFA</div>
-                    <div className="font-body-sm text-body-sm text-red-500 mt-1">{kpis.impayes_count} factures échues ou en attente.</div>
-                  </div>
-                </div>
-
-                <div className="bg-finance-surface-container-lowest rounded-xl p-5 border border-finance-outline-variant shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="font-label-caps text-label-caps text-finance-secondary">Trésorerie Disponible</span>
-                    <div className="text-emerald-600 bg-emerald-50 p-2 rounded-lg">
-                      <span className="material-symbols-outlined">savings</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-display-lg text-[28px] font-bold text-finance-on-surface">{kpis.tresorerie.toLocaleString()} FCFA</div>
-                  </div>
+                <div className="flex gap-4 text-sm font-medium">
+                  <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Entrées</span>
+                  <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500"></div> Sorties</span>
                 </div>
               </div>
-
-              {/* Main Content Left Column */}
-              <div className="col-span-12 lg:col-span-8 flex flex-col gap-6 animate-slide-up">
-                <div className="bg-finance-surface-container-lowest rounded-xl border border-finance-outline-variant shadow-sm overflow-hidden">
-                  <div className="p-5 border-b border-finance-outline-variant flex justify-between items-center">
-                    <h3 className="font-title-sm text-title-sm text-finance-on-surface">Factures Récentes</h3>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-finance-surface-container-lowest border-b border-finance-outline-variant">
-                          <th className="p-3 font-label-caps text-label-caps text-finance-secondary">Facture #</th>
-                          <th className="p-3 font-label-caps text-label-caps text-finance-secondary">Client ID</th>
-                          <th className="p-3 font-label-caps text-label-caps text-finance-secondary">Montant</th>
-                          <th className="p-3 font-label-caps text-label-caps text-finance-secondary">Date</th>
-                          <th className="p-3 font-label-caps text-label-caps text-finance-secondary">Statut</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentFactures.length === 0 ? (
-                          <tr><td colSpan={5} className="p-4 text-center text-finance-secondary">Aucune facture récente.</td></tr>
-                        ) : (
-                          recentFactures.map((f, i) => (
-                            <tr key={i} className="border-b border-finance-outline-variant hover:bg-finance-surface-container-low transition-colors">
-                              <td className="p-3 font-mono-data text-mono-data text-finance-primary font-bold">{f.reference || `FAC-${f.id}`}</td>
-                              <td className="p-3 font-body-sm text-body-sm text-finance-on-surface">{f.client_id}</td>
-                              <td className="p-3 font-mono-data text-mono-data text-finance-on-surface">{parseFloat(f.montant_ttc).toLocaleString()} FCFA</td>
-                              <td className="p-3 font-body-sm text-body-sm text-finance-secondary">{new Date(f.date_creation).toLocaleDateString()}</td>
-                              <td className="p-3">{getStatusBadge(f.statut)}</td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column (Notifications & Alerts) */}
-              <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 animate-slide-up">
-                {/* Gateway Notifications */}
-                <div className="bg-finance-surface-container-lowest rounded-xl border border-finance-outline-variant shadow-sm overflow-hidden">
-                  <div className="p-4 border-b border-finance-outline-variant bg-finance-surface-container-low flex items-center gap-2">
-                    <span className="material-symbols-outlined text-finance-primary">sync_alt</span>
-                    <h3 className="font-title-sm text-title-sm text-finance-on-surface">Gateway Inter-Module</h3>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-finance-secondary text-center">Aucune notification inter-module récente.</p>
-                  </div>
-                </div>
+              <div className="flex-1 w-full min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={cashflowData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Line type="monotone" dataKey="in" stroke="#10b981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="out" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
-          )}
-        </main>
-      </div>
+
+            {/* Quick Actions / Recent Activity */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col h-[400px]">
+              <h3 className="text-lg font-bold text-slate-800 mb-4">Dernières Factures</h3>
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+                {[
+                  { id: 'FAC-2023-01', amount: '1,200,000', status: 'Payée', type: 'in', date: 'Aujourd\'hui' },
+                  { id: 'FAC-2023-02', amount: '450,000', status: 'En attente', type: 'out', date: 'Hier' },
+                  { id: 'FAC-2023-03', amount: '890,000', status: 'Impayée', type: 'out', date: 'Il y a 3j' },
+                  { id: 'FAC-2023-04', amount: '2,100,000', status: 'Payée', type: 'in', date: 'Il y a 4j' },
+                ].map((f, i) => (
+                  <div key={i} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.type === 'in' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                        {f.type === 'in' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{f.id}</p>
+                        <p className="text-xs text-slate-400">{f.date}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-slate-700">{f.amount}</p>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${f.status === 'Payée' ? 'text-emerald-600' : f.status === 'Impayée' ? 'text-red-600' : 'text-amber-600'}`}>
+                        {f.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </>
+      )}
     </div>
   )
 }

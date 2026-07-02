@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search, Filter, Download, Plus, MoreVertical, FileText } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Eye, Filter, Download, MoreVertical, FileText } from 'lucide-react';
+import { TableSkeletonLoader } from '@/components/ui/Loaders';
 
 interface Column {
   key: string;
@@ -98,11 +99,8 @@ export default function GenericDataPage({
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="p-8 text-center text-gray-500">
-                    <div className="flex justify-center mb-3">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    </div>
-                    Chargement des données...
+                  <td colSpan={columns.length + 1} className="p-6">
+                    <TableSkeletonLoader columns={columns.length} rows={5} />
                   </td>
                 </tr>
               ) : data.length === 0 ? (
@@ -117,7 +115,7 @@ export default function GenericDataPage({
                 </tr>
               ) : (
                 data.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="hover:bg-gray-50/50 transition-colors group">
+                  <tr key={rowIndex} className="hover:bg-slate-50 transition-colors group">
                     {columns.map((col, colIndex) => (
                       <td key={col.key} className={`p-4 text-sm text-gray-600 ${colIndex === 0 ? 'pl-6 font-medium text-gray-900' : ''}`}>
                         {col.render ? col.render(row[col.key], row) : row[col.key] || '-'}

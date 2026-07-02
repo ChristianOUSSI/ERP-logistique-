@@ -7,6 +7,7 @@ import { getRouteForRole } from '@/lib/role-routes';
 import Link from 'next/link';
 
 import ModuleSidebar from '@/components/layout/ModuleSidebar';
+import { FullScreenLoader } from '@/components/ui/Loaders';
 import { LayoutDashboard, Settings, UserCircle, LogOut } from 'lucide-react';
 
 export default function AppLayout({
@@ -64,11 +65,7 @@ export default function AppLayout({
 
   // Show nothing or a loader while checking authentication
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
-        Chargement...
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   // If not loading and no user, we are redirecting
