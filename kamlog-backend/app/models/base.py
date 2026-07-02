@@ -11,7 +11,7 @@ class BaseModel(Base):
     Modèle de base KAMLOG :
     - id auto-généré
     - created_at / updated_at automatiques
-    - soft delete avec deleted_at
+    - soft delete avec is_deleted et deleted_at
     """
     __abstract__ = True
 
@@ -32,7 +32,11 @@ class BaseModel(Base):
     deleted_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    is_deleted: Mapped[bool] = mapped_column(
+        default=False, nullable=False, server_default="0"
+    )
 
     def soft_delete(self) -> None:
-        """Suppression logique  ne jamais supprimer physiquement en prod."""
+        """Suppression logique : ne jamais supprimer physiquement en prod."""
+        self.is_deleted = True
         self.deleted_at = func.now()

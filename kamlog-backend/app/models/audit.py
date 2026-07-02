@@ -9,12 +9,14 @@ class AuditLog(BaseModel):
     __tablename__ = "audit_log"
 
     table_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    record_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    action: Mapped[str] = mapped_column(String(20), nullable=False)  # INSERT/UPDATE/DELETE
+    record_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    action: Mapped[str] = mapped_column(String(50), nullable=False)  # INSERT/UPDATE/DELETE
     old_values: Mapped[dict | None] = mapped_column(JSON)
     new_values: Mapped[dict | None] = mapped_column(JSON)
     user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id'))
     agency_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('agencies.id'))
     ip_address: Mapped[str | None] = mapped_column(String(50))
+    user_agent: Mapped[str | None] = mapped_column(String(255))
+    context: Mapped[dict | None] = mapped_column(JSON)
     
     agency = relationship("Agency", back_populates="audit_logs")

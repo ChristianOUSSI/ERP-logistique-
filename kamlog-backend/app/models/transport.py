@@ -1,7 +1,7 @@
 # app/models/transport.py  Modèles K-Transport Complets
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index
+from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
@@ -57,6 +57,23 @@ class ChauffeurProfil(BaseModel):
     actif: Mapped[bool] = mapped_column(Boolean, default=True)
 
     missions: Mapped[list['MissionTransport']] = relationship(back_populates='chauffeur')
+
+
+class TicketCarburant(BaseModel):
+    __tablename__ = "tickets_carburant"
+
+    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
+    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id'))
+    quantite_litres: Mapped[Decimal] = mapped_column(Numeric(8, 2))
+    prix_unitaire: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    montant_total: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    date_plein: Mapped[str] = mapped_column(String(50)) # ISO format
+    kilometrage: Mapped[int] = mapped_column(Integer, default=0)
+    station_service: Mapped[str | None] = mapped_column(String(100))
+    notes: Mapped[str | None] = mapped_column(Text)
+    
+    camion: Mapped['CamionFlotte'] = relationship()
+    chauffeur: Mapped['ChauffeurProfil'] = relationship()
 
 
 class MissionTransport(BaseModel):

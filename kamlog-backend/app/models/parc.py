@@ -58,3 +58,18 @@ class MouvementParc(BaseModel):
     date_mouvement: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False)
     operateur_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     notes: Mapped[str | None] = mapped_column(String(500))
+
+
+class ReparationAtelier(BaseModel):
+    __tablename__ = "reparations_atelier"
+
+    reference: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
+    # On lie au camion de la flotte transport
+    camion_id: Mapped[int] = mapped_column(Integer, nullable=False) 
+    type_intervention: Mapped[str] = mapped_column(String(50)) # PREVENTIF, CURATIF
+    description: Mapped[str] = mapped_column(String(500))
+    statut: Mapped[str] = mapped_column(String(30), default="EN_ATTENTE") # EN_ATTENTE, EN_COURS, TERMINEE
+    cout_estime: Mapped[int | None] = mapped_column(Integer)
+    date_entree: Mapped[str] = mapped_column(String(50)) # ISO
+    date_sortie_prevue: Mapped[str | None] = mapped_column(String(50))
+    mecanicien_en_charge: Mapped[str | None] = mapped_column(String(100))

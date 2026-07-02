@@ -5,16 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
 
-class Role(str, enum.Enum):
-    ADMIN = "admin"
-    DISPATCHER = "dispatcher"
-    FINANCE = "finance"
-    DOUANE = "douane"
-    GATE_AGENT = "gate_agent"
-    MAGASIN = "magasin"
-    AUDITOR = "auditor"
-
-
 # Table d'association Many-to-Many entre Rôles et Permissions
 role_permissions = Table(
     "role_permissions",
@@ -59,8 +49,6 @@ class RoleModel(BaseModel):
 
 class User(BaseModel):
     __tablename__ = "users"
-    
-    Role = Role
 
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)

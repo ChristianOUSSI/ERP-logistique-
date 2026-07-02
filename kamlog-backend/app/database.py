@@ -1,6 +1,6 @@
 # app/database.py  Database Engine & Session KAMLOG
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker, with_loader_criteria
 from app.config import settings
 
 
@@ -62,3 +62,21 @@ def register_sqlite_now(dbapi_connection, connection_record):
             dbapi_connection.create_function("now", 0, lambda: datetime.datetime.utcnow().isoformat())
         except Exception:
             pass
+
+@event.listens_for(Session, "do_orm_execute")
+def _add_filtering_criteria(execute_state):
+    from app.models.base import BaseModel
+    if (
+        execute_state.is_select 
+        and not execute_state.is_column_load 
+        and not execute_state.is_relationship_load
+    ):
+        if not execute_state.execution_options.get("include_deleted", False):
+            execute_state.statement = execute_state.statement.options(
+                with_loader_criteria(
+                    BaseModel,
+                    lambda cls: cls.is_deleted.is_(False),
+                    include_aliases=True,
+                )
+            )
+

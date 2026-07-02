@@ -1,7 +1,7 @@
 # app/models  Import tous les modèles
 from app.models.base import Base, BaseModel
 from app.models.audit import AuditLog
-from app.models.user import User, Role, RoleModel, PermissionModel
+from app.models.user import User, RoleModel, PermissionModel
 from app.models.tiers import Tiers, StatutTiers
 from app.models.transport import (
     CamionFlotte,
@@ -86,7 +86,6 @@ __all__ = [
     "BaseModel",
     "AuditLog",
     "User",
-    "Role",
     "RoleModel",
     "PermissionModel",
     "Tiers",
