@@ -1,208 +1,155 @@
-// src/app/(app)/audit/dashboard/health/page.tsx
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import { MaterialSymbol } from '@/components/MaterialSymbol'
+import React, { useState, useEffect } from 'react'
+import { Activity, ShieldCheck, ServerCrash, Users, AlertTriangle, ArrowUpRight, Cpu } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts'
 
-export default function AuditHealthMonitor() {
-  const router = useRouter()
-  
-  const mfaData = [
-    { name: 'Compliant', value: 1452 },
-    { name: 'Non-Compliant', value: 128 }
-  ];
-  
-  const complianceRate = Math.round((1452 / (1452 + 128)) * 100);
+const mockUptimeData = Array.from({ length: 24 }).map((_, i) => ({
+  time: `${i}:00`,
+  uptime: 98 + Math.random() * 2
+}))
 
-  // Premium Custom Tooltip for Recharts
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-xl shadow-2xl border border-slate-700/50">
-          <p className="font-semibold text-sm mb-1">{payload[0].name}</p>
-          <p className="text-xl font-bold" style={{ color: payload[0].payload.name === 'Compliant' ? '#3b82f6' : '#ef4444' }}>
-            {payload[0].value} users
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+export default function AuditHealthDashboard() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate API fetch for health data
+    setTimeout(() => setLoading(false), 1000)
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className="p-6 md:p-8 w-full max-w-7xl mx-auto space-y-8 animate-fade-in relative">
-      {/* Decorative background pattern (scoped locally) */}
-      <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none z-[-1] rounded-3xl"
-        style={{
-          backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
-        }}
-      />
-      
-      {/* Breadcrumbs & Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-            Forensic Audit Dashboard
-            <span className="bg-emerald-50 text-emerald-700 text-sm font-semibold px-3 py-1 rounded-full border border-emerald-200 shadow-sm shadow-emerald-100 flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              System Optimal
-            </span>
-          </h1>
-          <p className="text-slate-500 mt-2 text-lg">Surveillance continue de la santé et de la sécurité des modules</p>
+    <div className="p-6 max-w-7xl mx-auto animate-in fade-in duration-500">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <Activity className="text-emerald-600 w-7 h-7" />
+          Santé Système & Audit
+        </h1>
+        <p className="text-sm text-slate-500 mt-1">Surveillance en temps réel des performances et de la sécurité de l'ERP.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-bold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full">Normal</span>
+            </div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Statut Global</p>
+            <h2 className="text-2xl font-black text-slate-800">100% <span className="text-sm font-bold text-slate-500">Opérationnel</span></h2>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <div className="bg-white px-4 py-2 rounded-lg flex items-center gap-2 border border-slate-200 shadow-sm text-sm font-medium text-slate-600">
-            <MaterialSymbol icon="schedule" size={18} className="text-slate-400" />
-            <span className="font-mono">Last Sync: 14:02:45 UTC</span>
+
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 bg-blue-100 text-blue-600 rounded-xl">
+                <Cpu className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-700 rounded-full">32ms ping</span>
+            </div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Charge Serveur (CPU)</p>
+            <h2 className="text-2xl font-black text-slate-800">24% <span className="text-sm font-bold text-slate-500">Moyenne</span></h2>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 bg-purple-100 text-purple-600 rounded-xl">
+                <Users className="w-6 h-6" />
+              </div>
+              <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-green-50 text-green-700 rounded-full">
+                <ArrowUpRight className="w-3 h-3" /> +12%
+              </span>
+            </div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Sessions Actives</p>
+            <h2 className="text-2xl font-black text-slate-800">142 <span className="text-sm font-bold text-slate-500">Utilisateurs</span></h2>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -z-0 transition-transform group-hover:scale-110"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 bg-amber-100 text-amber-600 rounded-xl">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <span className="text-xs font-bold px-2 py-1 bg-red-50 text-red-700 rounded-full">2 Non Résolues</span>
+            </div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Alertes Sécurité (MFA)</p>
+            <h2 className="text-2xl font-black text-slate-800">5 <span className="text-sm font-bold text-slate-500">Aujourd'hui</span></h2>
           </div>
         </div>
       </div>
 
-      {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* System Health Monitor (Wide) */}
-        <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-lg transition-all duration-300">
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <MaterialSymbol icon="monitor_heart" size={24} className="text-blue-600" />
-              Module Health Monitor
-            </h2>
-            <button 
-              onClick={() => router.push('/audit/dashboard/health/details')} 
-              className="text-blue-600 font-semibold text-sm hover:text-blue-800 transition-colors flex items-center gap-1"
-            >
-              View Details
-              <MaterialSymbol icon="arrow_forward" size={16} />
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2 flex flex-col h-[400px]">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-slate-800">Disponibilité des Services (24h)</h3>
+            <p className="text-sm text-slate-500">Temps de réponse et SLA</p>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Module: K-Transport */}
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center hover:bg-white hover:border-blue-100 hover:shadow-md transition-all duration-300 group">
-              <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">K-Transport</div>
-              <div className="flex items-center justify-center mb-3">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <MaterialSymbol icon="local_shipping" size={24} className="text-blue-600" />
-                </div>
-              </div>
-              <div className="inline-flex items-center justify-center px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold uppercase tracking-wider border border-emerald-200">
-                Online
-              </div>
-              <div className="mt-3 font-mono text-xs text-slate-500 bg-white py-1 rounded-md border border-slate-100">Uptime: 99.9%</div>
-            </div>
-
-            {/* Module: K-Magasin */}
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center hover:bg-white hover:border-emerald-100 hover:shadow-md transition-all duration-300 group">
-              <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">K-Magasin</div>
-              <div className="flex items-center justify-center mb-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <MaterialSymbol icon="warehouse" size={24} className="text-emerald-600" />
-                </div>
-              </div>
-              <div className="inline-flex items-center justify-center px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold uppercase tracking-wider border border-emerald-200">
-                Online
-              </div>
-              <div className="mt-3 font-mono text-xs text-slate-500 bg-white py-1 rounded-md border border-slate-100">Uptime: 99.8%</div>
-            </div>
-
-            {/* Module: K-Finance (Warning State) */}
-            <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-center shadow-[0_0_15px_rgba(244,63,94,0.1)] relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-400 to-rose-600"></div>
-              <div className="text-xs font-bold text-rose-700 mb-2 uppercase tracking-wider">K-Finance</div>
-              <div className="flex items-center justify-center mb-3">
-                <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <MaterialSymbol icon="account_balance" size={24} className="text-rose-600" />
-                </div>
-              </div>
-              <div className="inline-flex items-center justify-center px-2.5 py-1 bg-rose-200 text-rose-800 rounded-full text-[10px] font-bold uppercase tracking-wider border border-rose-300">
-                Sync Delay
-              </div>
-              <div className="mt-3 font-mono text-xs text-rose-600 font-semibold bg-white/60 py-1 rounded-md border border-rose-100">-45s lag detected</div>
-            </div>
-
-            {/* Module: K-Parc */}
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center hover:bg-white hover:border-amber-100 hover:shadow-md transition-all duration-300 group">
-              <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">K-Parc</div>
-              <div className="flex items-center justify-center mb-3">
-                <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <MaterialSymbol icon="directions_car" size={24} className="text-amber-600" />
-                </div>
-              </div>
-              <div className="inline-flex items-center justify-center px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold uppercase tracking-wider border border-emerald-200">
-                Online
-              </div>
-              <div className="mt-3 font-mono text-xs text-slate-500 bg-white py-1 rounded-md border border-slate-100">Uptime: 100%</div>
-            </div>
+          <div className="flex-1 w-full min-h-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={mockUptimeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorUptime" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} domain={[90, 100]} />
+                <RechartsTooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value: number) => [`${value.toFixed(2)}%`, 'Disponibilité']}
+                />
+                <Area type="monotone" dataKey="uptime" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorUptime)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* MFA Compliance (Square) */}
-        <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-lg transition-all duration-300 flex flex-col">
-          <div className="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <MaterialSymbol icon="fingerprint" size={24} className="text-blue-600" />
-              MFA Compliance
-            </h2>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-slate-800">Événements Récents</h3>
+            <p className="text-sm text-slate-500">Journal système (Auto-refresh)</p>
           </div>
-          
-          <div className="flex-1 flex flex-col items-center justify-center relative min-h-[220px]">
-            {/* Real Recharts Donut Chart */}
-            <div className="w-full h-[180px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Tooltip content={<CustomTooltip />} />
-                  <Pie
-                    data={mfaData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                    stroke="none"
-                    animationBegin={200}
-                    animationDuration={1200}
-                  >
-                    <Cell key="cell-0" fill="#3b82f6" className="drop-shadow-sm" />
-                    <Cell key="cell-1" fill="#f87171" />
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              {/* Center Text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-1">
-                <span className="text-3xl font-bold text-slate-800">{complianceRate}%</span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Compliant</span>
+          <div className="space-y-4">
+            {[
+              { id: 1, type: 'success', text: 'Backup Base de données terminé', time: 'Il y a 5 min' },
+              { id: 2, type: 'warning', text: 'Tentative de connexion échouée (Admin)', time: 'Il y a 12 min' },
+              { id: 3, type: 'info', text: 'Mise à jour du certificat SSL', time: 'Il y a 1h' },
+              { id: 4, type: 'error', text: 'Timeout API Passerelle', time: 'Il y a 2h' },
+              { id: 5, type: 'success', text: 'Synchronisation Master Data ok', time: 'Il y a 3h' },
+            ].map(log => (
+              <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                  log.type === 'success' ? 'bg-emerald-500' : 
+                  log.type === 'warning' ? 'bg-amber-500' : 
+                  log.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                }`}></div>
+                <div>
+                  <p className="text-sm font-medium text-slate-800">{log.text}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{log.time}</p>
+                </div>
               </div>
-            </div>
-
-            {/* Legend */}
-            <div className="w-full space-y-3 mt-4">
-              <div className="flex justify-between items-center bg-slate-50 px-4 py-2 rounded-lg border border-slate-100">
-                <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <span className="w-2.5 h-2.5 bg-blue-500 rounded-full shadow-sm shadow-blue-200"></span> 
-                  Active MFA
-                </span>
-                <span className="font-mono text-sm font-bold text-slate-900">1,452 <span className="text-xs text-slate-500 font-sans font-normal">users</span></span>
-              </div>
-              <div className="flex justify-between items-center bg-rose-50 px-4 py-2 rounded-lg border border-rose-100">
-                <span className="flex items-center gap-2 text-sm font-semibold text-rose-800">
-                  <span className="w-2.5 h-2.5 bg-rose-400 rounded-full shadow-sm shadow-rose-200"></span> 
-                  Pending/Inactive
-                </span>
-                <span className="font-mono text-sm font-bold text-rose-700">128 <span className="text-xs text-rose-500 font-sans font-normal">users</span></span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-        
       </div>
     </div>
   )

@@ -1,45 +1,103 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import GenericDataPage from '@/components/ui/GenericDataPage';
-import { History } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { adminAPI } from '@/lib/api-client'
+import GenericDataPage from '@/components/ui/GenericDataPage'
+import { History, ShieldAlert } from 'lucide-react'
 
-export default function OperationTracePage() {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function AuditOperationTrace() {
+  const [logs, setLogs] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setTimeout(() => {
-      setData([
-        { id: 'TRC-9901', user: 'admin@kamlog.com', action: 'CREATE_USER', resource: 'User(ID:45)', timestamp: '2026-07-02 10:00:01', ip: '192.168.1.10' },
-        { id: 'TRC-9902', user: 'finance@kamlog.com', action: 'APPROVE_INVOICE', resource: 'Facture(ID:1020)', timestamp: '2026-07-02 11:20:45', ip: '192.168.1.15' },
-        { id: 'TRC-9903', user: 'transport@kamlog.com', action: 'UPDATE_MISSION', resource: 'Mission(ID:500)', timestamp: '2026-07-02 14:15:22', ip: '10.0.0.5' },
-      ]);
-      setLoading(false);
-    }, 900);
-  }, []);
+    async function fetchLogs() {
+      try {
+        const res = await adminAPI.getAuditLogs()
+        setLogs(res.data || [])
+      } catch (err) {
+        console.error('Error fetching audit logs:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchLogs()
+  }, [])
 
   const columns = [
-    { key: 'timestamp', label: 'Horodatage' },
-    { key: 'user', label: 'Utilisateur' },
-    { 
-      key: 'action', 
-      label: 'Action',
-      render: (val: string) => <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">{val}</span>
+    {
+      key: 'timestamp',
+      label: 'Date & Heure',
+      render: (val: any) => (
+        <span className="text-sm font-medium text-slate-700">
+          {new Date(val).toLocaleString()}
+        </span>
+      ),
     },
-    { key: 'resource', label: 'Ressource Impactée' },
-    { key: 'ip', label: 'Adresse IP' }
-  ];
+    {
+      key: 'user',
+      label: 'Utilisateur',
+      render: (val: any, row: any) => (
+        <div>
+          <div className="font-semibold text-slate-900">{row.user?.username || val || 'Système'}</div>
+          <div className="text-xs text-slate-500">{row.ip_address || '127.0.0.1'}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'action',
+      label: 'Action',
+      render: (val: any) => {
+        let style = 'bg-slate-50 text-slate-700 ring-slate-600/20'
+        if (val?.includes('CREATE') || val?.includes('LOGIN')) style = 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+        if (val?.includes('UPDATE') || val?.includes('MODIFIED')) style = 'bg-blue-50 text-blue-700 ring-blue-600/20'
+        if (val?.includes('DELETE') || val?.includes('FAILED')) style = 'bg-red-50 text-red-700 ring-red-600/20'
+
+        return (
+          <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${style}`}>
+            {val || 'UNKNOWN_ACTION'}
+          </span>
+        )
+      }
+    },
+    {
+      key: 'resource',
+      label: 'Ressource',
+      render: (val: any) => (
+        <div className="text-sm text-slate-600 font-mono">
+          {val || 'N/A'}
+        </div>
+      )
+    },
+    {
+      key: 'details',
+      label: 'Détails',
+      render: (val: any) => (
+        <div className="text-xs text-slate-500 truncate max-w-[200px]" title={JSON.stringify(val)}>
+          {val ? JSON.stringify(val) : '-'}
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (val: any, row: any) => (
+        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${row.status === 'ERROR' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+          {row.status === 'ERROR' ? <ShieldAlert className="w-3 h-3" /> : null}
+          {row.status === 'ERROR' ? 'Échec' : 'Succès'}
+        </span>
+      )
+    }
+  ]
 
   return (
     <GenericDataPage
-      title="Traçabilité des Opérations"
-      description="Journal complet d'audit système (Audit Trail) de toutes les actions effectuées."
-      icon={<History className="w-6 h-6 text-slate-700" />}
+      title="Traces d'Opérations (Audit Logs)"
+      description="Historique immuable de toutes les actions système, modifications de données et tentatives d'accès."
+      icon={<History className="w-6 h-6 text-slate-600" />}
       columns={columns}
-      data={data}
+      data={logs}
       isLoading={loading}
-      onExport={() => alert('Exporting audit logs...')}
+      onExport={() => console.log('Export logs')}
     />
-  );
+  )
 }
