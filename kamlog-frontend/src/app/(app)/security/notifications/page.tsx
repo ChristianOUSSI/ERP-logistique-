@@ -88,7 +88,7 @@ export default function SecurityNotificationsPage() {
       data={data}
       isLoading={loading}
       primaryActionLabel="Marquer tout comme lu"
-      onPrimaryAction={handleMarkAllAsRead}
+      onAdd={handleMarkAllAsRead}
     />
   );
 }
