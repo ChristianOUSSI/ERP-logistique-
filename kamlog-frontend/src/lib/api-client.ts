@@ -139,6 +139,20 @@ export const tiersAPI = {
     apiClient.put(`/api/tiers/${id}`, data),
 };
 
+// ─── Service Master Data ──────────────────────────────────
+export const masterDataAPI = {
+  getArticles: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/master-data/articles', { params }),
+  getArticle: (id: number) =>
+    apiClient.get(`/api/master-data/articles/${id}`),
+  createArticle: (data: unknown) =>
+    apiClient.post('/api/master-data/articles', data),
+  updateArticle: (id: number, data: unknown) =>
+    apiClient.put(`/api/master-data/articles/${id}`, data),
+  deleteArticle: (id: number) =>
+    apiClient.delete(`/api/master-data/articles/${id}`),
+};
+
 // ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
 export const magasinAPI = {
   getMagasins: (params?: Record<string, unknown>) =>

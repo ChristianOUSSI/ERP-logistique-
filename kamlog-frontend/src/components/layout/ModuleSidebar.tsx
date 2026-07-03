@@ -161,11 +161,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   'master-data': [
     { labelKey: 'tiers', href: '/master-data/tiers', icon: 'hub' },
-    { labelKey: 'clients', href: '/master-data/clients/create', icon: 'person_add' },
-    { labelKey: 'suppliers', href: '/master-data/suppliers/create', icon: 'conveyor_belt' },
-    { labelKey: 'articles', href: '/master-data/article-creation', icon: 'inventory_2' },
-    { labelKey: 'incoterms', href: '/master-data/incoterms', icon: 'gavel' },
-    { labelKey: 'units', href: '/master-data/units', icon: 'straighten' },
+    { labelKey: 'articles', href: '/master-data/articles', icon: 'inventory_2' },
   ],
   transport: [
     { labelKey: 'fleet', href: '/transport/control', icon: 'local_shipping' },
