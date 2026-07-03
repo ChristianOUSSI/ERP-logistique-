@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown, Package, ShieldAlert, CreditCard, Truck, Term
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getRouteFromTCode } from '@/utils/tcodeLookup'
-import { financeAPI, transportAPI, auditAPI, magasinAPI } from '@/lib/api-client'
+import { financeAPI, transportAPI } from '@/lib/api-client'
 
 // Mock Data pour les graphiques
 const revenueDataWeek = [
