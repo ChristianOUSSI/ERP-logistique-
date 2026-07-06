@@ -2,6 +2,8 @@ import markdown2
 from weasyprint import HTML, CSS
 import os
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 def convert_markdown_to_pdf(md_file, pdf_file):
     # Read markdown file
     with open(md_file, 'r', encoding='utf-8') as f:
@@ -81,9 +83,8 @@ if __name__ == "__main__":
     md_file = "docs/DOCUMENT_TRANSACTIONS.md"
     pdf_file = "docs/DOCUMENT_TRANSACTIONS.pdf"
     
-    # Get absolute paths
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    md_file = os.path.join(base_dir, md_file)
-    pdf_file = os.path.join(base_dir, pdf_file)
+    # Resolve paths from the repository root after moving this utility into tools/docs.
+    md_file = os.path.join(REPO_ROOT, md_file)
+    pdf_file = os.path.join(REPO_ROOT, pdf_file)
     
     convert_markdown_to_pdf(md_file, pdf_file)

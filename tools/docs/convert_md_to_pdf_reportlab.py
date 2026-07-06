@@ -7,6 +7,8 @@ from reportlab.lib import colors
 import re
 import os
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 def parse_markdown(md_content):
     """Parse markdown content and return a list of platypus flowables."""
     flowables = []
@@ -181,9 +183,8 @@ if __name__ == "__main__":
         pdf_file = sys.argv[2] if len(sys.argv) > 2 else md_file.replace('.md', '.pdf')
         author = sys.argv[3] if len(sys.argv) > 3 else ""
     
-    # Get absolute paths
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    md_file = os.path.join(base_dir, md_file)
-    pdf_file = os.path.join(base_dir, pdf_file)
+    # Resolve paths from the repository root after moving this utility into tools/docs.
+    md_file = os.path.join(REPO_ROOT, md_file)
+    pdf_file = os.path.join(REPO_ROOT, pdf_file)
     
     convert_markdown_to_pdf(md_file, pdf_file, author)

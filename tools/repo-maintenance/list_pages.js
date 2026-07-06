@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const baseDir = path.join(__dirname, 'kamlog-frontend', 'src', 'app', '(app)');
+const repoRoot = path.resolve(__dirname, '..', '..');
+const baseDir = path.join(repoRoot, 'kamlog-frontend', 'src', 'app', '(app)');
+const outputFile = path.join(__dirname, 'modules_list.json');
 
 function getPages(dir, relativePath = '') {
     let pages = [];
@@ -19,5 +21,5 @@ function getPages(dir, relativePath = '') {
 }
 
 const allPages = getPages(baseDir);
-fs.writeFileSync('modules_list.json', JSON.stringify(allPages, null, 2));
+fs.writeFileSync(outputFile, JSON.stringify(allPages, null, 2));
 console.log(`Found ${allPages.length} pages.`);

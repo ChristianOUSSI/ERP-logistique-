@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const repoRoot = path.resolve(__dirname, '..', '..');
 
-const srcDir = path.join(__dirname, 'kamlog-frontend', 'src');
+const srcDir = path.join(repoRoot, 'kamlog-frontend', 'src');
 
 function traverse(dir) {
     const files = fs.readdirSync(dir);

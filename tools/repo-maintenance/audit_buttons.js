@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const repoRoot = path.resolve(__dirname, '..', '..');
+const frontendRoot = path.join(repoRoot, 'kamlog-frontend');
 
 function walkDir(dir, callback) {
   fs.readdirSync(dir).forEach(f => {
@@ -9,13 +11,13 @@ function walkDir(dir, callback) {
   });
 }
 
-const appDir = path.join(__dirname, 'kamlog-frontend', 'src', 'app', '(app)');
+const appDir = path.join(frontendRoot, 'src', 'app', '(app)');
 const results = [];
 
 walkDir(appDir, (filePath) => {
   if (!filePath.endsWith('.tsx')) return;
   const content = fs.readFileSync(filePath, 'utf-8');
-  const relPath = path.relative(path.join(__dirname, 'kamlog-frontend'), filePath);
+  const relPath = path.relative(frontendRoot, filePath);
   
   const lines = content.split('\n');
   lines.forEach((line, idx) => {

@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const schemasDir = path.join(__dirname, 'kamlog-backend', 'app', 'schemas');
+const repoRoot = path.resolve(__dirname, '..', '..');
+const schemasDir = path.join(repoRoot, 'kamlog-backend', 'app', 'schemas');
 const files = fs.readdirSync(schemasDir).filter(f => f.endsWith('.py'));
 let fixedCount = 0;
 

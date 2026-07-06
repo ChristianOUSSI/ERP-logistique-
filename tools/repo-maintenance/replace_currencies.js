@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const repoRoot = path.resolve(__dirname, '..', '..');
 
 function replaceCurrencies(dir) {
     const files = fs.readdirSync(dir);
@@ -40,5 +41,5 @@ function replaceCurrencies(dir) {
     }
 }
 
-replaceCurrencies(path.join(__dirname, 'kamlog-frontend', 'src'));
+replaceCurrencies(path.join(repoRoot, 'kamlog-frontend', 'src'));
 console.log('Currency replacement complete.');

@@ -57,6 +57,8 @@ build/
 *.swp
 *.swo
 *~
+.kilo/
+.cora/
 
 # OS
 .DS_Store
@@ -66,3 +68,8 @@ Thumbs.db
 *.log
 .agenticagents/
 .cleanpush
+
+# Frontend generated artifacts
+kamlog-frontend/*.tsbuildinfo
+kamlog-frontend/playwright-report/
+kamlog-frontend/test-results/
