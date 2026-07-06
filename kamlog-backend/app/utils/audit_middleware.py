@@ -1,5 +1,6 @@
 import time
 import json
+from sqlalchemy.exc import ProgrammingError
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
@@ -10,12 +11,21 @@ from app.schemas.audit import AuditLogCreate
 import logging
 
 logger = logging.getLogger(__name__)
+_missing_http_audit_table_logged = False
+
+
+def _is_missing_http_audit_table_error(exc: ProgrammingError) -> bool:
+    error_message = str(getattr(exc, "orig", exc)).lower()
+    return "http_audit_log" in error_message and (
+        "does not exist" in error_message or "undefinedtable" in error_message
+    )
 
 class AuditMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: ASGIApp):
         super().__init__(app)
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        global _missing_http_audit_table_logged
         start_time = time.time()
 
         # Extraction sécurisée des informations d'identité (injectées par le middleware d'Auth)
@@ -68,15 +78,32 @@ class AuditMiddleware(BaseHTTPMiddleware):
             module=module,
         )
 
+        db = None
         try:
             db = SessionLocal()
             db_audit = HTTPAuditLog(**audit_log_entry.model_dump())
             db.add(db_audit)
             db.commit()
             db.refresh(db_audit)
+        except ProgrammingError as e:
+            if db is not None:
+                db.rollback()
+
+            if _is_missing_http_audit_table_error(e):
+                if not _missing_http_audit_table_logged:
+                    logger.warning(
+                        "Skipping HTTP audit logging because table 'http_audit_log' does not exist yet. "
+                        "Apply the latest Alembic migrations to enable it."
+                    )
+                    _missing_http_audit_table_logged = True
+            else:
+                logger.error(f"Failed to log audit entry: {e}", exc_info=True)
         except Exception as e:
+            if db is not None:
+                db.rollback()
             logger.error(f"Failed to log audit entry: {e}", exc_info=True)
         finally:
-            db.close()
+            if db is not None:
+                db.close()
 
         return response

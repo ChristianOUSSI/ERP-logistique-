@@ -22,3 +22,4 @@ class Agency(BaseModel):
     # Relations
     users = relationship("User", back_populates="agency")
     audit_logs = relationship("AuditLog", back_populates="agency")
+    http_audit_logs = relationship("HTTPAuditLog", back_populates="agency")
