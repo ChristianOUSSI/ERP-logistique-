@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, ShieldAlert, CheckCircle2, Calendar, Plus, X } from 'lucide-react';
-import { transportAPI } from '@/lib/api-client'; // Note: you might need to add getVehiculeDocuments to api-client if not there, or use fetch
 
 export default function VehiculeDocuments({ vehicule, onClose }: { vehicule: any, onClose: () => void }) {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -55,7 +54,7 @@ export default function VehiculeDocuments({ vehicule, onClose }: { vehicule: any
     }
   };
 
-  const isExpired = (dateString: str) => {
+  const isExpired = (dateString: string) => {
     return new Date(dateString) < new Date();
   };
 

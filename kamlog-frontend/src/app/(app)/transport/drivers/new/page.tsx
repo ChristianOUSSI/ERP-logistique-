@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { transportAPI } from '@/lib/api-client';
-import { UserPlus, IdCard, Phone, MapPin, Truck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { UserPlus, User, Phone, MapPin, Truck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 
 export default function NewDriverPage() {
@@ -91,7 +91,7 @@ export default function NewDriverPage() {
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-2 mb-6">
                 <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                  <IdCard className="w-5 h-5" />
+                  <User className="w-5 h-5" />
                 </div>
                 <h2 className="text-lg font-semibold text-slate-800">Identité & Contact</h2>
               </div>

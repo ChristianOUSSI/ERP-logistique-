@@ -184,7 +184,11 @@ export default function FlottePage() {
       )}
       
       {showHseModal && selectedVehicule && (
-        <HseBlockModal vehicule={selectedVehicule} onClose={() => setShowHseModal(false)} />
+        <HseBlockModal
+          vehicule={selectedVehicule}
+          onClose={() => setShowHseModal(false)}
+          onRefresh={fetchCamions}
+        />
       )}
 
       {/* Associate Modal */}
