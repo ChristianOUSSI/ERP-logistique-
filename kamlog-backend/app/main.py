@@ -53,31 +53,7 @@ Limiter.limit = patched_limit
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, dossiers
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
@@ -174,30 +150,8 @@ app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies"])
 app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
-=======
 app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
-=======
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
->>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+app.include_router(dossiers.router, prefix="/api/dossiers", tags=["Dossiers"])
 
 
 @app.get('/api/health')

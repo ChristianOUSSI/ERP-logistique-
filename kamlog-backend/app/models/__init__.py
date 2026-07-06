@@ -1,6 +1,6 @@
 # app/models  Import tous les modèles
 from app.models.base import Base, BaseModel
-from app.models.audit import AuditLog
+from app.models.audit import AuditLog, HTTPAuditLog
 from app.models.user import User, RoleModel, PermissionModel
 from app.models.tiers import Tiers, StatutTiers
 from app.models.marchandises import (
@@ -109,11 +109,18 @@ from app.models.notification import (
     PrioriteNotification,
     StatutNotification,
 )
+from app.models.purchase import (
+    FicheBesoin,
+    LigneFicheBesoin,
+    StatutFicheBesoin,
+    PrioriteFicheBesoin,
+)
 
 __all__ = [
     "Base",
     "BaseModel",
     "AuditLog",
+    "HTTPAuditLog",
     "User",
     "RoleModel",
     "PermissionModel",
@@ -208,4 +215,8 @@ __all__ = [
     "TypeNotification",
     "PrioriteNotification",
     "StatutNotification",
+    "FicheBesoin",
+    "LigneFicheBesoin",
+    "StatutFicheBesoin",
+    "PrioriteFicheBesoin",
 ]

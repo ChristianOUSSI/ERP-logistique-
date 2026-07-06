@@ -343,6 +343,7 @@ class MissionTransportService:
     def valider_creation_mission(db: Session, data: MissionCreate) -> None:
         """
         Règles métier AVANT création mission :
+        0. Vérification de l'habilitation transport et de la limite de crédit
         1. Camion non déjà EN_ROUTE / EN_CHARGEMENT / BLOQUE_HSE / EN_MAINTENANCE
         2. Chauffeur non déjà assigné à une mission active
         3. Cohérence type_camion / nature_fret
@@ -350,7 +351,24 @@ class MissionTransportService:
         """
         from datetime import date
         from app.models.transport import VehiculeDocument, ChauffeurDocument
+        from app.services.tiers_service import TiersService
+        from app.services.finance_service import EncoursService
         today = date.today()
+
+        # Règle 0 : Habilitation client (Tiers) pour Transport et limite de crédit
+        client = TiersService.get_tiers(db, data.tiers_id)
+        if not client:
+            raise ValueError("Client (Tiers) introuvable")
+            
+        if not getattr(client, "autorise_transport", False):
+            raise ValueError(f"Le service Transport n'est pas autorisé pour le client {client.raison_sociale}")
+            
+        encours = EncoursService.calculer_encours_client(db, data.tiers_id)
+        if encours.get("limite_credit_xaf", 0) > 0 and encours.get("encours_xaf", 0) > encours.get("limite_credit_xaf", 0):
+            raise ValueError(
+                f"Limite de crédit dépassée pour le client {client.raison_sociale} : "
+                f"Encours actuel ({encours['encours_xaf']:,.2f} XAF) > Limite ({encours['limite_credit_xaf']:,.2f} XAF)"
+            )
 
         # Règle 1 : tracteur disponible et non bloqué
         camion = CamionFlotteService.get_camion(db, data.camion_id)
@@ -588,7 +606,7 @@ def calculer_ecart_carburant(
     theorique = (distance_km / 100) * consommation_theorique_l_100
     if theorique == 0:
         return Decimal('0')
-    return (consommation_reelle_litres - theorique).abs() / theorique
+    return abs(consommation_reelle_litres - theorique) / theorique
 
 
 class PanneVehiculeService:

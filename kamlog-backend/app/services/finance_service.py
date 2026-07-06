@@ -128,6 +128,15 @@ class FactureService:
         """Valide une facture"""
         db_facture = FactureService.get_facture(db, facture_id)
         if db_facture:
+            # Vérifier l'équilibre comptable des écritures SYSCOHADA associées
+            debits = sum(e.montant for e in db_facture.ecritures if e.sens_mouvement == "DEBIT")
+            credits = sum(e.montant for e in db_facture.ecritures if e.sens_mouvement == "CREDIT")
+            if debits != credits:
+                raise ValueError(
+                    f"Déséquilibre comptable pour la facture {db_facture.numero_facture} : "
+                    f"Total Débit ({debits:,.2f}) != Total Crédit ({credits:,.2f})"
+                )
+
             db_facture.statut = StatutFacture.EMISE
             db_facture.valide_par = valide_par
             db_facture.date_validation = datetime.now()

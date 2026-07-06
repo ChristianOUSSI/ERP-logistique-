@@ -15,7 +15,7 @@ from app.services.purchase_requisition_workflow_service import PurchaseRequisiti
 from app.models.user import User
 from app.routers.auth import get_current_user
 from app.utils.rbac import require_permission, require_role
-from app.exceptions import ResourceNotFoundError, BusinessRuleViolationError
+from app.exceptions import NotFoundException, BusinessRuleViolationError
 
 router = APIRouter(
     prefix="/api/purchase/requisitions",
@@ -62,7 +62,7 @@ async def get_fiche_besoin(
     """Récupère une fiche de besoin par ID."""
     try:
         return fiche_besoin_service.get_by_id(db, fiche_id)
-    except ResourceNotFoundError as e:
+    except NotFoundException as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 @router.put("/{fiche_id}", response_model=FicheBesoinResponse)
@@ -76,7 +76,7 @@ async def update_fiche_besoin(
     """Met à jour une fiche de besoin."""
     try:
         return fiche_besoin_service.update(db, fiche_id, fiche_data)
-    except (ResourceNotFoundError, BusinessRuleViolationError) as e:
+    except (NotFoundException, BusinessRuleViolationError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 @router.delete("/{fiche_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -90,7 +90,7 @@ async def delete_fiche_besoin(
     try:
         fiche_besoin_service.delete(db, fiche_id)
         return {"message": "Fiche de besoin supprimée avec succès."}
-    except (ResourceNotFoundError, BusinessRuleViolationError) as e:
+    except (NotFoundException, BusinessRuleViolationError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
@@ -106,7 +106,7 @@ async def submit_fiche_besoin_for_approval(
     """Soumet une fiche de besoin pour approbation."""
     try:
         return PurchaseRequisitionWorkflowService.submit_for_approval(db, fiche_id, current_user)
-    except (ResourceNotFoundError, BusinessRuleViolationError) as e:
+    except (NotFoundException, BusinessRuleViolationError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
@@ -128,5 +128,5 @@ async def review_fiche_besoin(
             is_approved=review_data.is_approved,
             notes=review_data.notes
         )
-    except (ResourceNotFoundError, BusinessRuleViolationError) as e:
+    except (NotFoundException, BusinessRuleViolationError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
