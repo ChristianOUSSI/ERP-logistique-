@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Bool
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
-from app.models.base import BaseModel
+from app.models.base import Base
 
 
 class StatutFicheBesoin(enum.Enum):
@@ -23,7 +23,7 @@ class PrioriteFicheBesoin(enum.Enum):
     CRITIQUE = "CRITIQUE"
 
 
-class FicheBesoin(BaseModel):
+class FicheBesoin(Base):
     """
     Fiche de besoin (Purchase Requisition)
     Document demandant l'achat de biens/services
@@ -70,7 +70,7 @@ class FicheBesoin(BaseModel):
     lignes = relationship("LigneFicheBesoin", back_populates="fiche_besoin", cascade="all, delete-orphan")
 
 
-class LigneFicheBesoin(BaseModel):
+class LigneFicheBesoin(Base):
     """
     Ligne de fiche de besoin (Purchase Requisition Line)
     Détail des articles/services demandés

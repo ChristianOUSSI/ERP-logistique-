@@ -36,8 +36,8 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit: 'Traces d\'Audit',
     security: 'Configuration MFA',
     tiers: 'Tiers (Général)',
-    clients: 'Clients',
     suppliers: 'Fournisseurs',
+    purchases: 'Fiches de Besoin',
     articles: 'Articles',
     incoterms: 'Incoterms',
     units: 'Unités de Mesure',
@@ -98,6 +98,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     tiers: 'Partners (General)',
     clients: 'Customers',
     suppliers: 'Suppliers',
+    purchases: 'Purchase Requisitions',
     articles: 'Materials/Items',
     incoterms: 'Incoterms',
     units: 'Units of Measure',
@@ -163,6 +164,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   'master-data': [
     { labelKey: 'tiers', href: '/master-data/tiers', icon: 'hub' },
+    { labelKey: 'suppliers', href: '/master-data/tiers?type=supplier', icon: 'handshake' },
     { labelKey: 'articles', href: '/master-data/articles', icon: 'inventory_2' },
   ],
   transport: [
@@ -178,6 +180,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },
     { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' },
     { labelKey: 'billing', href: '/finance/factures', icon: 'receipt_long' },
+    { labelKey: 'purchases', href: '/finance/requisitions', icon: 'shopping_bag' },
     { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
     { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },
     { labelKey: 'transactions', href: '/finance/saisie-transaction-bancaire', icon: 'add_card' },

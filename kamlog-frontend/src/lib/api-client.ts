@@ -121,6 +121,27 @@ export const financeAPI = {
     apiClient.get('/api/finance/kpis'),
 };
 
+// ─── Service Purchases (K-Achats) ─────────────────────────
+export const purchaseAPI = {
+  getRequisitions: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/purchase/requisitions/', { params }),
+  createRequisition: (data: unknown) =>
+    apiClient.post('/api/purchase/requisitions/', data),
+  getRequisition: (id: number) =>
+    apiClient.get(`/api/purchase/requisitions/${id}`),
+  updateRequisition: (id: number, data: unknown) =>
+    apiClient.put(`/api/purchase/requisitions/${id}`, data),
+  deleteRequisition: (id: number) =>
+    apiClient.delete(`/api/purchase/requisitions/${id}`),
+  submitRequisition: (id: number) =>
+    apiClient.post(`/api/purchase/requisitions/${id}/submit`),
+  approveRequisition: (id: number, notes?: string) =>
+    apiClient.post(`/api/purchase/requisitions/${id}/approve`, { notes_approbation: notes }),
+  rejectRequisition: (id: number, notes?: string) =>
+    apiClient.post(`/api/purchase/requisitions/${id}/reject`, { notes_approbation: notes }),
+};
+
+
 // ─── Service Parc ─────────────────────────────────────────
 export const parcAPI = {
   getZones: (params?: Record<string, unknown>) =>

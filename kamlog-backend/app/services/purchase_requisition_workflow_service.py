@@ -5,7 +5,7 @@ from datetime import datetime
 
 from app.models.purchase import FicheBesoin, StatutFicheBesoin
 from app.models.user import User
-from app.exceptions import BusinessRuleViolationError, NotFoundException
+from app.exceptions import BusinessRuleViolationError, ResourceNotFoundError
 from app.services.notification_service import NotificationService, TypeNotification, PrioriteNotification
 
 class PurchaseRequisitionWorkflowService:
@@ -21,7 +21,7 @@ class PurchaseRequisitionWorkflowService:
         """
         fiche = db.query(FicheBesoin).filter(FicheBesoin.id == fiche_id).first()
         if not fiche:
-            raise NotFoundException("Fiche de besoin introuvable.")
+            raise ResourceNotFoundError("Fiche de besoin introuvable.")
         
         if fiche.demandeur_id != demandeur.id:
             raise BusinessRuleViolationError("Seul le demandeur peut soumettre la fiche.")
@@ -66,7 +66,7 @@ class PurchaseRequisitionWorkflowService:
         """
         fiche = db.query(FicheBesoin).filter(FicheBesoin.id == fiche_id).first()
         if not fiche:
-            raise NotFoundException("Fiche de besoin introuvable.")
+            raise ResourceNotFoundError("Fiche de besoin introuvable.")
 
         if fiche.statut != StatutFicheBesoin.EN_ATTENTE_APPROBATION:
             raise BusinessRuleViolationError(f"La fiche doit être en statut 'EN_ATTENTE_APPROBATION'. Statut actuel: {fiche.statut}")

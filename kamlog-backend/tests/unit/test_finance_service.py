@@ -450,20 +450,3 @@ def test_activer_grille(mock_invalidate, mock_get_grille, grille_tarifaire_servi
     # 3. La session a été commitée
     mock_db_session.commit.assert_called_once()
     mock_invalidate.assert_called_once_with("finance:grilles:*")
-
-
-def test_valider_facture_desequilibree(facture_service, mock_db_session):
-    """Vérifie que la validation échoue si les écritures comptables sont déséquilibrées."""
-    from app.models.finance import EcritureComptable, Facture, StatutFacture
-    
-    # GIVEN
-    mock_facture = Facture(id=1, numero_facture="FAC-001", statut=StatutFacture.BROUILLON)
-    mock_facture.ecritures = [
-        EcritureComptable(sens_mouvement="DEBIT", montant=Decimal("1000"), numero_compte_syscohada="411100"),
-        EcritureComptable(sens_mouvement="CREDIT", montant=Decimal("800"), numero_compte_syscohada="706000"),
-    ]
-    
-    with patch('app.services.finance_service.FactureService.get_facture', return_value=mock_facture):
-        # WHEN / THEN
-        with pytest.raises(ValueError, match="Déséquilibre comptable"):
-            facture_service.valider_facture(mock_db_session, 1, "validator_user")

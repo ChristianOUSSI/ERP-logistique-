@@ -53,7 +53,7 @@ Limiter.limit = patched_limit
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, dossiers
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
@@ -151,7 +151,6 @@ app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Adm
 app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
-app.include_router(dossiers.router, prefix="/api/dossiers", tags=["Dossiers"])
 
 
 @app.get('/api/health')
