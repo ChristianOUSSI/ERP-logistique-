@@ -5,8 +5,8 @@ from typing import List
 
 from app.database import get_db
 from app.schemas.purchase import (
-    FicheBesoinCreate, 
-    FicheBesoinUpdate, 
+    FicheBesoinCreate,
+    FicheBesoinUpdate,
     FicheBesoinResponse,
     FicheBesoinApproveReject
 )

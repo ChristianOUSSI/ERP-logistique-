@@ -7,13 +7,14 @@ from datetime import datetime
 
 from app.models.transport import (
     CamionFlotte, ChauffeurProfil, MissionTransport,
-    StatutMission, StatutCamion
+    StatutMission, StatutCamion, PanneVehicule, StatutPanne,
+    VehiculeDocument, ChauffeurDocument
 )
 from app.models.magasin import BandeLivraison
 from app.schemas.transport import (
     CamionFlotteCreate, CamionFlotteUpdate,
     ChauffeurProfilCreate, ChauffeurProfilUpdate,
-    MissionCreate, MissionUpdate
+    MissionCreate, MissionUpdate, PanneVehiculeUpdate
 )
 from app.schemas.magasin import BandeLivraisonCreate, BandeLivraisonUpdate
 from app.utils.audit import AuditService
@@ -105,7 +106,7 @@ class CamionFlotteService:
         """Met le camion en maintenance"""
         db_camion = CamionFlotteService.get_camion(db, camion_id)
         if db_camion:
-            db_camion.statut = StatutCamion.MAINTENANCE
+            db_camion.statut = StatutCamion.EN_MAINTENANCE
             db.commit()
             db.refresh(db_camion)
             
@@ -115,7 +116,16 @@ class CamionFlotteService:
 
     @staticmethod
     def mettre_disponible(db: Session, camion_id: int) -> Optional[CamionFlotte]:
-        """Met le camion disponible"""
+        """Met le camion disponible s'il n'a pas de pannes non résolues"""
+        # Vérifier s'il y a des pannes non résolues
+        pannes_actives = db.query(PanneVehicule).filter(
+            PanneVehicule.vehicule_id == camion_id,
+            PanneVehicule.statut.in_([StatutPanne.A_REPARER, StatutPanne.EN_COURS])
+        ).count()
+        
+        if pannes_actives > 0:
+            raise ValueError("Impossible de rendre le camion disponible : pannes non résolues.")
+
         db_camion = CamionFlotteService.get_camion(db, camion_id)
         if db_camion:
             db_camion.statut = StatutCamion.DISPONIBLE
@@ -182,7 +192,7 @@ class ChauffeurProfilService:
         # Invalider le cache
         invalidate_cache_pattern("transport:chauffeurs:*")
         
-        logger.info(f"Chauffeur créé: {db_chauffeur.nom_complet}", extra={"chauffeur_id": db_chauffeur.id})
+        logger.info(f"Chauffeur créé: {db_chauffeur.prenom} {db_chauffeur.nom}", extra={"chauffeur_id": db_chauffeur.id})
         return db_chauffeur
 
     @staticmethod
@@ -248,6 +258,16 @@ class MissionTransportService:
         if cached:
             return cached
         result = db.query(MissionTransport).filter(MissionTransport.chauffeur_id == chauffeur_id).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
+
+    @staticmethod
+    def get_missions_by_client(db: Session, client_id: int) -> List[MissionTransport]:
+        cache_key = f"transport:missions:client:{client_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(MissionTransport).filter(MissionTransport.tiers_id == client_id).all()
         cache_service.set(cache_key, result, expire=300)
         return result
 
@@ -412,7 +432,6 @@ class MissionTransportService:
         db_mission = MissionTransportService.get_mission(db, mission_id)
         if db_mission:
             db_mission.statut = StatutMission.EN_ROUTE
-            db_mission.date_depart = datetime.now()
             
             # Mettre le camion en route
             camion = CamionFlotteService.get_camion(db, db_mission.camion_id)
@@ -481,8 +500,6 @@ class MissionTransportService:
         invalidate_cache_pattern("transport:missions:*")
         invalidate_cache_pattern("transport:camions:*")
         invalidate_cache_pattern("transport:chauffeurs:*")
-        
-        return db_mission
         
         return db_mission
 
@@ -572,3 +589,47 @@ def calculer_ecart_carburant(
     if theorique == 0:
         return Decimal('0')
     return (consommation_reelle_litres - theorique).abs() / theorique
+
+
+class PanneVehiculeService:
+    """Service pour la gestion des pannes de véhicules"""
+
+    @staticmethod
+    def update_panne(db: Session, camion_id: int, panne_id: int, panne_update: PanneVehiculeUpdate) -> Optional[PanneVehicule]:
+        db_panne = db.query(PanneVehicule).filter(
+            PanneVehicule.id == panne_id,
+            PanneVehicule.vehicule_id == camion_id
+        ).first()
+        
+        if not db_panne:
+            return None
+            
+        for field, value in panne_update.dict(exclude_unset=True).items():
+            setattr(db_panne, field, value)
+            
+        db.commit()
+        db.refresh(db_panne)
+        return db_panne
+
+
+class AlertesService:
+    """Service pour gérer les alertes opérationnelles (documents, etc.)"""
+
+    @staticmethod
+    def get_expiring_documents(db: Session) -> dict:
+        from datetime import date, timedelta
+        target_date = date.today() + timedelta(days=30)
+        
+        vehicules_docs = db.query(VehiculeDocument).filter(
+            VehiculeDocument.date_expiration <= target_date
+        ).all()
+        
+        chauffeurs_docs = db.query(ChauffeurDocument).filter(
+            ChauffeurDocument.date_expiration <= target_date
+        ).all()
+        
+        return {
+            "vehicules": vehicules_docs,
+            "chauffeurs": chauffeurs_docs
+        }
+

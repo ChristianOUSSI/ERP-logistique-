@@ -145,7 +145,9 @@ class Declaration(Base):
     client_id = Column(Integer, ForeignKey("clients_magasin.id"), nullable=False)
     incoterm_id = Column(Integer, ForeignKey("incoterms.id"), nullable=True)
     type_conteneur_id = Column(Integer, ForeignKey("types_conteneur.id"), nullable=True)
-    numero_conteneur = Column(String(50), nullable=True)
+    # Code article remplace numero_conteneur comme clé principale pour la marchandise
+    code_article = Column(String(20), nullable=False, index=True, comment="Code article principal de la déclaration")
+    numero_conteneur = Column(String(50), nullable=True, comment="Numéro conteneur (optionnel)")
     date_declaration = Column(DateTime(timezone=True), server_default=func.now())
     date_arrivee_prevue = Column(DateTime(timezone=True))
     statut = Column(Enum(StatutDeclaration), default=StatutDeclaration.BROUILLON)
@@ -170,6 +172,8 @@ class LigneDeclaration(Base):
     quantite_declaree = Column(Numeric(15, 3), nullable=False)
     unite_mesure = Column(Enum(UniteMesure), nullable=False)
     quantite_udb = Column(Numeric(15, 3), nullable=True)  # Quantité en UDB calculée
+    quantite_recue = Column(Numeric(15, 3), default=0, comment="Quantité totale reçue (tous magasins)")
+    quantite_restante = Column(Numeric(15, 3), nullable=True, comment="Quantité restante à recevoir (calculée)")
 
     # Relations
     declaration = relationship("Declaration", back_populates="lignes")

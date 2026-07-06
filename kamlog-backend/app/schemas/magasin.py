@@ -233,6 +233,7 @@ class LigneDeclaration(LigneDeclarationBase):
 # ============ DECLARATION ============
 class DeclarationBase(BaseModel):
     client_id: int
+    code_article: str = Field(..., max_length=20)
     incoterm_id: Optional[int] = None
     type_conteneur_id: Optional[int] = None
     numero_conteneur: Optional[str] = Field(None, max_length=50)

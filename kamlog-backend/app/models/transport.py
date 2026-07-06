@@ -25,12 +25,14 @@ class TypeVehicule(str, enum.Enum):
 
 class StatutMission(str, enum.Enum):
     BROUILLON = "BROUILLON"
+    PLANIFIE = "PLANIFIE"
     VALIDE = "VALIDE"
     EN_CHARGEMENT = "EN_CHARGEMENT"
     EN_ROUTE = "EN_ROUTE"
     EN_LIVRAISON = "EN_LIVRAISON"
     LIVRE = "LIVRE"
     FACTURE = "FACTURE"
+    TERMINEE = "TERMINEE"
 
 class StatutCamion(str, enum.Enum):
     DISPONIBLE = "DISPONIBLE"

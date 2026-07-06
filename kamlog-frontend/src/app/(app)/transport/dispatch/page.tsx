@@ -1,404 +1,353 @@
-// src/app/(app)/transport/dispatch/page.tsx - K-Transport Dispatch Control - De-hardcoded
-'use client'
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { transportAPI } from '@/lib/api-client';
+import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import { 
+  Building2, Box, Truck, Map, Receipt, CheckCircle2, 
+  AlertCircle, ChevronRight, User, Phone, MapPin, Scale, Clock
+} from 'lucide-react';
+import { CardSkeletonLoader } from '@/components/ui/Loaders';
 
 export default function TransportDispatchPage() {
-  const [isOptimizing, setIsOptimizing] = useState(false);
-  const [routesOptimized, setRoutesOptimized] = useState(false);
-  
-  const [missions, setMissions] = useState<any[]>([]);
-  const [chauffeurs, setChauffeurs] = useState<any[]>([]);
-  const [camions, setCamions] = useState<any[]>([]);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  // Form state
-  const [newMission, setNewMission] = useState({
-    chauffeur_id: '',
+  // References Data
+  const [chauffeurs, setChauffeurs] = useState<any[]>([]);
+  const [camions, setCamions] = useState<any[]>([]); // Includes Tractors, Remorques, etc.
+
+  // Form State (5 Blocks)
+  const [formData, setFormData] = useState({
+    // 1. Entités
+    client_id: '1', // Hardcoded for MVP or we'd fetch clients
+    expediteur_adresse: '',
+    destinataire_adresse: '',
+    contact_site: '',
+    
+    // 2. Fret
+    nature_fret: 'CONTENEUR_20',
+    poids_kg: '',
+    volume_m3: '',
+    
+    // 3. Ressources
     camion_id: '',
     remorque_id: '',
-    point_depart: '',
-    point_arrivee: '',
-    nature_fret: 'STANDARD',
-    volume_m3: '',
-    montant_fret: ''
+    chauffeur_id: '',
+    
+    // 4. Logistique
+    origine: '',
+    destination: '',
+    distance_km: '',
+    date_chargement_prevue: '',
+    date_livraison_souhaitee: '',
+    
+    // 5. Finance
+    montant_fret: '',
+    frais_peage: '0',
+    frais_annexes: '0',
+    notes: ''
   });
 
   useEffect(() => {
-    loadData();
+    const fetchData = async () => {
+      try {
+        const [chaufRes, camRes] = await Promise.all([
+          transportAPI.getChauffeurs(),
+          transportAPI.getCamions()
+        ]);
+        setChauffeurs(chaufRes.data || []);
+        setCamions(camRes.data || []);
+      } catch (err) {
+        console.error("Failed to load references", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const loadData = async () => {
-    try {
-      const [missRes, chaufRes, camRes] = await Promise.all([
-        transportAPI.getMissions().catch(() => ({ data: [] })),
-        transportAPI.getChauffeurs().catch(() => ({ data: [] })),
-        transportAPI.getCamions().catch(() => ({ data: [] }))
-      ]);
-      setMissions(missRes.data || []);
-      setChauffeurs(chaufRes.data || []);
-      setCamions(camRes.data || []);
-    } catch (error) {
-      console.error("Failed to load dispatch data", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleOptimize = () => {
-    setIsOptimizing(true);
-    setTimeout(() => {
-      setIsOptimizing(false);
-      setRoutesOptimized(true);
-    }, 2000);
-  };
-
-  const handleCreateMission = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMission.chauffeur_id || !newMission.camion_id || !newMission.point_depart || !newMission.point_arrivee) {
-      alert("Veuillez remplir tous les champs obligatoires !");
-      return;
-    }
-    
+    setSubmitting(true);
+    setError(null);
+    setSuccess(null);
+
     try {
       const payload: any = {
-        chauffeur_id: parseInt(newMission.chauffeur_id),
-        camion_id: parseInt(newMission.camion_id),
-        point_depart: newMission.point_depart,
-        point_arrivee: newMission.point_arrivee,
-        statut: 'PLANIFIEE',
-        client_id: 1, // Defaulting for MVP
-        nature_fret: newMission.nature_fret,
+        reference: `OT-${new Date().getTime().toString().slice(-6)}`,
+        tiers_id: parseInt(formData.client_id),
+        expediteur_adresse: formData.expediteur_adresse,
+        destinataire_adresse: formData.destinataire_adresse,
+        contact_site: formData.contact_site,
+
+        camion_id: parseInt(formData.camion_id),
+        chauffeur_id: parseInt(formData.chauffeur_id),
+        
+        origine: formData.origine,
+        destination: formData.destination,
+        distance_km: parseFloat(formData.distance_km) || 0,
+        nature_fret: formData.nature_fret,
       };
-      if (newMission.remorque_id) payload.remorque_id = parseInt(newMission.remorque_id);
-      if (newMission.volume_m3) payload.volume_m3 = parseFloat(newMission.volume_m3);
-      if (newMission.montant_fret) payload.montant_fret = parseFloat(newMission.montant_fret);
 
-      await transportAPI.createMission(payload);
-      alert("Mission créée avec succès !");
-      loadData();
-      setNewMission({ chauffeur_id: '', camion_id: '', remorque_id: '', point_depart: '', point_arrivee: '', nature_fret: 'STANDARD', volume_m3: '', montant_fret: '' });
-    } catch (error: any) {
-      console.error("Creation failed", error);
-      alert("Erreur: " + (error.response?.data?.detail || "Échec de la création. Vérifiez les documents / Garde-Fou HSE."));
+      if (formData.remorque_id) payload.remorque_id = parseInt(formData.remorque_id);
+      if (formData.poids_kg) payload.poids_kg = parseFloat(formData.poids_kg);
+      if (formData.volume_m3) payload.volume_m3 = parseFloat(formData.volume_m3);
+      if (formData.date_chargement_prevue) payload.date_chargement_prevue = new Date(formData.date_chargement_prevue).toISOString();
+      if (formData.date_livraison_souhaitee) payload.date_livraison_souhaitee = new Date(formData.date_livraison_souhaitee).toISOString();
+      if (formData.montant_fret) payload.montant_fret = parseFloat(formData.montant_fret);
+      if (formData.frais_peage) payload.frais_peage = parseFloat(formData.frais_peage);
+      if (formData.frais_annexes) payload.frais_annexes = parseFloat(formData.frais_annexes);
+      if (formData.notes) payload.notes = formData.notes;
+
+      const res = await transportAPI.createMission(payload);
+      setSuccess(`L'Ordre de Transport ${res.data?.reference} a été créé avec succès.`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.detail || "Erreur de création. Vérifiez que le véhicule et le chauffeur sont disponibles et conformes (Garde-fou HSE).");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const getStatusStyle = (statut: string) => {
-    switch (statut) {
-      case 'EN_TRANSIT':
-      case 'EN_COURS': return 'bg-blue-100 text-blue-700';
-      case 'EN_CHARGEMENT': return 'bg-orange-100 text-orange-700';
-      case 'LIVREE':
-      case 'TERMINEE': return 'bg-green-100 text-green-700';
-      case 'PLANIFIEE': return 'bg-gray-100 text-gray-700';
-      default: return 'bg-gray-100 text-gray-700';
-    }
-  };
-
-  const activeMissions = missions.filter(m => m.statut !== 'TERMINEE' && m.statut !== 'ANNULEE');
+  const tracteurs = camions.filter(c => c.type_materiel === 'TRACTEUR');
+  const remorques = camions.filter(c => c.type_materiel === 'SEMI_REMORQUE' || c.type_materiel === 'REMORQUE');
 
   return (
-    <>
-      <style jsx global>{`
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
-          vertical-align: middle;
-        }
-        body { font-family: 'Inter', sans-serif; background-color: #f0f3ff; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #F59E0B; border-radius: 10px; }
-      `}</style>
-      <div className="text-on-surface">
+    <ModuleLayout module="transport">
+      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
         
-        
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+            <Map className="w-8 h-8 text-blue-600" />
+            Création d'Ordre de Transport (OT)
+          </h1>
+          <p className="text-slate-500 mt-2">
+            Générez un nouvel OT en remplissant les 5 blocs requis. Le Garde-fou de conformité HSE s'assurera de la validité du transport.
+          </p>
+        </div>
 
-        
-        
-
-        {/* Main Content Stage */}
-        <main className="pt-16 min-h-screen p-8">
-          {/* Dashboard Header */}
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              
-              <h1 className="text-headline-md font-headline-md text-on-background">Dispatch Fleet Monitor</h1>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-2 bg-white border border-outline-variant px-4 py-1 rounded">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span className="text-label-md font-label-md">System Live</span>
-              </div>
-              <div className="text-on-surface-variant text-label-md font-label-md bg-surface-container-high px-4 py-1 rounded">
-                Updated: Just now
-              </div>
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-red-800">Blocage de Sécurité (Garde-fou)</h3>
+              <p className="text-sm text-red-600 mt-1">{error}</p>
             </div>
           </div>
+        )}
 
-          {/* Bento Layout */}
-          <div className="grid grid-cols-12 gap-6 max-w-[1600px] mx-auto">
-            {/* Left Pane: Map & Mission Form */}
-            <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
-              {/* Map Widget */}
-              <div className="bg-white border border-outline-variant rounded shadow-sm relative overflow-hidden h-[400px]">
-                <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-                  <div className="bg-white/90 backdrop-blur-sm p-4 border border-outline-variant rounded shadow-md">
-                    <h3 className="text-label-md font-label-md font-bold text-on-background mb-1">Real-time Telemetry</h3>
-                    <div className="flex items-center gap-2 text-label-sm">
-                      <span className="w-3 h-3 rounded-full bg-primary"></span> {activeMissions.length} Active Trucks
-                    </div>
-                  </div>
-                </div>
-                {/* Placeholder for Map */}
-                <div className="w-full h-full bg-surface-container-highest relative">
-                  <img alt="Operational Map" className="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFck20JD_GQMW1qAQDetaNG-7VrbYx_S6dlTjf0BH1UydGIlWxC8aCWzKZB_C3qSE25FMMih-oA3ecSoc3H1HALp0E7SM39Y5NTLQtnl2dcpJZjUJZUx1mZdDVUxkPZ7QFlbrQ3GW5pKD9U2jeh_mK5IkwQl8zMirNz0W0ZvntY8d5E8O4OPIkv0KXX98-ug-YLJdYkCw_S6-xl9LuTEalBQvsN1kr78f47dBlSO4t2YWF9fXu3H9AtV9vaVTPTj28ieS_qMfiToQ"/>
-                  {/* Simulated Markers based on count */}
-                  {[...Array(Math.min(3, activeMissions.length))].map((_, i) => (
-                    <div key={i} className={`absolute w-6 h-6 bg-primary rounded-full border-2 border-white flex items-center justify-center shadow-lg ${i===0 ? 'top-1/4 left-1/3 animate-bounce' : i===1 ? 'top-1/2 left-1/2' : 'bottom-1/3 right-1/4'}`}>
-                      <span className="material-symbols-outlined text-white text-[14px]">local_shipping</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Table: Active Missions */}
-              <div className="bg-white border border-outline-variant rounded shadow-sm overflow-hidden">
-                <div className="px-6 py-4 bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
-                  <h2 className="text-title-md font-title-md text-on-background flex items-center gap-2">
-                    Live Mission Log
-                    {!routesOptimized && !isOptimizing && (
-                      <button onClick={handleOptimize} className="ml-4 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 hover:bg-primary/20 transition-colors flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">route</span> Optimize Routes (AI)
-                      </button>
-                    )}
-                    {isOptimizing && (
-                      <span className="ml-4 text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1 animate-pulse">
-                        <span className="material-symbols-outlined text-[14px] animate-spin">sync</span> Calculating...
-                      </span>
-                    )}
-                    {routesOptimized && (
-                      <span className="ml-4 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-1 rounded border border-green-200 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">check_circle</span> Routes Optimized
-                      </span>
-                    )}
-                  </h2>
-                  <div className="flex gap-2">
-                    <button className="material-symbols-outlined p-1 text-on-surface-variant hover:bg-surface-container-highest rounded">filter_list</button>
-                    <button className="material-symbols-outlined p-1 text-on-surface-variant hover:bg-surface-container-highest rounded">download</button>
-                  </div>
-                </div>
-                <div className="overflow-x-auto max-h-[400px]">
-                  <table className="w-full text-left border-collapse">
-                    <thead className="sticky top-0 z-10 bg-surface-container-low border-b border-outline-variant">
-                      <tr>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Mission ID</th>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Driver</th>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Route</th>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Vehicle</th>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Status</th>
-                        <th className="px-4 py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Progress</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-outline-variant">
-                      {loading ? (
-                        <tr><td colSpan={6} className="text-center py-8">Chargement...</td></tr>
-                      ) : activeMissions.length === 0 ? (
-                        <tr><td colSpan={6} className="text-center py-8 text-on-surface-variant">Aucune mission active.</td></tr>
-                      ) : (
-                        activeMissions.map((mission, i) => (
-                          <tr key={mission.id} className="hover:bg-surface-container-lowest transition-colors h-12">
-                            <td className="px-4 py-2 font-data-tabular text-body-sm text-primary font-bold">{mission.reference || `#MSN-${mission.id}`}</td>
-                            <td className="px-4 py-2 text-body-sm">{mission.chauffeur?.nom || 'N/A'} {mission.chauffeur?.prenom || ''}</td>
-                            <td className="px-4 py-2 text-body-sm">
-                              {mission.point_depart} → {mission.point_arrivee}
-                              {routesOptimized && i % 2 === 0 && <div className="text-[10px] text-green-600 font-bold mt-0.5">-12% distance via N4</div>}
-                            </td>
-                            <td className="px-4 py-2 text-body-sm">{mission.camion?.immatriculation || 'N/A'}</td>
-                            <td className="px-4 py-2">
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${getStatusStyle(mission.statut)}`}>
-                                {mission.statut}
-                              </span>
-                            </td>
-                            <td className="px-4 py-2 min-w-[120px]">
-                              <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-primary h-full transition-all duration-1000" style={{ width: routesOptimized ? `${Math.min(100, 30 + (i*20) + 10)}%` : `${Math.min(100, 30 + (i*20))}%` }}></div>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Pane: Add Mission Form & Analytics */}
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-              {/* Add Mission Form */}
-              <div className="bg-white border border-outline-variant rounded shadow-sm p-6">
-                <h2 className="text-title-md font-title-md text-on-background mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">add_circle</span>
-                  Initialize New Mission
-                </h2>
-                <form className="space-y-4" onSubmit={handleCreateMission}>
-                  <div>
-                    <label className="block text-label-sm font-label-sm text-outline mb-1">Select Driver</label>
-                    <select 
-                      value={newMission.chauffeur_id} 
-                      onChange={e => setNewMission({...newMission, chauffeur_id: e.target.value})}
-                      className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
-                    >
-                      <option value="">-- Choisir un chauffeur --</option>
-                      {chauffeurs.map(ch => (
-                        <option key={ch.id} value={ch.id}>{ch.nom} {ch.prenom} - {ch.statut}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Tracteur</label>
-                      <select 
-                        value={newMission.camion_id} 
-                        onChange={e => setNewMission({...newMission, camion_id: e.target.value})}
-                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
-                      >
-                        <option value="">-- Choisir Tracteur --</option>
-                        {camions.filter(c => c.type_materiel === 'TRACTEUR' || !c.type_materiel).map(c => (
-                          <option key={c.id} value={c.id}>{c.immatriculation} - {c.statut}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Remorque</label>
-                      <select 
-                        value={newMission.remorque_id} 
-                        onChange={e => setNewMission({...newMission, remorque_id: e.target.value})}
-                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md focus:ring-primary focus:border-primary outline-none"
-                      >
-                        <option value="">-- Facultatif --</option>
-                        {camions.filter(c => c.type_materiel === 'REMORQUE' || c.type_materiel === 'SEMI_REMORQUE').map(c => (
-                          <option key={c.id} value={c.id}>{c.immatriculation} - {c.statut}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Origin</label>
-                      <input 
-                        value={newMission.point_depart} 
-                        onChange={e => setNewMission({...newMission, point_depart: e.target.value})}
-                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md outline-none focus:border-primary" placeholder="e.g. Zone A" type="text"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Destination</label>
-                      <input 
-                        value={newMission.point_arrivee} 
-                        onChange={e => setNewMission({...newMission, point_arrivee: e.target.value})}
-                        className="w-full border-outline-variant border rounded px-4 py-2 text-body-md outline-none focus:border-primary" placeholder="e.g. Quay 9" type="text"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Fret</label>
-                      <select value={newMission.nature_fret} onChange={e => setNewMission({...newMission, nature_fret: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none">
-                        <option value="CONTENEUR_20">CONTENEUR_20</option>
-                        <option value="CONTENEUR_40">CONTENEUR_40</option>
-                        <option value="VRAC_SOLIDE">VRAC_SOLIDE</option>
-                        <option value="VRAC_LIQUIDE">VRAC_LIQUIDE</option>
-                        <option value="CONVENTIONNEL">CONVENTIONNEL</option>
-                        <option value="STANDARD">STANDARD</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Volume</label>
-                      <input type="number" placeholder="m3/tonnes" value={newMission.volume_m3} onChange={e => setNewMission({...newMission, volume_m3: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none" />
-                    </div>
-                    <div>
-                      <label className="block text-label-sm font-label-sm text-outline mb-1">Montant</label>
-                      <input type="number" placeholder="FCFA" value={newMission.montant_fret} onChange={e => setNewMission({...newMission, montant_fret: e.target.value})} className="w-full border rounded px-2 py-2 text-sm outline-none" />
-                    </div>
-                  </div>
-                  <div className="pt-2">
-                    <button className="w-full bg-primary text-white font-bold py-3 rounded hover:brightness-110 transition-all shadow-md shadow-primary/20 disabled:opacity-50" type="submit" disabled={loading}>
-                      {loading ? 'CHARGEMENT...' : 'DISPATCH MISSION'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Stats/Atmospheric Widget */}
-              <div className="bg-primary rounded p-6 text-white shadow-lg relative overflow-hidden">
-                {/* Subtle background pattern/animation */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none"></div>
-                <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-8">
-                    <div>
-                      <p className="text-label-sm opacity-80 uppercase tracking-widest font-bold">Fleet Efficiency</p>
-                      <h4 className="text-headline-sm font-headline-sm">94.2%</h4>
-                    </div>
-                    <span className="material-symbols-outlined text-[32px] opacity-50">analytics</span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-label-sm">
-                      <span>Active Missions</span>
-                      <span className="font-bold">{activeMissions.length}/{missions.length || 1}</span>
-                    </div>
-                    <div className="w-full bg-white/20 h-1 rounded-full">
-                      <div className="bg-white h-full" style={{ width: `${missions.length > 0 ? (activeMissions.length/missions.length)*100 : 0}%` }}></div>
-                    </div>
-                  </div>
-                  <div className="mt-6 pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-[10px] opacity-70 uppercase">Total Deliveries</p>
-                      <p className="text-title-md font-bold">{missions.length}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] opacity-70 uppercase">Fuel Index</p>
-                      <p className="text-title-md font-bold transition-colors duration-1000">
-                        {routesOptimized ? '0.94' : '0.82'} 
-                        <span className={`text-[10px] font-normal ml-2 ${routesOptimized ? 'text-green-300' : 'text-red-300'}`}>
-                          {routesOptimized ? '▲ 14%' : '▼ 2%'}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Alerts Feed */}
-              <div className="bg-white border border-outline-variant rounded shadow-sm flex-1 flex flex-col min-h-0">
-                <div className="px-6 py-4 border-b border-outline-variant">
-                  <h3 className="text-label-md font-bold text-on-background flex items-center gap-2">
-                    <span className="material-symbols-outlined text-error text-[18px]">warning</span>
-                    Critical Alerts
-                  </h3>
-                </div>
-                <div className="overflow-y-auto custom-scrollbar p-2 space-y-2 max-h-[160px]">
-                  <div className="p-2 bg-error-container/30 border border-error/10 rounded flex gap-2">
-                    <span className="material-symbols-outlined text-error text-[16px]">tire_repair</span>
-                    <div className="text-[11px]">
-                      <p className="font-bold text-on-error-container">TRK-009: Pressure Warning</p>
-                      <p className="text-outline">Sensor detected low PSI on Rear-Axle 2.</p>
-                    </div>
-                  </div>
-                  <div className="p-2 bg-surface-container-high border border-outline-variant rounded flex gap-2">
-                    <span className="material-symbols-outlined text-primary text-[16px]">schedule</span>
-                    <div className="text-[11px]">
-                      <p className="font-bold text-on-surface">Delay: Quay 4 Congestion</p>
-                      <p className="text-outline">Estimated wait time increased by 15 mins.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {success && (
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-emerald-800">Succès</h3>
+              <p className="text-sm text-emerald-600 mt-1">{success}</p>
+              <button 
+                onClick={() => router.push('/transport/missions')}
+                className="mt-3 text-sm font-bold text-emerald-700 bg-emerald-100 px-4 py-2 rounded-lg hover:bg-emerald-200 transition-colors"
+              >
+                Voir les missions
+              </button>
             </div>
           </div>
-        </main>
+        )}
+
+        {loading ? (
+          <div className="space-y-6"><CardSkeletonLoader /><CardSkeletonLoader /></div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* 1. Entités Contractuelles */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 p-4 md:px-6 flex items-center gap-3">
+                <div className="p-2 bg-blue-100 text-blue-700 rounded-lg"><Building2 className="w-5 h-5" /></div>
+                <h2 className="text-lg font-bold text-slate-800">1. Entités Contractuelles</h2>
+              </div>
+              <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Client Facturé *</label>
+                  <select name="client_id" required value={formData.client_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    <option value="1">Client Général (MVP)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Adresse Expéditeur</label>
+                  <div className="relative">
+                    <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    <input type="text" name="expediteur_adresse" value={formData.expediteur_adresse} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Point de départ" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Adresse Destinataire</label>
+                  <div className="relative">
+                    <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    <input type="text" name="destinataire_adresse" value={formData.destinataire_adresse} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Point de livraison" />
+                  </div>
+                </div>
+                <div className="md:col-span-2 lg:col-span-3">
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Contact sur Site</label>
+                  <div className="relative w-full md:w-1/3">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    <input type="text" name="contact_site" value={formData.contact_site} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Nom & Numéro" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Détails du Fret */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 p-4 md:px-6 flex items-center gap-3">
+                <div className="p-2 bg-amber-100 text-amber-700 rounded-lg"><Box className="w-5 h-5" /></div>
+                <h2 className="text-lg font-bold text-slate-800">2. Détails du Fret</h2>
+              </div>
+              <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Nature du Fret *</label>
+                  <select name="nature_fret" required value={formData.nature_fret} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    <option value="CONTENEUR_20">Conteneur 20 pieds</option>
+                    <option value="CONTENEUR_40">Conteneur 40 pieds</option>
+                    <option value="VRAC_SOLIDE">Vrac Solide</option>
+                    <option value="VRAC_LIQUIDE">Vrac Liquide (Citerne)</option>
+                    <option value="PALETTES">Palettes / Conventionnel</option>
+                    <option value="MATIERES_DANGEREUSES">Matières Dangereuses</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Poids (Kg)</label>
+                  <div className="relative">
+                    <Scale className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    <input type="number" name="poids_kg" value={formData.poids_kg} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Ex: 25000" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Volume (m³)</label>
+                  <div className="relative">
+                    <Box className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                    <input type="number" name="volume_m3" value={formData.volume_m3} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Ex: 33" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Ressources Affectées */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 p-4 md:px-6 flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg"><Truck className="w-5 h-5" /></div>
+                <h2 className="text-lg font-bold text-slate-800">3. Ressources Affectées</h2>
+              </div>
+              <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Tracteur *</label>
+                  <select name="camion_id" required value={formData.camion_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    <option value="">Sélectionner</option>
+                    {tracteurs.map((t: any) => (
+                      <option key={t.id} value={t.id}>{t.immatriculation} - {t.marque} {t.statut !== 'DISPONIBLE' ? `(${t.statut})` : ''}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Semi-remorque (Optionnel)</label>
+                  <select name="remorque_id" value={formData.remorque_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    <option value="">Aucune</option>
+                    {remorques.map((r: any) => (
+                      <option key={r.id} value={r.id}>{r.immatriculation} - {r.marque}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Conducteur *</label>
+                  <select name="chauffeur_id" required value={formData.chauffeur_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                    <option value="">Sélectionner</option>
+                    {chauffeurs.map((c: any) => (
+                      <option key={c.id} value={c.id}>{c.prenom} {c.nom} {c.specialisation ? `[${c.specialisation}]` : ''}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Logistique Opérationnelle */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 p-4 md:px-6 flex items-center gap-3">
+                <div className="p-2 bg-emerald-100 text-emerald-700 rounded-lg"><Map className="w-5 h-5" /></div>
+                <h2 className="text-lg font-bold text-slate-800">4. Logistique Opérationnelle</h2>
+              </div>
+              <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Origine (Ville/Site) *</label>
+                  <input type="text" name="origine" required value={formData.origine} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Port Autonome" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Destination (Ville/Site) *</label>
+                  <input type="text" name="destination" required value={formData.destination} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Entrepôt Yassa" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Distance Estimée (Km) *</label>
+                  <input type="number" name="distance_km" required value={formData.distance_km} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Ex: 45" />
+                </div>
+                <div className="hidden lg:block"></div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Date Chargement</label>
+                  <input type="datetime-local" name="date_chargement_prevue" value={formData.date_chargement_prevue} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Date Livraison Souhaitée</label>
+                  <input type="datetime-local" name="date_livraison_souhaitee" value={formData.date_livraison_souhaitee} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Finance */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-slate-50 border-b border-slate-100 p-4 md:px-6 flex items-center gap-3">
+                <div className="p-2 bg-purple-100 text-purple-700 rounded-lg"><Receipt className="w-5 h-5" /></div>
+                <h2 className="text-lg font-bold text-slate-800">5. Volet Financier</h2>
+              </div>
+              <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Montant Fret (FCFA) *</label>
+                  <input type="number" name="montant_fret" required value={formData.montant_fret} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all" placeholder="Ex: 150000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Frais de Péage</label>
+                  <input type="number" name="frais_peage" value={formData.frais_peage} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all" placeholder="Ex: 5000" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Frais Annexes</label>
+                  <input type="number" name="frais_annexes" value={formData.frais_annexes} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all" placeholder="Ex: 10000" />
+                </div>
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Notes & Instructions (Affiché sur le BL)</label>
+                  <textarea name="notes" value={formData.notes} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all resize-none h-24" placeholder="Instructions particulières pour le conducteur..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            {/* Submission */}
+            <div className="flex items-center justify-end gap-4 py-4">
+              <button type="button" onClick={() => router.push('/transport/missions')} className="px-6 py-3 rounded-xl font-bold text-slate-600 hover:bg-slate-200/50 transition-colors">
+                Annuler
+              </button>
+              <button type="submit" disabled={submitting} className="px-8 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all">
+                {submitting ? 'Validation Garde-fou...' : 'Confirmer l\'Ordre de Transport'}
+              </button>
+            </div>
+
+          </form>
+        )}
       </div>
-    </>
-  )
+    </ModuleLayout>
+  );
 }

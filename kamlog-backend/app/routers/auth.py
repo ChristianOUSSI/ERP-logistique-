@@ -25,13 +25,13 @@ from app.utils.rbac import get_current_user
 
 # /force-seed endpoint removed for security
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-
+@limiter.limit("5/minute")
 async def register(
     request: Request,
     user_data: UserCreate,
     db: Session = Depends(get_db)
 ):
-    """Enregistre un nouvel utilisateur."""
+    """Enregistre un nouvel utilisateur avec rôle guest par défaut."""
     # Vérifier si l'email existe déjà
     result = db.execute(select(User).where(User.email == user_data.email))
     if result.scalar_one_or_none():
@@ -39,7 +39,7 @@ async def register(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
+
     # Vérifier si le username existe déjà
     result = db.execute(select(User).where(User.username == user_data.username))
     if result.scalar_one_or_none():
@@ -47,7 +47,7 @@ async def register(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already taken"
         )
-    
+
     # Créer l'utilisateur
     hashed_password = get_password_hash(user_data.password)
     db_user = User(
@@ -57,16 +57,20 @@ async def register(
         full_name=user_data.full_name,
         agency_id=getattr(user_data, "agency_id", None)
     )
-    
-    # Assigner les rôles
+
+    # Assigner uniquement le rôle guest par défaut (sécurité: pas d'élévation de privilèges)
     from app.models.user import RoleModel
-    roles_db = db.query(RoleModel).filter(RoleModel.code.in_(user_data.roles)).all()
-    db_user.roles = roles_db
-    
+    guest_role = db.query(RoleModel).filter(RoleModel.code == "guest").first()
+    if guest_role:
+        db_user.roles = [guest_role]
+    else:
+        # Fallback: si guest n'existe pas, pas de rôle assigné
+        db_user.roles = []
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
+
     return {
         "id": db_user.id,
         "email": str(db_user.email),
@@ -79,7 +83,7 @@ async def register(
 
 
 @router.post("/login", response_model=Token)
-
+@limiter.limit("10/minute")
 async def login(
     request: Request,
     response: Response,

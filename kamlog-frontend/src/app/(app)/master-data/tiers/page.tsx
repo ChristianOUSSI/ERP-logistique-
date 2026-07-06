@@ -28,6 +28,8 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
   const [form, setForm] = useState({
     raison_sociale: '',
     type: 'client' as 'client' | 'supplier' | 'partner',
+    niu: '',
+    rccm: '',
     email: '',
     telephone: '',
     ville: '',
@@ -46,6 +48,8 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
       await masterDataAPI.createTier({
         code_tiers: `T-${Date.now().toString().slice(-6)}`,
         raison_sociale: form.raison_sociale,
+        niu: form.niu || `NIU-${Date.now().toString().slice(-6)}`,
+        rccm: form.rccm,
         email: form.email,
         telephone: form.telephone,
         ville: form.ville,
@@ -62,7 +66,7 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
         onCreated()
         onClose()
         // Reset form
-        setForm({ raison_sociale: '', type: 'client', email: '', telephone: '', ville: '', region: '', limite_credit_xaf: 0 })
+        setForm({ raison_sociale: '', type: 'client', niu: '', rccm: '', email: '', telephone: '', ville: '', region: '', limite_credit_xaf: 0 })
       }, 1200)
     } catch (err: any) {
       setError(err?.response?.data?.detail || 'Erreur lors de la création du tier.')
@@ -109,17 +113,41 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Raison Sociale *</label>
-              <input
-                required
-                type="text"
-                value={form.raison_sociale}
-                onChange={(e) => setForm({ ...form, raison_sociale: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
-                placeholder="Nom de l'entreprise"
-              />
-            </div>
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-gray-700">Raison Sociale *</label>
+                <input
+                  type="text"
+                  required
+                  value={form.raison_sociale}
+                  onChange={(e) => setForm({ ...form, raison_sociale: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Ex: SABC Cameroun"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-semibold text-gray-700">Numéro Identifiant Unique (NIU) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.niu}
+                    onChange={(e) => setForm({ ...form, niu: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    placeholder="Obligatoire"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-semibold text-gray-700">Registre Commerce (RCCM)</label>
+                  <input
+                    type="text"
+                    value={form.rccm}
+                    onChange={(e) => setForm({ ...form, rccm: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    placeholder="Optionnel"
+                  />
+                </div>
+              </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>

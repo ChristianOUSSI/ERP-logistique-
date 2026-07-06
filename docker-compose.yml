@@ -64,13 +64,6 @@ services:
       - ./kamlog-backend:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-  # ─── Celery Worker ────────────────────────────────────────
-  worker:
-    build: { context: ./kamlog-backend }
-    container_name: kamlog_worker
-    depends_on: [api, redis]
-    command: celery -A app.tasks.celery_app worker --loglevel=info
-
   # ─── Next.js Frontend ─────────────────────────────────────
   frontend:
     build:

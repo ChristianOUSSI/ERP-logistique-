@@ -1,314 +1,179 @@
-// src/app/(app)/transport/map/page.tsx - K-Transport Terminal Map Control - Fidèle 100% au HTML original
 'use client'
 
-import { useState, useEffect } from 'react';
-import { TCodeSearch } from '@/components/ui/TCodeSearch'
+import React, { useState, useEffect, useMemo } from 'react';
 import { transportAPI } from '@/lib/api-client';
+import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import { MapPin, Search, Truck, ShieldAlert, CheckCircle2, Navigation, Activity } from 'lucide-react';
 
-export default function KTransportTerminalMapControl() {
-  const [truckPos, setTruckPos] = useState(10);
-  const [iotActive, setIotActive] = useState(true);
+export default function TransportMapPage() {
   const [vehicles, setVehicles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [liveFeed, setLiveFeed] = useState(true);
 
+  // Poll for GPS data
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
     const fetchGps = async () => {
       try {
         const res = await transportAPI.getGPS();
         if (res.data) {
           setVehicles(res.data);
-          // Just use the first vehicle's longitude to simulate movement for demo
-          if (res.data.length > 0) {
-            const simulatedPos = (Math.abs(res.data[0].longitude) * 100) % 100;
-            setTruckPos(simulatedPos);
-          }
         }
       } catch (err) {
         console.error("Failed to fetch GPS", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (iotActive) {
-      fetchGps();
-      interval = setInterval(() => {
-        fetchGps();
-        setTruckPos((prev) => (prev + 0.5) % 100);
-      }, 3000);
+    fetchGps();
+    
+    let interval: NodeJS.Timeout;
+    if (liveFeed) {
+      interval = setInterval(fetchGps, 5000);
     }
     
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [iotActive]);
+  }, [liveFeed]);
+
+  // Filter vehicles by immatriculation
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter(v => v.immatriculation.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [vehicles, searchTerm]);
 
   return (
-    <>
-      <style jsx global>{`
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
-        }
-        .icon-fill {
-          font-variation-settings: 'FILL 1';
-        }
-        .terminal-grid {
-          background-color: #f9f9ff;
-          background-image: linear-gradient(#dce2f3 1px, transparent 1px), linear-gradient(90deg, #dce2f3 1px, transparent 1px);
-          background-size: 40px 40px;
-        }
-        @keyframes pulse-border {
-          0% { border-color: rgba(163, 103, 0, 0.4); }
-          50% { border-color: rgba(163, 103, 0, 1); }
-          100% { border-color: rgba(163, 103, 0, 0.4); }
-        }
-        .live-element {
-          animation: pulse-border 3s infinite;
-        }
-      `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex">
+    <ModuleLayout module="transport">
+      <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden">
         
-        
-        
-        <div className="flex-1 flex flex-col min-h-screen">
+        {/* Header & Controls */}
+        <div className="bg-white border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 z-10 shadow-sm relative">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+              <MapPin className="w-6 h-6 text-blue-600" />
+              Tracking GPS Flotte
+            </h1>
+          </div>
           
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Rechercher par matricule..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm outline-none shadow-inner bg-slate-50"
+              />
+            </div>
+            <button 
+              onClick={() => setLiveFeed(!liveFeed)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${liveFeed ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            >
+              <Activity className={`w-4 h-4 ${liveFeed ? 'animate-pulse' : ''}`} />
+              {liveFeed ? 'Live ON' : 'Live OFF'}
+            </button>
+          </div>
+        </div>
+
+        {/* Map Area */}
+        <div className="flex-1 flex flex-col md:flex-row relative bg-slate-100 overflow-hidden">
           
-          {/* Main Dashboard Stage */}
-          <main className="flex-1 p-gutter flex gap-gutter overflow-hidden h-[calc(100vh-64px)]">
-            {/* Left Pane: Interactive Terminal Map (Bento Grid Style) */}
-            <section className="flex-1 bg-surface border border-outline-variant rounded-xl shadow-sm flex flex-col overflow-hidden relative">
-              {/* Map Header */}
-              <div className="flex items-center justify-between p-md border-b border-outline-variant bg-surface-container-lowest z-10">
-                <div>
-                  <h2 className="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
-                    <span className="material-symbols-outlined text-tertiary">map</span>
-                    Live Terminal Topology
-                  </h2>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">Zone Alpha - Active Dispatch</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1.5 text-label-md font-label-md bg-surface-container border border-outline-variant rounded hover:bg-surface-variant transition-colors">Standard View</button>
-                  <button 
-                    onClick={() => setIotActive(!iotActive)}
-                    className={`px-3 py-1.5 text-label-md font-label-md rounded transition-colors flex items-center gap-1 shadow-sm ${iotActive ? 'bg-tertiary text-on-tertiary' : 'bg-surface-container border border-outline-variant text-on-surface-variant'}`}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">{iotActive ? 'sensors' : 'sensors_off'}</span> 
-                    {iotActive ? 'Live IoT Feed' : 'IoT Paused'}
-                  </button>
-                </div>
-              </div>
-              {/* Map Canvas area */}
-              <div className="flex-1 terminal-grid relative overflow-hidden p-lg">
-                {/* Water / Dock Edge */}
-                <div className="absolute bottom-0 left-0 w-full h-32 bg-primary-fixed border-t-4 border-outline-variant flex items-center px-lg gap-xl">
-                  {/* Ship 1 */}
-                  <div className="relative group cursor-pointer mt-4">
-                    <div className="w-64 h-20 bg-surface border-2 border-outline-variant rounded-t-full flex items-center justify-center shadow-md live-element">
-                      <span className="font-title-lg text-title-lg text-on-surface">MV Horizon</span>
-                    </div>
-                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface border border-outline-variant rounded px-2 py-1 shadow flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                      <span className="font-label-sm text-label-sm text-tertiary">Dock 1</span>
-                      <span className="font-data-tabular text-data-tabular">Loading: 45%</span>
-                    </div>
-                  </div>
-                  {/* Ship 2 (Empty berth) */}
-                  <div className="w-64 h-20 border-2 border-dashed border-outline-variant rounded-t-full flex items-center justify-center opacity-50">
-                    <span className="font-label-md text-label-md text-on-surface-variant">Berth 2 - Open</span>
-                  </div>
-                </div>
-                {/* Container Yard Blocks */}
-                <div className="grid grid-cols-3 gap-xl w-full h-[calc(100%-8rem)] pb-8 pt-4">
-                  {/* Block A (Active Transport) */}
-                  <div className="bg-surface border-2 border-tertiary rounded-lg p-sm relative shadow-sm hover:shadow-md transition-shadow cursor-crosshair">
-                    <div className="absolute top-0 right-0 bg-tertiary text-on-tertiary font-label-sm text-label-sm px-2 py-0.5 rounded-bl-lg rounded-tr-sm">Block A</div>
-                    <div className="grid grid-cols-4 gap-1 h-full pt-6">
-                      {/* Dummy containers */}
-                      <div className="bg-tertiary-fixed border border-tertiary rounded-sm h-full w-full"></div>
-                      <div className="bg-outline-variant border border-outline rounded-sm h-full w-full"></div>
-                      <div className="bg-tertiary-fixed border border-tertiary rounded-sm h-full w-full"></div>
-                      <div className="bg-surface-container-high border border-outline-variant rounded-sm h-3/4 mt-auto w-full"></div>
-                      <div className="bg-outline-variant border border-outline rounded-sm h-full w-full"></div>
-                      <div className="bg-tertiary-fixed border border-tertiary rounded-sm h-1/2 mt-auto w-full"></div>
-                    </div>
-                    {/* Reachstacker icon moving */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-tertiary rounded-full flex items-center justify-center shadow-lg live-element z-10">
-                      <span className="material-symbols-outlined text-on-tertiary text-[18px]">forklift</span>
-                    </div>
-                  </div>
-                  {/* Block B (Storage) */}
-                  <div className="bg-surface border border-outline-variant rounded-lg p-sm relative shadow-sm">
-                    <div className="absolute top-0 right-0 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-bl-lg rounded-tr-sm">Block B</div>
-                    <div className="grid grid-cols-4 gap-1 h-full pt-6 opacity-60">
-                      <div className="bg-surface-dim border border-outline-variant rounded-sm h-full w-full"></div>
-                      <div className="bg-surface-dim border border-outline-variant rounded-sm h-full w-full"></div>
-                      <div className="bg-surface-dim border border-outline-variant rounded-sm h-full w-full"></div>
-                      <div className="bg-surface-dim border border-outline-variant rounded-sm h-full w-full"></div>
-                    </div>
-                  </div>
-                  <div className="col-span-3 h-12 bg-surface-container border-y-2 border-dashed border-outline-variant flex items-center px-lg mt-auto relative overflow-hidden">
-                    <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest z-10 bg-surface-container/80 px-2 rounded">Main Transport Arterial</span>
-                    {/* Moving trucks */}
-                    {vehicles.length > 0 ? vehicles.map((v, i) => (
-                      <div 
-                        key={v.camion_id}
-                        className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
-                        style={{ left: `${(truckPos + (i * 20)) % 100}%` }}
-                      >
-                        <span className="material-symbols-outlined">local_shipping</span>
-                        <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">{v.immatriculation}</span>
-                      </div>
-                    )) : (
-                      <div 
-                        className="absolute flex items-center gap-1 text-tertiary transition-all duration-100 ease-linear z-20"
-                        style={{ left: `${truckPos}%` }}
-                      >
-                        <span className="material-symbols-outlined">local_shipping</span>
-                        <span className="font-data-tabular text-data-tabular bg-surface px-1 rounded shadow-sm border border-outline-variant text-xs">Unit 402</span>
-                      </div>
+          {/* Simulated Map Background */}
+          <div className="flex-1 relative" style={{
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%239C92AC\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
+          }}>
+            {/* Map Overlay for context */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-emerald-50/50 pointer-events-none" />
+            
+            {/* Markers */}
+            {filteredVehicles.map((v) => {
+              // Simulated position calculation based on real coordinates or random for demo
+              // Using Douala coords roughly mapping to screen percentages
+              const xPos = ((v.longitude - 9.7) / 0.15) * 100;
+              const yPos = ((v.latitude - 4.0) / 0.1) * 100;
+              
+              // Ensure markers stay within bounds for demo
+              const safeX = Math.max(5, Math.min(95, xPos));
+              const safeY = Math.max(5, Math.min(95, 100 - yPos));
+
+              const isRunning = v.statut === 'EN_ROUTE';
+              const isMaintenance = v.statut === 'EN_MAINTENANCE' || v.statut === 'BLOQUE_HSE';
+
+              return (
+                <div 
+                  key={v.camion_id}
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer transition-all duration-1000 ease-in-out"
+                  style={{ left: `${safeX}%`, top: `${safeY}%` }}
+                >
+                  <div className={`relative flex items-center justify-center w-12 h-12 rounded-full shadow-lg border-2 ${isRunning ? 'bg-blue-500 border-white' : isMaintenance ? 'bg-red-500 border-white' : 'bg-emerald-500 border-white'} ${isRunning && liveFeed ? 'animate-bounce' : ''}`}>
+                    <Navigation className="w-5 h-5 text-white transform rotate-45" />
+                    
+                    {/* Ripple Effect for active vehicles */}
+                    {isRunning && liveFeed && (
+                      <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-ping opacity-75"></div>
                     )}
                   </div>
-                </div>
-              </div>
-            </section>
-            {/* Right Pane: Terminal Events & Equipment Status */}
-            <aside className="w-[360px] flex flex-col gap-gutter overflow-y-auto pr-2">
-              {/* Terminal Events Card */}
-              <div className="bg-surface border border-outline-variant rounded-xl shadow-sm flex flex-col">
-                <div className="p-4 border-b border-outline-variant bg-surface-container-lowest rounded-t-xl flex justify-between items-center">
-                  <h3 className="font-title-md text-title-md text-on-surface flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-[20px]">notifications_active</span>
-                    Terminal Events
-                  </h3>
-                  <span className="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">Live</span>
-                </div>
-                <div className="p-2 flex flex-col gap-1 h-[280px] overflow-y-auto">
-                  {/* Event Item: Transport related */}
-                  <div className="p-3 bg-tertiary-fixed bg-opacity-20 border-l-2 border-tertiary rounded flex gap-3 hover:bg-surface-container-low transition-colors cursor-default">
-                    <div className="mt-0.5">
-                      <span className="material-symbols-outlined text-tertiary text-[18px]">local_shipping</span>
+                  
+                  {/* Tooltip */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-slate-900 text-white rounded-xl p-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+                    <div className="font-bold text-base mb-1">{v.immatriculation}</div>
+                    <div className="text-xs text-slate-300 flex items-center justify-between mb-2">
+                      <span>{v.vitesse_kmh} km/h</span>
+                      <span className="flex items-center gap-1">
+                        <div className={`w-2 h-2 rounded-full ${isRunning ? 'bg-blue-400' : isMaintenance ? 'bg-red-400' : 'bg-emerald-400'}`}></div>
+                        {v.statut.replace('_', ' ')}
+                      </span>
                     </div>
-                    <div>
-                      <p className="font-body-sm text-body-sm text-on-surface font-medium">Truck 402 Arrived at Block A</p>
-                      <p className="font-data-tabular text-data-tabular text-on-surface-variant text-[11px] mt-1">10:42 AM • T-Code: 8992-B</p>
-                    </div>
-                  </div>
-                  {/* Event Item: Warning */}
-                  <div className="p-3 hover:bg-surface-container border-l-2 border-error rounded flex gap-3 transition-colors cursor-default">
-                    <div className="mt-0.5">
-                      <span className="material-symbols-outlined text-error text-[18px]">warning</span>
-                    </div>
-                    <div>
-                      <p className="font-body-sm text-body-sm text-on-surface font-medium">Crane 3 Speed Limit Alert</p>
-                      <p className="font-data-tabular text-data-tabular text-on-surface-variant text-[11px] mt-1">10:38 AM • Wind conditions</p>
-                    </div>
-                  </div>
-                  {/* Event Item: Info */}
-                  <div className="p-3 hover:bg-surface-container border-l-2 border-primary rounded flex gap-3 transition-colors cursor-default">
-                    <div className="mt-0.5">
-                      <span className="material-symbols-outlined text-primary text-[18px]">sailing</span>
-                    </div>
-                    <div>
-                      <p className="font-body-sm text-body-sm text-on-surface font-medium">MV Horizon Mooring Complete</p>
-                      <p className="font-data-tabular text-data-tabular text-on-surface-variant text-[11px] mt-1">10:15 AM • Berth 1</p>
-                    </div>
-                  </div>
-                  {/* Event Item: Routine */}
-                  <div className="p-3 hover:bg-surface-container border-l-2 border-outline-variant rounded flex gap-3 transition-colors cursor-default">
-                    <div className="mt-0.5">
-                      <span className="material-symbols-outlined text-outline text-[18px]">inventory_2</span>
-                    </div>
-                    <div>
-                      <p className="font-body-sm text-body-sm text-on-surface font-medium">Container CX-909 Staged</p>
-                      <p className="font-data-tabular text-data-tabular text-on-surface-variant text-[11px] mt-1">10:05 AM • Block B</p>
+                    <div className="text-[10px] text-slate-500 text-right">
+                      Mis à jour: {v.derniere_mise_a_jour}
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Equipment Status Card */}
-              <div className="bg-surface border border-outline-variant rounded-xl shadow-sm flex flex-col flex-1">
-                <div className="p-4 border-b border-outline-variant bg-surface-container-lowest rounded-t-xl flex justify-between items-center">
-                  <h3 className="font-title-md text-title-md text-on-surface flex items-center gap-2">
-                    <span className="material-symbols-outlined text-secondary text-[20px]">engineering</span>
-                    Equipment Status
-                  </h3>
-                  <button className="material-symbols-outlined text-outline hover:text-primary transition-colors text-[20px]">more_vert</button>
-                </div>
-                <div className="p-4 flex flex-col gap-4">
-                  {/* Category: Reachstackers */}
-                  <div>
-                    <h4 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2 border-b border-outline-variant pb-1 flex justify-between">
-                      Reachstackers
-                      <span className="text-tertiary">3/4 Active</span>
-                    </h4>
-                    <div className="flex flex-col gap-2">
-                      {/* Eq 1 */}
-                      <div className="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-tertiary live-element"></div>
-                          <span className="font-data-tabular text-data-tabular font-medium">RS-01</span>
-                        </div>
-                        <span className="font-label-sm text-label-sm bg-tertiary-fixed text-tertiary px-2 py-0.5 rounded">Active - Block A</span>
+              );
+            })}
+          </div>
+
+          {/* Right Sidebar: Vehicle List */}
+          <div className="w-full md:w-80 bg-white border-l border-slate-200 flex flex-col shadow-xl z-10">
+            <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-slate-800 flex justify-between items-center">
+              <span>Véhicules ({filteredVehicles.length})</span>
+              {loading && <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>}
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
+              {filteredVehicles.length === 0 ? (
+                <div className="text-center text-slate-500 mt-10 text-sm">Aucun véhicule trouvé.</div>
+              ) : (
+                filteredVehicles.map(v => (
+                  <div key={v.camion_id} className="p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer bg-white">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-bold text-slate-900 flex items-center gap-2">
+                        <Truck className="w-4 h-4 text-slate-400" />
+                        {v.immatriculation}
                       </div>
-                      {/* Eq 2 */}
-                      <div className="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-tertiary live-element"></div>
-                          <span className="font-data-tabular text-data-tabular font-medium">RS-02</span>
-                        </div>
-                        <span className="font-label-sm text-label-sm bg-tertiary-fixed text-tertiary px-2 py-0.5 rounded">Active - Berth 1</span>
-                      </div>
-                      {/* Eq 3 (Offline) */}
-                      <div className="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant opacity-70">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-error"></div>
-                          <span className="font-data-tabular text-data-tabular font-medium text-on-surface-variant">RS-03</span>
-                        </div>
-                        <span className="font-label-sm text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded">Maintenance</span>
-                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        v.statut === 'EN_ROUTE' ? 'bg-blue-100 text-blue-700' : 
+                        v.statut.includes('MAINTENANCE') || v.statut.includes('HSE') ? 'bg-red-100 text-red-700' : 
+                        'bg-emerald-100 text-emerald-700'
+                      }`}>
+                        {v.statut.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500 flex justify-between items-center">
+                      <span>Vitesse: <strong className="text-slate-700">{v.vitesse_kmh} km/h</strong></span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> GPS Actif
+                      </span>
                     </div>
                   </div>
-                  {/* Category: Ship-to-Shore Cranes */}
-                  <div className="mt-2">
-                    <h4 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2 border-b border-outline-variant pb-1 flex justify-between">
-                      STS Cranes
-                      <span className="text-primary">2/2 Active</span>
-                    </h4>
-                    <div className="flex flex-col gap-2">
-                      {/* Crane 1 */}
-                      <div className="flex flex-col gap-1 p-2 rounded bg-surface-container-lowest border border-outline-variant">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-primary live-element"></div>
-                            <span className="font-data-tabular text-data-tabular font-medium">STS-North</span>
-                          </div>
-                          <span className="font-data-tabular text-data-tabular text-[11px] text-on-surface-variant">24 moves/hr</span>
-                        </div>
-                        {/* Mini progress bar */}
-                        <div className="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden mt-1">
-                          <div className="bg-primary h-full w-[80%]"></div>
-                        </div>
-                      </div>
-                      {/* Crane 2 */}
-                      <div className="flex flex-col gap-1 p-2 rounded bg-surface-container-lowest border border-outline-variant">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-primary live-element"></div>
-                            <span className="font-data-tabular text-data-tabular font-medium">STS-South</span>
-                          </div>
-                          <span className="font-data-tabular text-data-tabular text-[11px] text-on-surface-variant">18 moves/hr</span>
-                        </div>
-                        {/* Mini progress bar */}
-                        <div className="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden mt-1">
-                          <div className="bg-primary h-full w-[60%]"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </aside>
-          </main>
+                ))
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
-    </>
+    </ModuleLayout>
   )
 }

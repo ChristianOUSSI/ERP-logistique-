@@ -174,19 +174,19 @@ def get_articles(
     return ArticleService.get_all_articles(db, skip, limit)
 
 
-@router.get("/articles/{article_id}", response_model=Article)
-def get_article(article_id: int, db: Session = Depends(get_db)):
-    """Récupère un article par son ID"""
-    article = ArticleService.get_article(db, article_id)
+@router.get("/articles/by-code/{code_article}", response_model=Article)
+def get_article_by_code(code_article: str, db: Session = Depends(get_db)):
+    """Récupère un article par son code d'article (auto-complétion)"""
+    article = ArticleService.get_article_by_code(db, code_article)
     if not article:
         raise HTTPException(status_code=404, detail="Article non trouvé")
     return article
 
 
-@router.get("/articles/code/{code_article}", response_model=Article)
-def get_article_by_code(code_article: str, db: Session = Depends(get_db)):
-    """Récupère un article par son code"""
-    article = ArticleService.get_article_by_code(db, code_article)
+@router.get("/articles/{article_id}", response_model=Article)
+def get_article(article_id: int, db: Session = Depends(get_db)):
+    """Récupère un article par son ID"""
+    article = ArticleService.get_article(db, article_id)
     if not article:
         raise HTTPException(status_code=404, detail="Article non trouvé")
     return article
@@ -253,6 +253,14 @@ def get_declaration_by_bl(numero_bl: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Déclaration non trouvée")
     return declaration
 
+
+@router.get("/declarations/{declaration_id}/receptions-summary")
+def get_declaration_receptions_summary(declaration_id: int, db: Session = Depends(get_db)):
+    """Récupère le résumé des réceptions (par magasin) pour une déclaration"""
+    declaration = DeclarationService.get_declaration(db, declaration_id)
+    if not declaration:
+        raise HTTPException(status_code=404, detail="Déclaration non trouvée")
+    return DeclarationService.get_receptions_summary(db, declaration_id)
 
 @router.post("/declarations", response_model=Declaration)
 
@@ -395,6 +403,50 @@ def get_stock(magasin_id: int, article_id: int, db: Session = Depends(get_db)):
     if not stock:
         raise HTTPException(status_code=404, detail="Stock non trouvé")
     return stock
+
+
+@router.get("/stocks/article/{article_id}/total")
+def get_total_stock_by_article(article_id: int, db: Session = Depends(get_db)):
+    """
+    Récupère le stock total d'un article tous magasins confondus
+    avec détail par magasin pour visibilité inter-magasins
+    """
+    from app.models.magasin import Stock, Article, Magasin
+
+    # Récupérer l'article
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+
+    # Récupérer tous les stocks de cet article par magasin
+    stocks_par_magasin = db.query(Stock).join(Magasin).filter(
+        Stock.article_id == article_id
+    ).all()
+
+    # Calculer le total
+    total_udb = sum(stock.quantite_udb for stock in stocks_par_magasin)
+
+    # Construire la réponse détaillée
+    details = []
+    for stock in stocks_par_magasin:
+        details.append({
+            "magasin_id": stock.magasin_id,
+            "magasin_code": stock.magasin.code,
+            "magasin_nom": stock.magasin.nom,
+            "quantite_disponible": float(stock.quantite_disponible),
+            "quantite_udb": float(stock.quantite_udb),
+            "statut": stock.statut.value if stock.statut else None
+        })
+
+    return {
+        "article_id": article_id,
+        "code_article": article.code_article,
+        "nom_article": article.nom,
+        "total_udb": float(total_udb),
+        "total_unites": float(sum(s.quantite_disponible for s in stocks_par_magasin)),
+        "unite_mesure": article.unite_mesure.value if article.unite_mesure else None,
+        "par_magasin": details
+    }
 
 
 @router.get("/stocks/total/{article_id}")

@@ -3,6 +3,19 @@ from app.models.base import Base, BaseModel
 from app.models.audit import AuditLog
 from app.models.user import User, RoleModel, PermissionModel
 from app.models.tiers import Tiers, StatutTiers
+from app.models.marchandises import (
+    Marchandise,
+    TypeMarchandise,
+    UniteMesureFacturation,
+)
+from app.models.escales import Escale, StatutEscale
+from app.models.dossier import (
+    DossierOperationnel,
+    ContenuDossierMarchandise,
+    RegimeDouane,
+    StatutDossier,
+    TypeServiceConcerne,
+)
 from app.models.transport import (
     CamionFlotte,
     ChauffeurProfil,
@@ -13,9 +26,12 @@ from app.models.transport import (
 )
 from app.models.finance import (
     Facture,
+    FactureLigne,
     Encaissement,
+    EcritureComptable,
     GrilleTarifaire,
     StatutFacture,
+    ModePaiement,
     Avoir,
 )
 from app.models.parc import (
@@ -24,6 +40,20 @@ from app.models.parc import (
     StockPhysiqueParc,
     MouvementParc,
     StatutEmplacement,
+    TypeZoneParc,
+    TypeMouvementParc,
+    ReparationAtelier,
+)
+from app.models.planning import (
+    PlanningGlobal,
+    PlanningRessource,
+    PlanningCotation,
+    DepartementKamlog,
+    StatutPlan,
+)
+from app.models.documents_sortants import (
+    DocumentSortant,
+    TypeDocument,
 )
 from app.models.magasin import (
     Magasin,
@@ -79,7 +109,6 @@ from app.models.notification import (
     PrioriteNotification,
     StatutNotification,
 )
-from app.models.dossier import DossierOperationnel
 
 __all__ = [
     "Base",
@@ -88,24 +117,55 @@ __all__ = [
     "User",
     "RoleModel",
     "PermissionModel",
+    # ── Core ──
     "Tiers",
     "StatutTiers",
+    "Marchandise",
+    "TypeMarchandise",
+    "UniteMesureFacturation",
+    # ── Opérations ──
+    "Escale",
+    "StatutEscale",
+    "DossierOperationnel",
+    "ContenuDossierMarchandise",
+    "RegimeDouane",
+    "StatutDossier",
+    "TypeServiceConcerne",
+    # ── Transport ──
     "CamionFlotte",
     "ChauffeurProfil",
     "MissionTransport",
     "TypeVehicule",
     "StatutMission",
     "StatutCamion",
+    # ── Finance ──
     "Facture",
+    "FactureLigne",
     "Encaissement",
+    "EcritureComptable",
     "GrilleTarifaire",
     "StatutFacture",
+    "ModePaiement",
     "Avoir",
+    # ── Parc ──
     "ZoneParc",
     "EmplacementParc",
     "StockPhysiqueParc",
     "MouvementParc",
     "StatutEmplacement",
+    "TypeZoneParc",
+    "TypeMouvementParc",
+    "ReparationAtelier",
+    # ── Planning ──
+    "PlanningGlobal",
+    "PlanningRessource",
+    "PlanningCotation",
+    "DepartementKamlog",
+    "StatutPlan",
+    # ── Documents Sortants ──
+    "DocumentSortant",
+    "TypeDocument",
+    # ── Magasin ──
     "Magasin",
     "ClientMagasin",
     "Article",
@@ -122,12 +182,14 @@ __all__ = [
     "StatutDeclaration",
     "StatutReception",
     "StatutCommande",
+    # ── Gateway ──
     "Passerelle",
     "CommandeFacture",
     "CommandeLivraison",
     "ReceptionStock",
     "FacturePaiement",
     "MissionFacture",
+    # ── Misc ──
     "GoodsDeclaration",
     "LigneGoodsDeclaration",
     "StatutGoodsDeclaration",
@@ -146,5 +208,4 @@ __all__ = [
     "TypeNotification",
     "PrioriteNotification",
     "StatutNotification",
-    "DossierOperationnel",
 ]

@@ -5,8 +5,8 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
 from app.database import SessionLocal
-from app.models.audit import AuditLog as AuditLogModel
-from app.schemas.audit import AuditLogCreate # Assuming you'll create this Pydantic schema
+from app.models.audit import HTTPAuditLog
+from app.schemas.audit import AuditLogCreate
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         start_time = time.time()
-        
+
         # Extraction sécurisée des informations d'identité (injectées par le middleware d'Auth)
         user = getattr(request.state, "user", None)
         user_id = str(user.id) if user else None
@@ -38,7 +38,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
                 request_body_summary = "<failed to read body>"
 
         response = await call_next(request)
-        
+
         process_time = time.time() - start_time
         duration_ms = int(process_time * 1000)
 
@@ -70,7 +70,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
 
         try:
             db = SessionLocal()
-            db_audit = AuditLogModel(**audit_log_entry.model_dump())
+            db_audit = HTTPAuditLog(**audit_log_entry.model_dump())
             db.add(db_audit)
             db.commit()
             db.refresh(db_audit)

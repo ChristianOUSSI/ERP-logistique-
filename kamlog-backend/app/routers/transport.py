@@ -15,8 +15,8 @@ from app.schemas.transport import (
     ChauffeurProfilCreate, ChauffeurProfilUpdate, ChauffeurResponse,
     MissionCreate, MissionUpdate, MissionResponse,
     VehiculeDocumentCreate, VehiculeDocumentResponse,
-    ChauffeurDocumentCreate, ChauffeurDocumentResponse,
-    PanneVehiculeCreate, PanneVehiculeResponse
+    PanneVehiculeCreate, PanneVehiculeResponse, PanneVehiculeUpdate,
+    ChauffeurDocumentCreate, ChauffeurDocumentResponse
 )
 from pydantic import BaseModel
 from decimal import Decimal
@@ -44,7 +44,8 @@ from app.routers.auth import get_current_user
 from app.utils.rbac import require_role, require_permission
 from app.services.transport_service import (
     CamionFlotteService, ChauffeurProfilService, MissionTransportService,
-    BandeLivraisonService, calculer_ecart_carburant
+    BandeLivraisonService, calculer_ecart_carburant,
+    PanneVehiculeService, AlertesService
 )
 
 router = APIRouter(tags=["Transport"])
@@ -297,7 +298,7 @@ async def delete_chauffeur(
     return None
 
 
-# ─── Missions ───────────────────────────────────────────────
+# ─── Missions ─────────────────────────────────────────────
 @router.get("/missions", response_model=List[MissionResponse])
 @require_permission("transport:read")
 async def list_missions(
@@ -341,6 +342,17 @@ async def get_missions_by_chauffeur(
 ):
     """Récupère les missions d'un chauffeur."""
     return MissionTransportService.get_missions_by_chauffeur(db, chauffeur_id)
+
+
+@router.get("/missions/client/{client_id}", response_model=List[MissionResponse])
+@require_permission("transport:read")
+async def get_missions_by_client(
+    client_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère l'historique des missions d'un client."""
+    return MissionTransportService.get_missions_by_client(db, client_id)
 
 
 @router.post("/missions", response_model=MissionResponse, status_code=status.HTTP_201_CREATED)
@@ -483,6 +495,23 @@ async def add_vehicule_document(camion_id: int, doc_data: VehiculeDocumentCreate
 async def get_vehicule_documents(camion_id: int, db: Session = Depends(get_db)):
     return db.query(VehiculeDocument).filter(VehiculeDocument.vehicule_id == camion_id).all()
 
+@router.put("/camions/{camion_id}/associer-remorque", response_model=CamionResponse)
+@require_permission("transport:write")
+async def associer_remorque(camion_id: int, remorque_id: int = None, db: Session = Depends(get_db)):
+    camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
+    if not camion:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
+    
+    if remorque_id:
+        remorque = db.query(CamionFlotte).filter(CamionFlotte.id == remorque_id).first()
+        if not remorque:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Remorque introuvable")
+    
+    camion.remorque_id = remorque_id
+    db.commit()
+    db.refresh(camion)
+    return camion
+
 # ─── Documents Chauffeur ───────────────────────────────────────
 
 @router.post("/chauffeurs/{chauffeur_id}/documents", response_model=ChauffeurDocumentResponse, status_code=status.HTTP_201_CREATED)
@@ -521,6 +550,25 @@ async def declarer_panne(camion_id: int, panne_data: PanneVehiculeCreate, db: Se
 async def get_pannes(camion_id: int, db: Session = Depends(get_db)):
     return db.query(PanneVehicule).filter(PanneVehicule.vehicule_id == camion_id).all()
 
+@router.put("/camions/{camion_id}/pannes/{panne_id}", response_model=PanneVehiculeResponse)
+@require_permission("transport:write")
+async def update_panne(camion_id: int, panne_id: int, panne_update: PanneVehiculeUpdate, db: Session = Depends(get_db)):
+    panne = PanneVehiculeService.update_panne(db, camion_id, panne_id, panne_update)
+    if not panne:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Panne introuvable")
+    return panne
+
+@router.put("/camions/{camion_id}/debloquer", response_model=CamionResponse)
+@require_permission("transport:write")
+async def debloquer_camion(camion_id: int, db: Session = Depends(get_db)):
+    try:
+        camion = CamionFlotteService.mettre_disponible(db, camion_id)
+        if not camion:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
+        return camion
+    except ValueError as e:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
+
 @router.post("/camions/{camion_id}/hse-block")
 @require_permission("transport:write")
 async def bloquer_hse(camion_id: int, motif: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -555,3 +603,9 @@ async def livrer_mission(mission_id: int, payload: LivrerMissionPayload, db: Ses
         return {"message": "Livraison validée, facture générée automatiquement.", "mission_id": mission.id}
     except ValueError as e:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
+
+@router.get("/alertes/documents")
+@require_permission("transport:read")
+async def get_alertes_documents(db: Session = Depends(get_db)):
+    """Retourne la liste des documents expirant dans moins de 30 jours."""
+    return AlertesService.get_expiring_documents(db)

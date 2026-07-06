@@ -376,6 +376,36 @@ class DeclarationService:
         return result
 
     @staticmethod
+    def get_receptions_summary(db: Session, declaration_id: int) -> dict:
+        """Retourne un résumé des quantités reçues par magasin pour une déclaration"""
+        from app.models.magasin import LigneReception, Reception, Magasin, LigneDeclaration
+        
+        # 1. Total par magasin
+        res = db.query(
+            Magasin.nom,
+            db.func.sum(LigneReception.quantite_recue).label("total_recu")
+        ).join(Reception, Reception.magasin_id == Magasin.id) \
+         .join(LigneReception, LigneReception.reception_id == Reception.id) \
+         .filter(Reception.declaration_id == declaration_id) \
+         .group_by(Magasin.nom).all()
+        
+        receptions_par_magasin = {nom: float(total) for nom, total in res}
+        
+        # 2. Total reçu global vs déclaré (sur le premier article pour simplifier)
+        ligne_decl = db.query(LigneDeclaration).filter(LigneDeclaration.declaration_id == declaration_id).first()
+        quantite_declaree = float(ligne_decl.quantite_declaree) if ligne_decl else 0.0
+        
+        total_global = sum(receptions_par_magasin.values())
+        reste_a_recevoir = quantite_declaree - total_global
+        
+        return {
+            "quantite_declaree": quantite_declaree,
+            "total_recu": total_global,
+            "reste_a_recevoir": max(0, reste_a_recevoir),
+            "receptions_par_magasin": receptions_par_magasin
+        }
+
+    @staticmethod
     def get_declaration(db: Session, declaration_id: int) -> Optional[Declaration]:
         cache_key = f"magasin:declaration:{declaration_id}"
         cached = cache_service.get(cache_key)
@@ -546,7 +576,12 @@ class ReceptionService:
     def create_reception(db: Session, reception: ReceptionCreate, recu_par: str, user_id: Optional[int] = None) -> Reception:
         # Générer le numéro de réception
         numero_reception = ReceptionService.generate_numero_reception(db)
-        
+
+        # Récupérer la déclaration pour validation
+        declaration = db.query(Declaration).filter(Declaration.id == reception.declaration_id).first()
+        if not declaration:
+            raise BusinessRuleViolationError("Déclaration introuvable")
+
         try:
             # Transaction explicite
             with db.begin():
@@ -558,7 +593,7 @@ class ReceptionService:
                 db.add(db_reception)
                 db.flush()
 
-                # Ajouter les lignes avec conversion en UDB
+                # Ajouter les lignes avec conversion en UDB et validation
                 for ligne_data in reception.lignes:
                     article = ArticleService.get_article(db, ligne_data.article_id)
                     quantite_udb = ConversionService.convertir_vers_udb(
@@ -566,7 +601,39 @@ class ReceptionService:
                         ligne_data.unite_mesure,
                         article
                     )
-                    
+
+                    # Validation des réceptions partielles : total reçu ≤ quantité déclarée
+                    ligne_declaration = db.query(LigneDeclaration).filter(
+                        and_(
+                            LigneDeclaration.declaration_id == reception.declaration_id,
+                            LigneDeclaration.article_id == ligne_data.article_id
+                        )
+                    ).first()
+
+                    if ligne_declaration:
+                        # Calculer le total déjà reçu (tous magasins)
+                        total_deja_recu = db.query(LigneReception).join(Reception).filter(
+                            and_(
+                                Reception.declaration_id == reception.declaration_id,
+                                LigneReception.article_id == ligne_data.article_id,
+                                Reception.statut != StatutReception.ANNULEE
+                            )
+                        ).with_entities(
+                            db.func.sum(LigneReception.quantite_recue)
+                        ).scalar() or Decimal('0')
+
+                        # Vérifier que le nouveau total ne dépasse pas la quantité déclarée
+                        nouveau_total = total_deja_recu + ligne_data.quantite_recue
+                        if nouveau_total > ligne_declaration.quantite_declaree:
+                            raise BusinessRuleViolationError(
+                                f"Quantité reçue ({nouveau_total}) dépasse la quantité déclarée ({ligne_declaration.quantite_declaree}) "
+                                f"pour l'article {article.code_article}. Reste à recevoir: {ligne_declaration.quantite_declaree - total_deja_recu}"
+                            )
+
+                        # Mettre à jour quantite_recue et quantite_restante sur la ligne de déclaration
+                        ligne_declaration.quantite_recue = nouveau_total
+                        ligne_declaration.quantite_restante = ligne_declaration.quantite_declaree - nouveau_total
+
                     db_ligne = LigneReception(
                         reception_id=db_reception.id,
                         quantite_udb=quantite_udb,
@@ -578,12 +645,15 @@ class ReceptionService:
                 StockService.mettre_a_jour_stock_apres_reception(db, db_reception, user_id)
 
             db.refresh(db_reception)
-            
+
             # Invalider le cache
             invalidate_cache_pattern("magasin:receptions:*")
             invalidate_cache_pattern("magasin:stocks:*")
-            
+            invalidate_cache_pattern("magasin:declarations:*")
+
             return db_reception
+        except BusinessRuleViolationError:
+            raise
         except Exception as e:
             db.rollback()
             raise BusinessRuleViolationError(f"Erreur lors de la création de la réception: {str(e)}")

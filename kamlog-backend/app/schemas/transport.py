@@ -23,10 +23,18 @@ class CamionBase(BaseModel):
 
     @field_validator('immatriculation')
     def validate_immatriculation_cameroun(cls, v):
-        # Format toléré pour la souplesse mais on vérifie un pattern global.
-        # Ex: LT TR 123 AB
+        # Format: [2 Lettres Région] [2 Lettres Genre] [3 Chiffres] [2 Lettres Série]
+        # Ex: LT TR 123 AB, ou avec tirets/sans espaces LTTR123AB
         v_normalized = v.strip().upper()
-        return v_normalized
+        # Remove spaces and dashes for standard check
+        v_clean = re.sub(r'[\s\-]', '', v_normalized)
+        # Regex: 2 letters, 2 letters, 3 digits, 2 letters
+        pattern = r"^[A-Z]{2}[A-Z]{2}\d{3}[A-Z]{2}$"
+        if not re.match(pattern, v_clean):
+            raise ValueError("Le format de l'immatriculation est invalide. Attendu: ex. LT TR 123 AB")
+        
+        # Reformater proprement "LT TR 123 AB"
+        return f"{v_clean[0:2]} {v_clean[2:4]} {v_clean[4:7]} {v_clean[7:9]}"
 
 
 class CamionCreate(CamionBase):
@@ -84,6 +92,11 @@ class PanneVehiculeBase(BaseModel):
 
 class PanneVehiculeCreate(PanneVehiculeBase):
     vehicule_id: int
+
+class PanneVehiculeUpdate(BaseModel):
+    statut: StatutPanne | None = None
+    notes_resolution: str | None = None
+    date_reparation_prevue: date | None = None
 
 class PanneVehiculeResponse(PanneVehiculeBase):
     id: int

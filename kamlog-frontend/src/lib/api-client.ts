@@ -93,6 +93,14 @@ export const transportAPI = {
     apiClient.get('/api/transport/kpis'),
   getGPS: () =>
     apiClient.get('/api/transport/gps'),
+  getPannes: (camionId: number) =>
+    apiClient.get(`/api/transport/camions/${camionId}/pannes`),
+  updatePanne: (camionId: number, panneId: number, data: unknown) =>
+    apiClient.put(`/api/transport/camions/${camionId}/pannes/${panneId}`, data),
+  debloquerCamion: (camionId: number) =>
+    apiClient.put(`/api/transport/camions/${camionId}/debloquer`),
+  associerRemorque: (camionId: number, remorqueId: number | null) =>
+    apiClient.put(`/api/transport/camions/${camionId}/associer-remorque?remorque_id=${remorqueId || ''}`),
 };
 
 // ─── Service Finance ──────────────────────────────────────

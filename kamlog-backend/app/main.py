@@ -53,12 +53,36 @@ Limiter.limit = patched_limit
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
 from app.utils.error_handler import setup_error_handlers
-# from app.utils.audit_middleware import AuditMiddleware # Disabled due to incompatible DB model and SessionLocal import error
+from app.utils.audit_middleware import AuditMiddleware
 from app.utils.idempotency import IdempotencyMiddleware
 from app.utils.rbac import get_current_user  # Import unifié
 
@@ -74,12 +98,15 @@ async def lifespan(app: FastAPI):
     # Startup : initialiser logger et vérifier connexion DB
     setup_logger()
 
-    # Vérifier la connexion à la base de données
+    # Vérifier la connexion à la base de données (sync engine dans executor)
     # Ne pas raise ici : laisser uvicorn démarrer même si DB indisponible
     # Le health check signalera l'état dégradé
+    import asyncio
     try:
-        async with engine.begin() as conn:
-            await conn.execute(text("SELECT 1"))
+        def check_db():
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+        await asyncio.to_thread(check_db)
         print("✅ Database connection OK")
         startup_errors.clear()
     except Exception as e:
@@ -91,7 +118,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown : fermer connexions
-    await engine.dispose()
+    engine.dispose()
 
 
 limiter = Limiter(key_func=get_remote_address)
@@ -116,7 +143,7 @@ setup_error_handlers(app)
 setup_monitoring(app)
 
 # Middlewares de Sécurité et Audit (Niveau World Pro)
-# app.add_middleware(AuditMiddleware) # Disabled due to incompatible DB model
+app.add_middleware(AuditMiddleware)
 app.add_middleware(IdempotencyMiddleware, redis_url=settings.REDIS_URL)
 
 # CORS  autoriser le frontend Next.js
@@ -146,6 +173,31 @@ app.include_router(master_data.router, prefix="/api/master-data", tags=["Master 
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies"])
 app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"])
+app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+<<<<<<< D:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
+=======
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+>>>>>>> C:/Users/Franz/.windsurf/worktrees/KAMLOG-EM-ERP/KAMLOG-EM-ERP-bronze-pendulum/kamlog-backend/app/main.py
 
 
 @app.get('/api/health')
@@ -166,6 +218,7 @@ async def health_check():
 @app.get('/api/health/detailed')
 async def detailed_health_check():
     """Health check détaillé avec vérification des dépendances."""
+    import asyncio
     checks = {
         "status": "ok",
         "service": "KAMLOG EM-ERP",
@@ -173,10 +226,12 @@ async def detailed_health_check():
         "checks": {}
     }
 
-    # Vérifier la base de données
+    # Vérifier la base de données (sync engine dans executor)
     try:
-        async with engine.begin() as conn:
-            await conn.execute(text("SELECT 1"))
+        def check_db():
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+        await asyncio.to_thread(check_db)
         checks["checks"]["database"] = {"status": "ok", "message": "PostgreSQL connecté"}
     except Exception as e:
         checks["checks"]["database"] = {"status": "error", "message": str(e)}
