@@ -145,6 +145,8 @@ export const tiersAPI = {
     apiClient.post('/api/tiers', data),
   updateTiers: (id: number, data: unknown) =>
     apiClient.put(`/api/tiers/${id}`, data),
+  deleteTiers: (id: number) =>
+    apiClient.delete(`/api/tiers/${id}`),
 };
 
 // ─── Service Master Data ──────────────────────────────────
