@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { transportAPI } from '@/lib/api-client';
+import { transportAPI, tiersAPI } from '@/lib/api-client';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { 
   Building2, Box, Truck, Map, Receipt, CheckCircle2, 
@@ -21,10 +21,12 @@ export default function TransportDispatchPage() {
   const [chauffeurs, setChauffeurs] = useState<any[]>([]);
   const [camions, setCamions] = useState<any[]>([]); // Includes Tractors, Remorques, etc.
 
-  // Form State (5 Blocks)
+  const [clients, setClients] = useState<any[]>([]);
+
+  // Form State (5 Blocs)
   const [formData, setFormData] = useState({
     // 1. Entités
-    client_id: '1', // Hardcoded for MVP or we'd fetch clients
+    client_id: '',
     expediteur_adresse: '',
     destinataire_adresse: '',
     contact_site: '',
@@ -56,12 +58,14 @@ export default function TransportDispatchPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [chaufRes, camRes] = await Promise.all([
+        const [chaufRes, camRes, tiersRes] = await Promise.all([
           transportAPI.getChauffeurs(),
-          transportAPI.getCamions()
+          transportAPI.getCamions(),
+          tiersAPI.getTiers().catch(() => ({ data: [] }))
         ]);
         setChauffeurs(chaufRes.data || []);
         setCamions(camRes.data || []);
+        setClients(tiersRes.data || []);
       } catch (err) {
         console.error("Failed to load references", err);
       } finally {
@@ -179,7 +183,10 @@ export default function TransportDispatchPage() {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Client Facturé *</label>
                   <select name="client_id" required value={formData.client_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                    <option value="1">Client Général (MVP)</option>
+                    <option value="" disabled>Sélectionner un Client</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.raison_sociale}</option>
+                    ))}
                   </select>
                 </div>
                 <div>

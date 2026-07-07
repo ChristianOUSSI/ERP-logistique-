@@ -196,26 +196,21 @@ export default function KFinanceOverview() {
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col h-[400px]">
               <h3 className="text-lg font-bold text-slate-800 mb-4">Dernières Factures</h3>
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                {[
-                  { id: 'FAC-2023-01', amount: '1,200,000', status: 'Payée', type: 'in', date: 'Aujourd\'hui' },
-                  { id: 'FAC-2023-02', amount: '450,000', status: 'En attente', type: 'out', date: 'Hier' },
-                  { id: 'FAC-2023-03', amount: '890,000', status: 'Impayée', type: 'out', date: 'Il y a 3j' },
-                  { id: 'FAC-2023-04', amount: '2,100,000', status: 'Payée', type: 'in', date: 'Il y a 4j' },
-                ].map((f, i) => (
-                  <div key={i} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
+                {factures.slice(0, 4).map((f: any, i: number) => (
+                  <div key={f.id || i} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.type === 'in' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                        {f.type === 'in' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.type === 'ACHAT' || f.type === 'DEPENSE' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                        {f.type === 'ACHAT' || f.type === 'DEPENSE' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{f.id}</p>
-                        <p className="text-xs text-slate-400">{f.date}</p>
+                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{f.numero_facture || `FAC-${f.id}`}</p>
+                        <p className="text-xs text-slate-400">{new Date(f.date_emission || f.created_at || Date.now()).toLocaleDateString('fr-FR')}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-black text-slate-700">{f.amount}</p>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${f.status === 'Payée' ? 'text-emerald-600' : f.status === 'Impayée' ? 'text-red-600' : 'text-amber-600'}`}>
-                        {f.status}
+                      <p className="text-sm font-black text-slate-700">{Number(f.montant_ttc_xaf || 0).toLocaleString()}</p>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${f.statut === 'PAYEE' ? 'text-emerald-600' : f.statut === 'IMPAYEE' ? 'text-red-600' : 'text-amber-600'}`}>
+                        {f.statut || 'EN ATTENTE'}
                       </span>
                     </div>
                   </div>

@@ -113,6 +113,8 @@ export const financeAPI = {
     apiClient.get('/api/finance/factures', { params }),
   createFacture: (data: unknown) =>
     apiClient.post('/api/finance/factures', data),
+  getEncaissements: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/finance/encaissements', { params }),
   getEncours: (tiersId: number) =>
     apiClient.get(`/api/finance/encours/${tiersId}`),
   enregistrerEncaissement: (data: unknown) =>
@@ -222,6 +224,10 @@ export const magasinAPI = {
     apiClient.post('/api/magasin/receptions-mag3', data),
   getDeclarations: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/declarations', { params }),
+  getDeclarationReceptionsSummary: (id: number) =>
+    apiClient.get(`/api/magasin/declarations/${id}/receptions-summary`),
+  completeReception: (data: unknown) =>
+    apiClient.post('/api/magasin/receptions', data),
   getCommandes: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/commandes', { params }),
   getHistory: async (params?: Record<string, unknown>) => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { PackageOpen, Search, ArrowRightCircle, Warehouse, Box, AlertCircle } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
@@ -140,23 +140,21 @@ function ReceptionDashboard({ declaration, currentMagasin, onRefresh }: { declar
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  const fetchSummary = async () => {
+  const fetchSummary = React.useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/magasin/declarations/${declaration.id}/receptions-summary`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (res.ok) setSummary(await res.json())
+      const res = await magasinAPI.getDeclarationReceptionsSummary(declaration.id)
+      setSummary(res.data)
     } catch (err) {
       console.error(err)
     } finally {
       setLoading(false)
     }
-  }
+  }, [declaration.id])
 
   useEffect(() => {
     setLoading(true)
     fetchSummary()
-  }, [declaration.id, currentMagasin.id])
+  }, [fetchSummary, currentMagasin?.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -183,25 +181,12 @@ function ReceptionDashboard({ declaration, currentMagasin, onRefresh }: { declar
         ]
       }
       
-      const res = await fetch(`http://localhost:8000/api/magasin/receptions`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` 
-        },
-        body: JSON.stringify(payload)
-      })
-
-      if (res.ok) {
-        setQuantiteSaisie('')
-        fetchSummary()
-        onRefresh()
-      } else {
-        const errData = await res.json()
-        setErrorMsg(errData.detail || "Erreur de réception")
-      }
-    } catch (err) {
-      setErrorMsg("Erreur réseau")
+      await magasinAPI.completeReception(payload)
+      setQuantiteSaisie('')
+      fetchSummary()
+      onRefresh()
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.detail || "Erreur lors de la réception")
     } finally {
       setSubmitting(false)
     }

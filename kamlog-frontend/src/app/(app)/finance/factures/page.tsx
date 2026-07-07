@@ -5,10 +5,11 @@ import {
   FileText, Plus, Search, Filter, MoreVertical, 
   Download, Eye, Send, CheckCircle2, XCircle, Clock
 } from 'lucide-react';
-import { financeAPI } from '@/lib/api-client';
+import { financeAPI, tiersAPI } from '@/lib/api-client';
 
 export default function FacturesPage() {
   const [factures, setFactures] = useState<any[]>([]);
+  const [tiersMap, setTiersMap] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -20,8 +21,17 @@ export default function FacturesPage() {
 
   const fetchFactures = async () => {
     try {
-      const data = await financeAPI.getFactures();
-      setFactures(data.data || []);
+      const [facturesData, tiersData] = await Promise.all([
+        financeAPI.getFactures(),
+        tiersAPI.getTiers().catch(() => ({ data: [] }))
+      ]);
+      setFactures(facturesData.data || []);
+      
+      const map: Record<number, string> = {};
+      (tiersData.data || []).forEach((t: any) => {
+        map[t.id] = t.raison_sociale;
+      });
+      setTiersMap(map);
     } catch (err) {
       console.error(err);
       setFactures([]);
@@ -135,13 +145,13 @@ export default function FacturesPage() {
                       {new Date(facture.date_emission || facture.dueDate).toLocaleDateString('fr-FR')}
                     </td>
                     <td className="p-4">
-                      <div className="font-medium text-gray-900">{facture.client || 'Client Inconnu'}</div>
+                      <div className="font-medium text-gray-900">{tiersMap[facture.tiers_id] || facture.client || 'Client Inconnu'}</div>
                     </td>
                     <td className="p-4 text-right text-gray-600">
-                      {formatCurrency(facture.montant_ht_xaf || facture.amount * 0.8)}
+                      {formatCurrency(facture.montant_ht_xaf || (facture.amount ? facture.amount * 0.8 : 0))}
                     </td>
                     <td className="p-4 text-right font-medium text-gray-900">
-                      {formatCurrency(facture.montant_ttc_xaf || facture.amount)}
+                      {formatCurrency(facture.montant_ttc_xaf || facture.amount || 0)}
                     </td>
                     <td className="p-4 text-center">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(facture.statut || facture.status)}`}>
