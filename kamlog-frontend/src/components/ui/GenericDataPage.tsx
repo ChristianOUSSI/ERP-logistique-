@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Search, Plus, Edit2, Trash2, Eye, Filter, Download, X, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TableSkeletonLoader } from '@/components/ui/Loaders';
+import { useI18n } from '@/hooks/useI18n';
+import { ComingSoonModal } from '@/components/ui/ComingSoonModal';
 
 interface Column {
   key: string;
@@ -39,9 +41,9 @@ function DetailDrawer({
   columns: Column[];
   onClose: () => void;
 }) {
+  const t = useI18n();
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -54,54 +56,57 @@ function DetailDrawer({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] transition-opacity animate-in fade-in duration-200"
         onClick={onClose}
       />
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className="fixed right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl z-[70] flex flex-col animate-in slide-in-from-right duration-300"
+        className="fixed right-0 top-0 h-full w-full max-w-lg bg-surface shadow-2xl z-[70] flex flex-col animate-in slide-in-from-right duration-300 border-l border-outline"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-outline bg-surface-container-low">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Détail de l&apos;enregistrement</h3>
-            <p className="text-sm text-slate-500 mt-0.5">Vue complète des données</p>
+            <h3 className="text-base font-bold text-on-surface">{t.common?.recordDetail || 'Détails de l\'enregistrement'}</h3>
+            <p className="text-xs text-on-surface-variant mt-0.5">{t.common?.fullDataView || 'Vue complète des données'}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
+            className="p-2 hover:bg-surface-container rounded-xl text-on-surface-variant hover:text-on-surface transition-colors"
+            aria-label={t.common?.close || 'Fermer'}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-1">
+        <div className="flex-1 overflow-y-auto p-4 space-y-0.5 scrollbar-sidebar">
           {columns.map((col) => (
             <div key={col.key} className="group">
-              <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-4 px-4 rounded-xl hover:bg-slate-50 transition-colors">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider min-w-[140px] shrink-0 pt-0.5">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3.5 px-3 rounded-xl hover:bg-surface-container transition-colors">
+                <span className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider min-w-[130px] shrink-0 pt-0.5">
                   {col.label}
                 </span>
-                <span className="text-sm text-slate-800 font-medium flex-1 break-words">
+                <span className="text-sm text-on-surface font-medium flex-1 break-words">
                   {col.render
                     ? col.render(row[col.key], row)
                     : row[col.key] != null
                     ? String(row[col.key])
-                    : <span className="text-slate-300 italic">—</span>}
+                    : <span className="text-on-surface-variant italic opacity-50">—</span>}
                 </span>
               </div>
-              <div className="mx-4 border-b border-slate-100 group-last:border-0" />
+              <div className="mx-3 border-b border-outline-variant group-last:border-0 opacity-50" />
             </div>
           ))}
         </div>
+
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+        <div className="border-t border-outline bg-surface-container-low p-4 flex justify-end gap-3 shrink-0">
           <button
             onClick={onClose}
-            className="w-full px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+            className="px-5 py-2 rounded-xl border border-outline text-on-surface font-semibold hover:bg-surface-container transition-colors text-sm"
           >
-            Fermer
+            {t.common?.close || 'Fermer'}
           </button>
         </div>
       </div>
@@ -117,7 +122,6 @@ function exportToCSV(columns: Column[], data: any[], title: string) {
       .map((c) => {
         const val = row[c.key];
         const str = val != null ? String(val) : '';
-        // Escape commas and quotes
         return str.includes(',') || str.includes('"')
           ? `"${str.replace(/"/g, '""')}"`
           : str;
@@ -146,14 +150,26 @@ export default function GenericDataPage({
   onView,
   onEdit,
   onDelete,
-  primaryActionLabel = 'Nouveau',
-  icon = <FileText className="w-6 h-6 text-blue-600" />,
+  primaryActionLabel,
+  icon = <FileText className="w-5 h-5 text-primary" />,
   kpiCards,
   pageSize = 15,
 }: GenericDataPageProps) {
+  const t = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [drawerRow, setDrawerRow] = useState<any | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [comingSoonAction, setComingSoonAction] = useState<string | null>(null);
+
+  const addLabel = primaryActionLabel || t.common.new;
+
+  const handleAction = (actionFn: ((...args: any[]) => void) | undefined, fallbackName: string, ...args: any[]) => {
+    if (!actionFn || actionFn.toString().includes('console.log')) {
+      setComingSoonAction(fallbackName);
+    } else {
+      actionFn(...args);
+    }
+  };
 
   // Reset page on search or data change
   useEffect(() => {
@@ -186,7 +202,6 @@ export default function GenericDataPage({
       if (onView) {
         onView(row);
       } else {
-        // Default: open the detail drawer
         setDrawerRow(row);
       }
     },
@@ -201,99 +216,110 @@ export default function GenericDataPage({
     }
   }, [onExport, columns, filteredData, title]);
 
-  const hasRowActions = !!(onView || onEdit || onDelete || true); // Always show View
+  const hasRowActions = !!(onView || onEdit || onDelete || true);
 
   return (
     <>
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="p-3 sm:p-5 lg:p-6">
+
+        {/* ── Page Header ────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex-shrink-0 p-2.5 bg-surface rounded-xl border border-outline shadow-sm">
               {icon}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{title}</h1>
-              <p className="text-sm text-gray-500 mt-1">{description}</p>
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold text-on-surface tracking-tight truncate">{title}</h1>
+              <p className="text-sm text-on-surface-variant mt-0.5 truncate">{description}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Header actions */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-on-surface bg-surface border border-outline rounded-xl hover:bg-surface-container transition-all shadow-sm"
+              title={t.common.export}
             >
               <Download className="w-4 h-4" />
-              Exporter
+              <span className="hidden sm:inline">{t.common.export}</span>
             </button>
             {onAdd && (
               <button
-                onClick={onAdd}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-sm shadow-blue-200 hover:shadow-md hover:shadow-blue-200"
+                onClick={() => handleAction(onAdd, addLabel)}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-on-primary bg-primary rounded-xl hover:opacity-90 transition-all shadow-sm"
               >
                 <Plus className="w-4 h-4" />
-                {primaryActionLabel}
+                <span className="hidden xs:inline">{addLabel}</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* KPI Cards */}
-        {kpiCards && <div className="mb-6">{kpiCards}</div>}
+        {/* ── KPI Cards ─────────────────────────────────────────────── */}
+        {kpiCards && <div className="mb-5">{kpiCards}</div>}
 
-        {/* Filters Bar */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative flex-1 w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        {/* ── Filters Bar ───────────────────────────────────────────── */}
+        <div className="bg-surface border border-outline rounded-xl shadow-sm mb-4 p-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Search */}
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 pointer-events-none" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Rechercher dans toutes les colonnes..."
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm bg-gray-50/50 focus:bg-white"
+              placeholder={t.common.searchPlaceholder}
+              aria-label={t.common.search}
+              className="w-full pl-9 pr-9 py-2 rounded-lg border border-outline bg-surface-container-low text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface focus:outline-none transition-all"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors rounded p-0.5"
+                aria-label="Effacer la recherche"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Filter info + Filter btn */}
+          <div className="flex items-center gap-2 shrink-0">
             {!isLoading && (
-              <span className="text-sm text-gray-500">
-                <span className="font-semibold text-gray-800">{filteredData.length}</span>
-                {' '}résultat{filteredData.length !== 1 ? 's' : ''}
+              <span className="text-sm text-on-surface-variant whitespace-nowrap">
+                <span className="font-semibold text-on-surface">{filteredData.length}</span>
+                {' '}{filteredData.length !== 1 ? t.common.results : t.common.result}
                 {searchTerm && (
-                  <span className="text-gray-400"> sur {data.length}</span>
+                  <span className="text-on-surface-variant/60"> / {data.length}</span>
                 )}
               </span>
             )}
-            <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-on-surface bg-surface-container-low border border-outline rounded-lg hover:bg-surface-container transition-colors">
               <Filter className="w-4 h-4" />
-              Filtres
+              <span className="hidden sm:inline">{t.common.filter}</span>
             </button>
           </div>
         </div>
 
-        {/* Data Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* ── Data Table ────────────────────────────────────────────── */}
+        <div className="bg-surface rounded-xl shadow-sm border border-outline overflow-hidden">
+          {/* Horizontal scroll wrapper for mobile */}
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[480px]">
               <thead>
-                <tr className="bg-gray-50/80 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
+                <tr className="bg-surface-container-low border-b border-outline text-[11px] uppercase tracking-wider text-on-surface-variant">
                   {columns.map((col, i) => (
-                    <th key={col.key} className={`p-4 font-semibold ${i === 0 ? 'pl-6' : ''}`}>
+                    <th key={col.key} className={`p-3.5 font-semibold whitespace-nowrap ${i === 0 ? 'pl-5' : ''}`}>
                       {col.label}
                     </th>
                   ))}
                   {hasRowActions && (
-                    <th className="p-4 font-semibold text-right pr-6 w-[140px]">Actions</th>
+                    <th className="p-3.5 font-semibold text-right pr-5 w-[120px]">{t.common.actions}</th>
                   )}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+
+              <tbody className="divide-y divide-outline-variant/50">
                 {isLoading ? (
                   <tr>
                     <td colSpan={columns.length + (hasRowActions ? 1 : 0)} className="p-6">
@@ -302,15 +328,15 @@ export default function GenericDataPage({
                   </tr>
                 ) : paginatedData.length === 0 ? (
                   <tr>
-                    <td colSpan={columns.length + (hasRowActions ? 1 : 0)} className="p-12 text-center">
-                      <div className="mx-auto w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                        <Search className="w-6 h-6 text-gray-300" />
+                    <td colSpan={columns.length + (hasRowActions ? 1 : 0)} className="p-10 text-center">
+                      <div className="mx-auto w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center mb-3">
+                        <Search className="w-5 h-5 text-on-surface-variant opacity-50" />
                       </div>
-                      <p className="text-gray-900 font-semibold">Aucun résultat trouvé</p>
-                      <p className="text-gray-500 text-sm mt-1.5">
+                      <p className="text-on-surface font-semibold text-sm">{t.common.noResults}</p>
+                      <p className="text-on-surface-variant text-xs mt-1">
                         {searchTerm
-                          ? `Aucun résultat pour « ${searchTerm} ». Essayez un autre terme.`
-                          : 'Aucune donnée disponible pour le moment.'}
+                          ? `${t.common.noResultsFor}${searchTerm}${t.common.tryOtherTerm}`
+                          : t.common.noData}
                       </p>
                     </td>
                   </tr>
@@ -318,27 +344,30 @@ export default function GenericDataPage({
                   paginatedData.map((row, rowIndex) => (
                     <tr
                       key={rowIndex}
-                      className="hover:bg-blue-50/30 transition-colors group cursor-pointer"
+                      className={`
+                        hover:bg-primary/5 transition-colors group cursor-pointer
+                        ${rowIndex % 2 === 1 ? 'bg-surface-container-lowest/60' : ''}
+                      `}
                       onClick={() => handleView(row)}
                     >
                       {columns.map((col, colIndex) => (
                         <td
                           key={col.key}
-                          className={`p-4 text-sm text-gray-600 ${colIndex === 0 ? 'pl-6 font-medium text-gray-900' : ''}`}
+                          className={`p-3.5 text-sm text-on-surface-variant ${
+                            colIndex === 0 ? 'pl-5 font-medium text-on-surface' : ''
+                          }`}
                         >
-                          {col.render ? col.render(row[col.key], row) : row[col.key] || '-'}
+                          {col.render ? col.render(row[col.key], row) : row[col.key] ?? '—'}
                         </td>
                       ))}
+
                       {hasRowActions && (
-                        <td className="p-4 text-right pr-6">
-                          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                        <td className="p-3.5 text-right pr-5">
+                          <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-all duration-150">
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleView(row);
-                              }}
-                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                              title="Voir le détail"
+                              onClick={(e) => { e.stopPropagation(); handleView(row); }}
+                              className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                              title={t.common.view}
                             >
                               <Eye className="w-4 h-4" />
                             </button>
@@ -346,10 +375,10 @@ export default function GenericDataPage({
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onEdit(row);
+                                  handleAction(onEdit, 'Modification', row);
                                 }}
-                                className="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
-                                title="Modifier"
+                                className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors"
+                                title={t.common.edit}
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
@@ -358,10 +387,10 @@ export default function GenericDataPage({
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  onDelete(row);
+                                  handleAction(onDelete, 'Suppression', row);
                                 }}
-                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                title="Supprimer"
+                                className="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/50 rounded-lg transition-colors"
+                                title={t.common.delete}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -376,33 +405,35 @@ export default function GenericDataPage({
             </table>
           </div>
 
-          {/* Pagination Footer */}
+          {/* ── Pagination Footer ──────────────────────────────────── */}
           {!isLoading && filteredData.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
-              <span className="text-sm text-gray-500">
-                Affichage de{' '}
-                <span className="font-semibold text-gray-800">
-                  {(currentPage - 1) * pageSize + 1}
-                </span>{' '}
-                à{' '}
-                <span className="font-semibold text-gray-800">
+            <div className="px-5 py-3.5 border-t border-outline bg-surface-container-low flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-xs text-on-surface-variant">
+                {t.common.showing}{' '}
+                <span className="font-semibold text-on-surface">{(currentPage - 1) * pageSize + 1}</span>
+                {' – '}
+                <span className="font-semibold text-on-surface">
                   {Math.min(currentPage * pageSize, filteredData.length)}
-                </span>{' '}
-                sur{' '}
-                <span className="font-semibold text-gray-800">{filteredData.length}</span> résultats
+                </span>
+                {' '}{t.common.of}{' '}
+                <span className="font-semibold text-on-surface">{filteredData.length}</span>
+                {' '}{t.common.results}
               </span>
-              <div className="flex items-center gap-1.5">
+
+              <div className="flex items-center gap-1">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className={`p-2 rounded-lg border text-sm transition-all ${
+                  className={`p-1.5 rounded-lg border text-sm transition-all ${
                     currentPage === 1
-                      ? 'border-gray-100 text-gray-300 bg-white cursor-not-allowed'
-                      : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300'
+                      ? 'border-outline-variant text-on-surface-variant/30 cursor-not-allowed'
+                      : 'border-outline text-on-surface hover:bg-surface-container'
                   }`}
+                  aria-label="Page précédente"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
+
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                   let page: number;
                   if (totalPages <= 5) {
@@ -418,24 +449,26 @@ export default function GenericDataPage({
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                      className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all ${
                         page === currentPage
-                          ? 'bg-blue-600 text-white shadow-sm shadow-blue-200'
-                          : 'text-gray-600 hover:bg-gray-100'
+                          ? 'bg-primary text-on-primary shadow-sm'
+                          : 'text-on-surface-variant hover:bg-surface-container'
                       }`}
                     >
                       {page}
                     </button>
                   );
                 })}
+
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className={`p-2 rounded-lg border text-sm transition-all ${
+                  className={`p-1.5 rounded-lg border text-sm transition-all ${
                     currentPage === totalPages
-                      ? 'border-gray-100 text-gray-300 bg-white cursor-not-allowed'
-                      : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300'
+                      ? 'border-outline-variant text-on-surface-variant/30 cursor-not-allowed'
+                      : 'border-outline text-on-surface hover:bg-surface-container'
                   }`}
+                  aria-label="Page suivante"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -447,8 +480,19 @@ export default function GenericDataPage({
 
       {/* Detail Drawer */}
       {drawerRow && (
-        <DetailDrawer row={drawerRow} columns={columns} onClose={() => setDrawerRow(null)} />
+        <DetailDrawer
+          row={drawerRow}
+          columns={columns}
+          onClose={() => setDrawerRow(null)}
+        />
       )}
+
+      {/* Coming Soon Modal */}
+      <ComingSoonModal 
+        isOpen={!!comingSoonAction} 
+        onClose={() => setComingSoonAction(null)} 
+        featureName={comingSoonAction || ''} 
+      />
     </>
   );
 }

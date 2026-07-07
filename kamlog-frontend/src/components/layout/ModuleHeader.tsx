@@ -1,71 +1,66 @@
-'use client';
+'use client'
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { getModuleIcon, getModuleName } from '../../config/moduleColors';
-import { ModuleType } from './ModuleSidebar'; // Still needed for ModuleHeaderProps type
-import { useModuleTheme } from '../../hooks/useModuleTheme'; // Import the hook
-import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from '@/utils/tcodeLookup';
-import { useAuth } from './AuthProvider';
-import { useSettings, ThemePreference } from './SettingsProvider';
-import { toast } from 'sonner';
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { getModuleIcon, getModuleName } from '../../config/moduleColors'
+import { ModuleType } from './ModuleSidebar'
+import { useModuleTheme } from '../../hooks/useModuleTheme'
+import { getRouteFromTCode, canAccessTCode, TCODE_MAP } from '@/utils/tcodeLookup'
+import { useAuth } from './AuthProvider'
+import { useSettings, ThemePreference } from './SettingsProvider'
+import { useI18n } from '@/hooks/useI18n'
+import { toast } from 'sonner'
 
-const NOTIFICATIONS_STORAGE_KEY = 'kamlog_erp_notifications';
+const NOTIFICATIONS_STORAGE_KEY = 'kamlog_erp_notifications'
 
-interface ERPNotification {
-  id: string;
-  message: string;
-  severity: 'CRITICAL' | 'WARNING' | 'INFO';
-  timestamp: string;
-  read: boolean;
+type ERPNotification = {
+  id: string
+  message: string
+  severity: 'CRITICAL' | 'WARNING' | 'INFO'
+  timestamp: string
+  read: boolean
 }
 
-interface ModuleHeaderProps {
-  currentModule: ModuleType;
+type ModuleHeaderProps = {
+  currentModule: ModuleType
+  onMenuClick?: () => void
 }
 
-export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
-  const { theme } = useModuleTheme(currentModule); // Use the hook to get theme
-  const router = useRouter();
-  const [searchValue, setSearchValue] = useState('');
-  const [showSuggestion, setShowSuggestion] = useState(false);
-  const [notifications, setNotifications] = useState<ERPNotification[]>([]); // Notifications remain local to header
-  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
-  const [mounted, setMounted] = useState(false);
-  const moduleIcon = getModuleIcon(currentModule);
-  const moduleName = getModuleName(currentModule);
-  const themeClasses = theme.headerClasses || 'text-gray-600 bg-gray-50'; // Fallback for safety (consider moving to theme config)
-  
-  const { user, logout, sessionExpiresAt, renewSession, sessionExpired } = useAuth();
-  const suggestionRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const soundEnabledRef = useRef(true); // Ref for soundEnabled to avoid re-creating WebSocket
+export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) {
+  const { theme } = useModuleTheme(currentModule)
+  const router = useRouter()
+  const t = useI18n()
 
-  // Consume settings from context
-  const { 
-    soundEnabled,
-    toggleSound,
-    showSoundBadge, 
-    triggerSoundBadge, 
-    theme: uiTheme, 
-    setTheme,
-    language,
-    setLanguage 
-  } = useSettings();
+  const [searchValue, setSearchValue] = useState('')
+  const [showSuggestion, setShowSuggestion] = useState(false)
+  const [notifications, setNotifications] = useState<ERPNotification[]>([])
+  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected')
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false);
+  const moduleIcon = getModuleIcon(currentModule)
+  const moduleName = getModuleName(currentModule)
+  // themeClasses now uses CSS-variable-based dark-aware utility
+  const themeClasses = theme.headerClasses || 'module-badge-admin'
 
-  // Agency Selector (Multi-Tenancy)
-  const [selectedAgency, setSelectedAgency] = useState('Douala, CMR');
-  const [isAgencyMenuOpen, setIsAgencyMenuOpen] = useState(false);
+  const { user, logout, sessionExpiresAt, renewSession, sessionExpired } = useAuth()
+  const suggestionRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const soundEnabledRef = useRef(true)
+
+  const { soundEnabled, toggleSound, showSoundBadge, triggerSoundBadge, theme: uiTheme, setTheme, language, setLanguage } = useSettings()
+
+  const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false)
+  const [selectedAgency, setSelectedAgency] = useState('Douala, CMR')
+  const [isAgencyMenuOpen, setIsAgencyMenuOpen] = useState(false)
+  const [minutesLeft, setMinutesLeft] = useState<number | null>(null)
+  const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false)
 
   const AGENCIES = [
     { id: 'DLA', name: 'Douala, CMR', icon: 'domain' },
     { id: 'ABJ', name: 'Abidjan, CIV', icon: 'domain' },
     { id: 'DKR', name: 'Dakar, SEN', icon: 'domain' },
-  ];
+  ]
 
   const MODULES_LIST: { id: ModuleType; label: string; icon: string; path: string }[] = [
     { id: 'transport', label: 'Logistique / Transport', icon: 'local_shipping', path: '/transport/control' },
@@ -74,244 +69,166 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
     { id: 'parc', label: 'Yard / Parc', icon: 'directions_car', path: '/parc/overview' },
     { id: 'master-data', label: 'Données Maîtres', icon: 'hub', path: '/master-data/tiers' },
     { id: 'admin', label: 'Administration', icon: 'admin_panel_settings', path: '/admin/user-management/listing' },
-  ];
+  ]
 
-  // Session Monitoring
-  const [minutesLeft, setMinutesLeft] = useState<number | null>(null);
-  const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false); // New state for modal
+  useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
 
   useEffect(() => {
-    // Update soundEnabledRef whenever soundEnabled changes from context
-    soundEnabledRef.current = soundEnabled;
-  }, [soundEnabled]);
-
-  useEffect(() => {
-    if (!sessionExpiresAt) return;
-    
+    if (!sessionExpiresAt) return
     const checkSession = () => {
-      const diffMs = sessionExpiresAt.getTime() - Date.now();
-      const diffMins = Math.floor(diffMs / 60000);
-      setMinutesLeft(diffMins > 0 ? diffMins : 0);
+      const diffMins = Math.floor((sessionExpiresAt.getTime() - Date.now()) / 60000)
+      setMinutesLeft(diffMins > 0 ? diffMins : 0)
+      if (diffMins <= 0 && sessionExpired) setShowSessionExpiredModal(true)
+    }
+    checkSession()
+    const timer = setInterval(checkSession, 1000)
+    return () => clearInterval(timer)
+  }, [sessionExpiresAt, sessionExpired])
 
-      // If session has expired, show modal
-      if (diffMins <= 0 && sessionExpired) {
-        setShowSessionExpiredModal(true);
-      }
-    };
-
-    checkSession();
-    const timer = setInterval(checkSession, 1000); // Check every second for more precise countdown
-    return () => clearInterval(timer);
-  }, [sessionExpiresAt, sessionExpired]); // Added sessionExpired to dependencies
-
-  const reconnectAttemptsRef = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const socketRef = useRef<WebSocket | null>(null);
+  const reconnectAttemptsRef = useRef(0)
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const socketRef = useRef<WebSocket | null>(null)
 
   const cycleTheme = () => {
-    const themes: ThemePreference[] = ['light', 'dark', 'system'];
-    const nextIndex = (themes.indexOf(uiTheme) + 1) % themes.length;
-    setTheme(themes[nextIndex]);
-  };
+    const themes: ThemePreference[] = ['light', 'dark', 'system']
+    setTheme(themes[(themes.indexOf(uiTheme) + 1) % themes.length])
+  }
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'fr' ? 'en' : 'fr');
-  };
-
-  // 1. WebSocket Connection Logic
   const connect = useCallback(() => {
-    if (!user) return;
-    
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/alerts/ws/alerts';
-    const socket = new WebSocket(`${wsUrl}?token=${user.id}`);
-    socketRef.current = socket;
-    setWsStatus('connecting');
+    if (!user) return
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/alerts/ws/alerts'
+    const socket = new WebSocket(`${wsUrl}?token=${user.id}`)
+    socketRef.current = socket
+    setWsStatus('connecting')
 
-    socket.onopen = () => {
-      reconnectAttemptsRef.current = 0;
-      setWsStatus('connected');
-    };
-
+    socket.onopen = () => { reconnectAttemptsRef.current = 0; setWsStatus('connected') }
     socket.onmessage = (event) => {
-      const alert = JSON.parse(event.data);
-      const newNotif: ERPNotification = {
-        ...alert,
-        id: Math.random().toString(36).substr(2, 9),
-        read: false,
-        timestamp: alert.timestamp || new Date().toISOString(),
-      };
-      setNotifications((prev) => [newNotif, ...prev]);
-      
-      // Play sound for CRITICAL alerts to ensure immediate attention
+      const alert = JSON.parse(event.data)
+      const newNotif: ERPNotification = { ...alert, id: Math.random().toString(36).substr(2, 9), read: false, timestamp: alert.timestamp || new Date().toISOString() }
+      setNotifications((prev) => [newNotif, ...prev])
       if (alert.severity === 'CRITICAL' && soundEnabledRef.current) {
-        const audio = new Audio('/assets/sounds/critical-alert.mp3');
-        triggerSoundBadge(); // Trigger the visual badge
-        audio.volume = 0.5;
-        audio.play().catch(e => console.warn('Audio playback failed (blocked by browser or missing file):', e));
+        const audio = new Audio('/assets/sounds/critical-alert.mp3')
+        triggerSoundBadge(); audio.volume = 0.5
+        audio.play().catch((e) => console.warn('Audio playback failed:', e))
       }
-
-      toast(alert.message, {
-        icon: alert.severity === 'CRITICAL' ? '🚨' : '⚠️',
-        duration: 6000,
-        style: {
-          background: '#0f172a',
-          color: '#fff',
-          borderLeft: alert.severity === 'CRITICAL' ? '4px solid #ba1a1a' : '4px solid #f59e0b',
-        },
-      });
-    };
-
-    socket.onclose = (e) => {
-      if (e.wasClean) return;
-      setWsStatus('disconnected');
-      const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
-      reconnectTimeoutRef.current = setTimeout(() => {
-        reconnectAttemptsRef.current++;
-        connect();
-      }, delay);
-    };
-
-    socket.onerror = () => socket.close();
-  }, [user]);
-
-  // 1.1 WebSocket Real-time Alerts Implementation
-  useEffect(() => {
-    setMounted(true);
-    if (!user) return;
-
-    // Load persisted notifications on mount
-    const savedNotifs = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
-    if (savedNotifs) {
-      try { setNotifications(JSON.parse(savedNotifs)); } 
-      catch (err) { console.error('Failed to load notifications'); }
+      toast(alert.message, { icon: alert.severity === 'CRITICAL' ? '🚨' : '⚠️', duration: 6000, style: { background: '#0f172a', color: '#fff', borderLeft: alert.severity === 'CRITICAL' ? '4px solid #ba1a1a' : '4px solid #f59e0b' } })
     }
+    socket.onclose = (e) => {
+      if (e.wasClean) return
+      setWsStatus('disconnected')
+      const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000)
+      reconnectTimeoutRef.current = setTimeout(() => { reconnectAttemptsRef.current++; connect() }, delay)
+    }
+    socket.onerror = () => socket.close()
+  }, [user, triggerSoundBadge])
 
-    connect();
-    
-    return () => {
-      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-      socketRef.current?.close();
-    };
-  }, [user, connect]);
+  useEffect(() => {
+    setMounted(true)
+    if (!user) return
+    const savedNotifs = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY)
+    if (savedNotifs) { try { setNotifications(JSON.parse(savedNotifs)) } catch { } }
+    connect()
+    return () => { if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current); socketRef.current?.close() }
+  }, [user, connect])
 
-  const handleManualRetry = () => {
-    if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-    socketRef.current?.close();
-    connect();
-  };
+  const markAsRead = (id: string) => setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n))
+  const markAllAsRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  const clearReadNotifications = () => { setNotifications((prev) => prev.filter((n) => !n.read)); toast.success(language === 'fr' ? 'Notifications lues effacées' : 'Read notifications cleared') }
 
-  // Handle marking individual notifications as read
-  const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  };
-
-  const clearReadNotifications = () => {
-    setNotifications(prev => prev.filter(n => !n.read));
-    toast.success('Notifications lues effacées');
-  };
-
-  // Persistance hook
   useEffect(() => {
     if (notifications.length > 0 || localStorage.getItem(NOTIFICATIONS_STORAGE_KEY)) {
-      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
+      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications))
     }
-  }, [notifications]);
+  }, [notifications])
 
-  const tcodeKey = searchValue.toUpperCase();
-  const matchedSuggestion = TCODE_MAP[tcodeKey];
+  const tcodeKey = searchValue.toUpperCase()
+  const matchedSuggestion = TCODE_MAP[tcodeKey]
+  useEffect(() => { setShowSuggestion(!!matchedSuggestion) }, [searchValue, matchedSuggestion])
 
-  useEffect(() => {
-    setShowSuggestion(!!matchedSuggestion);
-  }, [searchValue, matchedSuggestion]);
-
-  // Global keyboard shortcut: Ctrl + K to focus search
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-      if (e.key === 'Escape') {
-        setShowSuggestion(false);
-        searchInputRef.current?.blur();
-      }
-    };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, []);
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); searchInputRef.current?.focus() }
+      if (e.key === 'Escape') { setShowSuggestion(false); searchInputRef.current?.blur() }
+    }
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [])
 
   const navigateToTCode = (code: string) => {
-    const hasAccess = user?.roles?.some(r => canAccessTCode(r, code)) ?? false;
-    if (!hasAccess) {
-      toast.error(`Accès Interdit : Votre profil (${user?.roles?.join(', ') || 'INVITÉ'}) ne dispose pas des droits pour ${code}.`, { id: 'forbidden-tcode', icon: 'lock' });
-      return;
-    }
-
-    const targetRoute = getRouteFromTCode(code);
-    if (targetRoute) {
-      router.push(targetRoute);
-      setSearchValue('');
-      setShowSuggestion(false);
-    }
-  };
+    const hasAccess = user?.roles?.some((r) => canAccessTCode(r, code)) ?? false
+    if (!hasAccess) { toast.error(`Accès Interdit : Votre profil (${user?.roles?.join(', ') || 'INVITÉ'}) ne dispose pas des droits pour ${code}.`, { id: 'forbidden-tcode', icon: 'lock' }); return }
+    const targetRoute = getRouteFromTCode(code)
+    if (targetRoute) { router.push(targetRoute); setSearchValue(''); setShowSuggestion(false) }
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      const code = searchValue.toUpperCase();
-      navigateToTCode(code);
-      (e.target as HTMLInputElement).blur();
-    }
-  };
+    if (e.key === 'Enter') { navigateToTCode(searchValue.toUpperCase()); (e.target as HTMLInputElement).blur() }
+  }
+
+  const unreadCount = notifications.filter((n) => !n.read).length
 
   return (
     <>
-      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo et nom du projet */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-kamlog-primary">KAMLOG</span>
-              <span className="text-sm text-gray-500">EM-ERP</span>
+      {/* ════════════════════════════════════════════
+          HEADER — sticky, 64px tall, 3 zones
+          Zone 1: Hamburger + Logo + Module switcher
+          Zone 2: T-Code search bar
+          Zone 3: Actions (agency, theme, lang, sound, notifs, profile, logout)
+          ════════════════════════════════════════════ */}
+      <header className="sticky top-0 z-30 h-16 border-b border-outline bg-surface/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-surface/85">
+        <div className="flex h-full items-center gap-2 px-3 sm:px-4 lg:px-5 overflow-x-auto no-scrollbar">
+
+          {/* ── Zone 1: Identity ── */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {/* Hamburger */}
+            <button
+              onClick={onMenuClick}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-outline bg-surface-container-low text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface lg:hidden"
+              aria-label="Ouvrir le menu"
+            >
+              <span className="material-symbols-outlined text-[20px]">menu</span>
+            </button>
+
+            {/* Logo */}
+            <div className="hidden items-center gap-1.5 sm:flex">
+              <span className="text-[18px] font-black tracking-tight text-kamlog-primary">KAMLOG</span>
+              <span className="hidden text-[11px] font-medium text-on-surface-variant md:block">EM-ERP</span>
             </div>
-            
-            {/* Séparateur */}
-            <div className="h-6 w-px bg-slate-200" />
-            
-            {/* Module Switcher Dropdown */}
+
+            {/* Divider */}
+            <div className="hidden h-5 w-px bg-outline sm:block" />
+
+            {/* Module switcher */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsModuleMenuOpen(!isModuleMenuOpen)}
-                className={`flex items-center space-x-2 px-4 py-1.5 rounded-full transition-all hover:ring-2 hover:ring-offset-2 hover:ring-slate-200 ${themeClasses}`}
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-bold uppercase tracking-wide transition-all hover:opacity-90 ${themeClasses}`}
+                aria-haspopup="listbox"
+                aria-expanded={isModuleMenuOpen}
               >
-                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">{moduleIcon}</span>
-                <span className="text-sm font-bold tracking-tight uppercase">{moduleName}</span>
-                <span className="material-symbols-outlined text-sm">expand_more</span>
+                <span className="material-symbols-outlined text-[16px]">{moduleIcon}</span>
+                <span className="hidden max-w-[120px] truncate sm:block">{moduleName}</span>
+                <span className="material-symbols-outlined text-[14px] opacity-70">expand_more</span>
               </button>
 
               {isModuleMenuOpen && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsModuleMenuOpen(false)} />
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 shadow-xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-2 border-b border-slate-100 bg-slate-50">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Basculer de module</span>
+                  <div className="fixed inset-0 z-[45]" onClick={() => setIsModuleMenuOpen(false)} />
+                  <div className="absolute top-full left-0 z-50 mt-1.5 w-64 overflow-hidden rounded-xl border border-outline bg-surface shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="border-b border-outline bg-surface-container-low px-4 py-2.5">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Changer de module</span>
                     </div>
                     <div className="py-1">
                       {MODULES_LIST.map((m) => (
                         <button
                           key={m.id}
-                          onClick={() => {
-                            setIsModuleMenuOpen(false);
-                            router.push(m.path);
-                          }}
-                          className={`w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${currentModule === m.id ? 'bg-slate-50 border-l-4 border-kamlog-primary' : 'border-l-4 border-transparent'}`}
+                          role="option"
+                          aria-selected={currentModule === m.id}
+                          onClick={() => { setIsModuleMenuOpen(false); router.push(m.path) }}
+                          className={`w-full flex items-center gap-3 border-l-[3px] px-4 py-2.5 text-left text-sm transition-colors hover:bg-surface-container-low ${currentModule === m.id ? 'border-primary bg-surface-container-low font-semibold text-primary' : 'border-transparent text-on-surface'}`}
                         >
-                          <span className={`material-symbols-outlined text-[20px] ${currentModule === m.id ? 'text-kamlog-primary' : 'text-slate-400'}`}>{m.icon}</span>
-                          <span className={`text-sm font-medium ${currentModule === m.id ? 'text-kamlog-primary font-bold' : 'text-slate-700'}`}>{m.label}</span>
+                          <span className={`material-symbols-outlined text-[18px] ${currentModule === m.id ? 'text-primary' : 'text-on-surface-variant'}`}>{m.icon}</span>
+                          {m.label}
                         </button>
                       ))}
                     </div>
@@ -321,11 +238,11 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
             </div>
           </div>
 
-          {/* T-Code Search Bar - DESIGN.md Compliant */}
-          <div className="flex-1 max-w-lg mx-12" role="search">
+          {/* ── Zone 2: T-Code Search (flex-1 center) ── */}
+          <div className="min-w-0 flex-1 px-2 sm:px-4 lg:max-w-xl" role="search">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-kamlog-primary transition-colors">
-                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">{moduleIcon}</span>
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-on-surface-variant transition-colors group-focus-within:text-primary">
+                <span className="material-symbols-outlined text-[18px]">manage_search</span>
               </div>
               <input
                 type="text"
@@ -333,88 +250,99 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Saisir Transaction (ex: KM24)..."
-                aria-label="Recherche de transaction par T-Code"
-                className="block w-full pl-10 pr-12 py-2 border border-slate-200 rounded-md leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-kamlog-primary/20 focus:border-kamlog-primary sm:text-sm transition-all"
+                placeholder={`T-Code (ex: KM24)…`}
+                aria-label="Recherche par T-Code"
+                className="block w-full rounded-lg border border-outline bg-surface-container-low py-2 pl-9 pr-14 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <span className="text-[10px] font-bold text-slate-300 border border-slate-200 px-1.5 py-0.5 rounded uppercase tracking-tighter">T-Code</span>
+              {/* Keyboard shortcut hint — hidden on very small screens */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 hidden items-center pr-2.5 sm:flex">
+                <kbd className="rounded border border-outline px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter text-on-surface-variant bg-surface-container">⌘K</kbd>
               </div>
 
-              {/* Quick Jump Suggestion Dropdown */}
+              {/* T-Code suggestion dropdown */}
               {showSuggestion && matchedSuggestion && (
-                <div 
+                <div
                   ref={suggestionRef}
-                  className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 shadow-xl rounded-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                  className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-outline bg-surface shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
                 >
                   <button
                     onClick={() => navigateToTCode(tcodeKey)}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors text-left"
+                    className="w-full text-left transition-colors hover:bg-surface-container-low"
                   >
-                    <div className="flex items-center space-x-3">
-                      <span className="font-mono text-sm font-bold text-kamlog-primary bg-blue-50 px-2 py-0.5 rounded border border-blue-100">{tcodeKey}</span>
-                      <span className="text-sm font-medium text-slate-700">Aller vers : {matchedSuggestion.split('/').pop()?.replace(/-/g, ' ')}</span>
+                    <div className="flex items-center justify-between gap-3 px-4 py-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex-shrink-0 rounded border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-sm font-bold text-primary">{tcodeKey}</span>
+                        <span className="truncate text-sm text-on-surface">→ {matchedSuggestion.split('/').pop()?.replace(/-/g, ' ')}</span>
+                      </div>
+                      <kbd className="flex-shrink-0 rounded border border-outline px-1.5 py-0.5 text-[10px] font-bold uppercase text-on-surface-variant">↵</kbd>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded uppercase">Entrée ↵</span>
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Navigation utilisateur */}
-          <div className="flex items-center space-x-4">
-            {/* WebSocket Status Indicator */}
+          {/* ── Zone 3: Actions ── */}
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+
+            {/* WS status — desktop only */}
             {wsStatus !== 'connected' && (
-              <div className="flex items-center space-x-2 px-2 py-1 bg-slate-100 rounded-md">
-                <span className={`h-2 w-2 rounded-full ${wsStatus === 'connecting' ? 'bg-amber-500' : 'bg-red-500'}`} />
-                <span className="text-[10px] font-bold text-slate-500 uppercase">
-                  {wsStatus === 'connecting' ? 'Reconnexion...' : 'Déconnecté'}
+              <div className="hidden items-center gap-1.5 rounded-lg bg-surface-container px-2.5 py-1.5 md:flex">
+                <span className={`h-1.5 w-1.5 rounded-full ${wsStatus === 'connecting' ? 'bg-amber-500 animate-pulse' : 'bg-red-500'}`} />
+                <span className="text-[10px] font-bold uppercase text-on-surface-variant">
+                  {wsStatus === 'connecting' ? 'Sync…' : 'Off'}
                 </span>
                 {wsStatus === 'disconnected' && (
-                  <button 
-                    onClick={handleManualRetry}
-                    className="ml-1 text-[10px] text-kamlog-primary hover:underline font-bold"
+                  <button
+                    onClick={() => { if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current); socketRef.current?.close(); connect() }}
+                    className="text-[10px] font-bold text-primary hover:underline"
                   >
-                    REESSAYER
+                    Retry
                   </button>
                 )}
               </div>
             )}
 
-            {/* Agency Switcher (Multi-Tenancy) */}
-            <div className="relative">
+            {/* Session expiry warning — xl only */}
+            {minutesLeft !== null && minutesLeft <= 5 && minutesLeft > 0 && (
+              <div className="hidden animate-pulse items-center gap-1 rounded-lg border border-red-300/50 bg-red-500/10 px-2.5 py-1.5 xl:flex">
+                <span className="text-[10px] font-bold text-red-500">SESSION {minutesLeft}m</span>
+                <button onClick={renewSession} className="text-[10px] font-black text-primary hover:underline">↺</button>
+              </div>
+            )}
+
+            {/* Agency selector — hidden on mobile */}
+            <div className="relative hidden md:block">
               <button
                 onClick={() => setIsAgencyMenuOpen(!isAgencyMenuOpen)}
-                className="flex items-center space-x-1 px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors shadow-sm"
-                title="Changer d'agence (Multi-Tenancy)"
+                className="flex items-center gap-1 rounded-lg border border-outline bg-surface-container-low px-2.5 py-1.5 text-[11px] font-semibold text-on-surface shadow-sm transition-colors hover:bg-surface-container"
+                aria-haspopup="listbox"
+                aria-expanded={isAgencyMenuOpen}
               >
-                <span className="material-symbols-outlined text-[16px] text-kamlog-primary">domain</span>
-                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-tight">{selectedAgency}</span>
-                <span className="material-symbols-outlined text-[16px] text-slate-400">arrow_drop_down</span>
+                <span className="material-symbols-outlined text-[15px] text-primary">domain</span>
+                <span className="hidden max-w-[7rem] truncate lg:block">{selectedAgency}</span>
+                <span className="material-symbols-outlined text-[14px] text-on-surface-variant">arrow_drop_down</span>
               </button>
 
               {isAgencyMenuOpen && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsAgencyMenuOpen(false)} />
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 shadow-xl rounded-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-2 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Sélecteur d'Agence</span>
-                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded uppercase">Global</span>
+                  <div className="fixed inset-0 z-[45]" onClick={() => setIsAgencyMenuOpen(false)} />
+                  <div className="absolute right-0 top-full z-50 mt-1.5 w-52 overflow-hidden rounded-xl border border-outline bg-surface shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center justify-between border-b border-outline bg-surface-container-low px-4 py-2.5">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Agence</span>
+                      <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary">Global</span>
                     </div>
                     <div className="py-1">
                       {AGENCIES.map((agency) => (
                         <button
                           key={agency.id}
-                          onClick={() => {
-                            setSelectedAgency(agency.name);
-                            setIsAgencyMenuOpen(false);
-                            toast.success(`Agence basculée vers ${agency.name}`, { icon: '🏢' });
-                          }}
-                          className={`w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors ${selectedAgency === agency.name ? 'bg-slate-50 border-l-2 border-kamlog-primary' : 'border-l-2 border-transparent'}`}
+                          role="option"
+                          aria-selected={selectedAgency === agency.name}
+                          onClick={() => { setSelectedAgency(agency.name); setIsAgencyMenuOpen(false); toast.success(`Agence → ${agency.name}`, { icon: '🏢' }) }}
+                          className={`w-full flex items-center gap-3 border-l-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-surface-container-low ${selectedAgency === agency.name ? 'border-primary bg-surface-container-low font-semibold text-primary' : 'border-transparent text-on-surface'}`}
                         >
-                          <span className={`material-symbols-outlined text-[18px] ${selectedAgency === agency.name ? 'text-kamlog-primary' : 'text-slate-400'}`}>{agency.icon}</span>
-                          <span className={`text-xs font-medium ${selectedAgency === agency.name ? 'text-kamlog-primary font-bold' : 'text-slate-600'}`}>{agency.name}</span>
+                          <span className={`material-symbols-outlined text-[16px] ${selectedAgency === agency.name ? 'text-primary' : 'text-on-surface-variant'}`}>{agency.icon}</span>
+                          <span>{agency.name}</span>
                         </button>
                       ))}
                     </div>
@@ -423,146 +351,138 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
               )}
             </div>
 
-            {/* Theme Switcher */}
-            <button 
+            {/* Theme toggle */}
+            <button
               onClick={cycleTheme}
-              className="p-2 rounded-full text-slate-500 hover:text-kamlog-primary hover:bg-slate-100 transition-colors"
-              title={`Thème actuel: ${uiTheme}`}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+              title={`Thème: ${uiTheme}`}
             >
-              <span className="material-symbols-outlined text-[22px]">
+              <span className="material-symbols-outlined text-[20px]">
                 {uiTheme === 'light' ? 'light_mode' : uiTheme === 'dark' ? 'dark_mode' : 'settings_brightness'}
               </span>
             </button>
 
-            {/* Language Switcher */}
-            <button 
-              onClick={toggleLanguage}
-              className="flex items-center space-x-1 px-2 py-1 rounded border border-slate-200 text-slate-500 hover:text-kamlog-primary hover:bg-slate-100 transition-colors"
-              title="Changer la langue / Switch Language"
-            >
-              <span className="material-symbols-outlined text-[18px]">language</span>
-              <span className="text-[11px] font-bold uppercase">{language}</span>
-            </button>
-
-            {/* Sound Toggle */}
+            {/* Language toggle */}
             <button
-              onClick={toggleSound} // Use toggleSound from context
-              className={`relative p-2 rounded-full transition-colors ${soundEnabled ? 'text-kamlog-primary hover:bg-slate-100' : 'text-slate-400 hover:bg-slate-100'}`}
-              title={soundEnabled ? 'Désactiver le son des alertes' : 'Activer le son des alertes'} // Title for accessibility
+              onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+              className="hidden items-center gap-0.5 rounded-lg border border-outline px-2 py-1.5 text-[11px] font-bold uppercase text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface sm:flex"
+              aria-label="Changer de langue"
             >
-              {showSoundBadge && ( // Conditional rendering for the badge
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-              )}
-              <span className="material-symbols-outlined text-[22px]">
-                {soundEnabled ? 'volume_up' : 'volume_off'}
-              </span>
+              <span className="material-symbols-outlined text-[15px]">translate</span>
+              {language}
             </button>
 
-            {/* Notifications */}
-            <button 
-              onClick={() => setIsDrawerOpen(true)}
-              className="p-2 text-slate-500 hover:text-kamlog-primary hover:bg-slate-100 rounded-full transition relative"
+            {/* Sound toggle */}
+            <button
+              onClick={toggleSound}
+              className={`relative inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-surface-container ${soundEnabled ? 'text-primary' : 'text-on-surface-variant'}`}
+              aria-label={soundEnabled ? 'Couper le son' : 'Activer le son'}
             >
-              <span className="material-symbols-outlined">notifications</span>
-              {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
-                  {notifications.filter(n => !n.read).length}
+              {showSoundBadge && <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />}
+              <span className="material-symbols-outlined text-[20px]">{soundEnabled ? 'volume_up' : 'volume_off'}</span>
+            </button>
+
+            {/* Notifications bell */}
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+              aria-label={`Notifications (${unreadCount} non lues)`}
+            >
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              {unreadCount > 0 && (
+                <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-surface bg-red-500 px-0.5 text-[9px] font-black text-white">
+                  {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </button>
 
-            {/* Profil utilisateur */}
-            <div className="flex items-center space-x-3">
-              {minutesLeft !== null && minutesLeft <= 5 && minutesLeft > 0 && ( // Only show warning if > 0 minutes left
-                <div 
-                  className="hidden md:flex flex-col items-end animate-pulse bg-red-50 px-2 py-1 rounded-md border border-red-100"
-                  title={`Session expire dans ${minutesLeft}m`}
-                >
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[10px] font-bold text-red-600">SESSION: {minutesLeft}m</span>
-                    <button 
-                      onClick={renewSession}
-                      className="text-[10px] font-black text-kamlog-primary hover:underline ml-1"
-                    >
-                      RENOUVELER
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className="text-right">
-                <p className="text-sm font-semibold text-slate-900 leading-tight">{user?.fullName || 'Chargement...'}</p>
-                <p className="text-xs text-slate-500">{user?.email}</p>
+            {/* Profile block */}
+            <div className="flex items-center gap-2 pl-1">
+              <div className="hidden flex-col items-end text-right lg:flex">
+                <p className="text-[13px] font-semibold leading-tight text-on-surface">{user?.fullName || '…'}</p>
+                <p className="text-[11px] text-on-surface-variant truncate max-w-[120px]">{user?.email}</p>
               </div>
-              <div className="h-9 w-9 rounded-lg bg-kamlog-primary flex items-center justify-center text-white font-bold shadow-sm">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-on-primary text-sm font-black shadow-sm ring-2 ring-primary/20 transition-transform hover:scale-105">
                 {user?.fullName?.charAt(0) || '?'}
               </div>
             </div>
 
-            {/* Bouton déconnexion */}
-            <button 
+            {/* Logout */}
+            <button
               onClick={logout}
-              className="p-2 text-slate-400 hover:text-kamlog-danger hover:bg-red-50 rounded-full transition"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-red-500/10 hover:text-error"
+              aria-label="Se déconnecter"
             >
-              <span className="material-symbols-outlined">logout</span>
+              <span className="material-symbols-outlined text-[20px]">logout</span>
             </button>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-      {/* Notification Drawer */}
+      {/* ════════════════════════════════════════════
+          NOTIFICATION DRAWER
+          ════════════════════════════════════════════ */}
       {isDrawerOpen && (
         <>
-          <div 
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"
             onClick={() => setIsDrawerOpen(false)}
           />
-          
-          <div className="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center space-x-2">
-                <span className="material-symbols-outlined text-slate-500">history</span>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">Historique Alertes</h2>
+          <div className="fixed inset-y-0 right-0 z-[60] flex w-[90vw] max-w-sm flex-col bg-surface border-l border-outline shadow-2xl animate-in slide-in-from-right duration-300">
+            {/* Drawer header */}
+            <div className="flex items-center justify-between border-b border-outline bg-surface-container-low px-4 py-3.5 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px] text-on-surface-variant">notifications</span>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-on-surface">{t.auth.notifTitle}</h2>
+                {unreadCount > 0 && (
+                  <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-black text-white">{unreadCount}</span>
+                )}
               </div>
-              <button onClick={() => setIsDrawerOpen(false)} className="p-1 hover:bg-slate-200 rounded-full transition-colors">
-                <span className="material-symbols-outlined text-slate-500">close</span>
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="rounded-lg p-1 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+                aria-label="Fermer les notifications"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-2 bg-slate-50/50">
+            {/* Notification list */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-surface-container-low/30">
               {notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                  <span className="material-symbols-outlined text-4xl mb-2">notifications_off</span>
-                  <p className="text-xs">Aucune notification</p>
+                <div className="flex flex-col items-center justify-center h-48 text-on-surface-variant gap-2">
+                  <span className="material-symbols-outlined text-5xl opacity-40">notifications_off</span>
+                  <p className="text-sm">{t.auth.notifEmpty}</p>
                 </div>
               ) : (
                 notifications.map((notif) => (
-                  <div 
+                  <div
                     key={notif.id}
-                    className={`p-3 rounded-lg border border-slate-200 bg-white shadow-sm transition-all relative group ${
-                      notif.severity === 'CRITICAL' ? 'border-l-4 border-l-red-500' : 'border-l-4 border-l-amber-500'
-                    } ${notif.read ? 'opacity-60' : ''}`}
+                    className={`group relative rounded-xl border border-outline bg-surface p-3.5 shadow-sm transition-all
+                      ${notif.severity === 'CRITICAL' ? 'border-l-4 border-l-red-500' : notif.severity === 'WARNING' ? 'border-l-4 border-l-amber-400' : 'border-l-4 border-l-blue-400'}
+                      ${notif.read ? 'opacity-50' : ''}
+                    `}
                   >
-                    <div className="flex justify-between items-start mb-1">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${
-                        notif.severity === 'CRITICAL' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
-                      }`}>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide
+                        ${notif.severity === 'CRITICAL' ? 'bg-error-container text-on-error-container' : notif.severity === 'WARNING' ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-primary-container text-on-primary-container'}
+                      `}>
                         {notif.severity}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="font-mono text-[10px] text-on-surface-variant">
                         {mounted ? new Date(notif.timestamp).toLocaleTimeString() : '--:--'}
                       </span>
                     </div>
-                    <p className={`text-xs leading-relaxed ${notif.read ? 'text-slate-500' : 'text-slate-700 font-medium'}`}>
+                    <p className={`text-xs leading-relaxed ${notif.read ? 'text-on-surface-variant' : 'text-on-surface font-medium'}`}>
                       {notif.message}
                     </p>
                     {!notif.read && (
                       <button
                         onClick={() => markAsRead(notif.id)}
-                        className="absolute bottom-2 right-2 p-1 bg-slate-100 rounded text-slate-500 hover:text-kamlog-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute bottom-2 right-2 rounded p-1 text-on-surface-variant opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
+                        aria-label="Marquer comme lu"
                       >
-                        <span className="material-symbols-outlined text-sm">done</span>
+                        <span className="material-symbols-outlined text-[16px]">done</span>
                       </button>
                     )}
                   </div>
@@ -570,43 +490,49 @@ export function ModuleHeader({ currentModule }: ModuleHeaderProps) {
               )}
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-white grid grid-cols-2 gap-3">
-              <button 
+            {/* Drawer footer */}
+            <div className="grid grid-cols-2 gap-2 border-t border-outline bg-surface p-3 shrink-0">
+              <button
                 onClick={markAllAsRead}
-                className="py-2 text-[10px] font-bold text-slate-600 hover:bg-slate-50 border border-slate-200 rounded uppercase tracking-wider transition-colors"
+                className="rounded-lg border border-outline py-2 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-container"
               >
-                Tout marquer lu
+                {t.auth.notifMarkAll}
               </button>
-              <button 
+              <button
                 onClick={clearReadNotifications}
-                disabled={!notifications.some(n => n.read)}
-                className="py-2 text-[10px] font-bold text-red-600 hover:bg-red-50 border border-red-100 rounded uppercase tracking-wider transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                disabled={!notifications.some((n) => n.read)}
+                className="rounded-lg border border-error/30 py-2 text-[11px] font-bold uppercase tracking-wide text-error transition-colors hover:bg-error-container/20 disabled:cursor-not-allowed disabled:opacity-30"
               >
-                Effacer les lus
+                {t.auth.notifClearRead}
               </button>
             </div>
           </div>
         </>
       )}
 
-    {/* Session Expired Modal */}
-    {showSessionExpiredModal && (
-      <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm text-center">
-          <span className="material-symbols-outlined text-red-500 text-6xl mb-4">lock_clock</span>
-          <h3 className="text-xl font-bold text-slate-800 mb-2">Session Expirée</h3>
-          <p className="text-slate-600 mb-6">
-            Votre session a expiré pour des raisons de sécurité. Veuillez vous reconnecter.
-          </p>
-          <button
-            onClick={logout}
-            className="w-full py-3 px-4 bg-kamlog-primary text-white font-bold rounded-md hover:bg-kamlog-primary/90 transition-colors"
-          >
-            Se reconnecter
-          </button>
+      {/* ════════════════════════════════════════════
+          SESSION EXPIRED MODAL
+          ════════════════════════════════════════════ */}
+      {showSessionExpiredModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-outline bg-surface p-8 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <span
+              className="material-symbols-outlined text-error text-6xl mb-4"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              lock_clock
+            </span>
+            <h3 className="mb-2 text-xl font-bold text-on-surface">{t.auth.sessionModalTitle}</h3>
+            <p className="mb-6 text-sm text-on-surface-variant">{t.auth.sessionModalBody}</p>
+            <button
+              onClick={logout}
+              className="w-full rounded-xl bg-primary py-3 px-4 font-bold text-on-primary transition-opacity hover:opacity-90"
+            >
+              {t.auth.sessionModalCta}
+            </button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </>
-  );
+  )
 }

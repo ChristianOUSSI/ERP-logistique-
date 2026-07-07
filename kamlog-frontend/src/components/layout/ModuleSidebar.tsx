@@ -17,6 +17,9 @@ interface NavItem {
 
 interface ModuleSidebarProps {
   isCollapsed?: boolean;
+  isMobile?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
   onToggle?: () => void;
 }
 
@@ -64,7 +67,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     fleet_management: 'Gestion Flotte',
     gate_in: 'Gate In',
     gate_out: 'Gate Out',
-    settings: 'Paramètres Module',
+    settings: 'Paramètres',
     logout: 'Déconnexion',
     mag_articles: 'Articles',
     mag_clients: 'Clients Magasin',
@@ -79,7 +82,8 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit_alerts: 'Alertes Sécurité',
     audit_reports: 'Rapports',
     audit_notifications: 'Notifications',
-    audit_settings: 'Paramètres Audit'
+    audit_settings: 'Paramètres Audit',
+    maintenance: 'Maintenance',
   },
   en: {
     global_overview: 'System Overview',
@@ -125,7 +129,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     fleet_management: 'Fleet Management',
     gate_in: 'Gate In',
     gate_out: 'Gate Out',
-    settings: 'Module Settings',
+    settings: 'Settings',
     logout: 'Sign Out',
     mag_articles: 'Articles',
     mag_clients: 'Warehouse Clients',
@@ -140,7 +144,8 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit_alerts: 'Security Alerts',
     audit_reports: 'Reports',
     audit_notifications: 'Notifications',
-    audit_settings: 'Audit Settings'
+    audit_settings: 'Audit Settings',
+    maintenance: 'Maintenance',
   }
 };
 
@@ -150,8 +155,8 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'transport_module', href: '/transport/control', icon: 'local_shipping' },
     { labelKey: 'finance_module', href: '/finance/overview', icon: 'account_balance' },
     { labelKey: 'magasin_module', href: '/magasin/dashboard', icon: 'warehouse' },
-    { labelKey: 'parc_module', href: '/parc/overview', icon: 'directions_car' },
-    { labelKey: 'audit_module', href: '/audit/dashboard/health', icon: 'shield' },
+    { labelKey: 'parc_module', href: '/parc/zones', icon: 'directions_car' },
+    { labelKey: 'audit_module', href: '/admin/audit/system-health', icon: 'shield' },
     { labelKey: 'master_data', href: '/master-data/tiers', icon: 'category' },
     { labelKey: 'admin_module', href: '/admin/user-management/listing', icon: 'manage_accounts' },
   ],
@@ -178,7 +183,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   finance: [
     { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },
-    { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' },
+    // { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' }, // Disabled until created
     { labelKey: 'billing', href: '/finance/factures', icon: 'receipt_long' },
     { labelKey: 'purchases', href: '/finance/requisitions', icon: 'shopping_bag' },
     { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
@@ -203,7 +208,8 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'analytics', href: '/magasin/analytics', icon: 'analytics' },
   ],
   parc: [
-    { labelKey: 'overview', href: '/parc/overview', icon: 'directions_car' },
+    { labelKey: 'overview', href: '/parc/zones', icon: 'dashboard' },
+    { labelKey: 'gate_in', href: '/parc/gate', icon: 'login' },
     { labelKey: 'fleet_management', href: '/parc/gestion-de-la-flotte', icon: 'local_shipping' },
     { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
     { labelKey: 'orders', href: '/parc/work-orders/create', icon: 'handyman' },
@@ -218,118 +224,241 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
 };
 
-export default function ModuleSidebar({ isCollapsed = false, onToggle }: ModuleSidebarProps) {
+/** Module icon per module key */
+const MODULE_ICONS: Record<ModuleType, string> = {
+  magasin: 'warehouse',
+  transport: 'conversion_path',
+  audit: 'shield',
+  finance: 'account_balance',
+  parc: 'directions_car',
+  admin: 'admin_panel_settings',
+  'master-data': 'hub',
+  dashboard: 'dashboard',
+};
+
+export default function ModuleSidebar({
+  isCollapsed = false,
+  isMobile = false,
+  isOpen = false,
+  onClose,
+  onToggle,
+}: ModuleSidebarProps) {
   const pathname = usePathname();
   const baseModule = pathname.split('/')[1] as ModuleType;
-  
-  // Si le module n'est pas dans NAVIGATION_CONFIG, on ne rend pas la sidebar (ou on affiche un fallback)
+
   const items = NAVIGATION_CONFIG[baseModule] || [];
-  const validModule = NAVIGATION_CONFIG[baseModule] ? baseModule : 'magasin'; // fallback theme
+  const validModule = NAVIGATION_CONFIG[baseModule] ? baseModule : 'magasin';
   const { theme } = useModuleTheme(validModule);
   const { language } = useSettings();
 
-  const t = (key: string) => SIDEBAR_I18N[language][key] || key;
-  
-  if (!items.length) return null; // Ne pas afficher de sidebar sur les pages sans module
+  const t = (key: string) => SIDEBAR_I18N[language]?.[key] || key;
+
+  if (!items.length) return null;
+
+  const moduleIcon = MODULE_ICONS[baseModule] || 'rocket_launch';
+  const moduleName = baseModule?.replace('-', ' ') || '';
+
+  /* ─────────────────────────────────────────────────────────
+   * On mobile  : fixed overlay drawer (z-[60])
+   * On desktop : shrinks/expands in the CSS-grid column (z-20)
+   * ───────────────────────────────────────────────────────── */
+  const mobileClasses = `
+    fixed inset-y-0 left-0 z-[60] h-full w-[280px] max-w-[85vw]
+    shadow-2xl transition-transform duration-300 ease-in-out
+    ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+  `;
+
+  const desktopClasses = `
+    relative z-20 h-full
+    sidebar-smooth
+    ${isCollapsed ? 'w-[72px]' : 'w-[260px]'}
+  `;
 
   return (
     <aside
-      className={`layout-sidebar flex flex-col transition-all duration-300 overflow-hidden bg-slate-900 absolute md:relative z-50 h-full ${
-        !isCollapsed ? 'translate-x-0 w-[260px]' : '-translate-x-full w-[260px] md:translate-x-0 md:w-[80px]'
-      }`}
+      className={`
+        flex flex-col bg-slate-950 text-slate-100 border-r border-slate-800/90
+        ${isMobile ? mobileClasses : desktopClasses}
+      `}
     >
-      {/* Brand Logo Area */}
-      <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between shrink-0">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className={`w-8 h-8 rounded-lg ${theme.sidebar.brandIconBg} ${theme.sidebar.brandIconText} flex items-center justify-center`}>
-            <span 
-              className="material-symbols-outlined text-white transition-all duration-300"
-              style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
+      {/* ── Brand / Module header ── */}
+      <div className="h-16 flex items-center px-3 border-b border-slate-800 justify-between shrink-0 gap-2">
+        <div className="flex items-center gap-3 overflow-hidden min-w-0">
+          {/* Module icon badge */}
+          <div
+            className={`
+              flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
+              ${theme.sidebar.brandIconBg} ${theme.sidebar.brandIconText}
+              transition-transform duration-200 hover:scale-110
+            `}
+          >
+            <span
+              className="material-symbols-outlined text-white"
+              style={{ fontSize: '18px' }}
             >
-              {baseModule === 'magasin' ? 'warehouse' : baseModule === 'transport' ? 'conversion_path' : baseModule === 'audit' ? 'shield' : 'rocket_launch'}
+              {moduleIcon}
             </span>
           </div>
-          {!isCollapsed && (
-            <span className="font-bold text-white tracking-tight uppercase text-sm truncate">
-              {baseModule}
+
+          {/* Module name — fades out when collapsed */}
+          <div
+            className={`
+              overflow-hidden transition-all duration-280
+              ${isCollapsed && !isMobile ? 'w-0 opacity-0' : 'w-full opacity-100'}
+            `}
+          >
+            <span className="block font-bold text-white tracking-tight uppercase text-sm whitespace-nowrap">
+              {moduleName}
             </span>
-          )}
+            <span className="block text-[10px] text-slate-400 whitespace-nowrap">KAMLOG ERP</span>
+          </div>
         </div>
-        
-        <button 
-          onClick={onToggle}
-          className="p-1 hover:bg-slate-800 rounded-md text-slate-400 transition-colors"
+
+        {/* Toggle / Close button */}
+        <button
+          onClick={isMobile ? onClose : onToggle}
+          className="flex-shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          aria-label={
+            isMobile ? 'Fermer le menu' : isCollapsed ? 'Déplier le menu' : 'Réduire le menu'
+          }
         >
           <span className="material-symbols-outlined text-[20px]">
-            {isCollapsed ? 'menu' : 'menu_open'}
+            {isMobile ? 'close' : isCollapsed ? 'menu' : 'menu_open'}
           </span>
         </button>
       </div>
 
-      {/* Navigation Items */}
-      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+      {/* ── Navigation items ── */}
+      <nav
+        className="flex-1 py-4 px-2 space-y-0.5 overflow-y-auto scrollbar-sidebar"
+        aria-label="Navigation principale"
+      >
         {items.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          const label = t(item.labelKey);
+
           return (
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => { if (isMobile) onClose?.(); }}
+              title={isCollapsed && !isMobile ? label : undefined}
               className={`
-                group flex items-center justify-between px-3 py-2.5 rounded-r-lg transition-all duration-200 border-l-4
-                ${isActive 
-                  ? `${theme.sidebar.activeAccent} ${theme.sidebar.activeBgSubtle}` 
-                  : `text-slate-400 border-transparent ${theme.sidebar.hoverBg} hover:text-slate-200`}
+                group relative flex items-center gap-3 px-2.5 py-2.5 rounded-xl
+                transition-all duration-150 min-w-0 overflow-hidden
+                ${isActive
+                  ? `${theme.sidebar.activeAccent} ${theme.sidebar.activeBgSubtle} font-semibold`
+                  : `text-slate-400 border-transparent hover:text-slate-100 ${theme.sidebar.hoverBg} hover:bg-slate-800/80`
+                }
               `}
-              title={isCollapsed ? t(item.labelKey) : ''}
             >
-              <div className="flex items-center gap-3">
-                <span 
-                  className="material-symbols-outlined transition-all duration-300"
-                  style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
-                >
-                  {item.icon}
+              {/* Active left border indicator */}
+              {isActive && (
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-current"
+                  aria-hidden="true"
+                />
+              )}
+
+              {/* Icon */}
+              <span
+                className="material-symbols-outlined flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
+                style={{ fontSize: '20px', fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+              >
+                {item.icon}
+              </span>
+
+              {/* Label — hidden when collapsed on desktop */}
+              {(!isCollapsed || isMobile) && (
+                <span className="truncate text-[13px] leading-tight flex-1">
+                  {label}
                 </span>
-                {!isCollapsed && (
-                  <span className="text-[13px] font-medium">
-                    {t(item.labelKey)}
-                  </span>
-                )}
-              </div>
-              
-              {!isCollapsed && item.badge && (
-                <span className={`
-                  text-[10px] px-1.5 py-0.5 rounded font-bold uppercase flex-shrink-0
-                  ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-500'}
-                `}>
+              )}
+
+              {/* Badge (e.g. Mag3) */}
+              {(!isCollapsed || isMobile) && item.badge && (
+                <span
+                  className={`
+                    flex-shrink-0 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide
+                    ${isActive
+                      ? 'bg-white/20 text-white'
+                      : 'bg-slate-700/70 text-slate-400'
+                    }
+                  `}
+                >
                   {item.badge}
                 </span>
+              )}
+
+              {/* Tooltip on collapsed desktop */}
+              {isCollapsed && !isMobile && (
+                <div
+                  className="
+                    pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2
+                    z-[70] px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap
+                    bg-slate-800 text-slate-100 border border-slate-700 shadow-xl
+                    opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100
+                    transition-all duration-150 origin-left
+                  "
+                  role="tooltip"
+                >
+                  {label}
+                  {item.badge && (
+                    <span className="ml-1.5 text-[9px] px-1 py-0.5 rounded bg-slate-700 text-slate-300 uppercase">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
               )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Bottom Profile / Settings */}
-      <div className="p-4 border-t border-slate-800">
+      {/* ── Bottom: Settings & Logout ── */}
+      <div className="shrink-0 p-2 border-t border-slate-800 space-y-0.5">
         <Link
           href="/settings"
-          className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors"
+          onClick={() => { if (isMobile) onClose?.(); }}
+          title={isCollapsed && !isMobile ? t('settings') : undefined}
+          className="group relative flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
         >
-          <span 
-            className="material-symbols-outlined flex-shrink-0 transition-all duration-300"
-            style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
-          >settings</span>
-          {!isCollapsed && <span className="text-xs">{t('settings')}</span>}
+          <span
+            className="material-symbols-outlined flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
+            style={{ fontSize: '20px' }}
+          >
+            settings
+          </span>
+          {(!isCollapsed || isMobile) && (
+            <span className="text-xs truncate">{t('settings')}</span>
+          )}
+          {isCollapsed && !isMobile && (
+            <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 z-[70] px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-slate-800 text-slate-100 border border-slate-700 shadow-xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 origin-left">
+              {t('settings')}
+            </div>
+          )}
         </Link>
+
         <Link
           href="/logout"
-          className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-red-400 transition-colors"
+          onClick={() => { if (isMobile) onClose?.(); }}
+          title={isCollapsed && !isMobile ? t('logout') : undefined}
+          className="group relative flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
         >
-          <span 
-            className="material-symbols-outlined flex-shrink-0 transition-all duration-300"
-            style={{ fontSize: 'var(--sidebar-icon-size)' } as React.CSSProperties}
-          >logout</span>
-          {!isCollapsed && <span className="text-xs">{t('logout')}</span>}
+          <span
+            className="material-symbols-outlined flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
+            style={{ fontSize: '20px' }}
+          >
+            logout
+          </span>
+          {(!isCollapsed || isMobile) && (
+            <span className="text-xs truncate">{t('logout')}</span>
+          )}
+          {isCollapsed && !isMobile && (
+            <div className="pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 z-[70] px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-slate-800 text-slate-100 border border-slate-700 shadow-xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 origin-left">
+              {t('logout')}
+            </div>
+          )}
         </Link>
       </div>
     </aside>

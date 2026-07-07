@@ -17,11 +17,7 @@ export default function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <SettingsProvider>
-      <AppLayoutContent>{children}</AppLayoutContent>
-    </SettingsProvider>
-  );
+  return <AppLayoutContent>{children}</AppLayoutContent>;
 }
 
 function AppLayoutContent({
@@ -34,39 +30,58 @@ function AppLayoutContent({
   const pathname = usePathname();
   const { theme, currentModule } = useModuleTheme();
   const { theme: uiTheme } = useSettings();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Auto-collapse based on screen size (Standard Tablet/Mobile breakpoint)
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  /* ────────────────────────────────────────────
+   * Responsive breakpoint detection
+   * lg = 1024px threshold (Tailwind default)
+   * ──────────────────────────────────────────── */
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsSidebarCollapsed(true);
-      } else {
-        setIsSidebarCollapsed(false); 
-      }
+    const mq = window.matchMedia('(max-width: 1023px)');
+
+    const sync = (e?: MediaQueryList | MediaQueryListEvent) => {
+      const mobile = e ? (e as MediaQueryListEvent).matches : mq.matches;
+      setIsMobileViewport(mobile);
+      // Close mobile drawer when resizing to desktop
+      if (!mobile) setIsMobileSidebarOpen(false);
     };
 
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
   }, []);
 
+  /* Prevent body scroll when mobile drawer is open */
+  useEffect(() => {
+    if (isMobileViewport && isMobileSidebarOpen) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+    return () => document.body.classList.remove('no-scroll');
+  }, [isMobileViewport, isMobileSidebarOpen]);
+
+  /* ────────────────────────────────────────────
+   * Auth guard
+   * ──────────────────────────────────────────── */
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
 
-  // Route Guard Logic
+  /* ────────────────────────────────────────────
+   * RBAC route guard
+   * ──────────────────────────────────────────── */
   const isAuthorized = () => {
     if (!user) return false;
     const userRoles = user.roles.map(r => r.toUpperCase());
-    if (userRoles.includes('ADMIN') || userRoles.includes('MANAGER')) return true; // Admin has full access
+    if (userRoles.includes('ADMIN') || userRoles.includes('MANAGER')) return true;
 
-    // Extract base module from pathname (e.g. '/magasin/dashboard' -> 'magasin')
     const baseModule = pathname.split('/')[1];
-
-    // Pages accessibles à tous les rôles authentifiés
     const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings', 'chauffeur'];
     if (commonPages.includes(baseModule)) return true;
 
@@ -94,62 +109,110 @@ function AppLayoutContent({
     });
   };
 
-  if (loading) {
-    return <FullScreenLoader />;
-  }
-
-  if (!user) {
-    return null; 
-  }
+  /* ────────────────────────────────────────────
+   * Loading / Auth states
+   * ──────────────────────────────────────────── */
+  if (loading) return <FullScreenLoader />;
+  if (!user) return null;
 
   if (!isAuthorized()) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-900 gap-4">
-        <h2 className="text-2xl font-bold text-red-600">Accès Refusé</h2>
-        <p>Votre profil ({user.roles?.join(', ')}) ne vous permet pas d'accéder à ce module.</p>
-        <button 
-          onClick={() => router.push(getRouteForRole(user.roles))}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Retourner à mon espace
-        </button>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center text-on-background">
+        <div className="rounded-2xl border border-outline bg-surface p-8 shadow-xl max-w-md w-full">
+          <span className="material-symbols-outlined text-error text-5xl mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+          <h2 className="text-2xl font-bold text-error mb-2">Accès Refusé</h2>
+          <p className="text-sm text-on-surface-variant mb-6">
+            Votre profil ({user.roles?.join(', ')}) ne vous permet pas d&apos;accéder à ce module.
+          </p>
+          <button
+            onClick={() => router.push(getRouteForRole(user.roles))}
+            className="w-full rounded-xl bg-primary px-4 py-3 font-semibold text-on-primary transition hover:opacity-90"
+          >
+            Retourner à mon espace
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Maintainable sidebar width variables
-  const sidebarWidth = isSidebarCollapsed ? '80px' : '260px';
-  const iconSize = isSidebarCollapsed ? '24px' : '22px';
+  /* ────────────────────────────────────────────
+   * CSS Grid layout
+   *
+   * Desktop:
+   *   Header (sticky, z-30, h-16, full width)
+   *   ┌──────────────┬──────────────────────────┐
+   *   │  Sidebar     │  Main content             │
+   *   │  (z-20)      │  (overflow-y-auto)        │
+   *   └──────────────┴──────────────────────────┘
+   *
+   * Mobile:
+   *   Header (sticky, z-30)
+   *   Main content (full width)
+   *   Sidebar overlay (fixed, z-[60], above everything)
+   *
+   * Z-index hierarchy:
+   *   Header          z-30
+   *   Desktop sidebar z-20 (within flow, no overlap)
+   *   Mobile overlay  z-[55] (backdrop) / z-[60] (drawer)
+   *   Header dropdowns z-50 (above sidebar, below mobile drawer)
+   *   Notifications drawer z-[60]
+   *   Session modal   z-[9999]
+   * ──────────────────────────────────────────── */
 
-  const containerStyle = {
-    '--sidebar-width': sidebarWidth,
-    '--sidebar-icon-size': iconSize,
-  } as React.CSSProperties;
+  const sidebarWidth = isSidebarCollapsed ? '72px' : '260px';
 
   return (
-    <div style={containerStyle} className="min-h-screen bg-surface-container-low">
+    <div className="flex min-h-screen flex-col bg-surface-container-low overflow-x-hidden">
       <Toaster position="top-right" richColors theme={uiTheme === 'system' ? 'system' : uiTheme} />
 
-      {/* Mobile Overlay */}
-      {!isSidebarCollapsed && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity" 
-          onClick={() => setIsSidebarCollapsed(true)}
-        />
-      )}
+      {/* ── Sticky Header (full width) ── */}
+      <ModuleHeader
+        currentModule={currentModule}
+        onMenuClick={() => {
+          if (isMobileViewport) {
+            setIsMobileSidebarOpen((prev) => !prev);
+          } else {
+            setIsSidebarCollapsed((prev) => !prev);
+          }
+        }}
+      />
 
-      {/* Header global */}
-      <ModuleHeader currentModule={currentModule} />
-      
-      <div className="flex">
-        {/* Sidebar responsive */}
-        <ModuleSidebar isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
-        
-        {/* Contenu principal */}
-        <main 
-          className={`flex-1 p-6 transition-all duration-300 min-h-[calc(100vh-64px)] ${theme.mainBackground}`}
+      {/* ── Body row: sidebar + main ── */}
+      <div className="relative flex flex-1 min-h-[calc(100vh-64px)]">
+
+        {/* Mobile backdrop overlay */}
+        {isMobileViewport && isMobileSidebarOpen && (
+          <div
+            className="fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm transition-opacity lg:hidden"
+            onClick={() => setIsMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Sidebar
+            — on mobile: fixed drawer (handled entirely inside ModuleSidebar)
+            — on desktop: inline in flex row, shrinks/expands */}
+        <div
+          className={`
+            flex-shrink-0 transition-[width] duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)]
+            ${isMobileViewport ? 'w-0 overflow-visible' : ''}
+          `}
+          style={isMobileViewport ? undefined : { width: sidebarWidth }}
         >
-          <div className="max-w-7xl mx-auto">
+          <ModuleSidebar
+            isCollapsed={isSidebarCollapsed}
+            isMobile={isMobileViewport}
+            isOpen={isMobileSidebarOpen}
+            onClose={() => setIsMobileSidebarOpen(false)}
+            onToggle={() => setIsSidebarCollapsed((prev) => !prev)}
+          />
+        </div>
+
+        {/* Main content */}
+        <main
+          className={`min-w-0 flex-1 overflow-x-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-6 lg:py-6 ${theme.mainBackground}`}
+        >
+          <div className="mx-auto w-full max-w-7xl">
             {children}
           </div>
         </main>
@@ -157,6 +220,3 @@ function AppLayoutContent({
     </div>
   );
 }
-
-
-

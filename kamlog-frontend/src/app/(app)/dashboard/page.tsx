@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/layout/AuthProvider'
 import { getRouteForRole } from '@/lib/role-routes'
 import { magasinAPI, financeAPI, transportAPI } from '@/lib/api-client'
+import { useI18n } from '@/hooks/useI18n'
 
 export default function GlobalDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const t = useI18n();
   const [isRedirecting, setIsRedirecting] = useState(true);
 
-  // States for dynamic data
   const [stockValue, setStockValue] = useState<number>(0);
   const [activeVehicles, setActiveVehicles] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
@@ -38,7 +39,6 @@ export default function GlobalDashboard() {
   // Fetch Data
   useEffect(() => {
     if (isRedirecting) return;
-    
     async function fetchDashboardData() {
       try {
         const [magasinKpis, transportKpis, financeKpis, stocksRes] = await Promise.all([
@@ -47,175 +47,163 @@ export default function GlobalDashboard() {
           financeAPI.getKpis().catch(() => ({ data: { chiffre_affaires: 0 } })),
           magasinAPI.getStocks().catch(() => ({ data: [] }))
         ]);
-
         setStockValue(magasinKpis.data.totalStockValue || 0);
         setActiveVehicles(transportKpis.data.activeVehicles || 0);
         setTotalRevenue(financeKpis.data.chiffre_affaires || 0);
         setPendingMissions(transportKpis.data.activeMissions || 0);
-        
-        // Mocking dynamic alerts for now based on low stock
         const stocks = stocksRes.data || [];
         setAlerts(stocks.filter((s: any) => parseFloat(s.quantite_udb) < 10).map((s: any) => ({
           id: s.id || Math.random(),
-          message: `Stock faible pour l'article ${s.article_id || 'inconnu'}`,
+          message: `${t.magasin.lowStock} — ${s.article_id || t.common.unknown}`,
           type: 'warning'
         })));
-        
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
       } finally {
         setDataLoading(false);
       }
     }
-    
     fetchDashboardData();
-  }, [isRedirecting]);
+  }, [isRedirecting, t]);
 
   if (loading || isRedirecting) {
-    return <div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface">Redirection vers votre espace...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface-variant text-sm">
+        {t.common.redirecting}
+      </div>
+    );
   }
 
   return (
-    <>
-      <style jsx global>{`
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .zebra-table tr:nth-child(even) {
-          background-color: #F9FAFB;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #dce2f3;
-          border-radius: 10px;
-        }
-      `}</style>
-      <div className="bg-surface-container-low text-on-surface min-h-screen">
-        {/* TopAppBar Shell */}
-        
+    <div className="min-h-screen bg-surface-container-low text-on-surface">
 
-        {/* SideNavBar Shell */}
-        
+      <main className="p-3 sm:p-5 lg:p-6 max-w-7xl mx-auto">
 
-        {/* Main Content Area */}
-        <main className="lg: pt-16 min-h-screen">
-          <div className="p-lg max-w-max-width mx-auto">
-            {/* Global Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-md">
-              <div>
-                
-                <h1 className="text-headline-lg font-headline-lg text-on-background">System Overview</h1>
-              </div>
-              <div className="flex items-center gap-sm">
-                {dataLoading ? (
-                  <span className="text-label-md font-label-md text-on-surface-variant">Chargement...</span>
-                ) : (
-                  <span className="text-label-md font-label-md text-green-600">Données à jour</span>
-                )}
+        {/* ── Page Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-on-surface tracking-tight">{t.dashboard.systemOverview}</h1>
+            <p className="text-sm text-on-surface-variant mt-1">{t.dashboard.subtitle}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {dataLoading ? (
+              <span className="text-xs text-on-surface-variant">{t.common.loadingData}</span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {t.common.dataUpToDate}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* ── KPI Cards ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+          {/* Stock Value — Magasin */}
+          <div className="kpi-card">
+            <div className="flex justify-between items-start mb-4">
+              <div className="kpi-icon-wrap bg-error/10">
+                <span className="material-symbols-outlined text-error text-[22px]">warehouse</span>
               </div>
             </div>
-
-            {/* Bento Layout Main Dashboard */}
-            <div className="grid grid-cols-12 gap-gutter animate-fade-in">
-              {/* KPI CARDS (4 Modules) */}
-              {/* Stock Value - Red (Magasin) */}
-              <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-md">
-                  <div className="p-xs bg-error/10 text-error rounded-lg">
-                    <span className="material-symbols-outlined">warehouse</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Stock Value</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">{stockValue.toLocaleString()} FCFA</h2>
-                </div>
-                <div className="mt-md border-t border-outline-variant pt-sm">
-                  <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-error">K-Magasin</span></p>
-                </div>
-              </div>
-
-              {/* Pending Missions - Orange (Audit) */}
-              <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-md">
-                  <div className="p-xs bg-tertiary/10 text-tertiary rounded-lg">
-                    <span className="material-symbols-outlined">assignment_late</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Pending Missions</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">{pendingMissions}</h2>
-                </div>
-                <div className="mt-md border-t border-outline-variant pt-sm">
-                  <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-tertiary">K-Audit</span></p>
-                </div>
-              </div>
-
-              {/* Total Revenue - Purple (Finance) */}
-              <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-md">
-                  <div className="p-xs bg-[#8E24AA]/10 text-[#8E24AA] rounded-lg">
-                    <span className="material-symbols-outlined">payments</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Total Revenue</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">{totalRevenue.toLocaleString()} FCFA</h2>
-                </div>
-                <div className="mt-md border-t border-outline-variant pt-sm">
-                  <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-[#8E24AA]">K-Finance</span></p>
-                </div>
-              </div>
-
-              {/* Active Vehicles - Cyan (Transport) */}
-              <div className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white p-lg rounded-xl border border-outline-variant flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-md">
-                  <div className="p-xs bg-[#00ACC1]/10 text-[#00ACC1] rounded-lg">
-                    <span className="material-symbols-outlined">local_shipping</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-xxs">Active Vehicles</p>
-                  <h2 className="text-headline-md font-headline-md text-on-background">{activeVehicles} Units</h2>
-                </div>
-                <div className="mt-md border-t border-outline-variant pt-sm">
-                  <p className="text-label-sm font-label-sm text-on-surface-variant">Module: <span className="font-bold text-[#00ACC1]">K-Transport</span></p>
-                </div>
-              </div>
-
-              {/* Alerts Center */}
-              <div className="col-span-12 lg:col-span-12">
-                <div className="bg-white p-lg rounded-xl border border-outline-variant flex flex-col">
-                  <div className="flex items-center justify-between mb-md">
-                    <h3 className="text-title-lg font-title-lg text-on-background flex items-center gap-xs">
-                      <span className="material-symbols-outlined text-error">warning</span>
-                      Critical Alerts
-                    </h3>
-                  </div>
-                  <div className="flex-1 overflow-y-auto space-y-sm custom-scrollbar p-sm">
-                    {alerts.length === 0 ? (
-                      <div className="p-sm bg-surface-container-highest border-l-4 border-outline rounded-r-lg">
-                        <p className="text-body-sm font-body-sm text-on-surface text-center">Toutes les opérations sont normales. Aucune alerte critique pour le moment.</p>
-                      </div>
-                    ) : (
-                      alerts.map((alert: any) => (
-                        <div key={alert.id} className={`p-sm bg-${alert.type === 'error' ? 'error' : 'tertiary'}/10 border-l-4 border-${alert.type === 'error' ? 'error' : 'tertiary'} rounded-r-lg animate-slide-up`}>
-                          <p className={`text-body-sm font-body-sm text-${alert.type === 'error' ? 'error' : 'tertiary'} font-medium`}>{alert.message}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-
+            <div>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">{t.dashboard.stockValue}</p>
+              <h2 className="text-2xl font-black text-on-surface tabular-nums">{stockValue.toLocaleString()} <span className="text-sm font-semibold">FCFA</span></h2>
+            </div>
+            <div className="mt-4 border-t border-outline pt-3">
+              <p className="text-[11px] text-on-surface-variant">Module: <span className="font-bold text-error">{t.dashboard.moduleKMagasin}</span></p>
             </div>
           </div>
-        </main>
-      </div>
-    </>
+
+          {/* Pending Missions — Audit */}
+          <div className="kpi-card">
+            <div className="flex justify-between items-start mb-4">
+              <div className="kpi-icon-wrap bg-tertiary/10">
+                <span className="material-symbols-outlined text-tertiary text-[22px]">assignment_late</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">{t.dashboard.pendingMissions}</p>
+              <h2 className="text-2xl font-black text-on-surface tabular-nums">{pendingMissions}</h2>
+            </div>
+            <div className="mt-4 border-t border-outline pt-3">
+              <p className="text-[11px] text-on-surface-variant">Module: <span className="font-bold text-tertiary">{t.dashboard.moduleKAudit}</span></p>
+            </div>
+          </div>
+
+          {/* Total Revenue — Finance */}
+          <div className="kpi-card">
+            <div className="flex justify-between items-start mb-4">
+              <div className="kpi-icon-wrap bg-violet-500/10">
+                <span className="material-symbols-outlined text-violet-600 dark:text-violet-400 text-[22px]">payments</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">{t.dashboard.totalRevenue}</p>
+              <h2 className="text-2xl font-black text-on-surface tabular-nums">{totalRevenue.toLocaleString()} <span className="text-sm font-semibold">FCFA</span></h2>
+            </div>
+            <div className="mt-4 border-t border-outline pt-3">
+              <p className="text-[11px] text-on-surface-variant">Module: <span className="font-bold text-violet-600 dark:text-violet-400">{t.dashboard.moduleKFinance}</span></p>
+            </div>
+          </div>
+
+          {/* Active Vehicles — Transport */}
+          <div className="kpi-card">
+            <div className="flex justify-between items-start mb-4">
+              <div className="kpi-icon-wrap bg-cyan-500/10">
+                <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-[22px]">local_shipping</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">{t.dashboard.activeVehicles}</p>
+              <h2 className="text-2xl font-black text-on-surface tabular-nums">{activeVehicles} <span className="text-sm font-semibold">units</span></h2>
+            </div>
+            <div className="mt-4 border-t border-outline pt-3">
+              <p className="text-[11px] text-on-surface-variant">Module: <span className="font-bold text-cyan-600 dark:text-cyan-400">{t.dashboard.moduleKTransport}</span></p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Critical Alerts ── */}
+        <div className="erp-card">
+          <div className="erp-card-header flex items-center justify-between">
+            <h3 className="text-base font-bold text-on-surface flex items-center gap-2">
+              <span className="material-symbols-outlined text-error text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+              {t.dashboard.criticalAlerts}
+            </h3>
+            {alerts.length > 0 && (
+              <span className="rounded-full bg-error/10 text-error text-[11px] font-bold px-2 py-0.5">{alerts.length}</span>
+            )}
+          </div>
+          <div className="p-4 space-y-2 max-h-60 overflow-y-auto scrollbar-sidebar">
+            {alerts.length === 0 ? (
+              <div className="p-4 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-r-xl">
+                <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                  {t.dashboard.alertsNormal}
+                </p>
+              </div>
+            ) : (
+              alerts.map((alert: any) => (
+                <div
+                  key={alert.id}
+                  className={`p-3.5 rounded-xl border-l-4 ${
+                    alert.type === 'error'
+                      ? 'bg-error/5 border-error'
+                      : 'bg-tertiary/5 border-tertiary'
+                  }`}
+                >
+                  <p className={`text-sm font-medium ${alert.type === 'error' ? 'text-error' : 'text-tertiary'}`}>
+                    {alert.message}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+      </main>
+    </div>
   )
 }
