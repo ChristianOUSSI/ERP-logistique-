@@ -52,6 +52,10 @@ export const adminAPI = {
   getRoles: () => apiClient.get('/api/admin/roles'),
   createRole: (data: any) => apiClient.post('/api/admin/roles', data),
   getAuditLogs: () => apiClient.get('/api/admin/audit-logs'),
+  getAgencies: (params?: Record<string, unknown>) => apiClient.get('/api/admin/agencies', { params }),
+  createAgency: (data: unknown) => apiClient.post('/api/admin/agencies', data),
+  updateAgency: (id: number, data: unknown) => apiClient.put(`/api/admin/agencies/${id}`, data),
+  deleteAgency: (id: number) => apiClient.delete(`/api/admin/agencies/${id}`),
 };
 
 // ─── Service Auth ─────────────────────────────────────────
@@ -168,6 +172,18 @@ export const tiersAPI = {
     apiClient.put(`/api/tiers/${id}`, data),
   deleteTiers: (id: number) =>
     apiClient.delete(`/api/tiers/${id}`),
+};
+
+// ─── Service Suppliers (Fournisseurs) ─────────────────────
+export const suppliersAPI = {
+  getSuppliers: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/suppliers', { params }),
+  getSupplier: (id: number) =>
+    apiClient.get(`/api/suppliers/${id}`),
+  createSupplier: (data: unknown) =>
+    apiClient.post('/api/suppliers', data),
+  updateSupplier: (id: number, data: unknown) =>
+    apiClient.put(`/api/suppliers/${id}`, data),
 };
 
 // ─── Service Master Data ──────────────────────────────────
