@@ -175,8 +175,8 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
           Zone 2: T-Code search bar
           Zone 3: Actions (agency, theme, lang, sound, notifs, profile, logout)
           ════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-30 h-16 border-b border-outline bg-surface/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-surface/85">
-        <div className="flex h-full items-center gap-2 px-3 sm:px-4 lg:px-5 overflow-x-auto no-scrollbar">
+      <header className="sticky top-0 z-40 h-16 border-b border-outline bg-surface/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-surface/85">
+        <div className="flex h-full items-center gap-2 px-3 sm:px-4 lg:px-5">
 
           {/* ── Zone 1: Identity ── */}
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">

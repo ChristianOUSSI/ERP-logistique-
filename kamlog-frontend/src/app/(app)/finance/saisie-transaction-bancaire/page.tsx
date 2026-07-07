@@ -14,43 +14,43 @@ export default function SaisieTransactionBancairePage() {
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal - BNA (DZ)')
   const [selectedTransaction, setSelectedTransaction] = useState<number | null>(2)
   const [formData, setFormData] = useState({
-    dateValeur: '2023-10-13',
-    dateComptable: '2023-10-13',
-    libelle: 'FRAIS TENUE DE COMPTE OCT',
-    montant: '1 250.00',
-    compteGeneral: '627800',
-    compteGeneralLabel: 'Frais bancaires divers',
+    dateValeur: '2023-10-16',
+    dateComptable: '2023-10-16',
+    libelle: 'VIREMENT SALAIRES OCTOBRE',
+    montant: '4 250 000.00',
+    compteGeneral: '421000',
+    compteGeneralLabel: 'Personnel - Rémunérations dues',
     centreCout: '',
-    codeTaxe: 't2'
+    codeTaxe: 't0'
   })
 
   const [transactions] = useState<BankTransaction[]>([
     {
-      date: '12/10/2023',
-      label: 'VIR RECU PORT AUTHO REF: 99823',
+      date: '15/10/2023',
+      label: 'DEPOT ESPECES GUICHET',
       debit: '',
-      credit: '+ 450,000.00',
+      credit: '+ 1,500,000.00',
       status: 'matched'
     },
     {
-      date: '12/10/2023',
-      label: 'PRELEV FOURNISSEUR CMA CGM',
-      debit: '12,500.00',
-      credit: '',
-      status: 'matched'
-    },
-    {
-      date: '13/10/2023',
-      label: 'FRAIS TENUE DE COMPTE OCT',
-      debit: '1,250.00',
+      date: '16/10/2023',
+      label: 'VIREMENT SALAIRES OCTOBRE',
+      debit: '4,250,000.00',
       credit: '',
       status: 'pending'
     },
     {
-      date: '14/10/2023',
-      label: 'REMISE CHQ N 8872635',
+      date: '17/10/2023',
+      label: 'PAIEMENT IMPOTS',
+      debit: '850,000.00',
+      credit: '',
+      status: 'pending'
+    },
+    {
+      date: '18/10/2023',
+      label: 'ENCAISSEMENT FACTURE F-2023-110',
       debit: '',
-      credit: '+ 85,200.00',
+      credit: '+ 2,100,000.00',
       status: 'pending'
     }
   ])

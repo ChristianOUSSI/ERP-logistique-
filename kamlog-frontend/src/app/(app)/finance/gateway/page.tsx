@@ -58,32 +58,9 @@ export default function KFinanceGatewayMonitor() {
         
         <div className="flex flex-1 pt-16 overflow-hidden">
           
-          <aside className="w-60 bg-surface-container border-r border-outline-variant flex flex-col pt-4 pb-md z-40">
-            <div className="px-md mb-lg">
-              <div className="flex items-center gap-sm mb-xs">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="material-symbols-outlined text-white icon-filled">payments</span>
-                </div>
-                <div>
-                  <div className="text-headline-sm font-headline-sm font-black text-primary leading-tight">KAMLOG</div>
-                  <div className="text-label-md font-label-md text-on-surface-variant">K-Finance Gateway</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-auto px-xxs pt-4 border-t border-outline-variant">
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/settings/system/audit-health">
-                <span className="material-symbols-outlined">settings</span>
-                <span>Settings</span>
-              </a>
-              <a className="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all text-label-md font-label-md" href="/login">
-                <span className="material-symbols-outlined text-error">logout</span>
-                <span>Logout</span>
-              </a>
-            </div>
-          </aside>
+
           {/* Main Content Area */}
-          <main className="flex-1 overflow-y-auto custom-scrollbar bg-surface p-md md:p-lg space-y-lg">
+          <main className="ml-[240px] flex-1 overflow-y-auto custom-scrollbar bg-surface p-md md:p-lg space-y-lg">
             {/* Breadcrumbs & Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-md">
               <div className="space-y-xxs">
