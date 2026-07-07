@@ -4,7 +4,7 @@ from typing import List, Optional
 from app.models.purchase import FicheBesoin, StatutFicheBesoin
 from app.schemas.purchase import FicheBesoinCreate, FicheBesoinUpdate
 from app.repositories.purchase_repository import FicheBesoinRepository
-from app.exceptions import ResourceNotFoundError, BusinessRuleViolationError
+from app.exceptions import NotFoundException, BusinessRuleViolationError
 
 class FicheBesoinService:
     def __init__(self):
@@ -16,7 +16,7 @@ class FicheBesoinService:
     def get_by_id(self, db: Session, fiche_id: int) -> FicheBesoin:
         fiche = self.repo.get_by_id(db, fiche_id)
         if not fiche:
-            raise ResourceNotFoundError("Fiche de besoin non trouvée.")
+            raise NotFoundException("Fiche de besoin non trouvée.")
         return fiche
 
     def create(self, db: Session, fiche_data: FicheBesoinCreate, demandeur_id: int, cree_par: str) -> FicheBesoin:

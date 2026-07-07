@@ -98,7 +98,8 @@ def upgrade() -> None:
         batch_op.alter_column('statut',
                existing_type=sa.VARCHAR(length=30),
                type_=sa.Enum('DISPONIBLE', 'EN_MAINTENANCE', 'EN_ROUTE', 'EN_CHARGEMENT', 'BLOQUE_HSE', name='statutcamion'),
-               existing_nullable=False)
+               existing_nullable=False,
+               postgresql_using='statut::statutcamion')
         batch_op.create_unique_constraint(batch_op.f('uq_camions_flotte_gps_tracker_id'), ['gps_tracker_id'])
         batch_op.create_foreign_key(batch_op.f('fk_camions_flotte_remorque_id_camions_flotte'), 'camions_flotte', ['remorque_id'], ['id'])
 
