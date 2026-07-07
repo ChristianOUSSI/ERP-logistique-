@@ -96,7 +96,7 @@ class TiersService:
         if existing_niu:
             raise ValueError(f"NIU {tiers.niu} déjà utilisé")
         
-        db_tiers = Tiers(**tiers.dict(), cree_par=cree_par)
+        db_tiers = Tiers(**tiers.model_dump())
         db.add(db_tiers)
         db.commit()
         db.refresh(db_tiers)
@@ -163,7 +163,7 @@ class TiersService:
         """Désactive un tiers"""
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
-            db_tiers.statut = StatutTiers.INACTIF
+            db_tiers.statut = StatutTiers.BLOQUE
             db.commit()
             db.refresh(db_tiers)
             
