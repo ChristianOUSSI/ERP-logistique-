@@ -1,68 +1,41 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Home, RefreshCw, ShieldX } from 'lucide-react'
 import Link from 'next/link'
+import { useI18n } from '@/hooks/useI18n'
 
 export default function Forbidden() {
+  const t = useI18n()
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full">
-        {/* Illustration 403 */}
-        <div className="text-center mb-8">
-          <div className="inline-block relative">
-            <div className="text-[120px] font-bold text-orange-500 opacity-20">
-              403
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <ShieldX className="w-16 h-16 text-orange-500" />
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="max-w-md w-full text-center">
+        <div className="inline-block relative mb-8">
+          <div className="text-[120px] font-bold text-tertiary opacity-10 leading-none select-none">403</div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="material-symbols-outlined text-tertiary" style={{ fontSize: 64 }}>shield_lock</span>
           </div>
         </div>
 
-        {/* Message d'erreur */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">
-            Accès refusé
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.
-          </p>
-        </div>
+        <h1 className="text-3xl font-bold text-on-background mb-3">{t.errors.forbiddenTitle}</h1>
+        <p className="text-on-surface-variant text-base mb-8">{t.errors.forbiddenMessage}</p>
 
-        {/* Actions */}
         <div className="space-y-3">
-          <Link href="/dashboard">
-            <Button className="w-full bg-[#06b6d4] hover:bg-[#0891b2] text-white">
-              <Home className="w-4 h-4 mr-2" />
-              Retour à l'accueil
-            </Button>
-          </Link>
-          
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={() => window.history.back()}
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-primary text-on-primary font-semibold text-sm transition hover:opacity-90"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Page précédente
-          </Button>
+            <span className="material-symbols-outlined text-[18px]">home</span>
+            {t.errors.backHome}
+          </Link>
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-outline text-on-surface font-semibold text-sm transition hover:bg-surface-container"
+          >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            {t.errors.previousPage2}
+          </button>
         </div>
 
-        {/* Aide */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            Besoin d'aide ?{' '}
-            <a href="mailto:support@kamlog.cm" className="text-[#06b6d4] hover:underline">
-              Contactez le support
-            </a>
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-12 text-center text-xs text-gray-400">
-          <p>© 2026 CADC - KAMLOG EM-ERP • Confidentiel</p>
-        </div>
+        <p className="mt-10 text-xs text-on-surface-variant/50">{t.errors.confidentialFooter}</p>
       </div>
     </div>
   )

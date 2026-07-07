@@ -81,7 +81,7 @@ export default function RegisterPage() {
   }
 
   return (
-    // Fixe l'écran — aucun scroll body possible
+    // Fixe l'écran  aucun scroll body possible
     <div
       className="fixed inset-0 flex items-center justify-center bg-slate-900"
       style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
@@ -161,15 +161,15 @@ export default function RegisterPage() {
         </div>
 
         {/* ══ Panneau droit : Formulaire ══ */}
-        <div className="flex-1 bg-white flex flex-col min-h-0">
+        <div className="flex-1 bg-white dark:bg-slate-800 flex flex-col min-h-0">
           {/* Header fixe du panneau */}
-          <div className="px-7 pt-7 pb-4 shrink-0 border-b border-slate-100">
+          <div className="px-7 pt-7 pb-4 shrink-0 border-b border-slate-100 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-black text-slate-900">Créer un compte</h1>
-                <p className="text-sm text-slate-500 mt-0.5">Accédez aux modules opérationnels KAMLOG</p>
+                <h1 className="text-xl font-black text-slate-900 dark:text-slate-100">Créer un compte</h1>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Accédez aux modules opérationnels KAMLOG</p>
               </div>
-              {/* Lien retour connexion — toujours visible */}
+              {/* Lien retour connexion  toujours visible */}
               <Link
                 href="/login"
                 className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors shrink-0 ml-4"
@@ -192,7 +192,7 @@ export default function RegisterPage() {
                   </label>
                   <input
                     {...register('firstName')}
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     id="firstName"
                     placeholder="Jean"
                     type="text"
@@ -205,7 +205,7 @@ export default function RegisterPage() {
                   </label>
                   <input
                     {...register('lastName')}
-                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     id="lastName"
                     placeholder="Dupont"
                     type="text"
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                   </span>
                   <input
                     {...register('email')}
-                    className="w-full h-10 pl-9 pr-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full h-10 pl-9 pr-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     id="email"
                     placeholder="prenom.nom@kamlog.com"
                     type="email"
@@ -245,7 +245,7 @@ export default function RegisterPage() {
                   </span>
                   <select
                     {...register('department')}
-                    className="w-full h-10 pl-9 pr-8 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
+                    className="w-full h-10 pl-9 pr-8 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
                     id="department"
                   >
                     <option disabled value="">Sélectionner un département</option>
@@ -273,7 +273,7 @@ export default function RegisterPage() {
                   </span>
                   <input
                     {...register('password')}
-                    className="w-full h-10 pl-9 pr-10 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full h-10 pl-9 pr-10 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     id="password"
                     placeholder="••••••••"
                     type={showPassword ? 'text' : 'password'}
@@ -312,7 +312,7 @@ export default function RegisterPage() {
                   id="terms"
                   type="checkbox"
                 />
-                <label className="text-sm text-slate-600 cursor-pointer leading-relaxed" htmlFor="terms">
+                <label className="text-sm text-slate-600 dark:text-slate-300 cursor-pointer leading-relaxed" htmlFor="terms">
                   J'accepte les{' '}
                   <a className="text-blue-600 hover:underline font-semibold" href="#">conditions d'utilisation</a>
                   {' '}et la politique de confidentialité de KAMLOG ERP.

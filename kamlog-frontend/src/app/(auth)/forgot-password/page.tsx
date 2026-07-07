@@ -1,5 +1,3 @@
-// src/app/(auth)/forgot-password/page.tsx
-// Design: carte centrée sur fond ERP (identique au style login)
 'use client'
 
 import { useState } from 'react'
@@ -8,208 +6,101 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
 import { apiClient } from '@/lib/api-client'
+import { useI18n } from '@/hooks/useI18n'
+import { useSettings, ThemePreference } from '@/components/layout/SettingsProvider'
 
-const forgotSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email obligatoire')
-    .email('Format email invalide'),
-})
-
+const forgotSchema = z.object({ email: z.string().min(1).email() })
 type ForgotFormData = z.infer<typeof forgotSchema>
 
 export default function ForgotPasswordPage() {
+  const t = useI18n()
+  const { theme: uiTheme, setTheme, language, setLanguage } = useSettings()
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState('')
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ForgotFormData>({
-    resolver: zodResolver(forgotSchema),
-  })
+  const { register, handleSubmit, formState: { errors } } = useForm<ForgotFormData>({ resolver: zodResolver(forgotSchema) })
+
+  const cycleTheme = () => {
+    const themes: ThemePreference[] = ['light', 'dark', 'system']
+    setTheme(themes[(themes.indexOf(uiTheme) + 1) % themes.length])
+  }
 
   const onSubmit = async (data: ForgotFormData) => {
     setIsLoading(true)
-    try {
-      await apiClient.post('/api/auth/forgot-password', {
-        email: data.email,
-      })
-      setSubmittedEmail(data.email)
-      setIsSuccess(true)
-    } catch {
-      // Toujours afficher le succès (ne pas révéler si l'email existe)
-      setSubmittedEmail(data.email)
-      setIsSuccess(true)
-    } finally {
-      setIsLoading(false)
-    }
+    try { await apiClient.post('/api/auth/forgot-password', { email: data.email }) } catch { }
+    finally { setSubmittedEmail(data.email); setIsSuccess(true); setIsLoading(false) }
   }
 
   return (
-    <div
-      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center overflow-y-auto relative py-12"
-      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-    >
-      {/* ── Background Layer ── */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-surface-container-low via-white to-surface-container-highest" />
-        <div className="absolute inset-0 logistics-overlay" />
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <img
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3F047r3gYJ87S3A35ak4dIOIGqHlksQbCPpUlVQ9vzeVWDfPBYIsS1-J0MTQ9hZvKJAmbrnAYlmm3-ppAXOhAndHlGzivtl9VPHTj8VML1Wbf7MIAshXa5PCgYR8-lLGVUBSlC9vdyEDdCz62_JQU91TuJVRfwE8oKBOJkHTLfyCcTYJhzzqwJoSOseWKiawHRC8myzlInZFL1fwnsC2PjL2ayMm-MVJ3iAiIHWL6f6uK8IZa0Wp1uebXZ6G0B5GfrtQB6X6Qkic"
-            alt="Terminal portuaire KAMLOG"
-          />
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-slate-900 relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950" />
+      <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
+
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+        <button onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')} className="flex items-center gap-1 rounded border border-white/20 bg-white/10 px-2 py-1 text-[11px] font-bold uppercase text-white/70 backdrop-blur transition hover:bg-white/20">
+          <span className="material-symbols-outlined text-[14px]">language</span>{language}
+        </button>
+        <button onClick={cycleTheme} className="rounded border border-white/20 bg-white/10 p-1.5 text-white/70 backdrop-blur transition hover:bg-white/20">
+          <span className="material-symbols-outlined text-[16px]">{uiTheme === 'light' ? 'light_mode' : uiTheme === 'dark' ? 'dark_mode' : 'settings_brightness'}</span>
+        </button>
       </div>
 
-      {/* ── Main Content ── */}
-      <main className="relative z-10 w-full max-w-md px-md">
-
-        {/* ── Header / Branding ── */}
-        <div className="text-center mb-xl">
-          <div className="inline-flex items-center justify-center p-xs bg-white rounded-lg shadow-sm border border-outline-variant mb-md">
-            <span
-              className="material-symbols-outlined text-auth-blue text-4xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              precision_manufacturing
-            </span>
+      <div className="relative z-10 w-full max-w-[420px] mx-4">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/40 mb-4">
+            <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>precision_manufacturing</span>
           </div>
-          <h1 className="text-headline-sm font-headline-sm text-primary tracking-tight">
-            KAMLOG EM-ERP
-          </h1>
-          <p className="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest mt-xxs">
-            Operational Control Systems
-          </p>
+          <h1 className="text-2xl font-black text-white tracking-tight">KAMLOG EM-ERP</h1>
+          <p className="text-xs font-bold text-blue-300 uppercase tracking-[0.2em] mt-1">Operational Control Systems</p>
         </div>
 
-        {/* ── Card ── */}
-        <div className="bg-white border border-outline-variant rounded-lg p-lg auth-card">
-
+        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 p-7">
           {isSuccess ? (
-            /* ── État succès ── */
             <div className="text-center">
-              <div className="flex justify-center mb-lg">
-                <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-secondary text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    check_circle
-                  </span>
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-[40px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 </div>
               </div>
-
-              <h2 className="text-title-lg font-title-lg text-on-surface mb-xs">
-                Email envoyé !
-              </h2>
-              <p className="text-body-sm font-body-sm text-on-surface-variant mb-xxs">
-                Un lien de réinitialisation a été envoyé à
-              </p>
-              <p className="text-body-md font-title-md text-on-surface mb-lg">
-                {submittedEmail}
-              </p>
-
-              <div className="flex items-center gap-xs p-sm bg-surface-container rounded border border-outline-variant/30 mb-lg text-left">
-                <span className="material-symbols-outlined text-outline text-[18px] shrink-0">info</span>
-                <p className="text-label-sm font-label-sm text-on-surface-variant leading-tight">
-                  Vérifiez aussi vos spams. Le lien expire dans 30 minutes.
-                </p>
-              </div>
-
-              <Link
-                href="/login"
-                className="w-full py-sm px-md bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-xs shadow-md"
-              >
-                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-                <span>Retour à la connexion</span>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">{t.auth.forgotSuccessTitle}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{t.auth.forgotSuccessBody}</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-4">{submittedEmail}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-6">{t.auth.forgotSpamNote}</p>
+              <Link href="/login" className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition">
+                <span className="material-symbols-outlined text-[18px]">arrow_back</span>{t.auth.backToLogin}
               </Link>
             </div>
           ) : (
-            /* ── État formulaire ── */
             <>
-              <div className="mb-lg">
-                <div className="flex justify-center mb-md">
-                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      lock_reset
-                    </span>
-                  </div>
-                </div>
-                <h2 className="text-title-lg font-title-lg text-on-surface mb-xxs text-center">
-                  Mot de passe oublié ?
-                </h2>
-                <p className="text-body-sm font-body-sm text-on-surface-variant text-center">
-                  Entrez votre adresse email, nous vous enverrons un lien de réinitialisation.
-                </p>
+              <div className="mb-5">
+                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t.auth.forgotTitle}</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.auth.forgotSubtitle}</p>
               </div>
-
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-md" noValidate>
-                {/* Email Field */}
-                <div className="space-y-xs">
-                  <label className="text-label-md font-label-md text-on-surface-variant" htmlFor="email">
-                    Email institutionnel
-                  </label>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t.auth.emailInstitutionalLabel}</label>
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">
-                      alternate_email
-                    </span>
-                    <input
-                      {...register('email')}
-                      className="w-full pl-10 pr-md py-sm bg-surface rounded border border-outline-variant text-body-md focus-ring transition-all placeholder:text-outline"
-                      id="email"
-                      placeholder="user@kamlog.com"
-                      type="email"
-                      disabled={isLoading}
-                    />
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">alternate_email</span>
+                    <input {...register('email')} type="email" placeholder="user@kamlog.com" disabled={isLoading}
+                      className="w-full h-11 pl-9 pr-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                   </div>
-                  {errors.email && (
-                    <p className="text-error text-label-sm mt-xxs">{errors.email.message}</p>
-                  )}
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                 </div>
-
-                {/* Submit */}
-                <button
-                  className="w-full py-sm px-md bg-primary text-on-primary font-title-md text-title-md rounded-lg hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-xs shadow-md disabled:opacity-70"
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="material-symbols-outlined animate-spin">sync</span>
-                      <span>Envoi en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Envoyer le lien</span>
-                      <span className="material-symbols-outlined text-[20px]">send</span>
-                    </>
-                  )}
+                <button type="submit" disabled={isLoading} className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70">
+                  {isLoading ? <><span className="material-symbols-outlined animate-spin text-[20px]">sync</span><span>{t.auth.forgotSending}</span></> : <><span>{t.auth.forgotCta}</span><span className="material-symbols-outlined text-[20px]">send</span></>}
                 </button>
+                <div className="text-center pt-2 border-t border-slate-100 dark:border-slate-700">
+                  <Link href="/login" className="text-sm text-blue-500 hover:underline inline-flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">arrow_back</span>{t.auth.backToLogin}
+                  </Link>
+                </div>
               </form>
-
-              {/* Retour */}
-              <div className="mt-lg pt-md border-t border-outline-variant text-center">
-                <Link
-                  href="/login"
-                  className="text-body-sm font-body-sm text-primary hover:underline inline-flex items-center gap-xxs"
-                >
-                  <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-                  Retour à la connexion
-                </Link>
-              </div>
             </>
           )}
         </div>
-
-        {/* ── System Footer ── */}
-        <div className="mt-lg flex flex-col items-center gap-xs">
-          <p className="text-label-sm font-label-sm text-outline">
-            v4.8.2-stable | © 2026 KAMLOG LOGISTICS GROUP
-          </p>
-        </div>
-      </main>
+        <p className="text-center text-xs text-white/30 mt-4">v4.8.2-stable · © 2026 KAMLOG LOGISTICS GROUP</p>
+      </div>
     </div>
   )
 }

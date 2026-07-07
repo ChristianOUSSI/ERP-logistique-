@@ -70,11 +70,11 @@ export default function MfaPage() {
 
   return (
     <div
-      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col"
+      className="bg-slate-900 text-on-surface font-body-md min-h-screen flex flex-col"
       style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
     >
-      {/* ── TopNavBar (comme dans le design ERP original) ── */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface-container-low border-b border-outline-variant">
+      {/* ── TopNavBar ── */}
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-slate-800/90 backdrop-blur border-b border-white/10">
         <div className="flex items-center gap-xs">
           <span className="text-primary font-bold text-title-lg tracking-tight">KAMLOG EM-ERP</span>
         </div>
@@ -92,10 +92,10 @@ export default function MfaPage() {
         {/* Background */}
         <div className="absolute inset-0 z-0 opacity-40" />
 
-        <div className="relative z-10 w-full max-w-[480px] bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <div className="relative z-10 w-full max-w-[480px] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col">
 
           {/* ── Header Section ── */}
-          <div className="p-lg bg-surface-container-high/50 border-b border-outline-variant flex items-center gap-md">
+          <div className="p-lg bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-white/10 flex items-center gap-md">
             <div className="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
               <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 lock_person
@@ -230,7 +230,7 @@ export default function MfaPage() {
           </div>
 
           {/* ── Footer Compliance ── */}
-          <div className="px-lg py-md bg-surface-container-lowest text-center">
+          <div className="px-lg py-md bg-slate-50 dark:bg-slate-900/50 text-center border-t border-slate-200 dark:border-white/10">
             <p className="text-label-sm font-label-sm text-on-surface-variant">KAMLOG Secure Access Control © 2026</p>
             <div className="flex justify-center gap-md mt-xxs">
               <span className="text-label-sm text-outline flex items-center gap-xxs">

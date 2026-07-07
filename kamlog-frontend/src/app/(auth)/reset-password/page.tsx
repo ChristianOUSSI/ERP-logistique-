@@ -1,5 +1,5 @@
 // src/app/(auth)/reset-password/page.tsx
-// Design: carte centrée sur fond ERP — réinitialisation de mot de passe
+// Design: carte centrée sur fond ERP  réinitialisation de mot de passe
 'use client'
 
 import { useState, Suspense } from 'react'
@@ -85,20 +85,13 @@ function ResetPasswordForm() {
 
   return (
     <div
-      className="bg-surface-container-low text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center overflow-y-auto relative py-12"
+      className="bg-slate-900 text-on-surface font-body-md min-h-screen flex flex-col items-center justify-center overflow-y-auto relative py-12"
       style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
     >
       {/* ── Background Layer ── */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-surface-container-low via-white to-surface-container-highest" />
-        <div className="absolute inset-0 logistics-overlay" />
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <img
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3F047r3gYJ87S3A35ak4dIOIGqHlksQbCPpUlVQ9vzeVWDfPBYIsS1-J0MTQ9hZvKJAmbrnAYlmm3-ppAXOhAndHlGzivtl9VPHTj8VML1Wbf7MIAshXa5PCgYR8-lLGVUBSlC9vdyEDdCz62_JQU91TuJVRfwE8oKBOJkHTLfyCcTYJhzzqwJoSOseWKiawHRC8myzlInZFL1fwnsC2PjL2ayMm-MVJ3iAiIHWL6f6uK8IZa0Wp1uebXZ6G0B5GfrtQB6X6Qkic"
-            alt="Terminal portuaire KAMLOG"
-          />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950" />
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
       </div>
 
       {/* ── Main Content ── */}
@@ -123,7 +116,7 @@ function ResetPasswordForm() {
         </div>
 
         {/* ── Card ── */}
-        <div className="bg-white border border-outline-variant rounded-lg p-lg auth-card">
+        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl p-7">
 
           <div className="mb-lg">
             <div className="flex justify-center mb-md">
@@ -133,10 +126,10 @@ function ResetPasswordForm() {
                 </span>
               </div>
             </div>
-            <h2 className="text-title-lg font-title-lg text-on-surface mb-xxs text-center">
+            <h2 className="text-title-lg font-title-lg text-slate-800 dark:text-slate-100 mb-xxs text-center">
               Nouveau mot de passe
             </h2>
-            <p className="text-body-sm font-body-sm text-on-surface-variant text-center">
+            <p className="text-body-sm font-body-sm text-slate-500 dark:text-slate-400 text-center">
               Choisissez un mot de passe sécurisé pour votre compte.
             </p>
           </div>
@@ -154,7 +147,7 @@ function ResetPasswordForm() {
                 </span>
                 <input
                   {...register('password')}
-                  className="w-full pl-10 pr-12 py-sm bg-surface rounded border border-outline-variant text-body-md focus-ring transition-all"
+                  className="w-full pl-10 pr-12 py-sm bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   id="password"
                   placeholder="••••••••"
                   type={showPassword ? 'text' : 'password'}
@@ -201,12 +194,8 @@ function ResetPasswordForm() {
                 </span>
                 <input
                   {...register('confirm')}
-                  className={`w-full pl-10 pr-12 py-sm bg-surface rounded border text-body-md focus-ring transition-all ${
-                    errors.confirm
-                      ? 'border-error bg-error-container/20'
-                      : watchConfirm && watchConfirm === watchPassword
-                      ? 'border-secondary'
-                      : 'border-outline-variant'
+                  className={`w-full pl-10 pr-12 py-sm bg-slate-50 dark:bg-slate-700 border rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                    errors.confirm ? 'border-red-400' : watchConfirm && watchConfirm === watchPassword ? 'border-green-400' : 'border-slate-200 dark:border-slate-600'
                   }`}
                   id="confirm"
                   placeholder="••••••••"
