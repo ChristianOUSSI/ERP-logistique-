@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { transportAPI } from '@/lib/api-client';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
-import { Calendar, Filter, GripVertical, Map, MapPin, Search, TrendingUp, Truck, Users } from 'lucide-react';
+import { Calendar, Filter, GripVertical, Map, MapPin, Search, TrendingUp, Truck, Printer } from 'lucide-react';
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -76,7 +76,16 @@ export default function PlanningPage() {
                   <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
                     {mission.reference}
                   </span>
-                  <GripVertical className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => window.open(`/transport/documents/bl/${mission.id}`, '_blank')}
+                      className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-blue-600 transition-colors"
+                      title="Imprimer BL"
+                    >
+                      <Printer className="w-4 h-4" />
+                    </button>
+                    <GripVertical className="w-4 h-4 text-slate-300" />
+                  </div>
                 </div>
                 
                 <h4 className="text-sm font-semibold text-slate-800 mb-1 line-clamp-1">

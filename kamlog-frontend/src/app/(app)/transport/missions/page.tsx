@@ -153,7 +153,8 @@ export default function MissionsPage() {
                 <th className="px-6 py-4">Trajet</th>
                 <th className="px-6 py-4">Ressources</th>
                 <th className="px-6 py-4">Fret</th>
-                <th className="px-6 py-4 text-right">Statut</th>
+                <th className="px-6 py-4">Statut</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -200,10 +201,20 @@ export default function MissionsPage() {
                     <div className="text-sm font-bold text-slate-800">{mission.nature_fret}</div>
                     <div className="text-xs font-medium text-slate-500 mt-1">{mission.poids_kg} kg | {mission.volume_m3} m³</div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${getStatutColor(mission.statut)}`}>
                       {mission.statut.replace(/_/g, ' ')}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button 
+                      onClick={() => window.open(`/transport/documents/bl/${mission.id}`, '_blank')}
+                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 ml-auto"
+                      title="Imprimer le Bon de Livraison"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">print</span>
+                      BL
+                    </button>
                   </td>
                 </tr>
               ))}
