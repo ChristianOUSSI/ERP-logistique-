@@ -208,6 +208,10 @@ export const masterDataAPI = {
     apiClient.put(`/api/master-data/articles/${id}`, data),
   deleteArticle: (id: number) =>
     apiClient.delete(`/api/master-data/articles/${id}`),
+  getTiers: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/tiers', { params }),
+  getTier: (id: number) =>
+    apiClient.get(`/api/tiers/${id}`),
 };
 
 // ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
