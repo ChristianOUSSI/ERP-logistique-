@@ -1,97 +1,86 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
-import { Map, Truck, Navigation, Settings2, RefreshCw } from 'lucide-react';
+import { Map, Activity, MapPin, Search } from 'lucide-react';
 
-// Dynamic import of MapViewer to avoid SSR window is not defined errors
-const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
+// Dynamic import with SSR false is REQUIRED for react-leaflet
+const MapControlTower = dynamic(() => import('@/components/transport/MapControlTower'), { 
   ssr: false,
-  loading: () => <div className="w-full h-[600px] bg-slate-100 animate-pulse rounded-2xl flex items-center justify-center text-slate-400">Initialisation de la carte...</div>
+  loading: () => (
+    <div className="w-full h-full bg-slate-100 rounded-2xl animate-pulse flex items-center justify-center">
+      <p className="text-slate-400 font-bold flex items-center gap-2">
+        <Map className="w-5 h-5 animate-spin" />
+        Initialisation de la tour de contrôle...
+      </p>
+    </div>
+  )
 });
 
-export default function FleetTrackingPage() {
-  const [points, setPoints] = useState<any[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    fetchFleetPositions();
-  }, []);
-
-  const fetchFleetPositions = () => {
-    setRefreshing(true);
-    // Simulation d'une API GPS Temps réel
-    setTimeout(() => {
-      setPoints([
-        { id: 'CAM-001', lat: 4.0511, lng: 9.7679, type: 'truck', label: 'Tracteur T-120 (En route)' },
-        { id: 'CAM-002', lat: 4.0322, lng: 9.7155, type: 'truck', label: 'Tracteur T-085 (À quai)' },
-        { id: 'CAM-003', lat: 4.0673, lng: 9.7891, type: 'truck', label: 'Tracteur T-203 (Livraison)' },
-      ]);
-      setRefreshing(false);
-    }, 800);
-  };
-
+export default function GPSControlTowerPage() {
   return (
     <ModuleLayout module="transport">
-      <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500 flex flex-col h-[calc(100vh-80px)]">
+      <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col p-4 animate-in fade-in duration-500">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4 shrink-0">
+        {/* Header Compact */}
+        <div className="flex justify-between items-center mb-4 shrink-0">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-              <Map className="w-8 h-8 text-blue-600" />
-              Tracking Flotte & Suivi GPS
+            <h1 className="text-2xl font-black text-slate-800 flex items-center gap-2">
+              <Map className="w-6 h-6 text-blue-600" />
+              Tour de Contrôle GPS
             </h1>
-            <p className="text-sm text-slate-500 mt-2">Visualisation en temps réel de la flotte sur le terrain.</p>
+            <p className="text-slate-500 text-sm">Suivi télématique en temps réel de la flotte.</p>
           </div>
-          <div className="flex gap-3">
-            <button 
-              onClick={fetchFleetPositions}
-              disabled={refreshing}
-              className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
-            >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-blue-600' : ''}`} />
-              Rafraîchir
-            </button>
-            <button className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all">
-              <Settings2 className="w-4 h-4" />
-              Configuration GPS
-            </button>
+
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Rechercher OT, Camion..."
+                className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 outline-none w-64"
+              />
+            </div>
+            <div className="bg-emerald-50 text-emerald-600 px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2 border border-emerald-100 shadow-sm">
+              <Activity className="w-4 h-4" />
+              Système En Ligne
+            </div>
           </div>
         </div>
 
         {/* Map Container */}
-        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col relative">
+        <div className="flex-1 rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative z-0">
+          <MapControlTower missions={[]} />
           
-          {/* Overlay Panel (Status & Search) */}
-          <div className="absolute top-4 left-4 z-[400] w-80 bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl rounded-2xl overflow-hidden flex flex-col max-h-[80%]">
-            <div className="p-4 border-b border-slate-100 bg-slate-50">
-              <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                <Navigation className="w-5 h-5 text-blue-600" />
-                Véhicules en activité
-              </h3>
+          {/* Overlay Stats Card */}
+          <div className="absolute top-4 right-4 z-[400] w-72 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-100">
+            <h3 className="font-bold text-slate-800 mb-3 text-sm flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-blue-600" />
+              Statut Flotte
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-slate-500">En Mouvement</span>
+                <span className="text-sm font-black text-emerald-600">12</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-1.5"><div className="bg-emerald-500 h-1.5 rounded-full w-[60%]"></div></div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-slate-500">En Arrêt / Quai</span>
+                <span className="text-sm font-black text-amber-600">5</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-1.5"><div className="bg-amber-500 h-1.5 rounded-full w-[25%]"></div></div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-semibold text-slate-500">Hors Ligne / Maintenance</span>
+                <span className="text-sm font-black text-red-600">3</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-1.5"><div className="bg-red-500 h-1.5 rounded-full w-[15%]"></div></div>
             </div>
-            <div className="p-2 flex-1 overflow-y-auto custom-scrollbar">
-              {points.map((pt, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors border-b border-slate-50 last:border-0">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                    <Truck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">{pt.id}</h4>
-                    <p className="text-xs text-slate-500 truncate w-44">{pt.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="w-full h-full">
-            <MapViewer points={points} center={[4.0511, 9.7679]} zoom={12} mode="truck_tracking" />
           </div>
         </div>
-
+        
       </div>
     </ModuleLayout>
   );

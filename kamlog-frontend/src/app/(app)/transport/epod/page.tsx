@@ -1,210 +1,216 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import { transportAPI } from '@/lib/api-client';
-import { ModuleLayout } from '@/components/layout/ModuleLayout';
-import SignaturePadModal from '@/components/transport/SignaturePadModal';
-import { MapPin, Navigation, PackageCheck, AlertCircle, CheckCircle2, ChevronRight, Truck } from 'lucide-react';
+import { Package, MapPin, Truck, CheckCircle2, Camera, AlertTriangle, CheckCircle, Navigation, Phone } from 'lucide-react';
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function EPodPage() {
-  const router = useRouter();
-  const [missions, setMissions] = useState<any[]>([]);
+  const [mission, setMission] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  
-  // Signature Pad State
-  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
-  const [activeMissionId, setActiveMissionId] = useState<number | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [statusUpdated, setStatusUpdated] = useState(false);
 
-  const fetchActiveMissions = async () => {
+  // Pour le MVP, on prend la dernière mission "EN_ROUTE" du système
+  useEffect(() => {
+    loadActiveMission();
+  }, []);
+
+  const loadActiveMission = async () => {
     try {
       setLoading(true);
-      // Pour la démo E-POD, on récupère toutes les missions (ou celles assignées si l'API le permet)
-      // En prod, le backend filtre selon le current_user (chauffeur).
       const res = await transportAPI.getMissions();
-      // On filtre côté client pour ne garder que les missions pertinentes pour le E-POD
-      const active = res.data?.filter((m: any) => 
-        ['PLANIFIE', 'EN_CHARGEMENT', 'EN_ROUTE', 'EN_LIVRAISON'].includes(m.statut)
-      ) || [];
-      setMissions(active);
-    } catch (err: any) {
+      const activeMissions = res.data?.filter((m: any) => m.statut === 'EN_ROUTE' || m.statut === 'EN_CHARGEMENT') || [];
+      if (activeMissions.length > 0) {
+        setMission(activeMissions[0]); // Prendre la première mission active
+      } else {
+        setMission(null);
+      }
+    } catch (err) {
       console.error(err);
-      setError("Impossible de charger les missions.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchActiveMissions();
-  }, []);
-
-  const handleDemarrer = async (id: number) => {
+  const handleUpdateStatus = async (newStatus: string) => {
+    if (!mission) return;
     try {
-      setLoading(true);
-      await transportAPI.demarrerMission(id);
-      setSuccess("Mission démarrée avec succès !");
-      fetchActiveMissions();
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.detail || "Erreur lors du démarrage de la mission.");
-      setLoading(false);
+      setActionLoading(true);
+      await transportAPI.updateMission(mission.id, { statut: newStatus });
+      setMission({ ...mission, statut: newStatus });
+      if (newStatus === 'LIVRE') {
+        setStatusUpdated(true);
+        setTimeout(() => setStatusUpdated(false), 3000);
+      }
+    } catch (err) {
+      console.error("Erreur de mise à jour", err);
+      alert("Erreur lors de la mise à jour du statut.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  const handleOpenLivraison = (id: number) => {
-    setActiveMissionId(id);
-    setIsSignatureModalOpen(true);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-[80vh] flex flex-col p-4">
+        <CardSkeletonLoader />
+      </div>
+    );
+  }
 
-  const handleSaveSignature = async (signatureBase64: string, name: string) => {
-    if (!activeMissionId) return;
-    try {
-      setLoading(true);
-      setIsSignatureModalOpen(false);
-      
-      await transportAPI.livrerMission(activeMissionId, {
-        signature: signatureBase64,
-        nom_receptionnaire: name
-      });
-      
-      setSuccess("Livraison confirmée et facturation générée !");
-      setActiveMissionId(null);
-      fetchActiveMissions();
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.detail || "Erreur lors de la confirmation de la livraison.");
-      setLoading(false);
-    }
-  };
+  if (!mission) {
+    return (
+      <div className="min-h-[80vh] bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-24 h-24 bg-slate-200 rounded-full flex items-center justify-center mb-6">
+          <Truck className="w-12 h-12 text-slate-400" />
+        </div>
+        <h2 className="text-2xl font-black text-slate-800 mb-2">Aucune Mission</h2>
+        <p className="text-slate-500 mb-8">Vous n'avez aucune mission active assignée pour le moment. Reposez-vous bien !</p>
+        <button 
+          onClick={loadActiveMission}
+          className="w-full max-w-xs py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-blue-700 active:scale-95 transition-all"
+        >
+          Actualiser
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <ModuleLayout module="transport">
-      {/* Container optimisé pour l'affichage Mobile (Chauffeur) */}
-      <div className="max-w-md mx-auto min-h-[calc(100vh-64px)] bg-slate-50 pb-20 animate-in fade-in duration-500 shadow-xl border-x border-slate-200">
-        
-        {/* Header App-like */}
-        <div className="bg-blue-600 text-white p-6 rounded-b-3xl shadow-md">
-          <div className="flex items-center gap-3 mb-2">
-            <Truck className="w-8 h-8 opacity-80" />
-            <h1 className="text-2xl font-bold">Portail Chauffeur</h1>
-          </div>
-          <p className="text-blue-100 text-sm">Preuve de Livraison Électronique (E-POD)</p>
+    <div className="min-h-screen bg-slate-100 pb-24 font-sans">
+      
+      {/* App Bar Mobile */}
+      <div className="bg-blue-600 pt-12 pb-6 px-6 text-white rounded-b-3xl shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/3 -translate-y-1/3">
+          <Truck className="w-48 h-48" />
         </div>
-
-        <div className="p-4 mt-2">
-          {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-              <p className="text-sm text-red-700 font-medium">{error}</p>
-            </div>
-          )}
-
-          {success && (
-            <div className="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />
-              <p className="text-sm text-emerald-700 font-medium">{success}</p>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mb-4 px-1">
-            <h2 className="text-lg font-bold text-slate-800">Mes Missions Actives</h2>
-            <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">
-              {missions.length}
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            {loading ? (
-              <CardSkeletonLoader />
-            ) : missions.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center border border-slate-200 border-dashed">
-                <CheckCircle2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500 font-medium">Vous n'avez aucune mission active.</p>
-              </div>
-            ) : (
-              missions.map((mission) => (
-                <div key={mission.id} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative overflow-hidden">
-                  
-                  {/* Status indicator line */}
-                  <div className={`absolute top-0 left-0 w-1 h-full ${
-                    mission.statut === 'EN_ROUTE' ? 'bg-blue-500' : 'bg-amber-400'
-                  }`}></div>
-
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Réf: {mission.reference}</p>
-                      <h3 className="font-bold text-slate-800 text-lg">
-                        {mission.nature_fret} ({mission.poids_kg ? `${mission.poids_kg} Kg` : '-'})
-                      </h3>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
-                      mission.statut === 'EN_ROUTE' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
-                    }`}>
-                      {mission.statut.replace('_', ' ')}
-                    </span>
-                  </div>
-
-                  <div className="space-y-3 mb-6 relative">
-                    <div className="absolute left-[11px] top-4 bottom-4 w-0.5 bg-slate-100"></div>
-                    
-                    <div className="flex items-start gap-3 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white flex-shrink-0 mt-0.5">
-                        <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase">Départ</p>
-                        <p className="text-sm text-slate-800 font-medium">{mission.origine}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white flex-shrink-0 mt-0.5">
-                        <MapPin className="w-3.5 h-3.5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase">Destination</p>
-                        <p className="text-sm text-slate-800 font-medium">{mission.destination}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100">
-                    {mission.statut === 'PLANIFIE' || mission.statut === 'EN_CHARGEMENT' ? (
-                      <button 
-                        onClick={() => handleDemarrer(mission.id)}
-                        className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-                      >
-                        <Navigation className="w-5 h-5" />
-                        Démarrer le Trajet
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => handleOpenLivraison(mission.id)}
-                        className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-sm shadow-emerald-600/20"
-                      >
-                        <PackageCheck className="w-5 h-5" />
-                        Confirmer la Livraison
-                      </button>
-                    )}
-                  </div>
-
-                </div>
-              ))
-            )}
-          </div>
+        <p className="text-blue-100 text-sm font-bold uppercase tracking-widest mb-1">KAMLOG E-POD</p>
+        <h1 className="text-3xl font-black mb-4">Mission Actuelle</h1>
+        <div className="inline-flex items-center gap-2 bg-blue-700/50 px-3 py-1.5 rounded-full text-sm font-bold border border-blue-500/50">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          {mission.statut.replace('_', ' ')}
         </div>
       </div>
 
-      <SignaturePadModal
-        isOpen={isSignatureModalOpen}
-        onClose={() => setIsSignatureModalOpen(false)}
-        onSave={handleSaveSignature}
-      />
+      {/* Main Content */}
+      <div className="px-4 -mt-4 relative z-10 space-y-4">
+        
+        {/* Mission Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100">
+          <div className="flex justify-between items-start mb-6 border-b border-slate-100 pb-4">
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">RÉFÉRENCE</p>
+              <p className="text-xl font-black text-blue-600">{mission.reference}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">DATE</p>
+              <p className="text-sm font-bold text-slate-700">
+                {format(new Date(mission.date_chargement_prevue || Date.now()), 'dd/MM/yyyy')}
+              </p>
+            </div>
+          </div>
 
-    </ModuleLayout>
+          <div className="space-y-6 relative">
+            <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-slate-200 z-0"></div>
+            
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-emerald-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0">
+                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-emerald-600 uppercase mb-0.5">Origine</p>
+                <p className="font-bold text-slate-800 text-lg leading-tight">{mission.origine}</p>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-6 h-6 rounded-full bg-red-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0 mt-1">
+                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-red-600 uppercase mb-0.5">Destination</p>
+                <p className="font-bold text-slate-800 text-lg leading-tight">{mission.destination}</p>
+                <p className="text-sm text-slate-500 mt-1">{mission.distance_km} km</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cargo Details */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <Package className="w-5 h-5 text-indigo-500" />
+            Marchandise
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-slate-50 p-3 rounded-2xl">
+              <p className="text-xs text-slate-500 font-semibold mb-1">Type de Fret</p>
+              <p className="font-bold text-slate-800 text-sm">{mission.nature_fret.replace('_', ' ')}</p>
+            </div>
+            <div className="bg-slate-50 p-3 rounded-2xl">
+              <p className="text-xs text-slate-500 font-semibold mb-1">Poids</p>
+              <p className="font-bold text-slate-800 text-sm">{mission.poids_kg ? `${mission.poids_kg} Kg` : 'N/A'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-4">
+          <button className="bg-white flex flex-col items-center justify-center gap-2 p-4 rounded-3xl shadow-sm border border-slate-100 text-slate-600 active:bg-slate-50 transition-colors">
+            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+              <Navigation className="w-6 h-6" />
+            </div>
+            <span className="text-sm font-bold">Naviguer</span>
+          </button>
+          <button className="bg-white flex flex-col items-center justify-center gap-2 p-4 rounded-3xl shadow-sm border border-slate-100 text-slate-600 active:bg-slate-50 transition-colors">
+            <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <span className="text-sm font-bold">Signaler</span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* Floating Action Button (POD) */}
+      {mission.statut !== 'LIVRE' && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 z-50">
+          {mission.statut === 'EN_CHARGEMENT' ? (
+            <button 
+              onClick={() => handleUpdateStatus('EN_ROUTE')}
+              disabled={actionLoading}
+              className="w-full py-4 bg-amber-500 text-white rounded-2xl font-black text-lg shadow-lg shadow-amber-500/30 hover:bg-amber-600 active:scale-95 transition-all flex items-center justify-center gap-3"
+            >
+              <Truck className="w-6 h-6" />
+              Démarrer le Trajet
+            </button>
+          ) : (
+            <button 
+              onClick={() => handleUpdateStatus('LIVRE')}
+              disabled={actionLoading}
+              className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-lg shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 active:scale-95 transition-all flex items-center justify-center gap-3"
+            >
+              <Camera className="w-6 h-6" />
+              Scanner BL & Valider Livraison
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Success Overlay */}
+      {statusUpdated && (
+        <div className="fixed inset-0 bg-emerald-500 z-[100] flex flex-col items-center justify-center animate-in fade-in duration-300">
+          <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mb-6 animate-bounce shadow-2xl">
+            <CheckCircle className="w-16 h-16 text-emerald-500" />
+          </div>
+          <h2 className="text-4xl font-black text-white mb-2 text-center px-4">LIVRAISON CONFIRMÉE !</h2>
+          <p className="text-emerald-100 font-bold text-center px-6">La preuve de livraison a été envoyée au Dispatch avec succès.</p>
+        </div>
+      )}
+
+    </div>
   );
 }
