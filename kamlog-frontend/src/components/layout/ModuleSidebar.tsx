@@ -209,6 +209,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   parc: [
     { labelKey: 'overview', href: '/parc/zones', icon: 'dashboard' },
+    { labelKey: 'map', href: '/parc/yard-map', icon: 'map' },
     { labelKey: 'gate_in', href: '/parc/gate', icon: 'login' },
     { labelKey: 'fleet_management', href: '/parc/gestion-de-la-flotte', icon: 'local_shipping' },
     { labelKey: 'workshop', href: '/parc/workshop', icon: 'build' },
