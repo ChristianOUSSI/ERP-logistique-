@@ -79,6 +79,10 @@ export const transportAPI = {
     apiClient.post('/api/transport/missions', data),
   updateStatut: (id: number, statut: string) =>
     apiClient.patch(`/api/transport/missions/${id}/statut`, { statut }),
+  demarrerMission: (id: number) =>
+    apiClient.post(`/api/transport/missions/${id}/demarrer`),
+  livrerMission: (id: number, data: { signature: string; nom_receptionnaire: string }) =>
+    apiClient.post(`/api/transport/missions/${id}/livrer`, data),
   getCamions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/transport/camions', { params }),
   createCamion: (data: unknown) =>
