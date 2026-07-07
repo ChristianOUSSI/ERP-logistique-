@@ -8,11 +8,13 @@
 2. [Premiers Pas : Connexion et Interface](#2-premiers-pas--connexion-et-interface)
 3. [Étape 1 : Le Socle - Les Données Maîtres](#3-étape-1--le-socle---les-données-maîtres)
 4. [Étape 2 : L'Opérationnel - K-Transport](#4-étape-2--lopérationnel---k-transport)
-5. [Étape 3 : Le Terrain - K-Parc (Yard Management)](#5-étape-3--le-terrain---k-parc-yard-management)
+5. [Étape 3 : Le Terrain - K-Parc (Yard Management) & IA OCR](#5-étape-3--le-terrain---k-parc-yard-management--ia-ocr)
 6. [Étape 4 : Les Stocks - Entrepôt / Magasin](#6-étape-4--les-stocks---entrepôt--magasin)
-7. [Étape 5 : La Rentabilité - Finance et Comptabilité](#7-étape-5--la-rentabilité---finance-et-comptabilité)
-8. [Sécurité et Déconnexion](#8-sécurité-et-déconnexion)
-9. [Support Technique (CADC)](#9-support-technique-cadc)
+7. [Étape 5 : La Rentabilité - Finance, Paie et Comptabilité](#7-étape-5--la-rentabilité---finance-paie-et-comptabilité)
+8. [Les Nouveaux Super-Pouvoirs : Portail Client, E-POD et Cartographie](#8-les-nouveaux-super-pouvoirs--portail-client-e-pod-et-cartographie)
+9. [Atelier et Maintenance (K-Maintenance)](#9-atelier-et-maintenance-k-maintenance)
+10. [Sécurité et Déconnexion](#10-sécurité-et-déconnexion)
+11. [Support Technique (CADC)](#11-support-technique-cadc)
 
 ---
 
@@ -26,7 +28,8 @@ Pour bien utiliser ce logiciel, il est crucial de comprendre son "flux de travai
 1. **Rien ne se crée à partir de zéro dans l'urgence.** Vous devez d'abord déclarer vos clients, fournisseurs et articles dans les **Données Maîtres**.
 2. Une fois le client connu du système, le département Logistique peut créer un **Ordre de Transport (OT)** pour ce client.
 3. Le camion assigné à cet OT est ensuite suivi dans le module **K-Parc** pour ses entrées/sorties de la cour (Gate In/Gate Out).
-4. Enfin, le module **Finance** récupère cet OT validé pour générer automatiquement une **Facture** et attendre le paiement.
+4. Le document officiel (Bon de Livraison) est généré en un clic grâce à **K-Docs**.
+5. Enfin, le module **Finance** récupère cet OT validé pour générer automatiquement une **Facture**, mais aussi pour calculer la **Paie du Chauffeur** !
 
 Si vous comprenez cette chaîne, vous maîtriserez KAMLOG EM-ERP !
 
@@ -94,42 +97,33 @@ L'Ordre de Transport est le document officiel qui ordonne à un camion d'aller d
 6. Assignez un **Camion** (ex: "Tracteur TR-001") et un **Chauffeur**.
 7. Cliquez sur **Valider l'OT**.
 
-### 4.2. Suivre la flotte en direct (Suivi GPS)
-**CADC** a intégré une cartographie professionnelle puissante et gratuite (Leaflet) pour ne pas dépendre des licences onéreuses.
-1. Cliquez sur **Carte / Suivi GPS** dans le menu latéral.
-2. Une carte routière s'affiche. Vous y verrez des marqueurs (icônes de camions) représentant la position exacte de votre flotte sur le territoire. 
-3. Vous pouvez zoomer et dézoomer avec la souris.
+### 4.2. K-Planning (Kanban de Transport)
+Pour visualiser visuellement toutes les expéditions :
+1. Allez dans **K-Planning**.
+2. Le système organise vos missions en colonnes (Programmées, En Chargement, En Route, Livrées).
+3. **Imprimer le Bon de Livraison (BL)** : Au survol d'une carte "En Route", cliquez sur l'icône **Imprimante**. KAMLOG va générer automatiquement un BL officiel au format A4 en récupérant toutes les données du système (K-Docs) !
 
 ### 4.3. Gestion du Carburant
 Avant de lancer un camion sur une longue distance, il faut le ravitailler.
 1. Allez dans **Carburant (Fuel)**.
 2. Créez un **Bon de Carburant** en indiquant le camion concerné et le volume en litres autorisé.
 
-![Cartographie GPS](https://via.placeholder.com/800x400.png?text=Suivi+de+Flotte+GPS+by+CADC)
-
 ---
 
-## 5. Étape 3 : Le Terrain - K-Parc (Yard Management)
+## 5. Étape 3 : Le Terrain - K-Parc (Yard Management) & IA OCR
 
 **Pourquoi ce module ?** Un camion n'est pas toujours sur la route. Parfois, il est garé dans votre cour logistique (Yard), ou en réparation au garage.
 
-### 5.1. Cartographie de la Cour (Yard Map)
+### 5.1. L'Intelligence Artificielle au Gate In (Nouveau !)
+Pour accélérer l'entrée des camions sans saisie manuelle :
+1. Allez dans **Parc > Gate In / Gate Out**.
+2. Le gardien uploade une photo (via son smartphone ou son poste) du Bon de Livraison ou de la plaque d'immatriculation.
+3. Cliquez sur **Lancer la reconnaissance OCR**. L'intelligence artificielle analysera l'image, et lira le texte pour vous (Fiabilité > 90%) pour auto-remplir le numéro du conteneur et la plaque !
+
+### 5.2. Cartographie de la Cour (Yard Map)
 1. Allez dans le module **Parc** (barre supérieure).
 2. Cliquez sur **Cartographie du Parc (Yard Map)** dans le menu latéral.
 3. Contrairement à la carte routière des transports, cette carte affiche une **vue satellite haute définition** de votre cour. Vous pouvez voir exactement où sont garés les camions ou posés les conteneurs.
-
-### 5.2. Les Barrières (Gate In / Gate Out)
-Pour qu'un camion soit comptabilisé comme "présent" dans le parc, le gardien doit le signaler.
-1. Cliquez sur **Gate / Accès**.
-2. Lorsqu'un camion arrive, enregistrez une entrée (**Gate In**). Le statut du camion passera de "En Route" à "Sur Parc".
-3. Lorsqu'il repart, enregistrez une sortie (**Gate Out**).
-
-### 5.3. L'Atelier de maintenance (Workshop)
-Si un camion tombe en panne :
-1. Allez dans **Atelier**.
-2. Créez un ticket d'intervention. Le camion changera de statut ("En Maintenance") et ne pourra plus être sélectionné par les logisticiens pour un Ordre de Transport tant qu'il n'est pas réparé.
-
-![Vue Satellite Parc](https://via.placeholder.com/800x400.png?text=K-Parc:+Vue+Satellite+Haute+Definition)
 
 ---
 
@@ -139,14 +133,21 @@ Si un camion tombe en panne :
 
 ### 6.1. La Réception (Mag 3)
 1. Allez dans le module **Magasin**.
-2. Cliquez sur **Réceptions**.
-3. Lorsqu'un fournisseur livre de la marchandise, créez une fiche de réception. Le système va ajouter ces marchandises à votre stock global.
+2. Cliquez sur **Réceptions (Inbound)**.
+3. Recherchez un Bon de Livraison (BL) validé par les douanes/achats.
+4. Le système vous montre la quantité totale déclarée. Vous pouvez affecter les quantités reçues dans votre entrepôt (Magasin Principal, Magasin Secondaire).
+5. Le système vous indique en temps réel le *Reste à Recevoir*.
+
+### 6.2. Gestion des Stocks
+1. Allez dans **Inventaire (Stocks)**.
+2. Vous avez une vue instantanée sur toutes vos marchandises, filtrable par **Code article**, **Entrepôt**, ou **Client**.
+3. Chaque mouvement est automatiquement tracé.
 
 ---
 
-## 7. Étape 5 : La Rentabilité - Finance et Comptabilité
+## 7. Étape 5 : La Rentabilité - Finance, Paie et Comptabilité
 
-**Pourquoi ce module ?** Le but ultime de l'ERP est de s'assurer que tout le travail logistique est correctement facturé et encaissé.
+**Pourquoi ce module ?** Le but ultime de l'ERP est de s'assurer que tout le travail logistique est correctement facturé et encaissé, ET que vos employés soient payés.
 
 ### 7.1. Générer une Facture
 Puisque le module Logistique a déjà fait le travail de créer un "Ordre de Transport" (OT), la facturation est semi-automatique !
@@ -155,28 +156,38 @@ Puisque le module Logistique a déjà fait le travail de créer un "Ordre de Tra
 3. Créez une nouvelle facture. Vous pourrez importer directement les données d'un OT validé. Le système de **CADC** remplira le montant, le client et les taxes en respectant les lois locales de la zone OHADA / Cameroun.
 4. Enregistrez et imprimez la facture pour l'envoyer au client.
 
-### 7.2. Rapprochement Bancaire et Saisie
-1. Cliquez sur **Saisie de transaction**.
-2. Si le client vous paye (ex: virement bancaire de 500 000 FCFA), enregistrez cet encaissement via **Paiements & Encaissements**.
-3. Vous pouvez y effectuer le **Lettrage**, c'est-à-dire lier ce paiement à une ou plusieurs factures pour les marquer comme payées.
-4. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans KAMLOG EM-ERP avec le relevé de votre banque pour trouver les erreurs éventuelles.
+### 7.2. Module RH & Frais de Route (Nouveau !)
+Vos chauffeurs reçoivent des per diems, et le module automatise ces calculs complexes.
+1. Allez dans **Finance > Rémunérations (Payroll)**.
+2. Le système affiche le **Salaire de base + Les Primes de Trajet (variables) + Les Frais de Péage** pour chaque chauffeur de façon transparente.
+3. Cliquez sur l'icône de document pour éditer la **Fiche de Paie**.
 
-![Module Finance](https://via.placeholder.com/800x400.png?text=Tableau+de+Bord+Finance+-+Factures)
+### 7.3. Rapprochement Bancaire et Lettrage
+1. Si le client vous paye (ex: virement bancaire de 500 000 FCFA), enregistrez cet encaissement via **Paiements & Encaissements**.
+2. Vous pouvez y effectuer le **Lettrage**, c'est-à-dire lier ce paiement à une ou plusieurs factures pour les marquer comme payées.
+3. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans KAMLOG EM-ERP avec le relevé de votre banque.
 
 ---
 
-## 8. Magasin et Inventaire (K-Magasin)
+## 8. Les Nouveaux Super-Pouvoirs : Portail Client, E-POD et Cartographie
 
-### 8.1. Réception Multi-Magasins
-1. Allez dans le module **Magasin** puis **Réception (Inbound)**.
-2. Recherchez un Bon de Livraison (BL) validé par les douanes/achats.
-3. Le système vous montre la quantité totale déclarée. Vous pouvez affecter les quantités reçues dans votre entrepôt (Magasin Principal, Magasin Secondaire).
-4. Le système vous indique en temps réel le *Reste à Recevoir*.
+KAMLOG EM-ERP ne s'arrête pas aux frontières de votre bureau. Il s'étend à vos clients et vos camions !
 
-### 8.2. Gestion des Stocks
-1. Allez dans **Inventaire (Stocks)**.
-2. Vous avez une vue instantanée sur toutes vos marchandises, filtrable par **Code article**, **Entrepôt**, ou **Client**.
-3. Chaque mouvement est automatiquement tracé.
+### 8.1. E-POD : L'Application Mobile pour Chauffeurs
+Fini le papier perdu ! Vos chauffeurs accèdent à KAMLOG depuis leur smartphone (lien : `/transport/epod`).
+1. Le chauffeur voit sa mission actuelle en gros caractères ("KAMLOG E-POD").
+2. Il peut cliquer sur le bouton **Scanner BL & Valider Livraison** pour signer électroniquement, envoyer la preuve directement au système central, et déclencher instantanément la facture !
+
+### 8.2. Le Portail Client B2B
+Ne laissez plus vos clients dans le noir.
+Vos clients (ex: Nestlé) disposent d'un lien d'accès spécial (`/client-portal`). 
+- Ils y trouveront un magnifique tableau de bord de Tracking.
+- Ils peuvent voir les statuts "En Route" ou "Livré" de leurs propres expéditions uniquement.
+- Ils peuvent télécharger leurs factures sans vous appeler !
+
+### 8.3. La Tour de Contrôle GPS
+Dans l'ERP, cliquez sur **Transport > Tour de Contrôle GPS (`/transport/map`)**.
+Vous verrez apparaître la carte dynamique du pays (Leaflet) avec de petits camions animés représentant votre flotte "En Route" en temps réel. Parfait pour une supervision haut-niveau (Control Tower).
 
 ---
 
