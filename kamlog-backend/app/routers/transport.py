@@ -45,7 +45,7 @@ from app.utils.rbac import require_role, require_permission
 from app.services.transport_service import (
     CamionFlotteService, ChauffeurProfilService, MissionTransportService,
     BandeLivraisonService, calculer_ecart_carburant,
-    PanneVehiculeService, AlertesService
+    PanneVehiculeService, AlertesService, AnalyticsService
 )
 
 router = APIRouter(tags=["Transport"])

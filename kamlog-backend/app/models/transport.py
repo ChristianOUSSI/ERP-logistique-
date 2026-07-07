@@ -1,7 +1,7 @@
 # app/models/transport.py  Modèles K-Transport Complets
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date
+from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime, date
 from app.models.base import BaseModel
@@ -72,6 +72,7 @@ class CamionFlotte(BaseModel):
     
     statut: Mapped[StatutCamion] = mapped_column(default=StatutCamion.DISPONIBLE)
     actif: Mapped[bool] = mapped_column(Boolean, default=True)
+    proprietes_dynamiques: Mapped[dict | None] = mapped_column(JSON, default={}, comment="Variables libres dynamiques (Assurance, Numéro Pneu...)")
 
     remorque_attachee: Mapped['CamionFlotte'] = relationship(remote_side="CamionFlotte.id", backref="tracteur_parent")
     documents: Mapped[list['VehiculeDocument']] = relationship(back_populates='vehicule', cascade="all, delete-orphan")
@@ -197,6 +198,7 @@ class MissionTransport(BaseModel):
     montant_fret: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     frais_peage: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), default=0)
     frais_annexes: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), default=0)
+    proprietes_dynamiques: Mapped[dict | None] = mapped_column(JSON, default={}, comment="Variables libres dynamiques du trajet")
 
     statut: Mapped[StatutMission] = mapped_column(default=StatutMission.BROUILLON)
     notes: Mapped[str | None] = mapped_column(Text)

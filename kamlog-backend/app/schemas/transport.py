@@ -20,6 +20,7 @@ class CamionBase(BaseModel):
     conso_theorique_l_100: Decimal | None = Field(None, ge=0)
     gps_tracker_id: str | None = None
     remorque_id: int | None = None
+    proprietes_dynamiques: Optional[dict] = Field(default_factory=dict)
 
     @field_validator('immatriculation')
     def validate_immatriculation_cameroun(cls, v):
@@ -56,6 +57,7 @@ class CamionFlotteUpdate(BaseModel):
     remorque_id: int | None = None
     statut: StatutCamion | None = None
     actif: bool | None = None
+    proprietes_dynamiques: Optional[dict] = None
 
 
 class CamionResponse(CamionBase):
@@ -192,10 +194,10 @@ class MissionBase(BaseModel):
     date_livraison_souhaitee: datetime | None = None
     
     montant_fret: Decimal | None = Field(None, ge=0)
-    frais_peage: Decimal | None = Field(0, ge=0)
-    frais_annexes: Decimal | None = Field(0, ge=0)
-    
+    frais_peage: Decimal | None = Field(default=0, ge=0)
+    frais_annexes: Decimal | None = Field(default=0, ge=0)
     notes: str | None = None
+    proprietes_dynamiques: Optional[dict] = Field(default_factory=dict)
 
 
 class MissionCreate(MissionBase):

@@ -158,7 +158,7 @@ class ClientMagasin(ClientMagasinBase):
 
 # ============ ARTICLE ============
 class ArticleBase(BaseModel):
-    code_article: str = Field(..., min_length=7, max_length=20)
+    code_article: Optional[str] = Field(None, max_length=20)
     nom: str = Field(..., min_length=2, max_length=200)
     description: Optional[str] = Field(None, max_length=500)
     categorie: Optional[CategorieArticle] = None
@@ -166,15 +166,7 @@ class ArticleBase(BaseModel):
     poids_unitaire: Optional[float] = Field(None, ge=0)
     volume_unitaire: Optional[float] = Field(None, ge=0)
     est_actif: bool = True
-
-    @validator('code_article')
-    def validate_code_article(cls, v):
-        """Le code d'article doit avoir 7 chiffres"""
-        if len(v) != 7:
-            raise ValueError('Le code d\'article doit avoir exactement 7 chiffres')
-        if not v.isdigit():
-            raise ValueError('Le code d\'article doit contenir uniquement des chiffres')
-        return v
+    proprietes_dynamiques: Optional[dict] = Field(default_factory=dict)
 
 
 class ArticleCreate(ArticleBase):

@@ -51,6 +51,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     epod: 'Portail Chauffeur (E-POD)',
     fuel: 'Gestion Carburant',
     map: 'Cartographie',
+    analytics_fleet: 'Analytique & Historique',
     overview: 'Tableau de Bord',
     analytics: 'Analytique & Cashflow',
     billing: 'Facturation Client',
@@ -114,6 +115,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     epod: 'Driver Portal (E-POD)',
     fuel: 'Fuel Management',
     map: 'Mapping/GIS',
+    analytics_fleet: 'Analytics & History',
     overview: 'Executive Overview',
     analytics: 'Analytics & Cashflow',
     billing: 'Customer Billing',
@@ -183,6 +185,7 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'maintenance', href: '/transport/maintenance', icon: 'build_circle' },
     { labelKey: 'fuel', href: '/transport/fuel/ticket', icon: 'gas_meter' },
     { labelKey: 'map', href: '/transport/map', icon: 'map' },
+    { labelKey: 'analytics_fleet', href: '/transport/analytics', icon: 'monitoring', badge: 'New' },
   ],
   finance: [
     { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },

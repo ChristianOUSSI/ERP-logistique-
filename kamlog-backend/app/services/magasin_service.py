@@ -182,21 +182,25 @@ class ArticleService:
 
     @staticmethod
     def generate_code_article(db: Session) -> str:
-        """Génère automatiquement un code d'article à 7 chiffres commençant par 1"""
-        # Récupérer le dernier code d'article
-        last_article = db.query(Article).order_by(Article.id.desc()).first()
+        """Génère automatiquement un code d'article structuré (ex: ART-202607-001)"""
+        from datetime import datetime
+        now = datetime.now()
+        prefix = f"ART-{now.strftime('%Y%m')}"
+        
+        # Récupérer le dernier code d'article avec ce préfixe
+        last_article = db.query(Article).filter(Article.code_article.like(f"{prefix}-%")).order_by(Article.id.desc()).first()
         
         if last_article and last_article.code_article:
-            # Extraire la partie numérique et incrémenter
             try:
-                last_num = int(last_article.code_article)
-                new_num = last_num + 1
-            except ValueError:
-                new_num = 1000000  # Valeur par défaut si le dernier code n'est pas numérique
+                # Extraire le numéro après le dernier tiret
+                last_num_str = last_article.code_article.split('-')[-1]
+                new_num = int(last_num_str) + 1
+            except (ValueError, IndexError):
+                new_num = 1
         else:
-            new_num = 1000000  # Premier code: 1000000
-        
-        return str(new_num)
+            new_num = 1
+            
+        return f"{prefix}-{new_num:03d}"
 
     @staticmethod
     def get_all_articles(db: Session, skip: int = 0, limit: int = 100) -> List[Article]:

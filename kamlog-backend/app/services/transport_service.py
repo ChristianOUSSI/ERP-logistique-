@@ -633,3 +633,71 @@ class AlertesService:
             "chauffeurs": chauffeurs_docs
         }
 
+
+class AnalyticsService:
+    @staticmethod
+    def get_vehicles_history(db: Session, filters: dict = None) -> list[dict]:
+        """
+        Génère l'historique complet et la rentabilité de la flotte.
+        Retourne une liste de véhicules avec leurs KPI aggrégés.
+        """
+        # On charge tous les camions avec leurs missions et chauffeurs associés
+        query = db.query(CamionFlotte).options(
+            selectinload(CamionFlotte.missions).selectinload(MissionTransport.chauffeur),
+            selectinload(CamionFlotte.missions).selectinload(MissionTransport.tiers)
+        )
+        
+        # Filtres de base sur le camion si nécessaire
+        if filters and filters.get("statut"):
+            query = query.filter(CamionFlotte.statut == filters["statut"])
+            
+        camions = query.all()
+        result = []
+        
+        for camion in camions:
+            missions = camion.missions
+            
+            # Filtres temporels ou par client applicables sur les missions
+            if filters:
+                if filters.get("date_debut"):
+                    missions = [m for m in missions if m.date_creation and m.date_creation >= filters["date_debut"]]
+                if filters.get("date_fin"):
+                    missions = [m for m in missions if m.date_creation and m.date_creation <= filters["date_fin"]]
+                if filters.get("client_id"):
+                    missions = [m for m in missions if m.tiers_id == int(filters["client_id"])]
+                if filters.get("chauffeur_id"):
+                    missions = [m for m in missions if m.chauffeur_id == int(filters["chauffeur_id"])]
+
+            total_missions = len(missions)
+            revenus_totaux = sum([(m.montant_fret or Decimal('0')) for m in missions])
+            depenses_totales = sum([((m.frais_peage or Decimal('0')) + (m.frais_annexes or Decimal('0'))) for m in missions])
+            marge = revenus_totaux - depenses_totales
+            
+            # Extraire les clients et parcours uniques
+            clients_uniques = list({m.tiers.raison_sociale for m in missions if m.tiers})
+            parcours_uniques = list({f"{m.origine} - {m.destination}" for m in missions if m.origine and m.destination})
+            chauffeurs_uniques = list({f"{m.chauffeur.nom} {m.chauffeur.prenom}" for m in missions if m.chauffeur})
+            
+            result.append({
+                "camion": {
+                    "id": camion.id,
+                    "immatriculation": camion.immatriculation,
+                    "marque": camion.marque,
+                    "modele": camion.modele,
+                    "statut": camion.statut
+                },
+                "kpis": {
+                    "total_missions": total_missions,
+                    "revenus_xaf": float(revenus_totaux),
+                    "depenses_xaf": float(depenses_totales),
+                    "marge_xaf": float(marge)
+                },
+                "details": {
+                    "clients": clients_uniques,
+                    "parcours": parcours_uniques,
+                    "chauffeurs": chauffeurs_uniques
+                }
+            })
+            
+        return result
+

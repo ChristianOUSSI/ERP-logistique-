@@ -1,5 +1,5 @@
 # app/models/magasin.py - Modèles pour le module K-magasin
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -126,6 +126,7 @@ class Article(Base):
     poids_unitaire = Column(Float, nullable=True)  # Poids en kg si applicable
     volume_unitaire = Column(Float, nullable=True)  # Volume en m³ si applicable
     est_actif = Column(Boolean, default=True)
+    proprietes_dynamiques = Column(JSON, nullable=True, comment="Variables libres dynamiques (Température, HS Code...)")
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
 

@@ -99,6 +99,8 @@ export const transportAPI = {
     apiClient.get('/api/transport/kpis'),
   getKpis: () =>
     apiClient.get('/api/transport/kpis'),
+  getVehiclesHistory: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/transport/analytics/vehicles-history', { params }),
   getGPS: () =>
     apiClient.get('/api/transport/gps'),
   getPannes: (camionId: number) =>
