@@ -102,10 +102,16 @@ async def login(
     )
     user = result.scalar_one_or_none()
     
-    if not user or not verify_password(credentials.password, user.password_hash):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Utilisateur non trouvé"
+        )
+        
+    if not verify_password(credentials.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Mot de passe incorrect",
             headers={"WWW-Authenticate": "Bearer"},
         )
     

@@ -49,7 +49,9 @@ export default function LoginPage() {
         const roles = (session?.user as any)?.roles || [(session?.user as any)?.role]
         router.push(getRouteForRole(roles)); router.refresh()
       }
-    } catch { setErrorMessage('Une erreur est survenue. Réessayez.') }
+    } catch (error: any) { 
+      setErrorMessage(error?.response?.data?.detail || 'Une erreur est survenue. Réessayez.') 
+    }
     finally { setIsLoading(false) }
   }
 

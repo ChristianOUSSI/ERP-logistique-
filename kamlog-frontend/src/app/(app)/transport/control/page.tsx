@@ -31,15 +31,15 @@ export default function KTransportControl() {
   }, []);
 
   // Compute Fleet KPIs
-  const totalCamions = camions.length || 0;
+  const totalCamions = camions.length;
   const onRoad = missions.filter(m => m.statut === 'EN_TRANSIT' || m.statut === 'EN_COURS').length;
   const available = Math.max(0, camions.filter(c => c.actif).length - onRoad);
   const maintenance = camions.filter(c => !c.actif).length;
 
   const fleetData = [
-    { name: 'En transit', value: onRoad > 0 ? onRoad : 85, fill: '#0ea5e9' },
-    { name: 'Disponible', value: available > 0 ? available : 45, fill: '#10b981' },
-    { name: 'Maintenance', value: maintenance > 0 ? maintenance : 15, fill: '#f59e0b' }
+    { name: 'En transit', value: onRoad, fill: '#0ea5e9' },
+    { name: 'Disponible', value: available, fill: '#10b981' },
+    { name: 'Maintenance', value: maintenance, fill: '#f59e0b' }
   ];
 
   return (
@@ -82,13 +82,13 @@ export default function KTransportControl() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Flotte</p>
-                    <h2 className="text-3xl font-black text-slate-800">{totalCamions || 145} <span className="text-sm font-bold text-slate-500">Véhicules</span></h2>
+                    <h2 className="text-3xl font-black text-slate-800">{totalCamions} <span className="text-sm font-bold text-slate-500">Véhicules</span></h2>
                   </div>
                 </div>
                 <div className="flex flex-col justify-center gap-3 text-sm font-medium pr-4">
-                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div> En transit: {onRoad || 85}</div>
-                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"></div> Disponibles: {available || 45}</div>
-                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500"></div> Maintenance: {maintenance || 15}</div>
+                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div> En transit: {onRoad}</div>
+                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"></div> Disponibles: {available}</div>
+                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500"></div> Maintenance: {maintenance}</div>
                 </div>
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function KTransportControl() {
                   <MapPin className="w-6 h-6" />
                 </div>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Missions Actives</p>
-                <h2 className="text-3xl font-black text-slate-800">{missions.length || 32}</h2>
+                <h2 className="text-3xl font-black text-slate-800">{missions.length}</h2>
               </div>
             </div>
 
@@ -111,7 +111,7 @@ export default function KTransportControl() {
                   <AlertTriangle className="w-6 h-6" />
                 </div>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Retards & Alertes</p>
-                <h2 className="text-3xl font-black text-slate-800">4 <span className="text-sm font-bold text-slate-500">Signalements</span></h2>
+                <h2 className="text-3xl font-black text-slate-800">0 <span className="text-sm font-bold text-slate-500">Signalements</span></h2>
               </div>
             </div>
 
@@ -143,28 +143,26 @@ export default function KTransportControl() {
                 <button className="text-sm font-bold text-blue-600 hover:underline">Voir tout</button>
               </div>
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                {/* Mocked lines for premium display */}
-                {[
-                  { id: 'TRN-2023-0801', dest: 'Entrepôt Abidjan Sud', status: 'En route', icon: <Truck className="w-4 h-4 text-blue-600" />, bg: 'bg-blue-50' },
-                  { id: 'TRN-2023-0802', dest: 'Port Autonome', status: 'Chargement', icon: <Clock className="w-4 h-4 text-amber-600" />, bg: 'bg-amber-50' },
-                  { id: 'TRN-2023-0799', dest: 'Usine Bouaké', status: 'Livré', icon: <CheckCircle className="w-4 h-4 text-emerald-600" />, bg: 'bg-emerald-50' },
-                  { id: 'TRN-2023-0804', dest: 'Frontière Nord', status: 'En route', icon: <Truck className="w-4 h-4 text-blue-600" />, bg: 'bg-blue-50' },
-                ].map((m, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${m.bg}`}>
-                        {m.icon}
+                {missions.length === 0 ? (
+                  <div className="text-sm text-slate-500 p-4 text-center">Aucune mission en cours</div>
+                ) : (
+                  missions.map((m, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-50">
+                          <Truck className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{m.code_mission || `M-${m.id}`}</p>
+                          <p className="text-xs text-slate-500 font-medium">{m.destination || 'Non définie'}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{m.id}</p>
-                        <p className="text-xs text-slate-500 font-medium">{m.dest}</p>
+                      <div className="text-right">
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">{m.statut}</span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${m.bg} text-slate-700`}>{m.status}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 

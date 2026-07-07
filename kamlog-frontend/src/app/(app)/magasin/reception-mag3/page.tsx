@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { PackageOpen, Search, ArrowRightCircle, Warehouse, Box, AlertCircle } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
+import { magasinAPI } from '@/lib/api-client'
 
 export default function ReceptionsMultiMagasinsPage() {
   const [declarations, setDeclarations] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   
-  // Magasin simulation for demo (in reality, fetched from logged-in user context)
-  const [currentMagasin, setCurrentMagasin] = useState({ id: 1, nom: 'MAG3' })
-  const [magasins, setMagasins] = useState([{id: 1, nom: 'MAG3'}, {id: 2, nom: 'DNW'}, {id: 3, nom: 'MAGKRIBI'}])
+  const [currentMagasin, setCurrentMagasin] = useState<any>(null)
+  const [magasins, setMagasins] = useState<any[]>([])
   
   const [selectedDecl, setSelectedDecl] = useState<any>(null)
 
@@ -22,10 +22,15 @@ export default function ReceptionsMultiMagasinsPage() {
 
   const fetchDeclarations = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/magasin/declarations', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (res.ok) setDeclarations(await res.json())
+      const [declRes, magRes] = await Promise.all([
+        magasinAPI.getDeclarations().catch(() => ({ data: [] })),
+        magasinAPI.getMagasins().catch(() => ({ data: [] }))
+      ])
+      setDeclarations(declRes.data || [])
+      setMagasins(magRes.data || [])
+      if (magRes.data && magRes.data.length > 0) {
+        setCurrentMagasin(magRes.data[0])
+      }
     } catch (error) {
       console.error(error)
     } finally {
@@ -57,7 +62,7 @@ export default function ReceptionsMultiMagasinsPage() {
               <button 
                 key={m.id}
                 onClick={() => setCurrentMagasin(m)}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentMagasin.id === m.id ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentMagasin?.id === m.id ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
               >
                 {m.nom}
               </button>

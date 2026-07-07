@@ -5,7 +5,7 @@ import {
   FileText, Plus, Search, Filter, MoreVertical, 
   Download, Eye, Send, CheckCircle2, XCircle, Clock
 } from 'lucide-react';
-import { financeAPI } from '@/lib/api/finance';
+import { financeAPI } from '@/lib/api-client';
 
 export default function FacturesPage() {
   const [factures, setFactures] = useState<any[]>([]);
@@ -20,36 +20,11 @@ export default function FacturesPage() {
 
   const fetchFactures = async () => {
     try {
-      // Mocking fetch for now or using existing API
-      const data = await financeAPI.getInvoices();
-      setFactures(data);
+      const data = await financeAPI.getFactures();
+      setFactures(data.data || []);
     } catch (err) {
       console.error(err);
-      // Fallback data if backend is not fully connected yet
-      setFactures([
-        {
-          id: 'FAC-TR-2026-0001',
-          numero_facture: 'FAC-TR-2026-0001',
-          client: 'Client A',
-          montant_ht_xaf: 500000,
-          tva_xaf: 96250,
-          montant_ttc_xaf: 596250,
-          date_emission: '2026-07-02',
-          statut: 'BROUILLON',
-          mission_id: 101
-        },
-        {
-          id: 'FAC-TR-2026-0002',
-          numero_facture: 'FAC-TR-2026-0002',
-          client: 'Client B',
-          montant_ht_xaf: 1200000,
-          tva_xaf: 231000,
-          montant_ttc_xaf: 1431000,
-          date_emission: '2026-07-01',
-          statut: 'EMISE',
-          mission_id: 102
-        }
-      ]);
+      setFactures([]);
     } finally {
       setLoading(false);
     }

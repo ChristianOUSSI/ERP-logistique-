@@ -111,7 +111,13 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
         })
       }, 1200)
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Erreur lors de la création du tier.')
+      const detail = err?.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const messages = detail.map((e: any) => `${e.loc[e.loc.length - 1]}: ${e.msg}`).join(', ');
+        setError(`Erreur de validation : ${messages}`);
+      } else {
+        setError(detail || 'Erreur lors de la création du tier.');
+      }
     } finally {
       setSubmitting(false)
     }
