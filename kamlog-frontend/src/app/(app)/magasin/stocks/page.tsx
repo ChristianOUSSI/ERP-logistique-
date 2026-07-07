@@ -10,7 +10,7 @@ import { Stock, StockFilter } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { magasinAPI } from '@/lib/api-client'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 
 export default function StocksPage() {
   const [stocks, setStocks] = useState<Stock[]>([])

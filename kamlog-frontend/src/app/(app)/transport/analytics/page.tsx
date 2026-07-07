@@ -9,7 +9,7 @@ import { transportAPI } from '@/lib/api-client';
 import { 
   TrendingUp, Activity, Truck, Calendar, DollarSign, Filter 
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export default function AnalyticsVehicleHistory() {
   const [data, setData] = useState<any[]>([]);

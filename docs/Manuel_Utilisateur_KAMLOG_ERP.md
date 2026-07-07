@@ -157,14 +157,41 @@ Puisque le module Logistique a déjà fait le travail de créer un "Ordre de Tra
 
 ### 7.2. Rapprochement Bancaire et Saisie
 1. Cliquez sur **Saisie de transaction**.
-2. Si le client vous paye (ex: virement bancaire de 500 000 FCFA), enregistrez cet encaissement.
-3. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans KAMLOG EM-ERP avec le relevé de votre banque pour trouver les erreurs éventuelles.
+2. Si le client vous paye (ex: virement bancaire de 500 000 FCFA), enregistrez cet encaissement via **Paiements & Encaissements**.
+3. Vous pouvez y effectuer le **Lettrage**, c'est-à-dire lier ce paiement à une ou plusieurs factures pour les marquer comme payées.
+4. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans KAMLOG EM-ERP avec le relevé de votre banque pour trouver les erreurs éventuelles.
 
 ![Module Finance](https://via.placeholder.com/800x400.png?text=Tableau+de+Bord+Finance+-+Factures)
 
 ---
 
-## 8. Sécurité et Déconnexion
+## 8. Magasin et Inventaire (K-Magasin)
+
+### 8.1. Réception Multi-Magasins
+1. Allez dans le module **Magasin** puis **Réception (Inbound)**.
+2. Recherchez un Bon de Livraison (BL) validé par les douanes/achats.
+3. Le système vous montre la quantité totale déclarée. Vous pouvez affecter les quantités reçues dans votre entrepôt (Magasin Principal, Magasin Secondaire).
+4. Le système vous indique en temps réel le *Reste à Recevoir*.
+
+### 8.2. Gestion des Stocks
+1. Allez dans **Inventaire (Stocks)**.
+2. Vous avez une vue instantanée sur toutes vos marchandises, filtrable par **Code article**, **Entrepôt**, ou **Client**.
+3. Chaque mouvement est automatiquement tracé.
+
+---
+
+## 9. Atelier et Maintenance (K-Maintenance)
+
+Si un camion tombe en panne ou subit un blocage HSE, le département transport peut le mettre en statut `EN_MAINTENANCE`.
+1. Le département technique se rend sur **Transport > Maintenance**.
+2. Vous verrez la liste des camions immobilisés avec les descriptions de pannes.
+3. Le mécanicien peut cliquer sur **Prendre en charge** pour passer le statut de la panne à `EN_COURS`.
+4. Une fois réparé, cliquez sur **Marquer Résolu**.
+5. Le responsable peut alors **Débloquer le véhicule** pour qu'il puisse à nouveau recevoir des missions de transport !
+
+---
+
+## 10. Sécurité et Déconnexion
 
 Le logiciel a été codé par **Code Axis Digital Cameroun** avec de hauts standards de sécurité.
 - **Si vous quittez votre poste de travail, même pour 10 minutes, vous devez vous déconnecter.**
@@ -173,7 +200,7 @@ Le logiciel a été codé par **Code Axis Digital Cameroun** avec de hauts stand
 
 ---
 
-## 9. Support Technique (CADC)
+## 11. Support Technique (CADC)
 
 Si, malgré ce guide, vous rencontrez une difficulté, si un bouton ne clique pas, ou si vous souhaitez ajouter une nouvelle fonctionnalité à l'application, l'équipe de développement est là pour vous !
 

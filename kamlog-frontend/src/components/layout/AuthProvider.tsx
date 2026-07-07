@@ -83,8 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Backend logout failed", e);
     }
 
-    // Déconnexion NextAuth
-    signOut({ callbackUrl: '/login' });
+    // Déconnexion NextAuth sans redirection immédiate (pour voir la belle page de logout)
+    signOut({ redirect: false });
   }, []);
 
   const renewSession = useCallback(() => {

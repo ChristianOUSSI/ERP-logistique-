@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { financeAPI, masterDataAPI } from '@/lib/api-client';
 import { Plus, CheckCircle, Search, CreditCard, RefreshCw } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
