@@ -66,7 +66,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
     { id: 'transport', label: 'Logistique / Transport', icon: 'local_shipping', path: '/transport/control' },
     { id: 'finance', label: 'Comptabilité / Finance', icon: 'account_balance', path: '/finance/overview' },
     { id: 'magasin', label: 'Entrepôt / Magasin', icon: 'warehouse', path: '/magasin/dashboard' },
-    { id: 'parc', label: 'Yard / Parc', icon: 'directions_car', path: '/parc/overview' },
+    { id: 'parc', label: 'Yard / Parc', icon: 'directions_car', path: '/parc/zones' },
     { id: 'master-data', label: 'Données Maîtres', icon: 'hub', path: '/master-data/tiers' },
     { id: 'admin', label: 'Administration', icon: 'admin_panel_settings', path: '/admin/user-management/listing' },
   ]
@@ -409,7 +409,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
 
             {/* Logout */}
             <button
-              onClick={logout}
+              onClick={() => router.push('/logout')}
               className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-red-500/10 hover:text-error"
               aria-label="Se déconnecter"
             >
@@ -525,7 +525,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
             <h3 className="mb-2 text-xl font-bold text-on-surface">{t.auth.sessionModalTitle}</h3>
             <p className="mb-6 text-sm text-on-surface-variant">{t.auth.sessionModalBody}</p>
             <button
-              onClick={logout}
+              onClick={() => router.push('/logout')}
               className="w-full rounded-xl bg-primary py-3 px-4 font-bold text-on-primary transition-opacity hover:opacity-90"
             >
               {t.auth.sessionModalCta}
