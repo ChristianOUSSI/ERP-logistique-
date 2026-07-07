@@ -78,6 +78,13 @@ def upgrade() -> None:
     # sa.ForeignKeyConstraint(['chauffeur_id'], ['chauffeurs.id'], name=op.f('fk_chauffeur_documents_chauffeur_id_chauffeurs')),
     # sa.PrimaryKeyConstraint('id', name=op.f('pk_chauffeur_documents'))
     # )
+    op.execute("CREATE TYPE typemateriel AS ENUM ('TRACTEUR', 'REMORQUE', 'SEMI_REMORQUE')")
+    op.execute("CREATE TYPE statutcamion AS ENUM ('DISPONIBLE', 'EN_MAINTENANCE', 'EN_ROUTE', 'EN_CHARGEMENT', 'BLOQUE_HSE')")
+    op.execute("CREATE TYPE statutchauffeur AS ENUM ('EN_SERVICE', 'EN_REPOS', 'EN_MISSION', 'EN_FORMATION')")
+
+    with op.batch_alter_table('tiers', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('sigle_ou_enseigne', sa.String(length=50), nullable=True))
+
     with op.batch_alter_table('camions_flotte', schema=None) as batch_op:
         batch_op.add_column(sa.Column('type_materiel', sa.Enum('TRACTEUR', 'REMORQUE', 'SEMI_REMORQUE', name='typemateriel'), server_default='TRACTEUR', nullable=False))
         batch_op.add_column(sa.Column('gps_tracker_id', sa.String(length=100), nullable=True))
