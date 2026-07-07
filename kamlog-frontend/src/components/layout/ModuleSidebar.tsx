@@ -55,6 +55,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     overview: 'Tableau de Bord',
     analytics: 'Analytique & Cashflow',
     billing: 'Facturation Client',
+    encaissements: 'Paiements & Encaissements',
     reconciliation: 'Rapprochement Bancaire',
     gateway: 'Passerelle Monitor',
     transactions: 'Saisie Transaction',
@@ -119,6 +120,7 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     overview: 'Executive Overview',
     analytics: 'Analytics & Cashflow',
     billing: 'Customer Billing',
+    encaissements: 'Payments & Collections',
     reconciliation: 'Bank Reconciliation',
     gateway: 'Gateway Monitor',
     transactions: 'Transaction Entry',
@@ -189,8 +191,8 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
   ],
   finance: [
     { labelKey: 'overview', href: '/finance/overview', icon: 'query_stats' },
-    // { labelKey: 'analytics', href: '/finance/analytics', icon: 'analytics' }, // Disabled until created
     { labelKey: 'billing', href: '/finance/factures', icon: 'receipt_long' },
+    { labelKey: 'encaissements', href: '/finance/encaissements', icon: 'account_balance_wallet', badge: 'New' },
     { labelKey: 'purchases', href: '/finance/requisitions', icon: 'shopping_bag' },
     { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
     { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },

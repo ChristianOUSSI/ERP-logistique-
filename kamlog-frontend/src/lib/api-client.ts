@@ -129,6 +129,8 @@ export const financeAPI = {
     apiClient.get('/api/finance/tarifs', { params }),
   createTarif: (data: unknown) =>
     apiClient.post('/api/finance/tarifs', data),
+  lettrerEncaissement: (encaissementId: number, factureId: number) =>
+    apiClient.post(`/api/finance/encaissements/${encaissementId}/lettrer/${factureId}`),
   getKpis: () =>
     apiClient.get('/api/finance/kpis'),
 };

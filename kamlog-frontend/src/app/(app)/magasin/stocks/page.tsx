@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -9,6 +9,8 @@ import { DataTable } from '@/components/shared/DataTable'
 import { Stock, StockFilter } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
+import { magasinAPI } from '@/lib/api-client'
+import { toast } from 'react-toastify'
 
 export default function StocksPage() {
   const [stocks, setStocks] = useState<Stock[]>([])
@@ -20,8 +22,26 @@ export default function StocksPage() {
     magasin_ids: [],
     client_id: undefined,
     date_debut: '',
+    date_debut: '',
     date_fin: ''
   })
+
+  const loadStocks = async (activeFilters?: any) => {
+    setIsLoading(true)
+    try {
+      const response = await magasinAPI.getStocks(activeFilters)
+      setStocks(response.data || [])
+    } catch (error) {
+      console.error('Error fetching stocks:', error)
+      toast.error('Erreur lors du chargement des stocks')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadStocks()
+  }, [])
 
   const columns = [
     {
@@ -72,16 +92,11 @@ export default function StocksPage() {
   ]
 
   const handleFilter = async () => {
-    setIsLoading(true)
-    try {
-      // API call to filter stocks
-      // const response = await apiClient.post('/api/magasin/stocks/filtres', filters)
-      // setStocks(response.data)
-    } catch (error) {
-      console.error('Error filtering stocks:', error)
-    } finally {
-      setIsLoading(false)
-    }
+    const activeFilters: any = {}
+    if (filters.code_article) activeFilters.code_article = filters.code_article
+    if (filters.magasin_ids && filters.magasin_ids.length > 0) activeFilters.magasin_id = filters.magasin_ids[0]
+    
+    await loadStocks(activeFilters)
   }
 
   const handleReset = () => {
@@ -92,8 +107,7 @@ export default function StocksPage() {
       date_debut: '',
       date_fin: ''
     })
-    // Reload all stocks
-    // loadStocks()
+    loadStocks()
   }
 
   return (
