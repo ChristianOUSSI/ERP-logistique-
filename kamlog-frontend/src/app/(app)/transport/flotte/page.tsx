@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { transportAPI } from '@/lib/api-client'
 import VehiculeDocuments from '@/components/transport/VehiculeDocuments'
 import HseBlockModal from '@/components/transport/HseBlockModal'
+import CreateCamionModal from '@/components/transport/CreateCamionModal'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { Truck, Link, Unlink, ShieldAlert, FileText, CheckCircle2 } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
@@ -14,6 +15,7 @@ export default function FlottePage() {
   const [selectedVehicule, setSelectedVehicule] = useState<any>(null)
   const [showDocsModal, setShowDocsModal] = useState(false)
   const [showHseModal, setShowHseModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   
   // Association state
   const [showAssociateModal, setShowAssociateModal] = useState(false)
@@ -91,7 +93,7 @@ export default function FlottePage() {
               <span className="material-symbols-outlined text-[20px]">download</span>
               Exporter
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all">
+            <button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all">
               <span className="material-symbols-outlined text-[20px]">add</span>
               Nouveau Véhicule
             </button>
@@ -225,6 +227,17 @@ export default function FlottePage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <CreateCamionModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => {
+            setShowCreateModal(false)
+            fetchCamions()
+          }}
+        />
       )}
     </ModuleLayout>
   )
