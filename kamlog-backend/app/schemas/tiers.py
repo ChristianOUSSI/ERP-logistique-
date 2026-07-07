@@ -20,6 +20,7 @@ class TiersBase(BaseModel):
     adresse: Optional[str] = None
     ville: str = Field(default="Douala", max_length=50)
     pays: str = Field(default="Cameroun", max_length=50)
+    conditions_facturation: Optional[dict] = Field(default_factory=dict)
 
 
 class TiersCreate(TiersBase):
@@ -61,6 +62,7 @@ class TiersUpdate(BaseModel):
     limite_credit_maximum: Optional[Decimal] = Field(None, ge=0)
     limite_credit_xaf: Optional[Decimal] = Field(None, ge=0)
     delai_paiement_jours: Optional[int] = Field(None, ge=0)
+    conditions_facturation: Optional[dict] = None
     statut: Optional[StatutTiers] = None
 
 

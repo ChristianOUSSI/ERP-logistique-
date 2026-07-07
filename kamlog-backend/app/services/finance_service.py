@@ -6,7 +6,7 @@ from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import datetime
 
-from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture, Avoir
+from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture, Avoir, FactureLigne
 from app.models.tiers import Tiers
 from app.schemas.finance import (
     FactureCreate,
@@ -153,11 +153,49 @@ class FactureService:
 
     @staticmethod
     def generer_facture_transport(db: Session, mission: any) -> Facture:
-        """Génère automatiquement une facture à partir d'une mission de transport livrée."""
+        """Génère automatiquement une facture à partir d'une mission de transport livrée avec facturation dynamique (Phase 4)."""
         from datetime import datetime, timezone
         
-        montant_ht = (mission.montant_fret or Decimal('0')) + (mission.frais_peage or Decimal('0')) + (mission.frais_annexes or Decimal('0'))
+        # 1. Base du transport (Fret + Péage + Annexes)
+        montant_base = (mission.montant_fret or Decimal('0')) + (mission.frais_peage or Decimal('0')) + (mission.frais_annexes or Decimal('0'))
         
+        # 2. Variables Dynamiques du Profil Client (Phase 4)
+        conditions_dynamiques = {}
+        if mission.tiers and mission.tiers.conditions_facturation:
+            conditions_dynamiques = mission.tiers.conditions_facturation
+        
+        # Calcul des frais additionnels dynamiques
+        frais_dynamiques_ht = Decimal('0')
+        lignes_dynamiques = []
+        
+        for libelle, montant in conditions_dynamiques.items():
+            # Si le montant est un chiffre, on l'ajoute
+            try:
+                valeur_dec = Decimal(str(montant))
+                # Exemple de logique : si c'est un pourcentage (ex: "assurance_pourcentage": 1.5)
+                if 'pourcentage' in libelle.lower() or 'taux' in libelle.lower():
+                    valeur_calculee = (montant_base * valeur_dec / Decimal('100')).quantize(Decimal('1'))
+                    description = f"{libelle.replace('_', ' ').capitalize()} ({valeur_dec}%)"
+                else:
+                    # C'est une valeur fixe
+                    valeur_calculee = valeur_dec
+                    description = libelle.replace('_', ' ').capitalize()
+
+                frais_dynamiques_ht += valeur_calculee
+                
+                lignes_dynamiques.append(
+                    FactureLigne(
+                        description=description,
+                        quantite=Decimal('1'),
+                        prix_unitaire_ht_xaf=valeur_calculee,
+                        montant_total_ht_xaf=valeur_calculee
+                    )
+                )
+            except (ValueError, TypeError):
+                logger.warning(f"Variable dynamique ignorée (non numérique): {libelle}={montant}")
+
+        montant_ht = montant_base + frais_dynamiques_ht
+
         if montant_ht <= 0:
             raise ValueError("Le montant de la mission doit être supérieur à 0 pour facturer.")
 
@@ -182,12 +220,25 @@ class FactureService:
             statut=StatutFacture.BROUILLON,
             notes=f"Facture automatique générée suite à la livraison de la mission {mission.reference}."
         )
+
+        # Ajouter la ligne de base du transport
+        db_facture.lignes.append(FactureLigne(
+            description=f"Prestation de transport - Mission {mission.reference}",
+            quantite=Decimal('1'),
+            prix_unitaire_ht_xaf=montant_base,
+            montant_total_ht_xaf=montant_base
+        ))
+
+        # Ajouter les lignes dynamiques (Phase 4)
+        for ligne in lignes_dynamiques:
+            db_facture.lignes.append(ligne)
+
         db.add(db_facture)
         db.commit()
         db.refresh(db_facture)
         
         invalidate_cache_pattern("finance:factures:*")
-        logger.info(f"Facture auto générée: {numero} pour mission {mission.id}")
+        logger.info(f"Facture auto générée: {numero} pour mission {mission.id} avec variables dynamiques.")
         return db_facture
 
 

@@ -1,7 +1,7 @@
 # app/models/tiers.py  Modèle SQLAlchemy Tiers (Refonte SAP-Style)
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Boolean, Numeric, Text, Integer, Index
+from sqlalchemy import String, Boolean, Numeric, Text, Integer, Index, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
@@ -72,6 +72,11 @@ class Tiers(BaseModel):
     limite_credit_xaf: Mapped[Decimal] = mapped_column(Numeric(15, 0), default=0)
     delai_paiement_jours: Mapped[int] = mapped_column(
         Integer, default=30, comment="Nombre de jours avant échéance"
+    )
+
+    # ── FACTURATION DYNAMIQUE (PHASE 4) ───────────────────────────
+    conditions_facturation: Mapped[dict | None] = mapped_column(
+        JSON, default={}, comment="Variables dynamiques de facturation (ex: tarif_km, frais_dossier)"
     )
 
     # ── STATUT & AUDIT ────────────────────────────────────────────
