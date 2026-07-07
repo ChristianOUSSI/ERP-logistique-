@@ -818,7 +818,7 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">NIU (Fiscal)</span>
-                <span className="text-sm text-slate-800 font-medium">{tier.niu || '—'}</span>
+                <span className="text-sm text-slate-800 font-medium">{tier.niu || ''}</span>
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Régime Fiscal</span>
@@ -826,11 +826,11 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Téléphone</span>
-                <span className="text-sm text-slate-800 font-medium">{tier.telephone || '—'}</span>
+                <span className="text-sm text-slate-800 font-medium">{tier.telephone || ''}</span>
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Email</span>
-                <span className="text-sm text-slate-800 font-medium break-all">{tier.email || '—'}</span>
+                <span className="text-sm text-slate-800 font-medium break-all">{tier.email || ''}</span>
               </div>
             </div>
 

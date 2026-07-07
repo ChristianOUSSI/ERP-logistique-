@@ -130,11 +130,11 @@ export default function ConfigurationDesRolesRbacPage() {
 
   // Group permissions by module
   const groupedPermissions = permissions.reduce((acc, perm) => {
-    const module = perm.module || 'autre';
-    if (!acc[module]) {
-      acc[module] = [];
+    const moduleName = perm.module || 'autre';
+    if (!acc[moduleName]) {
+      acc[moduleName] = [];
     }
-    acc[module].push(perm);
+    acc[moduleName].push(perm);
     return acc;
   }, {} as Record<string, Permission[]>);
 

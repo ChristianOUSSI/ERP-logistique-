@@ -194,7 +194,7 @@ export default function AuditHealthDashboard() {
             </div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Statut Global</p>
             <h2 className="text-2xl font-black text-slate-800">
-              {apiOnline ? '100%' : '—'} <span className="text-sm font-bold text-slate-500">Opérationnel</span>
+              {apiOnline ? '100%' : ''} <span className="text-sm font-bold text-slate-500">Opérationnel</span>
             </h2>
           </div>
         </div>
@@ -207,12 +207,12 @@ export default function AuditHealthDashboard() {
                 <Cpu className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-700 rounded-full">
-                {health ? `${Math.round(health.cpuUsage)}%` : '—'}
+                {health ? `${Math.round(health.cpuUsage)}%` : ''}
               </span>
             </div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Charge Serveur (CPU)</p>
             <h2 className="text-2xl font-black text-slate-800">
-              {health ? `${Math.round(health.cpuUsage)}%` : '—'}{' '}
+              {health ? `${Math.round(health.cpuUsage)}%` : ''}{' '}
               <span className="text-sm font-bold text-slate-500">
                 {health && health.cpuUsage < 50 ? 'Faible' : health && health.cpuUsage < 80 ? 'Moyenne' : 'Élevée'}
               </span>
@@ -233,7 +233,7 @@ export default function AuditHealthDashboard() {
             </div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Connexions Actives</p>
             <h2 className="text-2xl font-black text-slate-800">
-              {health ? health.activeConnections : '—'}{' '}
+              {health ? health.activeConnections : ''}{' '}
               <span className="text-sm font-bold text-slate-500">Sessions</span>
             </h2>
           </div>
@@ -247,12 +247,12 @@ export default function AuditHealthDashboard() {
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-700 rounded-full">
-                {health ? `${Math.round(health.memoryUsage)}%` : '—'} RAM
+                {health ? `${Math.round(health.memoryUsage)}%` : ''} RAM
               </span>
             </div>
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mémoire Utilisée</p>
             <h2 className="text-2xl font-black text-slate-800">
-              {health ? `${Math.round(health.memoryUsage)}%` : '—'}{' '}
+              {health ? `${Math.round(health.memoryUsage)}%` : ''}{' '}
               <span className="text-sm font-bold text-slate-500">
                 {health && health.memoryUsage < 60 ? 'Normal' : 'Attention'}
               </span>
@@ -320,7 +320,7 @@ export default function AuditHealthDashboard() {
         </div>
       </div>
 
-      {/* Recent Events — connected to real audit logs */}
+      {/* Recent Events  connected to real audit logs */}
       <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div className="mb-6 flex items-center justify-between">
           <div>

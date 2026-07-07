@@ -1,6 +1,6 @@
 # app/models/dossier.py  Dossiers Opérationnels de Service (Inspiration SAP SD/LE)
 import enum
-from sqlalchemy import String, Boolean, Text, ForeignKey, Index, Table, Integer
+from sqlalchemy import String, Boolean, Text, ForeignKey, Index, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel, Base
 
@@ -35,26 +35,8 @@ class TypeServiceConcerne(str, enum.Enum):
 
 
 # ─── Table de liaison Many-to-Many : Dossier ↔ Marchandise ───
-
-contenu_dossier_marchandises = Table(
-    "contenu_dossier_marchandises",
-    Base.metadata,
-    # colonnes
-    # Note : On utilise Integer car BaseModel utilise des ID entiers auto-incrémentés
-    # (pas d'UUID ici pour rester cohérent avec le BaseModel existant)
-    # Si migration vers UUID à l'avenir, ces clés seront mises à jour.
-    # Pour l'instant on garde la cohérence avec le reste de l'application.
-    # La spec originale utilisait UUID mais on s'adapte à l'architecture existante.
-    # Le comportement RESTRICT est conservé.
-    # Le CASCADE sur dossier_id supprime les associations si le dossier est supprimé.
-    # Le RESTRICT sur marchandise_id empêche de supprimer une marchandise engagée.
-    *[
-        # Workaround: define columns inline
-    ]
-)
-
-# Note: SQLAlchemy Table() approach above is tricky with our setup.
-# Let's use an Association model instead for clarity.
+# Implémentée via un modèle Association (ContenuDossierMarchandise) ci-dessous
+# pour bénéficier des relations SQLAlchemy et du cascade delete-orphan.
 
 
 class ContenuDossierMarchandise(BaseModel):
