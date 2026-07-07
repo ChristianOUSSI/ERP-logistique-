@@ -1,50 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import GenericDataPage from '@/components/ui/GenericDataPage';
-import { Activity } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import { useComingSoon } from '@/contexts/ComingSoonContext';
+import { ShieldAlert } from 'lucide-react';
 
-export default function AlertMonitoringPage() {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function AlertsPage() {
+  const { showComingSoon } = useComingSoon();
 
   useEffect(() => {
-    setTimeout(() => {
-      setData([
-        { id: 'ALRT-001', metric: 'CPU Usage > 90%', node: 'Worker-Node-3', time: '10:45 AM', active: true },
-        { id: 'ALRT-002', metric: 'Database Latency Spike', node: 'DB-Primary', time: '09:12 AM', active: false },
-      ]);
-      setLoading(false);
-    }, 700);
-  }, []);
-
-  const columns = [
-    { key: 'id', label: 'ID Alerte' },
-    { key: 'metric', label: 'Métrique' },
-    { key: 'node', label: 'Nœud/Service' },
-    { key: 'time', label: 'Heure' },
-    { 
-      key: 'active', 
-      label: 'État',
-      render: (val: boolean) => (
-        <span className={`flex items-center gap-1.5 ${val ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}`}>
-          <span className={`w-2 h-2 rounded-full ${val ? 'bg-red-600 animate-pulse' : 'bg-green-600'}`}></span>
-          {val ? 'En cours' : 'Résolue'}
-        </span>
-      )
-    }
-  ];
+    // Show the coming soon modal immediately on load
+    showComingSoon('Alertes de Sécurité (Audit)');
+  }, [showComingSoon]);
 
   return (
-    <GenericDataPage
-      title="Monitoring des Alertes"
-      description="Surveillance en temps réel de l'infrastructure et des alertes actives."
-      icon={<Activity className="w-6 h-6 text-indigo-600" />}
-      columns={columns}
-      data={data}
-      isLoading={loading}
-      onExport={() => alert('Exporting alerts...')}
-      primaryActionLabel="Configurer les seuils"
-    />
+    <ModuleLayout module="admin">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+          <ShieldAlert className="w-10 h-10 text-slate-400" />
+        </div>
+        <h1 className="text-2xl font-bold text-slate-800 mb-2">Centre d'Alertes</h1>
+        <p className="text-slate-500 max-w-md">Ce module surveillera en temps réel toutes les anomalies et alertes de sécurité détectées par le système. Bientôt disponible.</p>
+      </div>
+    </ModuleLayout>
   );
 }

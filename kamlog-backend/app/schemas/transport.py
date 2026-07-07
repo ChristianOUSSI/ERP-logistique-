@@ -27,15 +27,13 @@ class CamionBase(BaseModel):
         # Format: [2 Lettres Région] [2 Lettres Genre] [3 Chiffres] [2 Lettres Série]
         # Ex: LT TR 123 AB, ou avec tirets/sans espaces LTTR123AB
         v_normalized = v.strip().upper()
-        # Remove spaces and dashes for standard check
+        # On assouplit la regex pour permettre la création de véhicules facilement (lettres, chiffres, espaces, tirets)
         v_clean = re.sub(r'[\s\-]', '', v_normalized)
-        # Regex: 2 letters, 2 letters, 3 digits, 2 letters
-        pattern = r"^[A-Z]{2}[A-Z]{2}\d{3}[A-Z]{2}$"
+        pattern = r"^[A-Z0-9]+$"
         if not re.match(pattern, v_clean):
-            raise ValueError("Le format de l'immatriculation est invalide. Attendu: ex. LT TR 123 AB")
+            raise ValueError("Le format de l'immatriculation est invalide. Lettres et chiffres uniquement.")
         
-        # Reformater proprement "LT TR 123 AB"
-        return f"{v_clean[0:2]} {v_clean[2:4]} {v_clean[4:7]} {v_clean[7:9]}"
+        return v_normalized
 
 
 class CamionCreate(CamionBase):

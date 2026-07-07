@@ -11,13 +11,18 @@ import { SettingsProvider, useSettings } from '@/components/layout/SettingsProvi
 import { useModuleTheme } from '@/hooks/useModuleTheme';
 import { FullScreenLoader } from '@/components/ui/Loaders';
 import { Toaster } from 'sonner';
+import { ComingSoonProvider } from '@/contexts/ComingSoonContext';
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppLayoutContent>{children}</AppLayoutContent>;
+  return (
+    <ComingSoonProvider>
+      <AppLayoutContent>{children}</AppLayoutContent>
+    </ComingSoonProvider>
+  );
 }
 
 function AppLayoutContent({
@@ -68,10 +73,10 @@ function AppLayoutContent({
    * Auth guard
    * ──────────────────────────────────────────── */
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && pathname !== '/logout') {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, pathname]);
 
   /* ────────────────────────────────────────────
    * RBAC route guard
