@@ -5,7 +5,7 @@ import { transportAPI } from '@/lib/api-client';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Wrench, ShieldAlert, CheckCircle2, Truck, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function MaintenancePage() {
   const [camions, setCamions] = useState<any[]>([]);

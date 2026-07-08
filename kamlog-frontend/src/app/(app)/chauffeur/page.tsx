@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Truck, MapPin, Package, CheckCircle2, Navigation, Clock, AlertTriangle } from 'lucide-react';
 import { transportAPI } from '@/lib/api/transport';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import SignaturePadModal from '@/components/transport/SignaturePadModal';
 
 export default function ChauffeurPage() {

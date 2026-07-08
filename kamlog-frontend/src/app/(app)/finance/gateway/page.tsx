@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useComingSoon } from '@/contexts/ComingSoonContext'
 import { gatewayAPI, Passerelle } from '@/lib/api/gateway'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function KFinanceGatewayMonitor() {
   const [showToast, setShowToast] = useState(false)

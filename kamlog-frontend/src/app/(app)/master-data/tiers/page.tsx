@@ -5,7 +5,7 @@ import { tiersAPI, financeAPI } from '@/lib/api-client'
 import type { Tier } from '@/lib/api/master-data'
 import GenericDataPage from '@/components/ui/GenericDataPage'
 import { Building2, Users, Briefcase, Handshake, CreditCard, X, AlertCircle, CheckCircle } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 // ── KPI Card component ─────────────────────────────────────────────────────────
 function KpiCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {

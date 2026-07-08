@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getRouteFromTCode } from '@/lib/tcodes';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export function TCodeSearch() {
   const [tcode, setTcode] = useState('');

@@ -5,7 +5,7 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { FileText, Search, Plus, Calendar, Edit, Ship, PackageSearch, Package } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { transportAPI } from '@/lib/api-client' // Assuming we can use general fetch if needed
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function DeclarationsPage() {
   const [declarations, setDeclarations] = useState<any[]>([])
