@@ -8,6 +8,7 @@ import { AuthProvider as CustomAuthProvider } from '@/components/layout/AuthProv
 import { SettingsProvider } from '@/components/layout/SettingsProvider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ThemeProvider } from '@/components/theme-provider'
 
 function AuthSync({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
@@ -65,7 +66,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <AuthSync>
           <CustomAuthProvider>
             <SettingsProvider>
-              {children}
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                {children}
+              </ThemeProvider>
             </SettingsProvider>
           </CustomAuthProvider>
         </AuthSync>

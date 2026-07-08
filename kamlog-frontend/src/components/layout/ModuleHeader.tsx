@@ -10,6 +10,7 @@ import { useAuth } from './AuthProvider'
 import { useSettings, ThemePreference } from './SettingsProvider'
 import { useI18n } from '@/hooks/useI18n'
 import { toast } from 'sonner'
+import { useTheme } from 'next-themes'
 
 const NOTIFICATIONS_STORAGE_KEY = 'kamlog_erp_notifications'
 
@@ -48,7 +49,8 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
   const searchInputRef = useRef<HTMLInputElement>(null)
   const soundEnabledRef = useRef(true)
 
-  const { soundEnabled, toggleSound, showSoundBadge, triggerSoundBadge, theme: uiTheme, setTheme, language, setLanguage } = useSettings()
+  const { soundEnabled, toggleSound, showSoundBadge, triggerSoundBadge, language, setLanguage } = useSettings()
+  const { theme: uiTheme, setTheme } = useTheme()
 
   const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false)
   const [selectedAgency, setSelectedAgency] = useState('Douala, CMR')
@@ -90,8 +92,8 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
   const socketRef = useRef<WebSocket | null>(null)
 
   const cycleTheme = () => {
-    const themes: ThemePreference[] = ['light', 'dark', 'system']
-    setTheme(themes[(themes.indexOf(uiTheme) + 1) % themes.length])
+    const themes = ['light', 'dark', 'system']
+    setTheme(themes[(themes.indexOf(uiTheme || 'system') + 1) % themes.length])
   }
 
   const connect = useCallback(() => {
