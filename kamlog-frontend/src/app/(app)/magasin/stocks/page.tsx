@@ -22,7 +22,6 @@ export default function StocksPage() {
     magasin_ids: [],
     client_id: undefined,
     date_debut: '',
-    date_debut: '',
     date_fin: ''
   })
 
