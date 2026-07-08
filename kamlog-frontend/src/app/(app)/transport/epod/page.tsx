@@ -39,7 +39,7 @@ export default function EPodPage() {
     if (!mission) return;
     try {
       setActionLoading(true);
-      await transportAPI.updateMission(mission.id, { statut: newStatus });
+      await transportAPI.updateStatut(mission.id, newStatus);
       setMission({ ...mission, statut: newStatus });
       if (newStatus === 'LIVRE') {
         setStatusUpdated(true);
