@@ -9,6 +9,7 @@ import {
   AlertCircle, ChevronRight, User, Phone, MapPin, Scale, Clock
 } from 'lucide-react';
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
+import { Combobox } from '@/components/ui/combobox';
 
 export default function TransportDispatchPage() {
   const router = useRouter();
@@ -182,12 +183,13 @@ export default function TransportDispatchPage() {
               <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Client Facturé *</label>
-                  <select name="client_id" required value={formData.client_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                    <option value="" disabled>Sélectionner un Client</option>
-                    {clients.map(c => (
-                      <option key={c.id} value={c.id}>{c.raison_sociale}</option>
-                    ))}
-                  </select>
+                  <Combobox
+                    options={clients.map(c => ({ value: String(c.id), label: c.raison_sociale }))}
+                    value={formData.client_id}
+                    onChange={(val) => setFormData(prev => ({ ...prev, client_id: val }))}
+                    placeholder="Sélectionner un Client"
+                    searchPlaceholder="Rechercher par nom..."
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Adresse Expéditeur</label>
@@ -257,30 +259,42 @@ export default function TransportDispatchPage() {
               <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Tracteur *</label>
-                  <select name="camion_id" required value={formData.camion_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                    <option value="">Sélectionner</option>
-                    {tracteurs.map((t: any) => (
-                      <option key={t.id} value={t.id}>{t.immatriculation} - {t.marque} {t.statut !== 'DISPONIBLE' ? `(${t.statut})` : ''}</option>
-                    ))}
-                  </select>
+                  <Combobox
+                    options={tracteurs.map((t: any) => ({
+                      value: String(t.id),
+                      label: `${t.immatriculation} - ${t.marque} ${t.statut !== 'DISPONIBLE' ? `(${t.statut})` : ''}`
+                    }))}
+                    value={formData.camion_id}
+                    onChange={(val) => setFormData(prev => ({ ...prev, camion_id: val }))}
+                    placeholder="Sélectionner un tracteur"
+                    searchPlaceholder="Rechercher immatriculation..."
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Semi-remorque (Optionnel)</label>
-                  <select name="remorque_id" value={formData.remorque_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                    <option value="">Aucune</option>
-                    {remorques.map((r: any) => (
-                      <option key={r.id} value={r.id}>{r.immatriculation} - {r.marque}</option>
-                    ))}
-                  </select>
+                  <Combobox
+                    options={remorques.map((r: any) => ({
+                      value: String(r.id),
+                      label: `${r.immatriculation} - ${r.marque}`
+                    }))}
+                    value={formData.remorque_id}
+                    onChange={(val) => setFormData(prev => ({ ...prev, remorque_id: val }))}
+                    placeholder="Aucune remorque"
+                    searchPlaceholder="Rechercher immatriculation..."
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Conducteur *</label>
-                  <select name="chauffeur_id" required value={formData.chauffeur_id} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
-                    <option value="">Sélectionner</option>
-                    {chauffeurs.map((c: any) => (
-                      <option key={c.id} value={c.id}>{c.prenom} {c.nom} {c.specialisation ? `[${c.specialisation}]` : ''}</option>
-                    ))}
-                  </select>
+                  <Combobox
+                    options={chauffeurs.map((c: any) => ({
+                      value: String(c.id),
+                      label: `${c.prenom} ${c.nom} ${c.specialisation ? `[${c.specialisation}]` : ''}`
+                    }))}
+                    value={formData.chauffeur_id}
+                    onChange={(val) => setFormData(prev => ({ ...prev, chauffeur_id: val }))}
+                    placeholder="Sélectionner un conducteur"
+                    searchPlaceholder="Rechercher par nom..."
+                  />
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { transportAPI } from '@/lib/api-client';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Wrench, ShieldAlert, CheckCircle2, Truck, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
+import toast from 'react-hot-toast';
 
 export default function MaintenancePage() {
   const [camions, setCamions] = useState<any[]>([]);
@@ -62,7 +63,7 @@ export default function MaintenancePage() {
       }));
     } catch (error) {
       console.error("Failed to update panne:", error);
-      alert("Erreur lors de la mise à jour de la panne.");
+      toast.error("Erreur lors de la mise à jour de la panne.");
     } finally {
       setProcessing(null);
     }
@@ -72,18 +73,18 @@ export default function MaintenancePage() {
     // Check if there are unresolved pannes
     const unresolved = pannesByCamion[camionId]?.filter(p => p.statut === 'A_REPARER' || p.statut === 'EN_COURS');
     if (unresolved && unresolved.length > 0) {
-      alert("Impossible de débloquer : il reste des pannes non résolues.");
+      toast.error("Impossible de débloquer : il reste des pannes non résolues.");
       return;
     }
 
     try {
       setProcessing(camionId);
       await transportAPI.debloquerCamion(camionId);
-      alert("Véhicule débloqué et remis en disponibilité !");
+      toast.success("Véhicule débloqué et remis en disponibilité !");
       fetchData(); // Refresh list
     } catch (error: any) {
       console.error("Failed to unlock vehicle:", error);
-      alert(error.response?.data?.detail || "Erreur lors du déblocage.");
+      toast.error(error.response?.data?.detail || "Erreur lors du déblocage.");
     } finally {
       setProcessing(null);
     }

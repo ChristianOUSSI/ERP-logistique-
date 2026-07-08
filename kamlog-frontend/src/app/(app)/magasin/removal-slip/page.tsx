@@ -2,9 +2,10 @@
 'use client'
 
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { magasinAPI } from '@/lib/api-client'
+import { magasinAPI, masterDataAPI } from '@/lib/api-client'
+import { Combobox, ComboboxOption } from '@/components/ui/combobox'
 
 export default function RemovalSlipPage() {
   const router = useRouter()
@@ -25,6 +26,31 @@ export default function RemovalSlipPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+
+  const [articles, setArticles] = useState<ComboboxOption[]>([])
+  const [rawArticles, setRawArticles] = useState<any[]>([])
+  const [isLoadingArticles, setIsLoadingArticles] = useState(true)
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await masterDataAPI.getArticles({ limit: 100 })
+        const data = response.data.items || response.data || []
+        if (Array.isArray(data)) {
+          setRawArticles(data)
+          setArticles(data.map((a: any) => ({
+            value: String(a.id),
+            label: `${a.code} - ${a.designation || a.nom}`
+          })))
+        }
+      } catch (err) {
+        console.error("Failed to load articles", err)
+      } finally {
+        setIsLoadingArticles(false)
+      }
+    }
+    fetchArticles()
+  }, [])
 
   const handleClear = () => {
     setSlipNumber('')
@@ -203,44 +229,26 @@ export default function RemovalSlipPage() {
                   </select>
                 </div>
 
-                {/* Article ID */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">ID Article (Backend) *</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="ID de l'article"
-                    type="number"
-                    value={articleId}
-                    onChange={(e) => setArticleId(e.target.value)}
-                  />
-                </div>
-
-                {/* Article Code (Optional, just UI) */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Code Article</label>
-                  <div className="relative">
-                    <input 
-                      className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                      placeholder="Ex: KA01-001"
-                      type="text"
-                      value={articleCode}
-                      onChange={(e) => setArticleCode(e.target.value)}
-                    />
-                    <button className="absolute right-2 top-1/2 -translate-y-1/2 text-error hover:text-error-container transition-colors">
-                      <span className="material-symbols-outlined text-[20px]">search</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Article Description */}
+                {/* Article */}
                 <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Description Article</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Description de l'article"
-                    type="text"
-                    value={articleDescription}
-                    onChange={(e) => setArticleDescription(e.target.value)}
+                  <label className="font-label-md font-label-md text-on-surface-variant block">Article *</label>
+                  <Combobox
+                    options={articles}
+                    value={articleId}
+                    onChange={(val) => {
+                      setArticleId(val)
+                      const selected = rawArticles.find(a => String(a.id) === val)
+                      if (selected) {
+                        setArticleCode(selected.code)
+                        setArticleDescription(selected.designation || selected.nom)
+                      } else {
+                        setArticleCode('')
+                        setArticleDescription('')
+                      }
+                    }}
+                    placeholder="Sélectionner un article..."
+                    searchPlaceholder="Rechercher par code ou nom..."
+                    isLoading={isLoadingArticles}
                   />
                 </div>
 

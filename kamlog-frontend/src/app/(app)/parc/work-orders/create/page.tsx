@@ -3,8 +3,10 @@
 import React from 'react'
 import GenericDataPage from '@/components/ui/GenericDataPage'
 import { Hammer } from 'lucide-react'
+import { useComingSoon } from '@/contexts/ComingSoonContext'
 
 export default function WorkOrdersCreate() {
+  const { showComingSoon } = useComingSoon()
   return (
     <GenericDataPage
       title="Création d'Ordre de Travail"
@@ -14,7 +16,7 @@ export default function WorkOrdersCreate() {
       data={[]}
       isLoading={false}
       primaryActionLabel="Générer Ordre"
-      onAdd={() => alert('Création en cours d\'intégration avec le Backend...')}
+      onAdd={() => showComingSoon('Générer Ordre de Travail')}
     />
   )
 }

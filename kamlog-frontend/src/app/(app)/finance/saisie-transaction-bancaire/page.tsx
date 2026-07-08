@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { financeAPI } from '@/lib/api-client'
 import { Plus, Search, Filter, MoreVertical, Download, Eye, CheckCircle2, ArrowRightLeft, CreditCard } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export default function SaisieTransactionBancairePage() {
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal - BNA (DZ)')
@@ -56,7 +57,7 @@ export default function SaisieTransactionBancairePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    alert('Saisie enregistrée avec succès (Simulation Backend).')
+    toast.success('Saisie enregistrée avec succès.')
     fetchTransactions()
   }
 

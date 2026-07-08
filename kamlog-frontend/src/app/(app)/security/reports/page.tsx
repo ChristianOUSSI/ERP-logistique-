@@ -3,21 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import GenericDataPage from '@/components/ui/GenericDataPage';
 import { ShieldAlert, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { useComingSoon } from '@/contexts/ComingSoonContext';
 
 export default function SecurityReportsPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { showComingSoon } = useComingSoon();
+
   useEffect(() => {
-    // Simulation d'un appel API pour les rapports de sécurité
-    setTimeout(() => {
-      setData([
-        { id: 'RPT-SEC-001', type: 'Intrusion Attempt', severity: 'High', date: '2026-07-02 14:30', status: 'Resolved', source: 'IP 192.168.1.45' },
-        { id: 'RPT-SEC-002', type: 'Failed Logins', severity: 'Medium', date: '2026-07-02 10:15', status: 'Investigating', source: 'Multiple IPs' },
-        { id: 'RPT-SEC-003', type: 'Unauthorized Access', severity: 'Critical', date: '2026-07-01 22:45', status: 'Open', source: 'User: demo_agent' },
-      ]);
-      setLoading(false);
-    }, 800);
+    // Supprimé: fausses données. Remplacé par un chargement en attente API.
+    setLoading(false);
   }, []);
 
   const columns = [
@@ -63,7 +59,8 @@ export default function SecurityReportsPage() {
       columns={columns}
       data={data}
       isLoading={loading}
-      onExport={() => alert('Export en cours...')}
+      onAdd={() => showComingSoon('Nouveau rapport de sécurité')}
+      onExport={() => showComingSoon('Export PDF')}
       primaryActionLabel="Créer un Rapport"
     />
   );

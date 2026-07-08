@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { Package, Search, Plus, Edit, Trash2, Layers, HardHat } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
+import toast from 'react-hot-toast'
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<any[]>([])
@@ -186,7 +187,7 @@ function ArticleModal({ article, onClose, onSuccess, filterType }: { article: an
     
     // Ensure code is numeric
     if (!/^\d+$/.test(formData.code_article)) {
-      alert("Le code article doit être uniquement numérique (ex: 1234567).")
+      toast.error("Le code article doit être uniquement numérique (ex: 1234567).");
       return
     }
 
@@ -209,7 +210,7 @@ function ArticleModal({ article, onClose, onSuccess, filterType }: { article: an
         body: JSON.stringify(payload)
       })
       if (res.ok) onSuccess()
-      else alert("Erreur lors de l'enregistrement.")
+      else toast.error("Erreur lors de l'enregistrement.");
     } catch (err) {
       console.error(err)
     }

@@ -6,6 +6,7 @@ import {
   Download, Eye, Send, CheckCircle2, XCircle, Clock
 } from 'lucide-react';
 import { financeAPI, tiersAPI } from '@/lib/api-client';
+import { exportToCSV } from '@/lib/export';
 
 export default function FacturesPage() {
   const [factures, setFactures] = useState<any[]>([]);
@@ -14,8 +15,6 @@ export default function FacturesPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // In a real implementation this would fetch from backend /api/finance/factures
-    // Currently using the mocked /api/finance/invoices from the template
     fetchFactures();
   }, []);
 
@@ -63,6 +62,19 @@ export default function FacturesPage() {
     return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF' }).format(amount);
   };
 
+  const handleExport = () => {
+    const dataToExport = factures.map(f => ({
+      'N° Facture': f.numero_facture,
+      'Mission ID': f.mission_id || '',
+      'Date Emission': new Date(f.date_emission).toLocaleDateString('fr-FR'),
+      'Client': tiersMap[f.tiers_id] || 'Client Inconnu',
+      'Montant HT': f.montant_ht_xaf,
+      'Montant TTC': f.montant_ttc_xaf,
+      'Statut': f.statut
+    }));
+    exportToCSV(dataToExport, 'export_factures.csv');
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -72,7 +84,10 @@ export default function FacturesPage() {
           <p className="text-gray-500 mt-1">Gérez les factures générées automatiquement ou manuellement.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          >
             <Download className="w-4 h-4" />
             Exporter
           </button>
@@ -136,26 +151,26 @@ export default function FacturesPage() {
                 factures.map((facture, index) => (
                   <tr key={index} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="p-4">
-                      <div className="font-medium text-gray-900">{facture.numero_facture || facture.id}</div>
+                      <div className="font-medium text-gray-900">{facture.numero_facture}</div>
                       {facture.mission_id && (
                         <div className="text-xs text-gray-500 mt-0.5">Mission: #{facture.mission_id}</div>
                       )}
                     </td>
                     <td className="p-4 text-gray-600">
-                      {new Date(facture.date_emission || facture.dueDate).toLocaleDateString('fr-FR')}
+                      {new Date(facture.date_emission).toLocaleDateString('fr-FR')}
                     </td>
                     <td className="p-4">
-                      <div className="font-medium text-gray-900">{tiersMap[facture.tiers_id] || facture.client || 'Client Inconnu'}</div>
+                      <div className="font-medium text-gray-900">{tiersMap[facture.tiers_id] || 'Client Inconnu'}</div>
                     </td>
                     <td className="p-4 text-right text-gray-600">
-                      {formatCurrency(facture.montant_ht_xaf || (facture.amount ? facture.amount * 0.8 : 0))}
+                      {formatCurrency(facture.montant_ht_xaf || 0)}
                     </td>
                     <td className="p-4 text-right font-medium text-gray-900">
-                      {formatCurrency(facture.montant_ttc_xaf || facture.amount || 0)}
+                      {formatCurrency(facture.montant_ttc_xaf || 0)}
                     </td>
                     <td className="p-4 text-center">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(facture.statut || facture.status)}`}>
-                        {facture.statut || facture.status}
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(facture.statut)}`}>
+                        {facture.statut}
                       </span>
                     </td>
                     <td className="p-4 text-right">

@@ -6,6 +6,7 @@ import { Package, MapPin, Truck, CheckCircle2, Camera, AlertTriangle, CheckCircl
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { toast } from 'react-hot-toast';
 
 export default function EPodPage() {
   const [mission, setMission] = useState<any>(null);
@@ -16,6 +17,23 @@ export default function EPodPage() {
   // Pour le MVP, on prend la dernière mission "EN_ROUTE" du système
   useEffect(() => {
     loadActiveMission();
+
+    const handleOnline = async () => {
+      const pendingUpdates = JSON.parse(localStorage.getItem('pending_mission_updates') || '[]');
+      if (pendingUpdates.length > 0) {
+        for (const update of pendingUpdates) {
+          try {
+            await transportAPI.updateStatut(update.missionId, update.statut);
+          } catch (e) {
+            console.error('Failed to sync', e);
+          }
+        }
+        localStorage.removeItem('pending_mission_updates');
+        toast.success("Synchronisation hors-ligne terminée.");
+      }
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
   }, []);
 
   const loadActiveMission = async () => {
@@ -39,6 +57,20 @@ export default function EPodPage() {
     if (!mission) return;
     try {
       setActionLoading(true);
+      if (!navigator.onLine) {
+        // Mode hors ligne
+        const pendingUpdates = JSON.parse(localStorage.getItem('pending_mission_updates') || '[]');
+        pendingUpdates.push({ missionId: mission.id, statut: newStatus, timestamp: new Date().toISOString() });
+        localStorage.setItem('pending_mission_updates', JSON.stringify(pendingUpdates));
+        setMission({ ...mission, statut: newStatus });
+        toast.warning("Réseau indisponible. Mise à jour enregistrée hors-ligne.");
+        if (newStatus === 'LIVRE') {
+          setStatusUpdated(true);
+          setTimeout(() => setStatusUpdated(false), 3000);
+        }
+        return;
+      }
+      
       await transportAPI.updateStatut(mission.id, newStatus);
       setMission({ ...mission, statut: newStatus });
       if (newStatus === 'LIVRE') {
@@ -47,7 +79,7 @@ export default function EPodPage() {
       }
     } catch (err) {
       console.error("Erreur de mise à jour", err);
-      alert("Erreur lors de la mise à jour du statut.");
+      toast.error("Erreur lors de la mise à jour du statut.");
     } finally {
       setActionLoading(false);
     }

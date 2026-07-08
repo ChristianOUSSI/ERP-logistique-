@@ -9,7 +9,7 @@ import io
 
 from app.database import get_db
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
-from app.models.transport import MissionTransport
+from app.models.transport import MissionTransport, ChauffeurProfil, StatutMission
 from app.models.user import User
 from app.schemas.finance import (
     FactureCreate, FactureUpdate, FactureResponse,
@@ -24,8 +24,43 @@ from app.services.finance_service import (
     calculer_tva, BankReconciliationService,
     AvoirService
 )
+from app.utils.cache import cache_service
 
 router = APIRouter()
+
+
+@router.get("/payroll/drivers")
+@require_permission("finance:read")
+async def get_drivers_payroll(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Génère la paie des chauffeurs basée sur les missions."""
+    chauffeurs = db.query(ChauffeurProfil).filter(ChauffeurProfil.est_actif == True).all()
+    result = []
+    for chauffeur in chauffeurs:
+        # Base arbitraire (si pas définie en DB)
+        base = 150000
+        
+        # Primes basées sur les missions LIVRÉES
+        missions = db.query(MissionTransport).filter(
+            MissionTransport.chauffeur_id == chauffeur.id,
+            MissionTransport.statut == StatutMission.LIVREE
+        ).all()
+        
+        primes = sum(m.frais_mission or 0 for m in missions)
+        peages = 10000 * len(missions)  # Mock logique de péage par mission
+        
+        result.append({
+            "id": chauffeur.id,
+            "nom": chauffeur.nom,
+            "prenoms": chauffeur.prenoms,
+            "base": base,
+            "primes": primes,
+            "peages": peages,
+            "statut": "PAYE" if primes > 0 else "EN_ATTENTE"
+        })
+    return result
 
 
 @router.get("/kpis")
@@ -65,6 +100,58 @@ async def get_finance_kpis(
         "depenses": float(depenses),
         "tresorerie": float(tresorerie)
     }
+
+@router.get("/analytics/chart-data")
+@require_permission("finance:read")
+async def get_analytics_chart_data(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Fournit des données de séries temporelles pour les tableaux de bord analytiques (Recharts)."""
+    cache_key = "finance:analytics_chart_data"
+    cached_data = cache_service.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    from sqlalchemy import func, extract
+    
+    current_year = datetime.now().year
+    results = []
+    month_names = ["", "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"]
+    
+    for month in range(1, 13):
+        if month > datetime.now().month:
+            break
+            
+        ca = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+            extract('year', Facture.date_emission) == current_year,
+            extract('month', Facture.date_emission) == month,
+            Facture.type.notin_(["ACHAT", "DEPENSE"]) # Everything except purchases/expenses is revenue
+        ).scalar() or Decimal('0')
+        
+        depenses = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+            extract('year', Facture.date_emission) == current_year,
+            extract('month', Facture.date_emission) == month,
+            Facture.type.in_(["ACHAT", "DEPENSE"])
+        ).scalar() or Decimal('0')
+        
+        marge = ca - depenses
+        
+        results.append({
+            "name": month_names[month],
+            "CA": float(ca),
+            "Depenses": float(depenses),
+            "Marge": float(marge)
+        })
+        
+    # S'il n'y a pas de données du tout, fournir une trame vide pour ne pas casser le graphe
+    if not results:
+        results = [{"name": month_names[datetime.now().month], "CA": 0, "Depenses": 0, "Marge": 0}]
+        
+    # Cache for 15 minutes (900 seconds)
+    cache_service.set(cache_key, results, expire=900)
+    
+    return results
 
 
 @router.get("/factures", response_model=List[FactureResponse])
@@ -123,7 +210,10 @@ async def create_facture(
     except ValueError as e:
         raise HTTPException(status.HTTP_402_PAYMENT_REQUIRED, str(e))
     
-    return FactureService.create_facture(db, facture_data, current_user.username)
+    result = FactureService.create_facture(db, facture_data, current_user.username)
+    # Invalider le cache analytique
+    cache_service.delete("finance:analytics_chart_data")
+    return result
 
 
 @router.put("/factures/{facture_id}", response_model=FactureResponse)

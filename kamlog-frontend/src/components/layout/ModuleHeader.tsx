@@ -70,6 +70,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
     { id: 'magasin', label: 'Entrepôt / Magasin', icon: 'warehouse', path: '/magasin/dashboard' },
     { id: 'parc', label: 'Yard / Parc', icon: 'directions_car', path: '/parc/zones' },
     { id: 'master-data', label: 'Données Maîtres', icon: 'hub', path: '/master-data/tiers' },
+    { id: 'rh', label: 'Ressources Humaines', icon: 'groups', path: '/rh/mon-espace' },
     { id: 'admin', label: 'Administration', icon: 'admin_panel_settings', path: '/admin/user-management/listing' },
   ]
 
@@ -98,7 +99,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
 
   const connect = useCallback(() => {
     if (!user) return
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/alerts/ws/alerts'
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/ws/events'
     const socket = new WebSocket(`${wsUrl}?token=${user.id}`)
     socketRef.current = socket
     setWsStatus('connecting')
@@ -412,10 +413,11 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
             {/* Logout */}
             <button
               onClick={() => router.push('/logout')}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-red-500/10 hover:text-error"
+              className="inline-flex h-9 px-3 items-center justify-center gap-2 rounded-lg text-on-surface-variant transition-colors hover:bg-red-500/10 hover:text-error ml-2"
               aria-label="Se déconnecter"
             >
               <span className="material-symbols-outlined text-[20px]">logout</span>
+              <span className="text-sm font-semibold hidden sm:inline">Déconnexion</span>
             </button>
           </div>
         </div>

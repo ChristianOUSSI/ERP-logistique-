@@ -1,15 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { masterDataAPI } from '@/lib/api-client'
+import { Combobox, ComboboxOption } from '@/components/ui/combobox'
 
 export default function MouvementDeStockManuelPage() {
-  const [articleCode, setArticleCode] = useState('ART-99201 - Filtre Huile Lourd')
+  const [articleCode, setArticleCode] = useState('')
   const [movementType, setMovementType] = useState('adjustment')
   const [quantity, setQuantity] = useState('-2')
   const [unit, setUnit] = useState('PC')
   const [sourceZone, setSourceZone] = useState('Z-A')
   const [sourceRack, setSourceRack] = useState('R42-B12')
   const [justification, setJustification] = useState('')
+
+  const [articles, setArticles] = useState<ComboboxOption[]>([])
+  const [isLoadingArticles, setIsLoadingArticles] = useState(true)
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await masterDataAPI.getArticles({ limit: 100 })
+        const data = response.data.items || response.data || []
+        if (Array.isArray(data)) {
+          setArticles(data.map((a: any) => ({
+            value: String(a.code || a.id),
+            label: `${a.code} - ${a.designation || a.nom}`
+          })))
+        }
+      } catch (err) {
+        console.error("Failed to load articles", err)
+      } finally {
+        setIsLoadingArticles(false)
+      }
+    }
+    fetchArticles()
+  }, [])
 
   const handleSubmit = () => {
     console.log('Movement submitted:', {
@@ -97,16 +122,14 @@ export default function MouvementDeStockManuelPage() {
                 {/* Article Selection */}
                 <div className="col-span-1 md:col-span-2">
                   <label className="block font-label-md text-label-md text-on-surface mb-xs font-medium">Code Article / Description <span className="text-magasin-main">*</span></label>
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style={{fontSize: '18px'}}>qr_code_scanner</span>
-                    <input 
-                      className="w-full bg-surface border border-outline-variant rounded-DEFAULT py-sm pl-10 pr-3 font-body-md text-body-md focus:border-magasin-main focus:ring-1 focus:ring-magasin-main outline-none transition-all" 
-                      placeholder="Rechercher un article..." 
-                      type="text" 
-                      value={articleCode}
-                      onChange={(e) => setArticleCode(e.target.value)}
-                    />
-                  </div>
+                  <Combobox
+                    options={articles}
+                    value={articleCode}
+                    onChange={setArticleCode}
+                    placeholder="Sélectionner un article..."
+                    searchPlaceholder="Rechercher par code ou nom..."
+                    isLoading={isLoadingArticles}
+                  />
                 </div>
 
                 {/* Type de Mouvement */}

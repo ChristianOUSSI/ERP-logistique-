@@ -5,6 +5,7 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { FileText, Search, Plus, Calendar, Edit, Ship, PackageSearch, Package } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { transportAPI } from '@/lib/api-client' // Assuming we can use general fetch if needed
+import toast from 'react-hot-toast'
 
 export default function DeclarationsPage() {
   const [declarations, setDeclarations] = useState<any[]>([])
@@ -94,10 +95,15 @@ export default function DeclarationsPage() {
               ) : filteredDeclarations.map((decl) => (
                 <tr key={decl.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-mono font-black text-blue-600">{decl.numero_bl}</div>
+                    <div className="font-mono font-black text-blue-600 flex items-center gap-2">
+                      {decl.numero_bl}
+                      {decl.numero_bl_externe && (
+                        <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded uppercase font-bold">EXT: {decl.numero_bl_externe}</span>
+                      )}
+                    </div>
                     <div className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-bold">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(decl.date_declaration).toLocaleDateString()}
+                      <Ship className="w-3.5 h-3.5" />
+                      {decl.nom_navire || "Navire non spécifié"} {decl.numero_voyage ? `(${decl.numero_voyage})` : ''}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -145,11 +151,33 @@ export default function DeclarationsPage() {
 }
 
 function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
+  const [activeTab, setActiveTab] = useState<'ident' | 'navire' | 'marchandise' | 'parties'>('ident')
+  
   const [formData, setFormData] = useState({
     numero_bl: '',
+    numero_bl_externe: '',
+    reference_booking: '',
+    numero_scelle: '',
     client_id: '',
+    nom_navire: '',
+    numero_voyage: '',
+    port_chargement: '',
+    port_dechargement: '',
+    lieu_livraison: '',
     code_article: '',
-    quantite_declaree: ''
+    quantite_declaree: '',
+    poids_brut_kg: '',
+    poids_net_kg: '',
+    volume_m3: '',
+    nombre_colis: '',
+    type_emballage: '',
+    description_marchandises: '',
+    expediteur_shipper: '',
+    destinataire_consignee: '',
+    notify_party: '',
+    mode_fret: '',
+    code_hs: '',
+    numero_declaration_douane: ''
   })
   
   const [clients, setClients] = useState<any[]>([])
@@ -157,13 +185,11 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
   const [articleError, setArticleError] = useState('')
 
   useEffect(() => {
-    // Fetch clients
     fetch('http://localhost:8000/api/magasin/clients', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     }).then(r => r.json()).then(setClients).catch(console.error)
   }, [])
 
-  // Auto-fill product info based on code_article
   useEffect(() => {
     if (formData.code_article.length === 7) {
       fetch(`http://localhost:8000/api/magasin/articles/by-code/${formData.code_article}`, {
@@ -190,15 +216,19 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!articleInfo) {
-      alert("Code article invalide.")
+      toast.error("Code article invalide.");
       return
     }
 
     const payload = {
+      ...formData,
       client_id: parseInt(formData.client_id),
-      numero_bl: formData.numero_bl,
-      code_article: formData.code_article,
       statut: "VALIDEE",
+      poids_brut_kg: formData.poids_brut_kg ? parseFloat(formData.poids_brut_kg) : null,
+      poids_net_kg: formData.poids_net_kg ? parseFloat(formData.poids_net_kg) : null,
+      volume_m3: formData.volume_m3 ? parseFloat(formData.volume_m3) : null,
+      nombre_colis: formData.nombre_colis ? parseInt(formData.nombre_colis) : null,
+      mode_fret: formData.mode_fret || null,
       lignes: [
         {
           article_id: articleInfo.id,
@@ -207,6 +237,13 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
         }
       ]
     }
+
+    // Nettoyer les champs vides pour ne pas envoyer de chaînes vides là où c'est optionnel
+    Object.keys(payload).forEach(key => {
+      if (payload[key as keyof typeof payload] === '') {
+        (payload as any)[key] = null
+      }
+    })
 
     try {
       const res = await fetch(`http://localhost:8000/api/magasin/declarations`, {
@@ -220,119 +257,193 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
       if (res.ok) onSuccess()
       else {
         const errorData = await res.json()
-        alert(`Erreur: ${errorData.detail || "Erreur inconnue"}`)
+        toast.error(`Erreur: ${errorData.detail || "Erreur inconnue"}`);
       }
     } catch (err) {
       console.error(err)
     }
   }
 
+  const InputField = ({ label, field, type = "text", required = false, placeholder = "" }: { label: string, field: keyof typeof formData, type?: string, required?: boolean, placeholder?: string }) => (
+    <div>
+      <label className="block text-sm font-bold text-slate-700 mb-1">{label} {required && '*'}</label>
+      <input 
+        type={type} 
+        required={required}
+        value={formData[field]}
+        onChange={e => setFormData({...formData, [field]: e.target.value})}
+        placeholder={placeholder}
+        className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+      />
+    </div>
+  )
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 my-8">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden animate-in zoom-in-95 duration-200 my-8">
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <FileText className="w-5 h-5 text-blue-600" />
-            Nouvelle Déclaration
+            Nouvelle Déclaration (Connaissement)
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
         </div>
+        
+        {/* Tabs */}
+        <div className="flex border-b border-slate-200 px-6 pt-4 gap-6 bg-slate-50">
+          {[
+            { id: 'ident', label: 'Identification' },
+            { id: 'navire', label: 'Navire & Ports' },
+            { id: 'marchandise', label: 'Marchandise' },
+            { id: 'parties', label: 'Parties & Douane' }
+          ].map(t => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActiveTab(t.id as any)}
+              className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === t.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Numéro BL *</label>
-              <input 
-                type="text" 
-                required
-                value={formData.numero_bl}
-                onChange={e => setFormData({...formData, numero_bl: e.target.value})}
-                placeholder="Ex: BL-2026-001"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Client *</label>
-              <select 
-                required
-                value={formData.client_id}
-                onChange={e => setFormData({...formData, client_id: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
-              >
-                <option value="">Sélectionner un client...</option>
-                {clients.map(c => (
-                  <option key={c.id} value={c.id}>{c.nom} {c.prenom}</option>
-                ))}
-              </select>
+          {/* TAB 1 : IDENTIFICATION */}
+          <div className={activeTab === 'ident' ? 'block' : 'hidden'}>
+            <div className="grid grid-cols-2 gap-6">
+              <InputField label="Numéro BL Interne" field="numero_bl" required placeholder="Ex: BL-2026-001" />
+              <InputField label="Numéro BL Externe (Vrai BL)" field="numero_bl_externe" placeholder="Ex: MAEU123456789" />
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Client Propriétaire *</label>
+                <select 
+                  required
+                  value={formData.client_id}
+                  onChange={e => setFormData({...formData, client_id: e.target.value})}
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                >
+                  <option value="">Sélectionner un client...</option>
+                  {clients.map(c => (
+                    <option key={c.id} value={c.id}>{c.nom} {c.prenom}</option>
+                  ))}
+                </select>
+              </div>
+              <InputField label="Référence Booking" field="reference_booking" placeholder="Ex: BK-2026-001" />
+              <InputField label="Numéro de Scellé" field="numero_scelle" placeholder="Ex: SC-789456" />
             </div>
           </div>
 
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-2">
-              <PackageSearch className="w-5 h-5 text-slate-500" /> Marchandise (Auto-remplissage)
-            </h3>
-            
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Code Article (7 chiffres) *</label>
-              <input 
-                type="text" 
-                required
-                pattern="\d{7}"
-                maxLength={7}
-                value={formData.code_article}
-                onChange={e => setFormData({...formData, code_article: e.target.value.replace(/\D/g, '')})}
-                placeholder="Saisissez le code numérique..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none font-mono text-lg bg-white"
-              />
-              {articleError && <p className="text-red-500 text-xs mt-1 font-bold">{articleError}</p>}
-            </div>
-
-            {/* Auto-filled Product Name */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 min-h-[60px] flex items-center">
-              {articleInfo ? (
-                <div className="flex flex-col">
-                  <span className="text-xs text-emerald-600 font-bold uppercase tracking-wider mb-0.5">Produit trouvé</span>
-                  <span className="text-lg font-black text-slate-900">{articleInfo.nom}</span>
-                </div>
-              ) : (
-                <span className="text-slate-400 text-sm italic">Le nom du produit s'affichera ici automatiquement...</span>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">
-                Quantité Totale 
-                {articleInfo && <span className="text-blue-600 ml-1">(en {articleInfo.unite_mesure})</span>} *
-              </label>
-              <div className="flex gap-3">
-                <input 
-                  type="number" 
-                  step="0.001"
-                  required
-                  disabled={!articleInfo}
-                  value={formData.quantite_declaree}
-                  onChange={e => setFormData({...formData, quantite_declaree: e.target.value})}
-                  placeholder="Ex: 500"
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-400 text-lg font-bold"
-                />
-                {articleInfo && (
-                  <div className="flex items-center px-4 bg-slate-200 text-slate-700 font-bold rounded-xl">
-                    {articleInfo.unite_mesure}
-                  </div>
-                )}
+          {/* TAB 2 : NAVIRE & PORTS */}
+          <div className={activeTab === 'navire' ? 'block' : 'hidden'}>
+            <div className="grid grid-cols-2 gap-6">
+              <InputField label="Nom du Navire" field="nom_navire" placeholder="Ex: MSC FANTASIA" />
+              <InputField label="Numéro de Voyage" field="numero_voyage" placeholder="Ex: V-2026-A" />
+              <InputField label="Port de Chargement" field="port_chargement" placeholder="Ex: Bangkok" />
+              <InputField label="Port de Déchargement" field="port_dechargement" placeholder="Ex: Douala" />
+              <div className="col-span-2">
+                <InputField label="Lieu de Livraison Finale" field="lieu_livraison" placeholder="Ex: Magasin KAMLOG Douala" />
               </div>
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-slate-100">
-            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Annuler</button>
-            <button 
-              type="submit" 
-              disabled={!articleInfo}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Créer la Déclaration
-            </button>
+          {/* TAB 3 : MARCHANDISE */}
+          <div className={activeTab === 'marchandise' ? 'block' : 'hidden'}>
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Code Article (7 chiffres) *</label>
+                  <input 
+                    type="text" 
+                    required
+                    pattern="\d{7}"
+                    maxLength={7}
+                    value={formData.code_article}
+                    onChange={e => setFormData({...formData, code_article: e.target.value.replace(/\D/g, '')})}
+                    placeholder="Saisissez le code numérique..."
+                    className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none font-mono text-sm bg-white"
+                  />
+                  {articleError && <p className="text-red-500 text-xs mt-1 font-bold">{articleError}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">
+                    Quantité {articleInfo ? `(en ${articleInfo.unite_mesure})` : ''} *
+                  </label>
+                  <input 
+                    type="number" step="0.001" required disabled={!articleInfo}
+                    value={formData.quantite_declaree}
+                    onChange={e => setFormData({...formData, quantite_declaree: e.target.value})}
+                    className="w-full px-4 py-2 rounded-xl border border-slate-300 outline-none disabled:bg-slate-100 text-sm font-bold"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200 text-sm flex items-center">
+                    {articleInfo ? (
+                      <span><span className="font-bold text-emerald-600 mr-2">Produit reconnu:</span> {articleInfo.nom}</span>
+                    ) : (
+                      <span className="text-slate-400 italic">Le produit s'affichera ici automatiquement...</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <InputField label="Poids Brut (kg)" field="poids_brut_kg" type="number" />
+              <InputField label="Poids Net (kg)" field="poids_net_kg" type="number" />
+              <InputField label="Volume (m³)" field="volume_m3" type="number" />
+              <InputField label="Nombre de Colis" field="nombre_colis" type="number" />
+              <InputField label="Type Emballage" field="type_emballage" placeholder="Ex: Sacs de 50kg" />
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-bold text-slate-700 mb-1">Description Détaillée</label>
+              <textarea 
+                value={formData.description_marchandises}
+                onChange={e => setFormData({...formData, description_marchandises: e.target.value})}
+                className="w-full px-4 py-2 rounded-xl border border-slate-300 outline-none text-sm h-20 resize-none"
+                placeholder="Description telle qu'écrite sur le BL..."
+              />
+            </div>
+          </div>
+
+          {/* TAB 4 : PARTIES & DOUANE */}
+          <div className={activeTab === 'parties' ? 'block' : 'hidden'}>
+            <div className="grid grid-cols-2 gap-6">
+              <InputField label="Expéditeur (Shipper)" field="expediteur_shipper" />
+              <InputField label="Destinataire (Consignee)" field="destinataire_consignee" />
+              <InputField label="Notify Party" field="notify_party" />
+              
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Mode de Fret</label>
+                <select 
+                  value={formData.mode_fret}
+                  onChange={e => setFormData({...formData, mode_fret: e.target.value})}
+                  className="w-full px-4 py-2 rounded-xl border border-slate-300 outline-none text-sm"
+                >
+                  <option value="">Non spécifié</option>
+                  <option value="PREPAID">Prepaid</option>
+                  <option value="COLLECT">Collect</option>
+                </select>
+              </div>
+              <InputField label="Code HS" field="code_hs" placeholder="Ex: 1006.30" />
+              <InputField label="Numéro Déclaration Douane" field="numero_declaration_douane" placeholder="Ex: SYDONIA-12345" />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+            <div className="text-xs text-slate-400">
+              * Champs obligatoires
+            </div>
+            <div className="flex gap-3">
+              <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Annuler</button>
+              <button 
+                type="submit" 
+                disabled={!articleInfo}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Créer la Déclaration BL
+              </button>
+            </div>
           </div>
         </form>
       </div>

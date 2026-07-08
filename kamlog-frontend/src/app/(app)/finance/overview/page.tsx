@@ -17,12 +17,13 @@ export default function KFinanceOverview() {
     depenses: 0,
     tresorerie: 0
   });
+  const [cashflowData, setCashflowData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [facturesRes, kpisRes] = await Promise.all([
+        const [facturesRes, kpisRes, chartRes] = await Promise.all([
           financeAPI.getFactures().catch(() => ({ data: [] })),
           financeAPI.getKpis().catch(() => ({ data: {
             chiffre_affaires: 0,
@@ -30,7 +31,8 @@ export default function KFinanceOverview() {
             impayes_count: 0,
             depenses: 0,
             tresorerie: 0
-          } }))
+          } })),
+          financeAPI.getAnalyticsChartData().catch(() => ({ data: [] }))
         ]);
         setFactures(facturesRes.data || []);
         setKpis(kpisRes.data || {
@@ -40,6 +42,10 @@ export default function KFinanceOverview() {
           depenses: 0,
           tresorerie: 0
         });
+        
+        // Ensure chart data defaults to empty if not array
+        const chartData = Array.isArray(chartRes.data) ? chartRes.data : [];
+        setCashflowData(chartData);
       } catch (err) {
         console.error("Failed to fetch finance data:", err);
       } finally {
@@ -48,16 +54,6 @@ export default function KFinanceOverview() {
     }
     fetchData();
   }, []);
-
-  const cashflowData = [
-    { name: 'Jan', in: 4000, out: 2400 },
-    { name: 'Fév', in: 3000, out: 1398 },
-    { name: 'Mar', in: 2000, out: 9800 },
-    { name: 'Avr', in: 2780, out: 3908 },
-    { name: 'Mai', in: 1890, out: 4800 },
-    { name: 'Juin', in: 2390, out: 3800 },
-    { name: 'Juil', in: 3490, out: 4300 },
-  ];
 
   return (
     <div className="bg-slate-50 min-h-full p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">

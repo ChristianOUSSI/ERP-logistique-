@@ -24,6 +24,23 @@ export default function Journal() {
     loadLogs();
   }, [])
 
+  // Calculate chart heights dynamically from real logs data
+  const getChartBars = () => {
+    const bars = [0, 0, 0, 0, 0, 0, 0];
+    if (logs.length === 0) return bars;
+    
+    // Group logs by day (simulating last 7 days distribution)
+    logs.forEach(log => {
+      const day = new Date(log.horodatage).getDay();
+      bars[day % 7]++;
+    });
+    
+    const max = Math.max(...bars, 1);
+    return bars.map(count => (count / max) * 100);
+  };
+
+  const chartHeights = getChartBars();
+
   const handleInputFocus = (id: string) => {
     setInputFocused(id)
   }
@@ -248,28 +265,11 @@ export default function Journal() {
                   <span className="text-label-sm text-outline">7 derniers jours</span>
                 </div>
                 <div className="h-48 w-full bg-surface-container-low rounded-lg flex items-end justify-between p-md gap-xs">
-                  {/* Chart Mockup */}
-                  <div className="w-full bg-primary/20 h-1/2 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-3/4 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-2/3 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-1/4 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-4/5 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-1/2 rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
-                  <div className="w-full bg-primary/20 h-full rounded-t-sm relative group">
-                    <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
-                  </div>
+                  {chartHeights.map((height, idx) => (
+                    <div key={idx} className="w-full bg-primary/20 rounded-t-sm relative group" style={{ height: `${height}%` }}>
+                      <div className="absolute inset-0 bg-primary h-0 group-hover:h-full transition-all duration-500"></div>
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className="bg-primary p-lg rounded-xl shadow-lg text-on-primary flex flex-col justify-between relative overflow-hidden group">

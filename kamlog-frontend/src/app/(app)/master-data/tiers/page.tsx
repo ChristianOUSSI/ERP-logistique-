@@ -5,6 +5,7 @@ import { tiersAPI, financeAPI } from '@/lib/api-client'
 import type { Tier } from '@/lib/api/master-data'
 import GenericDataPage from '@/components/ui/GenericDataPage'
 import { Building2, Users, Briefcase, Handshake, CreditCard, X, AlertCircle, CheckCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 // ── KPI Card component ─────────────────────────────────────────────────────────
 function KpiCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
@@ -56,7 +57,6 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
     setSubmitting(true)
     try {
       await tiersAPI.createTiers({
-        code_tiers: `T-${Date.now().toString().slice(-6)}`,
         raison_sociale: form.raison_sociale,
         sigle_ou_enseigne: form.sigle_ou_enseigne || null,
         niu: form.niu || `NIU-${Date.now().toString().slice(-6)}`,
@@ -999,7 +999,7 @@ export default function MasterDataTiers() {
         fetchTiers()
       } catch (err) {
         console.error('Error deleting tier:', err)
-        alert('Erreur lors de la suppression du tier.')
+        toast.error('Erreur lors de la suppression du tier.')
       }
     }
   }

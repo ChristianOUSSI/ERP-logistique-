@@ -3,15 +3,41 @@
 
 
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { tiersAPI } from '@/lib/api-client'
+import { Combobox, ComboboxOption } from '@/components/ui/combobox'
 
 export default function InvoiceCreation() {
   const router = useRouter()
+  const [tiers, setTiers] = useState<ComboboxOption[]>([])
+  const [selectedTiersId, setSelectedTiersId] = useState<string>('')
+  const [isLoadingTiers, setIsLoadingTiers] = useState(true)
+
   const [invoiceLines, setInvoiceLines] = useState([
     { pos: '0010', article: 'Manutention TC 20\' Plein', ref: 'Ref Commande: 450098221', qty: 12, um: 'UN', price: '45 000', tva: 'V1 (19.25%)', net: '540 000' },
     { pos: '0020', article: 'Frais de magasinage (Jours 1-5)', ref: 'Lot: L-88392', qty: 5, um: 'JR', price: '12 500', tva: 'V1 (19.25%)', net: '62 500' }
   ])
+
+  useEffect(() => {
+    const fetchTiers = async () => {
+      try {
+        const response = await tiersAPI.getTiers({ limit: 100 })
+        const data = response.data.items || response.data
+        if (Array.isArray(data)) {
+          setTiers(data.map((t: any) => ({
+            value: String(t.id),
+            label: `${t.code} - ${t.raison_sociale}`
+          })))
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des tiers', error)
+      } finally {
+        setIsLoadingTiers(false)
+      }
+    }
+    fetchTiers()
+  }, [])
 
   const handleSaveDraft = () => {
     // Save draft - will be connected to backend
@@ -80,22 +106,20 @@ export default function InvoiceCreation() {
                     Données Client
                   </h3>
                   <div className="grid grid-cols-2 gap-[1rem]">
-                    <div className="space-y-1">
-                      <label className="font-label-md text-label-md text-on-surface-variant">Code Client (Soldeur)</label>
-                      <div className="relative">
-                        <input className="w-full px-3 py-2 bg-surface-bright border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary k-finance-border" type="text" value="C-49201"/>
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary">
-                          <span className="material-symbols-outlined text-[18px]">search</span>
-                        </button>
-                      </div>
+                    <div className="space-y-1 col-span-2">
+                      <label className="font-label-md text-label-md text-on-surface-variant">Client (Soldeur)</label>
+                      <Combobox
+                        options={tiers}
+                        value={selectedTiersId}
+                        onChange={setSelectedTiersId}
+                        placeholder="Sélectionner un client..."
+                        searchPlaceholder="Rechercher par nom ou code..."
+                        isLoading={isLoadingTiers}
+                      />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-label-md text-label-md text-on-surface-variant">Nom / Raison Sociale</label>
-                      <input className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded font-body-sm text-body-sm text-on-surface-variant cursor-not-allowed" readOnly type="text" value="MAERSK LINE CAMEROUN SA"/>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="font-label-md text-label-md text-on-surface-variant">N° Contribuable</label>
-                      <input className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface-variant cursor-not-allowed" readOnly type="text" value="M049300012344B"/>
+                      <label className="font-label-md text-label-md text-on-surface-variant">N° Contribuable (Auto)</label>
+                      <input className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded font-data-tabular text-data-tabular text-on-surface-variant cursor-not-allowed" readOnly type="text" placeholder={selectedTiersId ? 'Chargé via API...' : ''} />
                     </div>
                     <div className="space-y-1">
                       <label className="font-label-md text-label-md text-on-surface-variant">Conditions de paiement</label>

@@ -137,8 +137,23 @@ class Article(Base):
     lignes_commande = relationship("LigneCommande", back_populates="article")
 
 
+class ModeFret(enum.Enum):
+    """Mode de paiement du fret"""
+    PREPAID = "PREPAID"
+    COLLECT = "COLLECT"
+
+
+class StatutOrdreTransfert(enum.Enum):
+    """Cycle de vie d'un Ordre de Transfert"""
+    BROUILLON = "BROUILLON"
+    VALIDE = "VALIDE"
+    EN_TRANSIT = "EN_TRANSIT"
+    RECEPTIONNE = "RECEPTIONNE"
+    ANNULE = "ANNULE"
+
+
 class Declaration(Base):
-    """Modèle pour les déclarations (Bill of Lading)"""
+    """Modèle pour les déclarations (Bill of Lading) — Connaissement maritime complet"""
     __tablename__ = "declarations"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -157,10 +172,67 @@ class Declaration(Base):
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
 
+    # ── ENRICHISSEMENT BL MARITIME ────────────────────────────────
+    # Identification & Traçabilité
+    numero_bl_externe = Column(String(50), nullable=True, index=True,
+        comment="Vrai numéro BL du document maritime (compagnie)")
+    reference_booking = Column(String(50), nullable=True,
+        comment="Référence de réservation auprès de la compagnie maritime")
+    numero_scelle = Column(String(50), nullable=True,
+        comment="Numéro de scellé du conteneur")
+
+    # Liaison Navire / Escale
+    escale_id = Column(Integer, ForeignKey("escales.id"), nullable=True,
+        comment="Liaison vers l'escale du navire")
+    nom_navire = Column(String(100), nullable=True,
+        comment="Nom du navire (texte libre si pas d'escale liée)")
+    numero_voyage = Column(String(50), nullable=True,
+        comment="Numéro du voyage")
+
+    # Parties prenantes
+    expediteur_shipper = Column(String(200), nullable=True,
+        comment="Expéditeur (Shipper) — celui qui expédie")
+    destinataire_consignee = Column(String(200), nullable=True,
+        comment="Destinataire (Consignee) — celui qui reçoit")
+    notify_party = Column(String(200), nullable=True,
+        comment="Partie à notifier à l'arrivée")
+
+    # Logistique & Ports
+    port_chargement = Column(String(100), nullable=True,
+        comment="Port of Loading")
+    port_dechargement = Column(String(100), nullable=True,
+        comment="Port of Discharge")
+    lieu_livraison = Column(String(200), nullable=True,
+        comment="Place of Delivery (destination finale)")
+    description_marchandises = Column(String(1000), nullable=True,
+        comment="Description détaillée des marchandises sur le BL")
+
+    # Poids, volumes, conditionnement
+    poids_brut_kg = Column(Numeric(12, 3), nullable=True,
+        comment="Poids brut déclaré en kg")
+    poids_net_kg = Column(Numeric(12, 3), nullable=True,
+        comment="Poids net déclaré en kg")
+    volume_m3 = Column(Numeric(10, 3), nullable=True,
+        comment="Volume en mètres cubes")
+    nombre_colis = Column(Integer, nullable=True,
+        comment="Nombre de colis / emballages")
+    type_emballage = Column(String(100), nullable=True,
+        comment="Type d'emballage (sacs, cartons, palettes…)")
+
+    # Données commerciales & douanières
+    mode_fret = Column(Enum(ModeFret), nullable=True,
+        comment="Prepaid ou Collect")
+    code_hs = Column(String(10), nullable=True,
+        comment="Code douanier du Système Harmonisé")
+    numero_declaration_douane = Column(String(50), nullable=True,
+        comment="Numéro de déclaration douanière (SYDONIA)")
+
     # Relations
     client = relationship("ClientMagasin", back_populates="declarations")
     lignes = relationship("LigneDeclaration", back_populates="declaration", cascade="all, delete-orphan")
     receptions = relationship("Reception", back_populates="declaration")
+    escale = relationship("Escale", backref="declarations")
+    ordres_transfert = relationship("OrdreTransfert", back_populates="declaration")
 
 
 class LigneDeclaration(Base):
@@ -374,3 +446,73 @@ class OperationTrace(Base):
     date_annulation = Column(DateTime(timezone=True), nullable=True)
     annule_par = Column(String(100), nullable=True)
     donnees_operation = Column(String(5000))  # JSON des données de l'opération
+
+
+class OrdreTransfert(Base):
+    """
+    Ordre de Transfert inter-magasins.
+    Permet de déplacer des marchandises d'un magasin source vers un magasin destination.
+    Lié au BL d'origine pour la traçabilité.
+    Cycle : BROUILLON → VALIDE (déstockage source) → EN_TRANSIT → RECEPTIONNE (stockage dest) → ou ANNULE
+    """
+    __tablename__ = "ordres_transfert"
+
+    id = Column(Integer, primary_key=True, index=True)
+    numero_ot = Column(String(30), unique=True, nullable=False, index=True,
+        comment="Format: OT-2026-0001")
+
+    # Liaison vers la déclaration BL d'origine (traçabilité)
+    declaration_id = Column(Integer, ForeignKey("declarations.id"), nullable=True,
+        comment="BL de référence pour la traçabilité")
+
+    # Magasins source et destination
+    magasin_source_id = Column(Integer, ForeignKey("magasins.id"), nullable=False,
+        comment="Magasin d'où partent les marchandises")
+    magasin_dest_id = Column(Integer, ForeignKey("magasins.id"), nullable=False,
+        comment="Magasin de destination")
+
+    # Dates et statut
+    date_transfert = Column(DateTime(timezone=True), server_default=func.now(),
+        comment="Date de création de l'OT")
+    date_validation = Column(DateTime(timezone=True), nullable=True,
+        comment="Date de validation (déstockage source)")
+    date_expedition = Column(DateTime(timezone=True), nullable=True,
+        comment="Date d'expédition physique")
+    date_reception = Column(DateTime(timezone=True), nullable=True,
+        comment="Date de réception au magasin destination")
+    statut = Column(Enum(StatutOrdreTransfert), default=StatutOrdreTransfert.BROUILLON,
+        nullable=False, index=True)
+
+    # Détails opérationnels
+    motif = Column(String(500), nullable=True,
+        comment="Motif / raison du transfert")
+    autorise_par = Column(String(100), nullable=True)
+    notes = Column(String(500), nullable=True)
+    cree_par = Column(String(100), nullable=True)
+    date_creation = Column(DateTime(timezone=True), server_default=func.now())
+    date_modification = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relations
+    declaration = relationship("Declaration", back_populates="ordres_transfert")
+    magasin_source = relationship("Magasin", foreign_keys=[magasin_source_id], backref="ot_sortants")
+    magasin_dest = relationship("Magasin", foreign_keys=[magasin_dest_id], backref="ot_entrants")
+    lignes = relationship("LigneOrdreTransfert", back_populates="ordre_transfert", cascade="all, delete-orphan")
+
+
+class LigneOrdreTransfert(Base):
+    """Ligne d'un Ordre de Transfert — détail article par article"""
+    __tablename__ = "lignes_ordre_transfert"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ordre_transfert_id = Column(Integer, ForeignKey("ordres_transfert.id"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    quantite = Column(Numeric(15, 3), nullable=False,
+        comment="Quantité à transférer")
+    unite_mesure = Column(Enum(UniteMesure), nullable=False)
+    quantite_recue = Column(Numeric(15, 3), default=0,
+        comment="Quantité effectivement reçue au magasin destination")
+
+    # Relations
+    ordre_transfert = relationship("OrdreTransfert", back_populates="lignes")
+    article = relationship("Article")
+

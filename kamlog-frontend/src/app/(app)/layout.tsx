@@ -118,7 +118,7 @@ function AppLayoutContent({
    * Loading / Auth states
    * ──────────────────────────────────────────── */
   if (loading) return <FullScreenLoader />;
-  if (!user) return null;
+  if (!user && pathname !== '/logout') return null;
 
   if (!isAuthorized()) {
     return (

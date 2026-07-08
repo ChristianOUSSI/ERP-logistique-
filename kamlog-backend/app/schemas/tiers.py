@@ -7,7 +7,7 @@ from app.models.tiers import StatutTiers
 
 
 class TiersBase(BaseModel):
-    code_tiers: str = Field(..., max_length=20)
+    code_tiers: Optional[str] = Field(None, max_length=20)
     raison_sociale: str = Field(..., max_length=150)
     sigle_ou_enseigne: Optional[str] = Field(None, max_length=50)
     niu: str = Field(..., max_length=50)
@@ -68,6 +68,7 @@ class TiersUpdate(BaseModel):
 
 class TiersResponse(TiersBase):
     id: int
+    code_tiers: str
     statut: StatutTiers
     # Services
     autorise_acconage: bool

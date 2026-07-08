@@ -2,44 +2,50 @@
 
 import Link from 'next/link'
 import { useI18n } from '@/hooks/useI18n'
+import { Construction, ArrowLeft, Home } from 'lucide-react'
 
 export default function NotFound() {
   const t = useI18n()
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="max-w-md w-full text-center">
-        <div className="inline-block relative mb-8">
-          <div className="text-[120px] font-bold text-primary opacity-10 leading-none select-none">404</div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: 64 }}>search</span>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-background relative px-4 overflow-hidden">
+      {/* Decorative blurred background */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0 pointer-events-none" />
+      
+      <div className="bg-surface border border-outline w-full max-w-md rounded-2xl shadow-2xl p-6 z-10 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+        
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+          <Construction className="w-8 h-8 text-primary animate-pulse" />
         </div>
-
-        <h1 className="text-3xl font-bold text-on-background mb-3">{t.errors.notFoundTitle}</h1>
-        <p className="text-on-surface-variant text-base mb-8">{t.errors.notFoundMessage}</p>
-
-        <div className="space-y-3">
+        
+        <h2 className="text-xl font-bold text-on-surface mb-2">
+          {t.errors.notFoundTitle || 'Page Introuvable'}
+        </h2>
+        
+        <p className="text-on-surface-variant text-sm mb-6">
+          La page que vous recherchez n'existe pas ou est actuellement en cours d'intégration dans le cadre d'un nouveau module. 
+        </p>
+        
+        <div className="w-full space-y-3">
           <Link
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-primary text-on-primary font-semibold text-sm transition hover:opacity-90"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-opacity"
           >
-            <span className="material-symbols-outlined text-[18px]">home</span>
-            {t.errors.backToHome}
+            <Home className="w-5 h-5" />
+            {t.errors.backToHome || 'Retour au tableau de bord'}
           </Link>
+          
           <button
             onClick={() => window.history.back()}
-            className="flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-outline text-on-surface font-semibold text-sm transition hover:bg-surface-container"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-outline text-on-surface font-bold text-sm hover:bg-surface-container transition-colors"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            {t.errors.previousPage}
+            <ArrowLeft className="w-5 h-5" />
+            {t.errors.previousPage || 'Page précédente'}
           </button>
         </div>
-
-        <p className="mt-8 text-sm text-on-surface-variant">
-          {t.errors.help}
-          <a href="mailto:support@kamlog.cm" className="text-primary hover:underline">support@kamlog.cm</a>
+        
+        <p className="mt-8 text-xs text-on-surface-variant/50">
+          {t.errors.help || "Besoin d'aide ?"} <a href="mailto:support@kamlog.cm" className="text-primary hover:underline">support@kamlog.cm</a>
         </p>
-        <p className="mt-10 text-xs text-on-surface-variant/50">{t.errors.confidentialFooter}</p>
       </div>
     </div>
   )

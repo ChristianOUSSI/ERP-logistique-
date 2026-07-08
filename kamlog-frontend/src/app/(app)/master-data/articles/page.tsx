@@ -40,7 +40,6 @@ function CreateArticleModal({ isOpen, onClose, onCreated }: { isOpen: boolean; o
     setSubmitting(true)
     try {
       await masterDataAPI.createArticle({
-        code_article: form.code_article || `ART-${Date.now().toString().slice(-6)}`,
         designation: form.designation,
         type_article: form.type_article,
         unite: form.unite,

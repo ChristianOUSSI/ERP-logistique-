@@ -53,7 +53,7 @@ Limiter.limit = patched_limit
 
 from app.database import engine, Base
 from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
-from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase
+from app.routers import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, incidents, public_api, rh
 from app.config import settings
 from app.utils.logger import setup_logger
 from app.utils.monitoring import setup_monitoring
@@ -138,6 +138,8 @@ app.include_router(transport.router, prefix="/api/transport", tags=["Transport"]
 app.include_router(finance.router, prefix="/api/finance", tags=["Finance"])
 app.include_router(parc.router, prefix="/api/parc", tags=["Parc"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
+from app.routers import ws
+app.include_router(ws.router, prefix="/api/ws", tags=["WebSockets"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
 app.include_router(magasin.router, prefix="/api/magasin", tags=["K-Magasin"])
 app.include_router(gateway.router, prefix="/api/gateway", tags=["Gateway"])
@@ -151,6 +153,9 @@ app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Adm
 app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats"])
+app.include_router(incidents.router, prefix="/api/incidents", tags=["Incidents"])
+app.include_router(public_api.router, prefix="/api/public", tags=["Public API"])
+app.include_router(rh.router, prefix="/api/rh", tags=["Ressources Humaines"])
 
 
 @app.get('/api/health')

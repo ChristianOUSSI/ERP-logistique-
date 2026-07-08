@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FileText, ShieldAlert, CheckCircle2, Calendar, Plus, X } from 'lucide-react';
+import apiClient from '@/lib/api-client';
 
 export default function VehiculeDocuments({ vehicule, onClose }: { vehicule: any, onClose: () => void }) {
   const [documents, setDocuments] = useState<any[]>([]);
@@ -7,46 +8,31 @@ export default function VehiculeDocuments({ vehicule, onClose }: { vehicule: any
   const [newDoc, setNewDoc] = useState({ type_document: 'ASSURANCE', numero: '', date_emission: '', date_expiration: '' });
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchDocs = async () => {
+  const fetchDocs = useCallback(async () => {
     try {
-      // Direct fetch if transportAPI.getVehiculeDocuments is not yet defined in api-client.ts
-      const res = await fetch(`http://localhost:8000/api/transport/camions/${vehicule.id}/documents`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setDocuments(data);
-      }
+      const res = await apiClient.get(`/api/transport/camions/${vehicule.id}/documents`);
+      setDocuments(res.data || []);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [vehicule.id]);
 
   useEffect(() => {
     fetchDocs();
-  }, [vehicule.id]);
+  }, [fetchDocs]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/transport/camions/${vehicule.id}/documents`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          vehicule_id: vehicule.id,
-          ...newDoc
-        })
+      await apiClient.post(`/api/transport/camions/${vehicule.id}/documents`, {
+        vehicule_id: vehicule.id,
+        ...newDoc
       });
-      if (res.ok) {
-        fetchDocs();
-        setNewDoc({ type_document: 'ASSURANCE', numero: '', date_emission: '', date_expiration: '' });
-      }
+      fetchDocs();
+      setNewDoc({ type_document: 'ASSURANCE', numero: '', date_emission: '', date_expiration: '' });
     } catch (err) {
       console.error(err);
     } finally {

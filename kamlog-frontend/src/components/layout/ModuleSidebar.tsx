@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useModuleTheme } from '../../hooks/useModuleTheme';
 import { useSettings } from './SettingsProvider';
 
-export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc' | 'audit' | 'dashboard';
+export type ModuleType = 'admin' | 'master-data' | 'transport' | 'finance' | 'magasin' | 'parc' | 'audit' | 'dashboard' | 'rh';
 
 interface NavItem {
   labelKey: string;
@@ -88,6 +88,9 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit_notifications: 'Notifications',
     audit_settings: 'Paramètres Audit',
     maintenance: 'Maintenance',
+    rh_module: 'Ressources Humaines',
+    rh_mon_espace: 'Mon Espace',
+    rh_dashboard: 'Administration RH',
   },
   en: {
     global_overview: 'System Overview',
@@ -154,6 +157,9 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     audit_notifications: 'Notifications',
     audit_settings: 'Audit Settings',
     maintenance: 'Maintenance',
+    rh_module: 'Human Resources',
+    rh_mon_espace: 'My Space',
+    rh_dashboard: 'HR Administration',
   }
 };
 
@@ -181,7 +187,8 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'articles', href: '/master-data/articles', icon: 'inventory_2' },
   ],
   transport: [
-    { labelKey: 'fleet', href: '/transport/control', icon: 'local_shipping' },
+    { labelKey: 'fleet', href: '/transport/control', icon: 'dashboard' },
+    { labelKey: 'fleet_management', href: '/transport/flotte', icon: 'local_shipping' },
     { labelKey: 'planning', href: '/transport/planning', icon: 'calendar_month', badge: 'SAP' },
     { labelKey: 'dispatch', href: '/transport/dispatch', icon: 'route' },
     { labelKey: 'goods', href: '/transport/goods-declaration', icon: 'description' },
@@ -234,6 +241,10 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'audit_reports', href: '/security/reports', icon: 'assessment' },
     { labelKey: 'audit_settings', href: '/settings/system/audit-health', icon: 'settings' },
   ],
+  rh: [
+    { labelKey: 'rh_mon_espace', href: '/rh/mon-espace', icon: 'badge' },
+    { labelKey: 'rh_dashboard', href: '/rh/dashboard', icon: 'manage_accounts', badge: 'Admin' },
+  ],
 };
 
 /** Module icon per module key */
@@ -246,6 +257,7 @@ const MODULE_ICONS: Record<ModuleType, string> = {
   admin: 'admin_panel_settings',
   'master-data': 'hub',
   dashboard: 'dashboard',
+  rh: 'groups',
 };
 
 export default function ModuleSidebar({

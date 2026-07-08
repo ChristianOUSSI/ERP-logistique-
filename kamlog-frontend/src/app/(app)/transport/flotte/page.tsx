@@ -6,8 +6,9 @@ import VehiculeDocuments from '@/components/transport/VehiculeDocuments'
 import HseBlockModal from '@/components/transport/HseBlockModal'
 import CreateCamionModal from '@/components/transport/CreateCamionModal'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
-import { Truck, Link, Unlink, ShieldAlert, FileText, CheckCircle2 } from 'lucide-react'
+import { Truck, Search, Plus, Calendar, ShieldAlert, BadgeCheck, FileWarning, ExternalLink, Link2, Unlink, FileText, CheckCircle2, Link } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
+import toast from 'react-hot-toast'
 
 export default function FlottePage() {
   const [camions, setCamions] = useState<any[]>([])
@@ -56,12 +57,12 @@ export default function FlottePage() {
   const handleAssociate = async () => {
     try {
       await transportAPI.associerRemorque(associatingTractor.id, selectedRemorqueId ? parseInt(selectedRemorqueId) : null)
-      alert("Association réussie !")
+      toast.success("Association réussie !")
       setShowAssociateModal(false)
       fetchCamions()
     } catch (error) {
       console.error(error)
-      alert("Erreur lors de l'association")
+      toast.error("Erreur lors de l'association")
     }
   }
 
@@ -69,11 +70,11 @@ export default function FlottePage() {
     if (!window.confirm("Voulez-vous vraiment délier cette remorque ?")) return
     try {
       await transportAPI.associerRemorque(tracteur.id, null)
-      alert("Remorque déliée !")
+      toast.success("Remorque déliée !")
       fetchCamions()
     } catch (error) {
       console.error(error)
-      alert("Erreur lors de la dissociation")
+      toast.error("Erreur lors de la dissociation")
     }
   }
 

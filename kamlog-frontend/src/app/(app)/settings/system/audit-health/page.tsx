@@ -3,20 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import GenericDataPage from '@/components/ui/GenericDataPage';
 import { Settings } from 'lucide-react';
+import { useComingSoon } from '@/contexts/ComingSoonContext';
 
 export default function AuditHealthSettingsPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { showComingSoon } = useComingSoon();
+
   useEffect(() => {
-    setTimeout(() => {
-      setData([
-        { id: 'SET-001', parameter: 'Data Retention (Days)', value: '90', module: 'Database', status: 'Active' },
-        { id: 'SET-002', parameter: 'Log Level', value: 'INFO', module: 'Application', status: 'Active' },
-        { id: 'SET-003', parameter: 'Auto-Archiving', value: 'Enabled', module: 'Storage', status: 'Pending' },
-      ]);
-      setLoading(false);
-    }, 600);
+    // Supprimé: fausses données. Remplacé par un chargement en attente API.
+    setLoading(false);
   }, []);
 
   const columns = [
@@ -46,7 +43,7 @@ export default function AuditHealthSettingsPage() {
       columns={columns}
       data={data}
       isLoading={loading}
-      onAdd={() => alert('Modification des paramètres...')}
+      onAdd={() => showComingSoon('Configuration des paramètres système')}
       primaryActionLabel="Ajouter Règle"
     />
   );

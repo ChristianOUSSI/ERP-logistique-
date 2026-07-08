@@ -3,20 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import GenericDataPage from '@/components/ui/GenericDataPage';
 import { ClipboardList, PieChart } from 'lucide-react';
+import { useComingSoon } from '@/contexts/ComingSoonContext';
 
 export default function CustomReportsPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { showComingSoon } = useComingSoon();
+
   useEffect(() => {
-    setTimeout(() => {
-      setData([
-        { id: 1, name: 'Bilan Transport Mensuel', author: 'finance_admin', lastRun: 'Il y a 2h', format: 'PDF, Excel' },
-        { id: 2, name: 'Audit des Accès', author: 'security_admin', lastRun: 'Hier', format: 'CSV' },
-        { id: 3, name: 'Mouvements de Stocks (Mag3)', author: 'magasin_manager', lastRun: 'Il y a 3 jours', format: 'Excel' },
-      ]);
-      setLoading(false);
-    }, 500);
+    // Supprimé: fausses données. Remplacé par un chargement en attente API.
+    setLoading(false);
   }, []);
 
   const columns = [
@@ -38,7 +35,7 @@ export default function CustomReportsPage() {
       columns={columns}
       data={data}
       isLoading={loading}
-      onAdd={() => alert('Ouverture du concepteur de rapport...')}
+      onAdd={() => showComingSoon('Générateur de Rapports Personnalisés')}
       primaryActionLabel="Créer un Rapport"
     />
   );

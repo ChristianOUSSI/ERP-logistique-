@@ -15,12 +15,13 @@ from app.schemas.magasin import (
     Reception, ReceptionCreate, ReceptionUpdate,
     Stock, StockCreate, StockUpdate, StockFilter,
     Commande, CommandeCreate, CommandeUpdate,
-    BandeLivraison, BandeLivraisonCreate, BandeLivraisonUpdate
+    BandeLivraison, BandeLivraisonCreate, BandeLivraisonUpdate,
+    OrdreTransfert, OrdreTransfertCreate, OrdreTransfertUpdate
 )
 from app.services.magasin_service import (
     MagasinService, ClientMagasinService, ArticleService,
     DeclarationService, ReceptionService, StockService,
-    CommandeService, BandeLivraisonService
+    CommandeService, BandeLivraisonService, OrdreTransfertService
 )
 
 
@@ -617,3 +618,109 @@ def update_bande(bande_id: int, bande: BandeLivraisonUpdate, db: Session = Depen
     if not updated_bande:
         raise HTTPException(status_code=404, detail="Bande de livraison non trouvée")
     return updated_bande
+
+
+# ============ ORDRES DE TRANSFERT ============
+@router.get("/ordres-transfert", response_model=List[OrdreTransfert])
+def get_ordres_transfert(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    """Récupère tous les ordres de transfert"""
+    return OrdreTransfertService.get_all(db, skip, limit)
+
+
+@router.get("/ordres-transfert/{ot_id}", response_model=OrdreTransfert)
+def get_ordre_transfert(ot_id: int, db: Session = Depends(get_db)):
+    """Récupère un ordre de transfert par son ID"""
+    ot = OrdreTransfertService.get_by_id(db, ot_id)
+    if not ot:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return ot
+
+
+@router.get("/ordres-transfert/declaration/{declaration_id}", response_model=List[OrdreTransfert])
+def get_ordres_transfert_by_declaration(declaration_id: int, db: Session = Depends(get_db)):
+    """Récupère les OT liés à une déclaration BL"""
+    return OrdreTransfertService.get_by_declaration(db, declaration_id)
+
+
+@router.post("/ordres-transfert", response_model=OrdreTransfert)
+@check_permission("magasin:create")
+def create_ordre_transfert(
+    ot: OrdreTransfertCreate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Crée un nouvel ordre de transfert (statut BROUILLON)"""
+    return OrdreTransfertService.create(db, ot, current_user.username)
+
+
+@router.put("/ordres-transfert/{ot_id}", response_model=OrdreTransfert)
+@check_permission("magasin:update")
+def update_ordre_transfert(
+    ot_id: int,
+    ot: OrdreTransfertUpdate,
+    db: Session = Depends(get_db)
+):
+    """Met à jour un OT (seulement si BROUILLON)"""
+    updated = OrdreTransfertService.update(db, ot_id, ot)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return updated
+
+
+@router.post("/ordres-transfert/{ot_id}/valider", response_model=OrdreTransfert)
+@check_permission("magasin:update")
+def valider_ordre_transfert(
+    ot_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Valide un OT → déstocke le magasin source"""
+    result = OrdreTransfertService.valider(db, ot_id, current_user.username, current_user.id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return result
+
+
+@router.post("/ordres-transfert/{ot_id}/expedier", response_model=OrdreTransfert)
+@check_permission("magasin:update")
+def expedier_ordre_transfert(
+    ot_id: int,
+    db: Session = Depends(get_db)
+):
+    """Marque l'OT comme expédié (en transit)"""
+    result = OrdreTransfertService.expedier(db, ot_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return result
+
+
+@router.post("/ordres-transfert/{ot_id}/receptionner", response_model=OrdreTransfert)
+@check_permission("magasin:update")
+def receptionner_ordre_transfert(
+    ot_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Réceptionne l'OT → stocke dans le magasin destination"""
+    result = OrdreTransfertService.receptionner(db, ot_id, current_user.id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return result
+
+
+@router.post("/ordres-transfert/{ot_id}/annuler", response_model=OrdreTransfert)
+@check_permission("magasin:update")
+def annuler_ordre_transfert(
+    ot_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Annule un OT (reverse le stock si nécessaire)"""
+    result = OrdreTransfertService.annuler(db, ot_id, current_user.id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Ordre de transfert non trouvé")
+    return result

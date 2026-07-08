@@ -18,15 +18,17 @@ from app.schemas.shared import CommandeFactureDTO, CommandeLivraisonDTO, Recepti
 from app.models.magasin import (
     Magasin, ClientMagasin, Article, Declaration, LigneDeclaration,
     Reception, LigneReception, Stock, Commande, LigneCommande,
-    BandeLivraison, LigneBandeLivraison, UniteMesure, StatutDeclaration,
-    StatutReception, StatutCommande, Incoterm, TypeConteneur
+    BandeLivraison, LigneBandeLivraison, OrdreTransfert, LigneOrdreTransfert,
+    UniteMesure, StatutDeclaration, StatutReception, StatutCommande,
+    StatutOrdreTransfert, Incoterm, TypeConteneur
 )
 from app.schemas.magasin import (
     MagasinCreate, MagasinUpdate, ClientMagasinCreate, ClientMagasinUpdate,
     ArticleCreate, ArticleUpdate, DeclarationCreate, DeclarationUpdate,
     ReceptionCreate, ReceptionUpdate, StockCreate, StockUpdate,
     CommandeCreate, CommandeUpdate, BandeLivraisonCreate, BandeLivraisonUpdate,
-    StockFilter, IncotermCreate, IncotermUpdate, TypeConteneurCreate, TypeConteneurUpdate
+    StockFilter, IncotermCreate, IncotermUpdate, TypeConteneurCreate, TypeConteneurUpdate,
+    OrdreTransfertCreate, OrdreTransfertUpdate
 )
 from app.utils.cache_sync import cache_service_sync as cache_service, invalidate_cache_pattern_sync as invalidate_cache_pattern
 
@@ -251,6 +253,25 @@ class ArticleService:
         ).all()
         cache_service.set(cache_key, result, expire=180)
         return result
+    @staticmethod
+    def generate_code_article(db: Session) -> str:
+        """Génère un code article de type ART-YYMM-XXXX"""
+        now = datetime.now()
+        year_month = now.strftime("%y%m")
+        base_prefix = f"ART-{year_month}"
+        
+        last_article = db.query(Article).filter(Article.code_article.like(f"{base_prefix}-%")).order_by(Article.code_article.desc()).first()
+        
+        if last_article and last_article.code_article:
+            try:
+                last_num = int(last_article.code_article.split("-")[-1])
+                new_num = last_num + 1
+            except ValueError:
+                new_num = 1
+        else:
+            new_num = 1
+            
+        return f"{base_prefix}-{new_num:04d}"
 
     @staticmethod
     def create_article(db: Session, article: ArticleCreate) -> Article:
@@ -797,7 +818,7 @@ class StockService:
             
             if stock:
                 quantite_avant = stock.quantite_disponible
-                stock.quantite_disponible += ligne.quantite_recue
+                stock.quantite_disponible += ligne.quantite_udb
                 stock.quantite_udb += ligne.quantite_udb
                 quantite_apres = stock.quantite_disponible
                 
@@ -816,7 +837,7 @@ class StockService:
                 stock = Stock(
                     magasin_id=reception.magasin_id,
                     article_id=ligne.article_id,
-                    quantite_disponible=ligne.quantite_recue,
+                    quantite_disponible=ligne.quantite_udb,
                     quantite_udb=ligne.quantite_udb
                 )
                 db.add(stock)
@@ -828,7 +849,7 @@ class StockService:
                     article_id=ligne.article_id,
                     magasin_id=reception.magasin_id,
                     quantite_avant=Decimal('0'),
-                    quantite_apres=ligne.quantite_recue,
+                    quantite_apres=ligne.quantite_udb,
                     user_id=user_id,
                     raison=f"Création stock via réception {reception.numero_reception}"
                 )
@@ -860,7 +881,7 @@ class StockService:
         for ligne in reception.lignes:
             stock = StockService.get_stock(db, reception.magasin_id, ligne.article_id)
             if stock:
-                stock.quantite_disponible -= ligne.quantite_recue
+                stock.quantite_disponible -= ligne.quantite_udb
                 stock.quantite_udb -= ligne.quantite_udb
         
         # Invalider le cache
@@ -876,13 +897,13 @@ class StockService:
                 quantite_udb = ConversionService.convertir_vers_udb(ligne.quantite, ligne.unite_mesure, article)
                 
                 # Validation: empêcher le stock de devenir négatif
-                if stock.quantite_disponible < ligne.quantite:
-                    raise InsufficientStockError(f"Stock insuffisant pour article {article.code_article}. Disponible: {stock.quantite_disponible}, Demandé: {ligne.quantite}")
+                if stock.quantite_disponible < quantite_udb:
+                    raise InsufficientStockError(f"Stock insuffisant pour article {article.code_article}. Disponible: {stock.quantite_disponible} UDB, Demandé: {quantite_udb} UDB")
                 if stock.quantite_udb < quantite_udb:
-                    raise InsufficientStockError(f"Stock UDB insuffisant pour article {article.code_article}. Disponible: {stock.quantite_udb}, Demandé: {quantite_udb}")
+                    raise InsufficientStockError(f"Stock UDB insuffisant pour article {article.code_article}. Disponible: {stock.quantite_udb} UDB, Demandé: {quantite_udb} UDB")
                 
                 quantite_avant = stock.quantite_disponible
-                stock.quantite_disponible -= ligne.quantite
+                stock.quantite_disponible -= quantite_udb
                 stock.quantite_udb -= quantite_udb
                 quantite_apres = stock.quantite_disponible
                 
@@ -1352,3 +1373,312 @@ class TypeConteneurService:
             invalidate_cache_pattern("magasin:types_conteneur:*")
             return True
         return False
+
+
+class OrdreTransfertService:
+    """Service pour la gestion des Ordres de Transfert inter-magasins"""
+
+    @staticmethod
+    def generate_numero_ot(db: Session) -> str:
+        """Génère un numéro d'OT unique : OT-2026-0001"""
+        year = datetime.now().year
+        count = db.query(OrdreTransfert).filter(
+            OrdreTransfert.numero_ot.like(f"OT-{year}-%")
+        ).count()
+        return f"OT-{year}-{count + 1:04d}"
+
+    @staticmethod
+    def get_all(db: Session, skip: int = 0, limit: int = 100) -> List[OrdreTransfert]:
+        cache_key = f"magasin:ot:all:{skip}:{limit}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(OrdreTransfert).options(
+            selectinload(OrdreTransfert.lignes)
+        ).order_by(OrdreTransfert.id.desc()).offset(skip).limit(limit).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
+
+    @staticmethod
+    def get_by_id(db: Session, ot_id: int) -> Optional[OrdreTransfert]:
+        cache_key = f"magasin:ot:{ot_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(OrdreTransfert).options(
+            selectinload(OrdreTransfert.lignes)
+        ).filter(OrdreTransfert.id == ot_id).first()
+        if result:
+            cache_service.set(cache_key, result, expire=600)
+        return result
+
+    @staticmethod
+    def get_by_declaration(db: Session, declaration_id: int) -> List[OrdreTransfert]:
+        cache_key = f"magasin:ot:declaration:{declaration_id}"
+        cached = cache_service.get(cache_key)
+        if cached:
+            return cached
+        result = db.query(OrdreTransfert).filter(
+            OrdreTransfert.declaration_id == declaration_id
+        ).all()
+        cache_service.set(cache_key, result, expire=300)
+        return result
+
+    @staticmethod
+    def create(db: Session, ot: OrdreTransfertCreate, cree_par: str) -> OrdreTransfert:
+        """Crée un OT en statut BROUILLON (pas d'impact stock)"""
+        numero_ot = OrdreTransfertService.generate_numero_ot(db)
+
+        # Validation : source ≠ destination
+        if ot.magasin_source_id == ot.magasin_dest_id:
+            raise BusinessRuleViolationError("Le magasin source et le magasin destination doivent être différents")
+
+        # Vérifier que les magasins existent
+        source = db.query(Magasin).filter(Magasin.id == ot.magasin_source_id).first()
+        if not source:
+            raise BusinessRuleViolationError(f"Magasin source ID {ot.magasin_source_id} introuvable")
+        dest = db.query(Magasin).filter(Magasin.id == ot.magasin_dest_id).first()
+        if not dest:
+            raise BusinessRuleViolationError(f"Magasin destination ID {ot.magasin_dest_id} introuvable")
+
+        try:
+            with db.begin():
+                db_ot = OrdreTransfert(
+                    numero_ot=numero_ot,
+                    cree_par=cree_par,
+                    statut=StatutOrdreTransfert.BROUILLON,
+                    **ot.dict(exclude={'lignes'})
+                )
+                db.add(db_ot)
+                db.flush()
+
+                for ligne_data in ot.lignes:
+                    # Vérifier que l'article existe
+                    article = db.query(Article).filter(Article.id == ligne_data.article_id).first()
+                    if not article:
+                        raise BusinessRuleViolationError(f"Article ID {ligne_data.article_id} introuvable")
+
+                    db_ligne = LigneOrdreTransfert(
+                        ordre_transfert_id=db_ot.id,
+                        **ligne_data.dict()
+                    )
+                    db.add(db_ligne)
+
+            db.refresh(db_ot)
+            invalidate_cache_pattern("magasin:ot:*")
+            return db_ot
+        except BusinessRuleViolationError:
+            raise
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur création OT: {str(e)}")
+
+    @staticmethod
+    def update(db: Session, ot_id: int, ot: OrdreTransfertUpdate) -> Optional[OrdreTransfert]:
+        """Met à jour un OT (seulement si BROUILLON)"""
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            return None
+        if db_ot.statut != StatutOrdreTransfert.BROUILLON:
+            raise BusinessRuleViolationError("Un OT ne peut être modifié qu'en statut BROUILLON")
+
+        for field, value in ot.dict(exclude_unset=True).items():
+            setattr(db_ot, field, value)
+        db.commit()
+        db.refresh(db_ot)
+        invalidate_cache_pattern("magasin:ot:*")
+        return db_ot
+
+    @staticmethod
+    def valider(db: Session, ot_id: int, autorise_par: str, user_id: Optional[int] = None) -> Optional[OrdreTransfert]:
+        """
+        Valide un OT → DÉSTOCKE le magasin source.
+        Vérifie la disponibilité du stock avant validation.
+        """
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            return None
+        if db_ot.statut != StatutOrdreTransfert.BROUILLON:
+            raise BusinessRuleViolationError("Seul un OT en BROUILLON peut être validé")
+
+        try:
+            with db.begin():
+                # Vérifier et déduire le stock pour chaque ligne
+                for ligne in db_ot.lignes:
+                    stock = StockService.get_stock(db, db_ot.magasin_source_id, ligne.article_id)
+                    # Convertir en UDB pour le stock UDB
+                    article = db.query(Article).filter(Article.id == ligne.article_id).first()
+                    quantite_udb = ConversionService.convertir_vers_udb(
+                        ligne.quantite, ligne.unite_mesure, article
+                    )
+
+                    if not stock or stock.quantite_disponible < quantite_udb:
+                        dispo = float(stock.quantite_disponible) if stock else 0
+                        raise InsufficientStockError(
+                            f"Stock insuffisant pour article {article.code_article if article else ligne.article_id}. "
+                            f"Disponible: {dispo} UDB, Demandé: {float(quantite_udb)} UDB"
+                        )
+
+                    # Déduire du stock source
+                    quantite_avant = stock.quantite_disponible
+                    stock.quantite_disponible -= quantite_udb
+                    stock.quantite_udb -= quantite_udb
+
+                    # Audit trail
+                    AuditService.log_stock_modification(
+                        db=db,
+                        action="transfert_sortie",
+                        article_id=ligne.article_id,
+                        magasin_id=db_ot.magasin_source_id,
+                        quantite_avant=quantite_avant,
+                        quantite_apres=stock.quantite_disponible,
+                        user_id=user_id,
+                        raison=f"OT {db_ot.numero_ot} — sortie vers {db_ot.magasin_dest_id}"
+                    )
+
+                db_ot.statut = StatutOrdreTransfert.VALIDE
+                db_ot.autorise_par = autorise_par
+                db_ot.date_validation = datetime.now()
+
+            db.refresh(db_ot)
+            invalidate_cache_pattern("magasin:ot:*")
+            invalidate_cache_pattern("magasin:stocks:*")
+            return db_ot
+        except (BusinessRuleViolationError, InsufficientStockError):
+            raise
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur validation OT: {str(e)}")
+
+    @staticmethod
+    def expedier(db: Session, ot_id: int) -> Optional[OrdreTransfert]:
+        """Marque l'OT comme expédié (en transit physique)"""
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            return None
+        if db_ot.statut != StatutOrdreTransfert.VALIDE:
+            raise BusinessRuleViolationError("Seul un OT VALIDÉ peut être expédié")
+
+        db_ot.statut = StatutOrdreTransfert.EN_TRANSIT
+        db_ot.date_expedition = datetime.now()
+        db.commit()
+        db.refresh(db_ot)
+        invalidate_cache_pattern("magasin:ot:*")
+        return db_ot
+
+    @staticmethod
+    def receptionner(db: Session, ot_id: int, user_id: Optional[int] = None) -> Optional[OrdreTransfert]:
+        """
+        Réceptionne l'OT → STOCKE dans le magasin destination.
+        Met à jour quantite_recue sur chaque ligne.
+        """
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            return None
+        if db_ot.statut not in (StatutOrdreTransfert.VALIDE, StatutOrdreTransfert.EN_TRANSIT):
+            raise BusinessRuleViolationError("Seul un OT VALIDÉ ou EN_TRANSIT peut être réceptionné")
+
+        try:
+            with db.begin():
+                for ligne in db_ot.lignes:
+                    article = db.query(Article).filter(Article.id == ligne.article_id).first()
+                    quantite_udb = ConversionService.convertir_vers_udb(
+                        ligne.quantite, ligne.unite_mesure, article
+                    )
+
+                    # Ajouter au stock destination
+                    stock_dest = StockService.get_stock(db, db_ot.magasin_dest_id, ligne.article_id)
+                    if stock_dest:
+                        quantite_avant = stock_dest.quantite_disponible
+                        stock_dest.quantite_disponible += quantite_udb
+                        stock_dest.quantite_udb += quantite_udb
+                    else:
+                        stock_dest = Stock(
+                            magasin_id=db_ot.magasin_dest_id,
+                            article_id=ligne.article_id,
+                            quantite_disponible=quantite_udb,
+                            quantite_udb=quantite_udb
+                        )
+                        db.add(stock_dest)
+                        quantite_avant = Decimal('0')
+
+                    # Mettre à jour la quantité reçue sur la ligne
+                    ligne.quantite_recue = ligne.quantite
+
+                    # Audit trail
+                    AuditService.log_stock_modification(
+                        db=db,
+                        action="transfert_entree",
+                        article_id=ligne.article_id,
+                        magasin_id=db_ot.magasin_dest_id,
+                        quantite_avant=quantite_avant,
+                        quantite_apres=stock_dest.quantite_disponible,
+                        user_id=user_id,
+                        raison=f"OT {db_ot.numero_ot} — entrée depuis {db_ot.magasin_source_id}"
+                    )
+
+                db_ot.statut = StatutOrdreTransfert.RECEPTIONNE
+                db_ot.date_reception = datetime.now()
+
+            db.refresh(db_ot)
+            invalidate_cache_pattern("magasin:ot:*")
+            invalidate_cache_pattern("magasin:stocks:*")
+            return db_ot
+        except BusinessRuleViolationError:
+            raise
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur réception OT: {str(e)}")
+
+    @staticmethod
+    def annuler(db: Session, ot_id: int, user_id: Optional[int] = None) -> Optional[OrdreTransfert]:
+        """
+        Annule un OT. Si le stock avait été déduit (VALIDE ou EN_TRANSIT),
+        on reverse le stock au magasin source.
+        """
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            return None
+        if db_ot.statut == StatutOrdreTransfert.ANNULE:
+            raise BusinessRuleViolationError("Cet OT est déjà annulé")
+        if db_ot.statut == StatutOrdreTransfert.RECEPTIONNE:
+            raise BusinessRuleViolationError("Un OT réceptionné ne peut pas être annulé")
+
+        try:
+            with db.begin():
+                # Si validé ou en transit, reverser le stock au magasin source
+                if db_ot.statut in (StatutOrdreTransfert.VALIDE, StatutOrdreTransfert.EN_TRANSIT):
+                    for ligne in db_ot.lignes:
+                        stock = StockService.get_stock(db, db_ot.magasin_source_id, ligne.article_id)
+                        if stock:
+                            article = db.query(Article).filter(Article.id == ligne.article_id).first()
+                            quantite_udb = ConversionService.convertir_vers_udb(
+                                ligne.quantite, ligne.unite_mesure, article
+                            )
+                            quantite_avant = stock.quantite_disponible
+                            stock.quantite_disponible += quantite_udb
+                            stock.quantite_udb += quantite_udb
+
+                            AuditService.log_stock_modification(
+                                db=db,
+                                action="transfert_annulation",
+                                article_id=ligne.article_id,
+                                magasin_id=db_ot.magasin_source_id,
+                                quantite_avant=quantite_avant,
+                                quantite_apres=stock.quantite_disponible,
+                                user_id=user_id,
+                                raison=f"Annulation OT {db_ot.numero_ot}"
+                            )
+
+                db_ot.statut = StatutOrdreTransfert.ANNULE
+
+            db.refresh(db_ot)
+            invalidate_cache_pattern("magasin:ot:*")
+            invalidate_cache_pattern("magasin:stocks:*")
+            return db_ot
+        except BusinessRuleViolationError:
+            raise
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur annulation OT: {str(e)}")
+

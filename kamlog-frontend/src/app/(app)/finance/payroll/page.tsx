@@ -1,17 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Users, Banknote, Calendar, CheckCircle2, AlertCircle, FileText } from 'lucide-react';
+import { financeAPI } from '@/lib/api-client';
 
 export default function PayrollPage() {
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [drivers, setDrivers] = useState<any[]>([]);
 
-  const mockDrivers = [
-    { id: 1, nom: 'Kamga', prenoms: 'Jean', base: 150000, primes: 45000, peages: 12000, statut: 'PAYE' },
-    { id: 2, nom: 'Oumarou', prenoms: 'Sanda', base: 150000, primes: 60000, peages: 15000, statut: 'EN_ATTENTE' },
-    { id: 3, nom: 'Nlend', prenoms: 'Pierre', base: 150000, primes: 25000, peages: 8000, statut: 'EN_ATTENTE' },
-  ];
+  useEffect(() => {
+    loadPayroll();
+  }, []);
+
+  const loadPayroll = async () => {
+    setLoading(true);
+    try {
+      const res = await financeAPI.getPayroll();
+      setDrivers(res.data || []);
+    } catch (error) {
+      console.error('Failed to load payroll', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ModuleLayout module="finance">
@@ -36,15 +48,21 @@ export default function PayrollPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
             <p className="text-xs font-bold text-slate-400 uppercase mb-2">Total Paie (Mois)</p>
-            <h2 className="text-3xl font-black text-slate-800">1.8M <span className="text-lg font-bold text-slate-500">XAF</span></h2>
+            <h2 className="text-3xl font-black text-slate-800">
+              {(drivers.reduce((acc, d) => acc + d.base + d.primes + d.peages, 0)).toLocaleString()} <span className="text-lg font-bold text-slate-500">XAF</span>
+            </h2>
           </div>
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
             <p className="text-xs font-bold text-slate-400 uppercase mb-2">Primes Variables</p>
-            <h2 className="text-3xl font-black text-emerald-600">450K <span className="text-lg font-bold text-emerald-600/50">XAF</span></h2>
+            <h2 className="text-3xl font-black text-emerald-600">
+              {(drivers.reduce((acc, d) => acc + d.primes, 0)).toLocaleString()} <span className="text-lg font-bold text-emerald-600/50">XAF</span>
+            </h2>
           </div>
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
             <p className="text-xs font-bold text-slate-400 uppercase mb-2">Frais Avancés (Péages)</p>
-            <h2 className="text-3xl font-black text-amber-600">85K <span className="text-lg font-bold text-amber-600/50">XAF</span></h2>
+            <h2 className="text-3xl font-black text-amber-600">
+              {(drivers.reduce((acc, d) => acc + d.peages, 0)).toLocaleString()} <span className="text-lg font-bold text-amber-600/50">XAF</span>
+            </h2>
           </div>
           <div className="bg-slate-900 p-5 rounded-2xl shadow-sm text-white">
             <p className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
@@ -75,7 +93,11 @@ export default function PayrollPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {mockDrivers.map((d) => (
+              {loading ? (
+                <tr><td colSpan={7} className="p-8 text-center text-slate-400">Chargement de la paie...</td></tr>
+              ) : drivers.length === 0 ? (
+                <tr><td colSpan={7} className="p-8 text-center text-slate-400">Aucun chauffeur trouvé.</td></tr>
+              ) : drivers.map((d) => (
                 <tr key={d.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-800">{d.nom} {d.prenoms}</div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { transportAPI } from '@/lib/api-client';
 import { Mission } from '@/types';
@@ -16,13 +16,7 @@ export default function DocumentBLPage() {
   const [mission, setMission] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (missionId) {
-      loadMissionData();
-    }
-  }, [missionId]);
-
-  const loadMissionData = async () => {
+  const loadMissionData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await transportAPI.getMission(missionId);
@@ -32,7 +26,13 @@ export default function DocumentBLPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [missionId]);
+
+  useEffect(() => {
+    if (missionId) {
+      loadMissionData();
+    }
+  }, [missionId, loadMissionData]);
 
   const handlePrint = () => {
     window.print();

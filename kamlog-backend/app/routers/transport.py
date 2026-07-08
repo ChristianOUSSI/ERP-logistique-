@@ -47,6 +47,7 @@ from app.services.transport_service import (
     BandeLivraisonService, calculer_ecart_carburant,
     PanneVehiculeService, AlertesService, AnalyticsService
 )
+from app.services.whatsapp import WhatsAppService
 
 router = APIRouter(tags=["Transport"])
 
@@ -428,6 +429,52 @@ async def terminer_mission(
     mission = MissionTransportService.terminer_mission(db, mission_id)
     if not mission:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission introuvable")
+    return mission
+
+
+class StatutUpdate(BaseModel):
+    statut: str
+
+@router.patch("/missions/{mission_id}/statut", response_model=MissionResponse)
+@require_role(["admin", "dispatcher", "chauffeur"])
+@require_permission("transport:write")
+async def update_mission_statut(
+    mission_id: int,
+    update_data: StatutUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Met à jour le statut d'une mission et broadcast via WebSocket."""
+    from app.routers.ws import manager
+    from datetime import datetime
+    import asyncio
+    
+    # Récupérer et mettre à jour la mission via le service existant
+    # Le service devrait être étendu, ou on met à jour directement.
+    # Pour le moment, on utilise l'attribut statut si possible.
+    mission = db.query(MissionTransport).filter(MissionTransport.id == mission_id).first()
+    if not mission:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission introuvable")
+        
+    mission.statut = update_data.statut
+    db.commit()
+    db.refresh(mission)
+    
+    # Broadcast l'événement en temps réel
+    asyncio.create_task(manager.broadcast({
+        "message": f"Mission {mission.id} passée au statut {update_data.statut}",
+        "severity": "INFO",
+        "timestamp": datetime.utcnow().isoformat(),
+        "mission_id": mission.id,
+        "nouveau_statut": update_data.statut
+    }))
+    
+    # WhatsApp Integration
+    if update_data.statut in ["EN_ROUTE", "LIVREE", "EN_CHARGEMENT"]:
+        client_phone = "+237600000000" # Fallback/Mock phone number
+        message = f"Bonjour, votre mission de transport #{mission.reference} vient de passer au statut: {update_data.statut}."
+        WhatsAppService.send_message(client_phone, message)
+    
     return mission
 
 

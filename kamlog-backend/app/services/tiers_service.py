@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import and_, or_
 from typing import List, Optional
 from decimal import Decimal
+from datetime import datetime
 
 from app.models.tiers import Tiers, StatutTiers
 from app.schemas.tiers import TiersCreate, TiersUpdate
@@ -85,16 +86,47 @@ class TiersService:
         return result
 
     @staticmethod
+    def generate_code_tiers(db: Session, prefix: str = "TIE") -> str:
+        """Génère un code tiers de type TIE-YYMM-XXXX"""
+        now = datetime.now()
+        year_month = now.strftime("%y%m")
+        base_prefix = f"{prefix}-{year_month}"
+        
+        # Trouver le dernier tiers créé ce mois-ci avec ce préfixe
+        last_tier = db.query(Tiers).filter(Tiers.code_tiers.like(f"{base_prefix}-%")).order_by(Tiers.code_tiers.desc()).first()
+        
+        if last_tier and last_tier.code_tiers:
+            try:
+                last_num = int(last_tier.code_tiers.split("-")[-1])
+                new_num = last_num + 1
+            except ValueError:
+                new_num = 1
+        else:
+            new_num = 1
+            
+        return f"{base_prefix}-{new_num:04d}"
+
+    @staticmethod
     def create_tiers(db: Session, tiers: TiersCreate, cree_par: str) -> Tiers:
+        if not tiers.code_tiers:
+            # Générer un préfixe basé sur les droits
+            prefix = "TIE"
+            if getattr(tiers, 'autorise_acconage', False) or getattr(tiers, 'autorise_transit', False) or getattr(tiers, 'autorise_manutention', False):
+                prefix = "CLI"
+            elif getattr(tiers, 'autorise_transport', False):
+                prefix = "FOU"
+            tiers.code_tiers = TiersService.generate_code_tiers(db, prefix)
+            
         # Vérifier que le code tiers n'existe pas déjà
         existing = TiersService.get_tiers_by_code(db, tiers.code_tiers)
         if existing:
             raise ValueError(f"Code tiers {tiers.code_tiers} déjà utilisé")
         
         # Vérifier que le NIU n'existe pas déjà
-        existing_niu = TiersService.get_tiers_by_niu(db, tiers.niu)
-        if existing_niu:
-            raise ValueError(f"NIU {tiers.niu} déjà utilisé")
+        if tiers.niu:
+            existing_niu = TiersService.get_tiers_by_niu(db, tiers.niu)
+            if existing_niu:
+                raise ValueError(f"NIU {tiers.niu} déjà utilisé")
         
         db_tiers = Tiers(**tiers.model_dump())
         db.add(db_tiers)

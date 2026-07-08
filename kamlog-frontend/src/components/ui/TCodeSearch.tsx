@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getRouteFromTCode } from '@/lib/tcodes';
+import toast from 'react-hot-toast';
 
 export function TCodeSearch() {
   const [tcode, setTcode] = useState('');
@@ -14,7 +15,7 @@ export function TCodeSearch() {
         router.push(route);
       } else {
         // Optional: show a small toast or shake animation for invalid T-Code
-        alert(`T-Code Invalide: ${tcode}`);
+        toast.error(`T-Code Invalide: ${tcode}`);
       }
     }
   };

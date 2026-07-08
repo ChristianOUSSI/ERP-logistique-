@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Truck, MapPin, Package, CheckCircle2, Navigation, Clock, AlertTriangle } from 'lucide-react';
 import { transportAPI } from '@/lib/api/transport';
+import { toast } from 'react-hot-toast';
 import SignaturePadModal from '@/components/transport/SignaturePadModal';
 
 export default function ChauffeurPage() {
@@ -46,7 +47,7 @@ export default function ChauffeurPage() {
       setSelectedMissionId(null);
       fetchMissions(); // Refresh the list
     } catch (err: any) {
-      alert(err.message || 'Erreur lors de la livraison');
+      toast.error(err.message || 'Erreur lors de la livraison');
     }
   };
 
@@ -138,7 +139,7 @@ export default function ChauffeurPage() {
               <div className="p-4 bg-gray-50/50 flex gap-3">
                 <button 
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
-                  onClick={() => alert("Ouvre le GPS (Google Maps)")}
+                  onClick={() => toast.success("Ouvre le GPS (Google Maps)")}
                 >
                   <Navigation className="w-4 h-4" />
                   Naviguer

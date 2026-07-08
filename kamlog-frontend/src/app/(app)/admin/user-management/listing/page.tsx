@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI, User, DbRole } from '@/lib/api/admin'
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
+import toast from 'react-hot-toast'
 
 export default function UserListing() {
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -49,7 +50,7 @@ export default function UserListing() {
       setSelectedUser(updated);
     } catch (err) {
       console.error('Error changing user role:', err);
-      alert('Erreur lors du changement de rôle');
+      toast.error('Erreur lors du changement de rôle');
     } finally {
       setUpdatingRole(false);
     }

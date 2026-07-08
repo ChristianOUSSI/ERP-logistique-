@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
+import { useComingSoon } from '@/contexts/ComingSoonContext';
+import { parcAPI } from '@/lib/api/parc';
+import toast from 'react-hot-toast';
 
 // Dynamic import of MapViewer to avoid SSR window is not defined errors
 const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
@@ -14,23 +17,39 @@ const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
 export default function YardMapPage() {
   const [points, setPoints] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const { showComingSoon } = useComingSoon();
+
+  const fetchYardPositions = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const [emplacements, stocks] = await Promise.all([
+        parcAPI.getEmplacements(),
+        parcAPI.getStocksActifs()
+      ]);
+      
+      const mapPoints = stocks.map(stock => {
+        const emp = emplacements.find(e => e.id === stock.emplacement_id);
+        if (!emp) return null;
+        return {
+          id: stock.numero_conteneur,
+          label: `${stock.type_conteneur} - ${emp.code_emplacement}`,
+          position: [emp.coordonnee_x || 4.0511 + (Math.random()-0.5)*0.005, emp.coordonnee_y || 9.7679 + (Math.random()-0.5)*0.005], // fallback coords if missing
+          status: stock.statut
+        };
+      }).filter(Boolean);
+      
+      setPoints(mapPoints);
+    } catch (error) {
+      console.error(error);
+      toast.error('Erreur lors du chargement de la cour');
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchYardPositions();
-  }, []);
-
-  const fetchYardPositions = () => {
-    setRefreshing(true);
-    // Simulation d'emplacements sur la cour
-    setTimeout(() => {
-      setPoints([
-        { id: 'CONT-101', lat: 4.0520, lng: 9.7680, type: 'container', label: 'Conteneur 40" - MSCU1234567' },
-        { id: 'CONT-102', lat: 4.0515, lng: 9.7685, type: 'container', label: 'Conteneur 20" - CMAU7654321' },
-        { id: 'CONT-103', lat: 4.0522, lng: 9.7675, type: 'container', label: 'Conteneur 40" HC - HLXU9876543' },
-      ]);
-      setRefreshing(false);
-    }, 800);
-  };
+  }, [fetchYardPositions]);
 
   return (
     <ModuleLayout module="parc">
@@ -54,7 +73,10 @@ export default function YardMapPage() {
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-amber-600' : ''}`} />
               Actualiser Cour
             </button>
-            <button className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all">
+            <button 
+              onClick={() => showComingSoon('Configuration Zones')}
+              className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
+            >
               <Settings2 className="w-4 h-4" />
               Configuration Zones
             </button>

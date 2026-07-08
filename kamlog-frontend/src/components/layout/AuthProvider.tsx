@@ -97,17 +97,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  // Monitor session expiration locally
+  // Monitor session expiration locally and listen for 401 api errors
   useEffect(() => {
-    if (!sessionExpiresAt || sessionExpired) return;
-
-    const timer = setInterval(() => {
-      if (Date.now() >= sessionExpiresAt.getTime()) {
-        setSessionExpired(true);
-        clearInterval(timer);
+    const handleAuthError = (e: Event) => {
+      console.warn("401 Unauthorized intercepted, logging out...");
+      logout();
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login?expired=true';
       }
-    }, 1000);
-    return () => clearInterval(timer);
+    };
+    
+    window.addEventListener('auth-error', handleAuthError);
+
+    let timer: NodeJS.Timeout | null = null;
+    if (sessionExpiresAt && !sessionExpired) {
+      timer = setInterval(() => {
+        if (Date.now() >= sessionExpiresAt.getTime()) {
+          setSessionExpired(true);
+          handleAuthError(new Event('auth-error'));
+          if (timer) clearInterval(timer);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      window.removeEventListener('auth-error', handleAuthError);
+      if (timer) clearInterval(timer);
+    };
   }, [sessionExpiresAt, sessionExpired, logout]);
 
   return (

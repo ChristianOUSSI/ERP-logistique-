@@ -82,6 +82,15 @@ export const MODULE_COLORS: Record<string, ModuleColorConfig> = {
     background: '#FFF7ED',
     text: '#9A3412',
   },
+  rh: {
+    primary: '#14B8A6',      // Teal
+    primaryLight: '#2DD4BF',
+    primaryDark: '#0D9488',
+    secondary: '#5EEAD4',
+    accent: '#CCFBF1',
+    background: '#F0FDFA',
+    text: '#0F766E',
+  },
 };
 
 export const MODULE_ICONS: Record<string, string> = {
@@ -93,6 +102,7 @@ export const MODULE_ICONS: Record<string, string> = {
   parc: '🚗',
   documents: '📄',
   alerts: '🔔',
+  rh: '👥',
 };
 
 export const MODULE_NAMES: Record<string, string> = {
@@ -104,6 +114,7 @@ export const MODULE_NAMES: Record<string, string> = {
   parc: 'K-Parc',
   documents: 'Documents',
   alerts: 'Alertes',
+  rh: 'Ressources Humaines',
 };
 
 export const getModuleColor = (module: string): ModuleColorConfig => {

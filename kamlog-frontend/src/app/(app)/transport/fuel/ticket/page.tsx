@@ -3,18 +3,44 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { transportAPI } from '@/lib/api-client'
+import { Combobox, ComboboxOption } from '@/components/ui/combobox'
 
 export default function FuelTicket() {
   const router = useRouter()
-  const [vehicle, setVehicle] = useState('TRK-902-AB')
-  const [driver, setDriver] = useState('Jean Dupont (CH-042)')
+  const [vehicle, setVehicle] = useState('')
+  const [driver, setDriver] = useState('')
   const [date, setDate] = useState('2023-10-24')
   const [time, setTime] = useState('08:45')
   const [odometer, setOdometer] = useState('145203')
   const [fuelType, setFuelType] = useState('diesel')
   const [volume, setVolume] = useState('450.00')
   const [unitPrice, setUnitPrice] = useState('1.854')
-  const [total, setTotal] = useState('834.30')
+  const [total, setTotal] = useState('0.00')
+
+  const [chauffeurs, setChauffeurs] = useState<ComboboxOption[]>([])
+  const [camions, setCamions] = useState<ComboboxOption[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [chaufRes, camRes] = await Promise.all([
+          transportAPI.getChauffeurs(),
+          transportAPI.getCamions()
+        ]);
+        const cList = chaufRes.data || [];
+        const tList = camRes.data || [];
+        setChauffeurs(cList.map((c: any) => ({ value: String(c.id), label: `${c.prenom} ${c.nom}` })));
+        setCamions(tList.map((t: any) => ({ value: String(t.id), label: `${t.immatriculation} - ${t.marque}` })));
+      } catch (err) {
+        console.error("Failed to load references", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [])
 
   useEffect(() => {
     const vol = parseFloat(volume) || 0
@@ -78,22 +104,26 @@ export default function FuelTicket() {
                   {/* Vehicle Selection */}
                   <div className="col-span-1">
                     <label className="block font-label-md text-label-md text-on-surface mb-[0.5rem]">Véhicule (Immatriculation / Parc ID)</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">directions_car</span>
-                      <input className="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded font-data-tabular text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors" placeholder="Ex: TRK-123-CD" type="text" value={vehicle} onChange={(e) => setVehicle(e.target.value)}/>
-                    </div>
+                    <Combobox
+                      options={camions}
+                      value={vehicle}
+                      onChange={setVehicle}
+                      placeholder="Sélectionner le véhicule..."
+                      searchPlaceholder="Rechercher par immatriculation..."
+                      isLoading={isLoading}
+                    />
                   </div>
                   {/* Driver Selection */}
                   <div className="col-span-1">
                     <label className="block font-label-md text-label-md text-on-surface mb-[0.5rem]">Conducteur</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
-                      <select className="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded font-body-md text-body-md focus:border-transport-accent focus:ring-1 focus:ring-transport-accent transition-colors appearance-none" value={driver} onChange={(e) => setDriver(e.target.value)}>
-                        <option>Jean Dupont (CH-042)</option>
-                        <option>Marie Martin (CH-089)</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
-                    </div>
+                    <Combobox
+                      options={chauffeurs}
+                      value={driver}
+                      onChange={setDriver}
+                      placeholder="Sélectionner le conducteur..."
+                      searchPlaceholder="Rechercher par nom..."
+                      isLoading={isLoading}
+                    />
                   </div>
                   {/* Date & Time */}
                   <div className="col-span-1">

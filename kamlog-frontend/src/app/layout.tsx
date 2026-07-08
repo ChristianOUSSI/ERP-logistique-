@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: 'KAMLOG EM-ERP',
   description: 'Système de Gestion Logistique Intégré  Port de Douala',
   icons: { icon: '/logo-kamlog.svg' },
+  manifest: '/manifest.json',
 }
 
 export default function RootLayout({

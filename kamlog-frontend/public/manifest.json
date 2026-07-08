@@ -1,0 +1,16 @@
+{
+  "name": "KAMLOG EM-ERP",
+  "short_name": "KAMLOG",
+  "description": "Application ERP Logistique et Transport",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon"
+    }
+  ]
+}

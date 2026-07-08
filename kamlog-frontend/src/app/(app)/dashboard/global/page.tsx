@@ -6,31 +6,7 @@ import { TrendingUp, TrendingDown, Package, ShieldAlert, CreditCard, Truck, Term
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getRouteFromTCode } from '@/utils/tcodeLookup'
-import { financeAPI, transportAPI } from '@/lib/api-client'
-
-// Mock Data pour les graphiques
-const revenueDataWeek = [
-  { name: 'Lun', value: 4000 },
-  { name: 'Mar', value: 3000 },
-  { name: 'Mer', value: 2000 },
-  { name: 'Jeu', value: 2780 },
-  { name: 'Ven', value: 1890 },
-  { name: 'Sam', value: 2390 },
-  { name: 'Dim', value: 3490 },
-]
-
-const revenueDataMonth = [
-  { name: 'Sem 1', value: 12000 },
-  { name: 'Sem 2', value: 15500 },
-  { name: 'Sem 3', value: 10200 },
-  { name: 'Sem 4', value: 18900 },
-]
-
-const fleetData = [
-  { name: 'En Route', value: 85, fill: '#00ACC1' },
-  { name: 'Maintenance', value: 15, fill: '#f59e0b' },
-  { name: 'Dispo', value: 45, fill: '#10b981' },
-]
+import { financeAPI, transportAPI, adminAPI } from '@/lib/api-client'
 
 export default function GlobalDashboard() {
   const router = useRouter()
@@ -42,30 +18,43 @@ export default function GlobalDashboard() {
   
   // States for real KPI data
   const [stockValue, setStockValue] = useState('14.2M')
-  const [activeMissions, setActiveMissions] = useState('42')
-  const [monthlyRevenue, setMonthlyRevenue] = useState('2.8M')
-  const [activeVehicles, setActiveVehicles] = useState('156')
+  const [activeMissions, setActiveMissions] = useState('0')
+  const [monthlyRevenue, setMonthlyRevenue] = useState('0M')
+  const [activeVehicles, setActiveVehicles] = useState('0')
+  
+  // Charts data
+  const [revenueDataWeek, setRevenueDataWeek] = useState<any[]>([])
+  const [revenueDataMonth, setRevenueDataMonth] = useState<any[]>([])
+  const [fleetData, setFleetData] = useState<any[]>([])
 
   const fetchRealData = useCallback(async () => {
     try {
       // Parallel fetch for available APIs
-      const [finRes, transRes] = await Promise.allSettled([
+      const [finRes, transRes, dashRes] = await Promise.allSettled([
         financeAPI.getKpis(),
         transportAPI.getKpis(),
+        adminAPI.getDashboardKpis()
       ]);
 
       if (finRes.status === 'fulfilled' && finRes.value.data) {
-        // e.g., finRes.value.data.revenue_mensuel
-        if (finRes.value.data.revenue_mensuel) {
-          setMonthlyRevenue((finRes.value.data.revenue_mensuel / 1000000).toFixed(1) + 'M')
+        if (finRes.value.data.chiffre_affaires) {
+          setMonthlyRevenue((finRes.value.data.chiffre_affaires / 1000000).toFixed(1) + 'M')
         }
       }
 
       if (transRes.status === 'fulfilled' && transRes.value.data) {
-        // e.g., transRes.value.data.vehicules_actifs
         if (transRes.value.data.vehicules_actifs !== undefined) {
           setActiveVehicles(transRes.value.data.vehicules_actifs.toString())
         }
+        if (transRes.value.data.missions_en_cours !== undefined) {
+          setActiveMissions(transRes.value.data.missions_en_cours.toString())
+        }
+      }
+      
+      if (dashRes.status === 'fulfilled' && dashRes.value.data) {
+        setRevenueDataWeek(dashRes.value.data.revenueDataWeek || [])
+        setRevenueDataMonth(dashRes.value.data.revenueDataMonth || [])
+        setFleetData(dashRes.value.data.fleetData || [])
       }
 
     } catch (e) {

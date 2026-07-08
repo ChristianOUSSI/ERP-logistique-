@@ -36,8 +36,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        // Dispatch custom event for AuthProvider to handle clean logout
+        window.dispatchEvent(new CustomEvent('auth-error', { detail: { reason: 'unauthorized' } }));
       }
     }
     return Promise.reject(error);
@@ -56,6 +57,7 @@ export const adminAPI = {
   createAgency: (data: unknown) => apiClient.post('/api/admin/agencies', data),
   updateAgency: (id: number, data: unknown) => apiClient.put(`/api/admin/agencies/${id}`, data),
   deleteAgency: (id: number) => apiClient.delete(`/api/admin/agencies/${id}`),
+  getDashboardKpis: () => apiClient.get('/api/admin/dashboard/global-kpis'),
 };
 
 // ─── Service Auth ─────────────────────────────────────────
@@ -133,6 +135,10 @@ export const financeAPI = {
     apiClient.post(`/api/finance/encaissements/${encaissementId}/lettrer/${factureId}`),
   getKpis: () =>
     apiClient.get('/api/finance/kpis'),
+  getAnalyticsChartData: () =>
+    apiClient.get('/api/finance/analytics/chart-data'),
+  getPayroll: () =>
+    apiClient.get('/api/finance/payroll/drivers'),
 };
 
 // ─── Service Purchases (K-Achats) ─────────────────────────
@@ -249,7 +255,20 @@ export const magasinAPI = {
     } catch {
       return [] // Fallback since history endpoint might not exist yet
     }
-  }
+  },
+  // Ordres de Transfert
+  getOrdresTransfert: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/ordres-transfert', { params }),
+  createOrdreTransfert: (data: unknown) =>
+    apiClient.post('/api/magasin/ordres-transfert', data),
+  validerOrdreTransfert: (id: number) =>
+    apiClient.post(`/api/magasin/ordres-transfert/${id}/valider`),
+  expedierOrdreTransfert: (id: number) =>
+    apiClient.post(`/api/magasin/ordres-transfert/${id}/expedier`),
+  receptionnerOrdreTransfert: (id: number) =>
+    apiClient.post(`/api/magasin/ordres-transfert/${id}/receptionner`),
+  annulerOrdreTransfert: (id: number) =>
+    apiClient.post(`/api/magasin/ordres-transfert/${id}/annuler`),
 };
 
 // ─── Service Notifications ───────────────────────────────
@@ -264,4 +283,24 @@ export const notificationsAPI = {
     apiClient.put('/api/notifications/mark-all-read'),
   deleteRead: () =>
     apiClient.delete('/api/notifications/read'),
+};
+
+// ─── Service Incidents (Ticketing) ────────────────────────
+export const incidentsAPI = {
+  getIncidents: () => apiClient.get('/api/incidents'),
+  getClientIncidents: (tiersId: number) => apiClient.get(`/api/incidents/client/${tiersId}`),
+  createIncident: (data: unknown) => apiClient.post('/api/incidents', data),
+  updateIncident: (id: number, data: unknown) => apiClient.patch(`/api/incidents/${id}`, data),
+};
+
+// ─── Service Ressources Humaines (RH) ──────────────────────
+export const rhAPI = {
+  getEmployes: (params?: Record<string, unknown>) => apiClient.get('/api/rh/employes', { params }),
+  createEmploye: (data: unknown) => apiClient.post('/api/rh/employes', data),
+  getMyProfile: () => apiClient.get('/api/rh/employes/me'),
+  getConges: (params?: Record<string, unknown>) => apiClient.get('/api/rh/conges', { params }),
+  createConge: (data: unknown) => apiClient.post('/api/rh/conges', data),
+  updateCongeStatut: (id: number, statut: string) => apiClient.patch(`/api/rh/conges/${id}/statut`, { statut }),
+  getPaie: (params?: Record<string, unknown>) => apiClient.get('/api/rh/paie', { params }),
+  createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
 };

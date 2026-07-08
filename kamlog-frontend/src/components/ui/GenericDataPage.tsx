@@ -29,6 +29,12 @@ interface GenericDataPageProps {
   kpiCards?: React.ReactNode;
   /** Page size for pagination */
   pageSize?: number;
+  /** Server-side pagination support */
+  serverTotalPages?: number;
+  serverCurrentPage?: number;
+  serverTotalResults?: number;
+  onPageChange?: (page: number) => void;
+  onSearchChange?: (term: string) => void;
 }
 
 // ── Detail Drawer ──────────────────────────────────────────────────────────────
@@ -154,12 +160,20 @@ export default function GenericDataPage({
   icon = <FileText className="w-5 h-5 text-primary" />,
   kpiCards,
   pageSize = 15,
+  serverTotalPages,
+  serverCurrentPage,
+  serverTotalResults,
+  onPageChange,
+  onSearchChange,
 }: GenericDataPageProps) {
   const t = useI18n();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [drawerRow, setDrawerRow] = useState<any | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [localCurrentPage, setLocalCurrentPage] = useState(1);
   const [comingSoonAction, setComingSoonAction] = useState<string | null>(null);
+  
+  const isServerSide = serverTotalPages !== undefined;
+  const currentPage = isServerSide ? (serverCurrentPage || 1) : localCurrentPage;
 
   const addLabel = primaryActionLabel || t.common.new;
 
@@ -171,15 +185,25 @@ export default function GenericDataPage({
     }
   };
 
-  // Reset page on search or data change
+  // Reset page on search or data change (client-side only)
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, data]);
+    if (!isServerSide) {
+      setLocalCurrentPage(1);
+    }
+  }, [localSearchTerm, data, isServerSide]);
 
-  // ── Client-side search filtering ─────────────────────────────────────────
+  // ── Search filtering ─────────────────────────────────────────
+  const handleSearchChange = (val: string) => {
+    setLocalSearchTerm(val);
+    if (onSearchChange) {
+      onSearchChange(val);
+    }
+  };
+
   const filteredData = useMemo(() => {
-    if (!searchTerm.trim()) return data;
-    const term = searchTerm.toLowerCase();
+    if (isServerSide) return data; // Server handles filtering
+    if (!localSearchTerm.trim()) return data;
+    const term = localSearchTerm.toLowerCase();
     return data.filter((row) =>
       columns.some((col) => {
         const val = row[col.key];
@@ -187,14 +211,17 @@ export default function GenericDataPage({
         return String(val).toLowerCase().includes(term);
       })
     );
-  }, [data, searchTerm, columns]);
+  }, [data, localSearchTerm, columns, isServerSide]);
 
   // ── Pagination ───────────────────────────────────────────────────────────
-  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const totalPages = isServerSide ? serverTotalPages : Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const totalResults = isServerSide ? (serverTotalResults || data.length) : filteredData.length;
+  
   const paginatedData = useMemo(() => {
+    if (isServerSide) return data; // Server handles pagination
     const start = (currentPage - 1) * pageSize;
     return filteredData.slice(start, start + pageSize);
-  }, [filteredData, currentPage, pageSize]);
+  }, [filteredData, currentPage, pageSize, isServerSide, data]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleView = useCallback(
@@ -266,15 +293,15 @@ export default function GenericDataPage({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 pointer-events-none" />
             <input
               type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={localSearchTerm}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder={t.common.searchPlaceholder}
               aria-label={t.common.search}
               className="w-full pl-9 pr-9 py-2 rounded-lg border border-outline bg-surface-container-low text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface focus:outline-none transition-all"
             />
-            {searchTerm && (
+            {localSearchTerm && (
               <button
-                onClick={() => setSearchTerm('')}
+                onClick={() => handleSearchChange('')}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors rounded p-0.5"
                 aria-label="Effacer la recherche"
               >
@@ -287,9 +314,9 @@ export default function GenericDataPage({
           <div className="flex items-center gap-2 shrink-0">
             {!isLoading && (
               <span className="text-sm text-on-surface-variant whitespace-nowrap">
-                <span className="font-semibold text-on-surface">{filteredData.length}</span>
-                {' '}{filteredData.length !== 1 ? t.common.results : t.common.result}
-                {searchTerm && (
+                <span className="font-semibold text-on-surface">{totalResults}</span>
+                {' '}{totalResults !== 1 ? t.common.results : t.common.result}
+                {localSearchTerm && !isServerSide && (
                   <span className="text-on-surface-variant/60"> / {data.length}</span>
                 )}
               </span>
@@ -303,8 +330,80 @@ export default function GenericDataPage({
 
         {/* ── Data Table ────────────────────────────────────────────── */}
         <div className="bg-surface rounded-xl shadow-sm border border-outline overflow-hidden">
-          {/* Horizontal scroll wrapper for mobile */}
-          <div className="overflow-x-auto">
+          
+          {/* Mobile Card View (Visible only on small screens) */}
+          <div className="md:hidden divide-y divide-outline">
+            {isLoading ? (
+              <div className="p-6 flex flex-col gap-4">
+                <TableSkeletonLoader columns={1} rows={3} />
+              </div>
+            ) : paginatedData.length === 0 ? (
+              <div className="p-10 text-center">
+                <div className="mx-auto w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center mb-3">
+                  <Search className="w-5 h-5 text-on-surface-variant opacity-50" />
+                </div>
+                <p className="text-on-surface font-semibold text-sm">{t.common.noResults}</p>
+                <p className="text-on-surface-variant text-xs mt-1">
+                  {localSearchTerm
+                    ? `${t.common.noResultsFor}${localSearchTerm}${t.common.tryOtherTerm}`
+                    : t.common.noData}
+                </p>
+              </div>
+            ) : (
+              paginatedData.map((row, rowIndex) => (
+                <div 
+                  key={rowIndex} 
+                  className="p-4 hover:bg-surface-container transition-colors cursor-pointer"
+                  onClick={() => handleView(row)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex flex-col">
+                      <span className="font-bold text-on-surface text-base">
+                        {columns[0]?.render ? columns[0].render(row[columns[0].key], row) : row[columns[0]?.key]}
+                      </span>
+                      {columns[1] && (
+                        <span className="text-sm text-on-surface-variant mt-0.5">
+                          {columns[1].render ? columns[1].render(row[columns[1].key], row) : row[columns[1].key]}
+                        </span>
+                      )}
+                    </div>
+                    {hasRowActions && (
+                      <div className="flex gap-1">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleView(row); }}
+                          className="p-2 text-on-surface-variant bg-surface-container-low rounded-lg"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        {onEdit && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAction(onEdit, 'Modification', row);
+                            }}
+                            className="p-2 text-on-surface-variant bg-surface-container-low rounded-lg"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {columns.slice(2, 4).map((col) => (
+                    <div key={col.key} className="flex justify-between items-center text-sm py-1 border-t border-outline/30 mt-2 pt-2">
+                      <span className="text-on-surface-variant">{col.label}</span>
+                      <span className="font-medium text-on-surface">
+                        {col.render ? col.render(row[col.key], row) : row[col.key]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Horizontal scroll wrapper for tablet/desktop */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[480px]">
               <thead>
                 <tr className="bg-surface-container-low border-b border-outline text-[11px] uppercase tracking-wider text-on-surface-variant">
@@ -334,8 +433,8 @@ export default function GenericDataPage({
                       </div>
                       <p className="text-on-surface font-semibold text-sm">{t.common.noResults}</p>
                       <p className="text-on-surface-variant text-xs mt-1">
-                        {searchTerm
-                          ? `${t.common.noResultsFor}${searchTerm}${t.common.tryOtherTerm}`
+                        {localSearchTerm
+                          ? `${t.common.noResultsFor}${localSearchTerm}${t.common.tryOtherTerm}`
                           : t.common.noData}
                       </p>
                     </td>
@@ -406,23 +505,27 @@ export default function GenericDataPage({
           </div>
 
           {/* ── Pagination Footer ──────────────────────────────────── */}
-          {!isLoading && filteredData.length > 0 && (
+          {!isLoading && totalResults > 0 && (
             <div className="px-5 py-3.5 border-t border-outline bg-surface-container-low flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span className="text-xs text-on-surface-variant">
                 {t.common.showing}{' '}
                 <span className="font-semibold text-on-surface">{(currentPage - 1) * pageSize + 1}</span>
                 {' – '}
                 <span className="font-semibold text-on-surface">
-                  {Math.min(currentPage * pageSize, filteredData.length)}
+                  {Math.min(currentPage * pageSize, totalResults)}
                 </span>
                 {' '}{t.common.of}{' '}
-                <span className="font-semibold text-on-surface">{filteredData.length}</span>
+                <span className="font-semibold text-on-surface">{totalResults}</span>
                 {' '}{t.common.results}
               </span>
 
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  onClick={() => {
+                    const newPage = Math.max(1, currentPage - 1);
+                    if (isServerSide && onPageChange) onPageChange(newPage);
+                    else setLocalCurrentPage(newPage);
+                  }}
                   disabled={currentPage === 1}
                   className={`p-1.5 rounded-lg border text-sm transition-all ${
                     currentPage === 1
@@ -448,7 +551,10 @@ export default function GenericDataPage({
                   return (
                     <button
                       key={page}
-                      onClick={() => setCurrentPage(page)}
+                      onClick={() => {
+                        if (isServerSide && onPageChange) onPageChange(page);
+                        else setLocalCurrentPage(page);
+                      }}
                       className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all ${
                         page === currentPage
                           ? 'bg-primary text-on-primary shadow-sm'
@@ -461,7 +567,11 @@ export default function GenericDataPage({
                 })}
 
                 <button
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => {
+                    const newPage = Math.min(totalPages || 1, currentPage + 1);
+                    if (isServerSide && onPageChange) onPageChange(newPage);
+                    else setLocalCurrentPage(newPage);
+                  }}
                   disabled={currentPage === totalPages}
                   className={`p-1.5 rounded-lg border text-sm transition-all ${
                     currentPage === totalPages

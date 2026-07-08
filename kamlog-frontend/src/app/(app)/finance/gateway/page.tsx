@@ -1,21 +1,37 @@
 // src/app/(app)/finance/gateway/page.tsx - K-Finance Gateway Monitor - Fidèle 100% au HTML original
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useComingSoon } from '@/contexts/ComingSoonContext'
+import { gatewayAPI, Passerelle } from '@/lib/api/gateway'
+import { toast } from 'react-hot-toast'
 
 export default function KFinanceGatewayMonitor() {
   const [showToast, setShowToast] = useState(false)
   const [validating, setValidating] = useState(false)
+  const [passerelles, setPasserelles] = useState<Passerelle[]>([])
+  const [loading, setLoading] = useState(true)
+  const { showComingSoon } = useComingSoon()
+
+  useEffect(() => {
+    fetchPasserelles()
+  }, [])
+
+  const fetchPasserelles = async () => {
+    try {
+      setLoading(true)
+      const data = await gatewayAPI.getPasserellesEnAttente()
+      setPasserelles(data)
+    } catch (error) {
+      toast.error("Erreur lors du chargement des passerelles")
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleBulkValidate = () => {
-    setValidating(true)
-    setTimeout(() => {
-      setValidating(false)
-      setShowToast(true)
-      setTimeout(() => {
-        setShowToast(false)
-      }, 4000)
-    }, 1500)
+    showComingSoon('Validation groupée K-Finance')
   }
 
   return (
@@ -182,106 +198,41 @@ export default function KFinanceGatewayMonitor() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant">
-                    {/* Row 1 */}
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
-                      <td className="px-md py-3">
-                        <span className="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
-                      </td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">TR-9921-X</td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-001</td>
-                      <td className="px-md py-3 font-bold text-on-surface">FCFA12,450.00</td>
-                      <td className="px-md py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
-                          TRAITÉ
-                        </span>
-                      </td>
-                      <td className="px-md py-3 text-label-md text-on-surface-variant">Today, 10:42 AM</td>
-                      <td className="px-md py-3 text-right">
-                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">visibility</span></button>
-                      </td>
-                    </tr>
-                    {/* Row 2 */}
-                    <tr className="hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
-                      <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
-                      <td className="px-md py-3">
-                        <span className="text-body-sm font-bold font-mono">MISSION_FACTURE</span>
-                      </td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">MS-4412-K</td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-002</td>
-                      <td className="px-md py-3 font-bold text-on-surface">FCFA3,890.15</td>
-                      <td className="px-md py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/40 text-on-error-container text-label-sm font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>
-                          ÉCHOUÉ
-                        </span>
-                      </td>
-                      <td className="px-md py-3 text-label-md text-on-surface-variant">Today, 09:15 AM</td>
-                      <td className="px-md py-3 text-right">
-                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">refresh</span></button>
-                      </td>
-                    </tr>
-                    {/* Row 3 */}
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
-                      <td className="px-md py-3">
-                        <span className="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
-                      </td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">TR-9945-Z</td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-003</td>
-                      <td className="px-md py-3 font-bold text-on-surface">FCFA45,000.00</td>
-                      <td className="px-md py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-label-sm font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span>
-                          EN ATTENTE
-                        </span>
-                      </td>
-                      <td className="px-md py-3 text-label-md text-on-surface-variant">Today, 08:30 AM</td>
-                      <td className="px-md py-3 text-right">
-                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">edit</span></button>
-                      </td>
-                    </tr>
-                    {/* Row 4 */}
-                    <tr className="hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
-                      <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
-                      <td className="px-md py-3">
-                        <span className="text-body-sm font-bold font-mono">MISSION_FACTURE</span>
-                      </td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">MS-4415-L</td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-004</td>
-                      <td className="px-md py-3 font-bold text-on-surface">FCFA1,120.00</td>
-                      <td className="px-md py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
-                          TRAITÉ
-                        </span>
-                      </td>
-                      <td className="px-md py-3 text-label-md text-on-surface-variant">Yesterday, 05:55 PM</td>
-                      <td className="px-md py-3 text-right">
-                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">visibility</span></button>
-                      </td>
-                    </tr>
-                    {/* Row 5 */}
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
-                      <td className="px-md py-3">
-                        <span className="text-body-sm font-bold font-mono">COMMANDE_FACTURE</span>
-                      </td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">TR-9948-M</td>
-                      <td className="px-md py-3 text-body-md font-data-tabular">FI-2026-005</td>
-                      <td className="px-md py-3 font-bold text-on-surface">FCFA28,500.00</td>
-                      <td className="px-md py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-bold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
-                          TRAITÉ
-                        </span>
-                      </td>
-                      <td className="px-md py-3 text-label-md text-on-surface-variant">Yesterday, 04:12 PM</td>
-                      <td className="px-md py-3 text-right">
-                        <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">visibility</span></button>
-                      </td>
-                    </tr>
+                    {loading ? (
+                      <tr><td colSpan={8} className="px-md py-8 text-center text-on-surface-variant">Chargement des transactions...</td></tr>
+                    ) : passerelles.length === 0 ? (
+                      <tr><td colSpan={8} className="px-md py-8 text-center text-on-surface-variant">Aucune transaction en attente</td></tr>
+                    ) : (
+                      passerelles.map((passerelle) => (
+                        <tr key={passerelle.id} className="hover:bg-surface-container-low transition-colors">
+                          <td className="px-md py-3"><input className="transaction-check rounded border-outline text-primary focus:ring-primary" type="checkbox"/></td>
+                          <td className="px-md py-3">
+                            <span className="text-body-sm font-bold font-mono">{passerelle.type_passerelle}</span>
+                          </td>
+                          <td className="px-md py-3 text-body-md font-data-tabular">{passerelle.source_module}-{passerelle.source_id}</td>
+                          <td className="px-md py-3 text-body-md font-data-tabular">{passerelle.cible_module}-{passerelle.cible_id || 'N/A'}</td>
+                          <td className="px-md py-3 font-bold text-on-surface">FCFA {passerelle.donnees_json?.montant?.toLocaleString() || '0'}</td>
+                          <td className="px-md py-3">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-bold ${
+                              passerelle.statut === 'TRAITE' ? 'bg-secondary-container/20 text-on-secondary-container' : 
+                              passerelle.statut === 'ECHOUE' ? 'bg-error-container/40 text-on-error-container' :
+                              'bg-surface-container-highest text-on-surface-variant'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                passerelle.statut === 'TRAITE' ? 'bg-secondary' : 
+                                passerelle.statut === 'ECHOUE' ? 'bg-error' :
+                                'bg-outline'
+                              }`}></span>
+                              {passerelle.statut}
+                            </span>
+                          </td>
+                          <td className="px-md py-3 text-label-md text-on-surface-variant">{new Date(passerelle.date_creation).toLocaleString()}</td>
+                          <td className="px-md py-3 text-right">
+                            <button className="p-1 hover:text-primary transition-colors"><span className="material-symbols-outlined text-[20px]">visibility</span></button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

@@ -222,7 +222,24 @@ class LigneDeclaration(LigneDeclarationBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ============ DECLARATION ============
+# ============ MODE FRET ============
+class ModeFret(str, Enum):
+    """Mode de paiement du fret"""
+    PREPAID = "PREPAID"
+    COLLECT = "COLLECT"
+
+
+# ============ STATUT ORDRE TRANSFERT ============
+class StatutOrdreTransfert(str, Enum):
+    """Cycle de vie d'un Ordre de Transfert"""
+    BROUILLON = "BROUILLON"
+    VALIDE = "VALIDE"
+    EN_TRANSIT = "EN_TRANSIT"
+    RECEPTIONNE = "RECEPTIONNE"
+    ANNULE = "ANNULE"
+
+
+# ============ DECLARATION (BILL OF LADING) ============
 class DeclarationBase(BaseModel):
     client_id: int
     code_article: str = Field(..., max_length=20)
@@ -233,6 +250,40 @@ class DeclarationBase(BaseModel):
     statut: StatutDeclaration = StatutDeclaration.BROUILLON
     notes: Optional[str] = Field(None, max_length=500)
 
+    # ── Enrichissement BL Maritime ──
+    # Identification & Traçabilité
+    numero_bl_externe: Optional[str] = Field(None, max_length=50, description="Vrai numéro BL du document maritime")
+    reference_booking: Optional[str] = Field(None, max_length=50, description="Référence booking compagnie maritime")
+    numero_scelle: Optional[str] = Field(None, max_length=50, description="Numéro de scellé du conteneur")
+
+    # Liaison Navire
+    escale_id: Optional[int] = None
+    nom_navire: Optional[str] = Field(None, max_length=100, description="Nom du navire")
+    numero_voyage: Optional[str] = Field(None, max_length=50, description="Numéro du voyage")
+
+    # Parties prenantes
+    expediteur_shipper: Optional[str] = Field(None, max_length=200, description="Expéditeur (Shipper)")
+    destinataire_consignee: Optional[str] = Field(None, max_length=200, description="Destinataire (Consignee)")
+    notify_party: Optional[str] = Field(None, max_length=200, description="Partie à notifier")
+
+    # Logistique & Ports
+    port_chargement: Optional[str] = Field(None, max_length=100, description="Port of Loading")
+    port_dechargement: Optional[str] = Field(None, max_length=100, description="Port of Discharge")
+    lieu_livraison: Optional[str] = Field(None, max_length=200, description="Lieu de livraison finale")
+    description_marchandises: Optional[str] = Field(None, max_length=1000, description="Description détaillée")
+
+    # Poids, volumes, conditionnement
+    poids_brut_kg: Optional[Decimal] = Field(None, ge=0, description="Poids brut en kg")
+    poids_net_kg: Optional[Decimal] = Field(None, ge=0, description="Poids net en kg")
+    volume_m3: Optional[Decimal] = Field(None, ge=0, description="Volume en m³")
+    nombre_colis: Optional[int] = Field(None, ge=0, description="Nombre de colis")
+    type_emballage: Optional[str] = Field(None, max_length=100, description="Type d'emballage")
+
+    # Données commerciales & douanières
+    mode_fret: Optional[ModeFret] = None
+    code_hs: Optional[str] = Field(None, max_length=10, description="Code HS douanier")
+    numero_declaration_douane: Optional[str] = Field(None, max_length=50, description="Numéro déclaration SYDONIA")
+
 
 class DeclarationCreate(DeclarationBase):
     lignes: List[LigneDeclarationCreate] = []
@@ -241,16 +292,36 @@ class DeclarationCreate(DeclarationBase):
         json_schema_extra={
             "example": {
                 "client_id": 1,
+                "code_article": "1111110",
                 "incoterm_id": 1,
                 "type_conteneur_id": 1,
-                "numero_conteneur": "ABCD1234567",
+                "numero_conteneur": "MSKU1234567",
                 "date_arrivee_prevue": "2026-06-15T10:00:00",
                 "statut": "BROUILLON",
-                "notes": "Déclaration de marchandise en provenance de Chine",
+                "notes": "Déclaration de riz en provenance de Thaïlande",
+                "numero_bl_externe": "MAEU123456789",
+                "reference_booking": "BK-2026-001",
+                "numero_scelle": "SC-789456",
+                "nom_navire": "MSC FANTASIA",
+                "numero_voyage": "V-2026-A",
+                "expediteur_shipper": "Thai Rice Export Co., Ltd.",
+                "destinataire_consignee": "KAMLOG Logistics SARL",
+                "notify_party": "Transit Express Cameroun",
+                "port_chargement": "Bangkok",
+                "port_dechargement": "Douala",
+                "lieu_livraison": "Magasin KAMLOG Douala",
+                "description_marchandises": "Riz blanc parfumé 50kg x 400 sacs",
+                "poids_brut_kg": 20500.000,
+                "poids_net_kg": 20000.000,
+                "volume_m3": 32.500,
+                "nombre_colis": 400,
+                "type_emballage": "Sacs de 50kg",
+                "mode_fret": "PREPAID",
+                "code_hs": "1006.30",
                 "lignes": [
                     {
                         "article_id": 1,
-                        "quantite_declaree": 100.0,
+                        "quantite_declaree": 400.0,
                         "unite_mesure": "UDB"
                     }
                 ]
@@ -266,6 +337,28 @@ class DeclarationUpdate(BaseModel):
     date_arrivee_prevue: Optional[datetime] = None
     statut: Optional[StatutDeclaration] = None
     notes: Optional[str] = Field(None, max_length=500)
+    # Champs BL enrichis (tous optionnels en update)
+    numero_bl_externe: Optional[str] = Field(None, max_length=50)
+    reference_booking: Optional[str] = Field(None, max_length=50)
+    numero_scelle: Optional[str] = Field(None, max_length=50)
+    escale_id: Optional[int] = None
+    nom_navire: Optional[str] = Field(None, max_length=100)
+    numero_voyage: Optional[str] = Field(None, max_length=50)
+    expediteur_shipper: Optional[str] = Field(None, max_length=200)
+    destinataire_consignee: Optional[str] = Field(None, max_length=200)
+    notify_party: Optional[str] = Field(None, max_length=200)
+    port_chargement: Optional[str] = Field(None, max_length=100)
+    port_dechargement: Optional[str] = Field(None, max_length=100)
+    lieu_livraison: Optional[str] = Field(None, max_length=200)
+    description_marchandises: Optional[str] = Field(None, max_length=1000)
+    poids_brut_kg: Optional[Decimal] = Field(None, ge=0)
+    poids_net_kg: Optional[Decimal] = Field(None, ge=0)
+    volume_m3: Optional[Decimal] = Field(None, ge=0)
+    nombre_colis: Optional[int] = Field(None, ge=0)
+    type_emballage: Optional[str] = Field(None, max_length=100)
+    mode_fret: Optional[ModeFret] = None
+    code_hs: Optional[str] = Field(None, max_length=10)
+    numero_declaration_douane: Optional[str] = Field(None, max_length=50)
 
 
 class Declaration(DeclarationBase):
@@ -278,6 +371,7 @@ class Declaration(DeclarationBase):
     client: Optional[ClientMagasin] = None
     lignes: List[LigneDeclaration] = []
     model_config = ConfigDict(from_attributes=True)
+
 
 
 # ============ LIGNE RECEPTION ============
@@ -695,3 +789,79 @@ class OperationCancelRequest(BaseModel):
             }
         }
     )
+
+
+# ============ LIGNE ORDRE TRANSFERT ============
+class LigneOrdreTransfertBase(BaseModel):
+    article_id: int
+    quantite: Decimal = Field(..., gt=0, decimal_places=3)
+    unite_mesure: UniteMesure
+
+
+class LigneOrdreTransfertCreate(LigneOrdreTransfertBase):
+    pass
+
+
+class LigneOrdreTransfert(LigneOrdreTransfertBase):
+    id: int
+    ordre_transfert_id: int
+    quantite_recue: Decimal = Field(default=0, ge=0, decimal_places=3)
+    article: Optional[Article] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ============ ORDRE DE TRANSFERT ============
+class OrdreTransfertBase(BaseModel):
+    declaration_id: Optional[int] = None
+    magasin_source_id: int
+    magasin_dest_id: int
+    motif: Optional[str] = Field(None, max_length=500)
+    notes: Optional[str] = Field(None, max_length=500)
+
+
+class OrdreTransfertCreate(OrdreTransfertBase):
+    lignes: List[LigneOrdreTransfertCreate] = []
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "declaration_id": 1,
+                "magasin_source_id": 1,
+                "magasin_dest_id": 2,
+                "motif": "Rééquilibrage de stock entre magasins",
+                "notes": "Transfert urgent demandé par le client",
+                "lignes": [
+                    {
+                        "article_id": 1,
+                        "quantite": 100.0,
+                        "unite_mesure": "UDB"
+                    }
+                ]
+            }
+        }
+    )
+
+
+class OrdreTransfertUpdate(BaseModel):
+    motif: Optional[str] = Field(None, max_length=500)
+    notes: Optional[str] = Field(None, max_length=500)
+
+
+class OrdreTransfert(OrdreTransfertBase):
+    id: int
+    numero_ot: str
+    statut: StatutOrdreTransfert
+    date_transfert: datetime
+    date_validation: Optional[datetime] = None
+    date_expedition: Optional[datetime] = None
+    date_reception: Optional[datetime] = None
+    autorise_par: Optional[str] = None
+    cree_par: Optional[str] = None
+    date_creation: datetime
+    date_modification: Optional[datetime] = None
+    magasin_source: Optional[Magasin] = None
+    magasin_dest: Optional[Magasin] = None
+    declaration: Optional[Declaration] = None
+    lignes: List[LigneOrdreTransfert] = []
+    model_config = ConfigDict(from_attributes=True)
+

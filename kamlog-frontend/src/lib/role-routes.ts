@@ -12,6 +12,7 @@ const ROLE_ROUTES: Record<string, string> = {
   MAGASIN: '/magasin/dashboard',
   MAGASINIER: '/magasin/dashboard',
   AUDITOR: '/audit/dashboard/health',
+  CLIENT_B2B: '/b2b/dashboard',
 };
 
 const ROLE_ALIASES: Record<string, string> = {
@@ -28,6 +29,7 @@ const ROLE_ALIASES: Record<string, string> = {
   magasin: 'MAGASIN',
   magasinier: 'MAGASINIER',
   auditor: 'AUDITOR',
+  client_b2b: 'CLIENT_B2B',
 };
 
 export function normalizeRole(role?: string | string[] | null): string {

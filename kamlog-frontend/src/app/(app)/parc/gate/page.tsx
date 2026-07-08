@@ -1,30 +1,105 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { ScanText, UploadCloud, Truck, CheckCircle2, ShieldAlert } from 'lucide-react';
-import { useComingSoon } from '@/contexts/ComingSoonContext';
+import { parcAPI, EmplacementParc } from '@/lib/api/parc';
+import toast from 'react-hot-toast';
 
 export default function GateOperationsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<any>(null);
-  const { showComingSoon } = useComingSoon();
+  const [isManual, setIsManual] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<'IN' | 'OUT'>('IN');
+  const [emplacements, setEmplacements] = useState<EmplacementParc[]>([]);
+  
+  const [form, setForm] = useState({
+    numero_conteneur: '',
+    type_conteneur: '20DRY',
+    etat: 'BON_ETAT',
+    poids_tare_kg: 2200,
+    emplacement_id: 0
+  });
+
+  useEffect(() => {
+    parcAPI.getEmplacements().then(data => {
+      setEmplacements(data.filter(e => e.statut === 'LIBRE'));
+    }).catch(console.error);
+  }, []);
 
   const handleSimulateOCR = () => {
     if (!file) return;
     setIsScanning(true);
-    
-    // Simulate OCR delay to look realistic
     setTimeout(() => {
-      setScanResult({
-        immatriculation: 'LT 123 AB',
-        containerId: 'MSCU 1234567',
-        driverName: 'KAMGA JEAN',
-        confidence: 94
-      });
       setIsScanning(false);
-    }, 2500);
+      setScanResult({
+        immatriculation: 'LT-123-AB',
+        containerId: `MSKU${Math.floor(Math.random()*10000000)}`,
+        driverName: 'Jean Dupont',
+        confidence: 96
+      });
+      setIsManual(true);
+      setForm(prev => ({...prev, numero_conteneur: `MSKU${Math.floor(Math.random()*10000000)}`}));
+    }, 2000);
+  };
+
+  const handleGateIn = async () => {
+    if (!form.numero_conteneur || !form.emplacement_id) {
+      toast.error("Veuillez remplir le numéro de conteneur et choisir un emplacement.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await parcAPI.gateIn({
+        numero_conteneur: form.numero_conteneur,
+        type_conteneur: form.type_conteneur,
+        etat: form.etat,
+        poids_tare_kg: form.poids_tare_kg,
+        emplacement_id: form.emplacement_id
+      });
+      toast.success("Gate In validé avec succès !");
+      setScanResult(null);
+      setFile(null);
+      setIsManual(false);
+      setForm({
+        numero_conteneur: '',
+        type_conteneur: '20DRY',
+        etat: 'BON_ETAT',
+        poids_tare_kg: 2200,
+        emplacement_id: 0
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors du Gate In");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGateOut = async () => {
+    if (!form.numero_conteneur) {
+      toast.error("Veuillez remplir le numéro de conteneur.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await parcAPI.gateOut({
+        numero_conteneur: form.numero_conteneur,
+      });
+      toast.success("Gate Out validé avec succès !");
+      setScanResult(null);
+      setFile(null);
+      setIsManual(false);
+      setForm({
+        ...form,
+        numero_conteneur: '',
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors du Gate Out");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -32,12 +107,18 @@ export default function GateOperationsPage() {
       <div className="max-w-4xl mx-auto py-8 px-4 animate-in fade-in duration-500">
         
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-            <ScanText className="w-8 h-8 text-blue-600" />
-            Gate Operations & IA (OCR)
-          </h1>
-          <p className="text-sm text-slate-500 mt-2">Reconnaissance optique des documents d'entrée/sortie du parc.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+              <ScanText className="w-8 h-8 text-blue-600" />
+              Gate Operations & IA (OCR)
+            </h1>
+            <p className="text-sm text-slate-500 mt-2">Reconnaissance optique des documents d'entrée/sortie du parc.</p>
+          </div>
+          <div className="flex bg-slate-100 p-1 rounded-xl">
+            <button onClick={() => setMode('IN')} className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${mode === 'IN' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Gate IN</button>
+            <button onClick={() => setMode('OUT')} className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${mode === 'OUT' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Gate OUT</button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -68,7 +149,7 @@ export default function GateOperationsPage() {
             <button 
               onClick={handleSimulateOCR}
               disabled={!file || isScanning}
-              className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${file && !isScanning ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
+              className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 mb-4 ${file && !isScanning ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
             >
               {isScanning ? (
                 <>
@@ -77,6 +158,12 @@ export default function GateOperationsPage() {
               ) : (
                 <>Lancer la reconnaissance OCR</>
               )}
+            </button>
+            <button 
+              onClick={() => setIsManual(true)}
+              className="w-full py-4 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+            >
+              Saisie Manuelle (Fallback)
             </button>
           </div>
 
@@ -88,7 +175,7 @@ export default function GateOperationsPage() {
             
             <h2 className="text-lg font-bold mb-6 flex items-center gap-2 relative z-10">
               <ScanText className="w-5 h-5 text-blue-400" />
-              Résultats de l'Extraction
+              {isManual ? `Validation Gate ${mode}` : "Résultats de l'Extraction"}
             </h2>
 
             {isScanning ? (
@@ -98,33 +185,58 @@ export default function GateOperationsPage() {
                 <div className="h-4 bg-slate-800 rounded animate-pulse w-5/6"></div>
                 <p className="text-blue-400 text-sm mt-8 animate-pulse font-mono">Loading Tesseract engine...</p>
               </div>
-            ) : scanResult ? (
-              <div className="space-y-6 relative z-10 animate-in slide-in-from-right duration-300">
-                <div className="flex items-center gap-3 text-emerald-400 mb-8">
-                  <CheckCircle2 className="w-6 h-6" />
-                  <span className="font-bold">Extraction réussie (Fiabilité {scanResult.confidence}%)</span>
-                </div>
+            ) : isManual ? (
+              <div className="space-y-4 relative z-10 animate-in slide-in-from-right duration-300">
+                {scanResult && (
+                  <div className="flex items-center gap-3 text-emerald-400 mb-6">
+                    <CheckCircle2 className="w-6 h-6" />
+                    <span className="font-bold">Extraction réussie (Fiabilité {scanResult.confidence}%)</span>
+                  </div>
+                )}
                 
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Plaque détectée</p>
-                  <p className="text-2xl font-mono text-white bg-slate-800 inline-block px-3 py-1 rounded-lg border border-slate-700">{scanResult.immatriculation}</p>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">N° Conteneur</label>
+                  <input type="text" value={form.numero_conteneur} onChange={e => setForm({...form, numero_conteneur: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500" placeholder="Ex: MSKU1234567" />
                 </div>
                 
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">N° Conteneur</p>
-                  <p className="text-lg font-medium text-white">{scanResult.containerId}</p>
-                </div>
+                {mode === 'IN' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">Type</label>
+                        <select value={form.type_conteneur} onChange={e => setForm({...form, type_conteneur: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none">
+                          <option value="20DRY">20' DRY</option>
+                          <option value="40DRY">40' DRY</option>
+                          <option value="20REEFER">20' REEFER</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">Etat</label>
+                        <select value={form.etat} onChange={e => setForm({...form, etat: e.target.value})} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none">
+                          <option value="BON_ETAT">Bon état</option>
+                          <option value="ENDOMMAGE">Endommagé</option>
+                        </select>
+                      </div>
+                    </div>
 
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Chauffeur (Nom sur document)</p>
-                  <p className="text-lg font-medium text-white">{scanResult.driverName}</p>
-                </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">Emplacement (Cour)</label>
+                      <select value={form.emplacement_id} onChange={e => setForm({...form, emplacement_id: Number(e.target.value)})} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:outline-none">
+                        <option value={0}>Sélectionnez un emplacement libre...</option>
+                        {emplacements.map(e => (
+                          <option key={e.id} value={e.id}>{e.code_emplacement}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
 
                 <button 
-                  onClick={() => showComingSoon('Création Auto Gate In')}
-                  className="mt-8 w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold text-white transition-colors"
+                  onClick={mode === 'IN' ? handleGateIn : handleGateOut}
+                  disabled={submitting}
+                  className={`mt-8 w-full py-3 rounded-xl font-bold text-white transition-colors disabled:opacity-50 ${mode === 'IN' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-rose-600 hover:bg-rose-500'}`}
                 >
-                  Valider le Gate In
+                  {submitting ? 'Validation...' : `Valider le Gate ${mode}`}
                 </button>
               </div>
             ) : (
