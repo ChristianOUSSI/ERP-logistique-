@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { incidentsAPI } from '@/lib/api-client';
 import { useAuth } from '@/components/layout/AuthProvider';
 import GenericDataPage from '@/components/ui/GenericDataPage';
@@ -17,12 +17,7 @@ export default function B2BIncidentsPage() {
 
   const tiersId = parseInt(user?.id || '1') || 1;
 
-  useEffect(() => {
-    if (!user) return;
-    loadData();
-  }, [user, tiersId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await incidentsAPI.getClientIncidents(tiersId);
@@ -32,7 +27,12 @@ export default function B2BIncidentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tiersId]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadData();
+  }, [user, tiersId, loadData]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

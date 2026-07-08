@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ModuleType } from '@/components/layout/ModuleSidebar';
 
 // Validating list of modules for type guarding
-const VALID_MODULES: ModuleType[] = ['admin', 'master-data', 'transport', 'finance', 'magasin', 'parc', 'audit', 'dashboard'];
+const VALID_MODULES: ModuleType[] = ['admin', 'master-data', 'transport', 'finance', 'magasin', 'parc', 'audit', 'dashboard', 'rh'];
 
 interface ModuleThemeConfig {
   mainBackground: string; // Background for the main content area
@@ -111,6 +111,17 @@ const MODULE_THEME_CONFIG: Record<ModuleType, ModuleThemeConfig> = {
       activeBgSubtle: 'bg-blue-500/10',
       hoverBg: 'hover:bg-slate-800',
       brandIconBg: 'bg-blue-600',
+      brandIconText: 'text-white',
+    },
+  },
+  rh: {
+    mainBackground: 'bg-surface-container-low',
+    headerClasses: 'module-badge-rh',
+    sidebar: {
+      activeAccent: 'text-pink-400 border-pink-400',
+      activeBgSubtle: 'bg-pink-500/10',
+      hoverBg: 'hover:bg-slate-800',
+      brandIconBg: 'bg-pink-600',
       brandIconText: 'text-white',
     },
   },
