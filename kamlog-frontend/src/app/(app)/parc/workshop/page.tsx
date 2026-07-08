@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Wrench, Calendar, Clock, CheckCircle, Search, Plus } from 'lucide-react';
 import { parcAPI, WorkshopRepair } from '@/lib/api/parc';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function WorkshopPage() {
   const [repairs, setRepairs] = useState<WorkshopRepair[]>([]);

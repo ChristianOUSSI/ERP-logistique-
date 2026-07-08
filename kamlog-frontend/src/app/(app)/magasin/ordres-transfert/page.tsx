@@ -5,7 +5,7 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { ArrowRightLeft, Search, Plus, Calendar, Edit, FileText, CheckCircle2, Truck, Box } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { magasinAPI } from '@/lib/api-client'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function OrdresTransfertPage() {
   const [ordres, setOrdres] = useState<any[]>([])

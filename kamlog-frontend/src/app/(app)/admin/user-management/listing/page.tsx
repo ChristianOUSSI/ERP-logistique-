@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI, User, DbRole } from '@/lib/api/admin'
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function UserListing() {
   const [drawerOpen, setDrawerOpen] = useState(false)

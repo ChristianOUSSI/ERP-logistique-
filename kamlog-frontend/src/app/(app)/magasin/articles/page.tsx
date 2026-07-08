@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { Package, Search, Plus, Edit, Trash2, Layers, HardHat } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<any[]>([])

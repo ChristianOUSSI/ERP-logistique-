@@ -5,7 +5,7 @@ import { financeAPI } from '@/lib/api-client';
 import { useAuth } from '@/components/layout/AuthProvider';
 import GenericDataPage from '@/components/ui/GenericDataPage';
 import { FileText, Download } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function B2BFacturesPage() {
   const { user } = useAuth();

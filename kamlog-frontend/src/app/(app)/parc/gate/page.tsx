@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { ScanText, UploadCloud, Truck, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { parcAPI, EmplacementParc } from '@/lib/api/parc';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function GateOperationsPage() {
   const [file, setFile] = useState<File | null>(null);

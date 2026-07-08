@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { financeAPI } from '@/lib/api-client'
 import { Plus, Search, Filter, MoreVertical, Download, Eye, CheckCircle2, ArrowRightLeft, CreditCard } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function SaisieTransactionBancairePage() {
   const [selectedAccount, setSelectedAccount] = useState('Compte Principal - BNA (DZ)')

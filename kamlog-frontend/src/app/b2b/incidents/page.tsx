@@ -5,7 +5,7 @@ import { incidentsAPI } from '@/lib/api-client';
 import { useAuth } from '@/components/layout/AuthProvider';
 import GenericDataPage from '@/components/ui/GenericDataPage';
 import { AlertCircle, Plus } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function B2BIncidentsPage() {
   const { user } = useAuth();

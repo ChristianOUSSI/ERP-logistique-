@@ -8,7 +8,7 @@ import CreateCamionModal from '@/components/transport/CreateCamionModal'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { Truck, Search, Plus, Calendar, ShieldAlert, BadgeCheck, FileWarning, ExternalLink, Link2, Unlink, FileText, CheckCircle2, Link } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export default function FlottePage() {
   const [camions, setCamions] = useState<any[]>([])

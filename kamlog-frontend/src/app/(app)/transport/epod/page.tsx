@@ -6,7 +6,7 @@ import { Package, MapPin, Truck, CheckCircle2, Camera, AlertTriangle, CheckCircl
 import { CardSkeletonLoader } from '@/components/ui/Loaders';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function EPodPage() {
   const [mission, setMission] = useState<any>(null);

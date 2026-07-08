@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FileText, ShieldAlert, CheckCircle2, Calendar, Plus, X } from 'lucide-react';
-import apiClient from '@/lib/api-client';
+import { apiClient } from '@/lib/api-client';
 
 export default function VehiculeDocuments({ vehicule, onClose }: { vehicule: any, onClose: () => void }) {
   const [documents, setDocuments] = useState<any[]>([]);

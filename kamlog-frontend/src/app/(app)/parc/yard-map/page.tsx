@@ -6,7 +6,7 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
 import { useComingSoon } from '@/contexts/ComingSoonContext';
 import { parcAPI } from '@/lib/api/parc';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 // Dynamic import of MapViewer to avoid SSR window is not defined errors
 const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
