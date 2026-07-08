@@ -9,7 +9,8 @@ export default function ClientPortalHome() {
   const [loading, setLoading] = useState(true);
   const [missions, setMissions] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'transport'|'finance'|'douane'>('transport');
+  type TabType = 'transport'|'finance'|'douane';
+  const [activeTab, setActiveTab] = useState<TabType>('transport');
 
   useEffect(() => {
     loadData();
@@ -207,7 +208,7 @@ export default function ClientPortalHome() {
             )}
           </tbody>
         </table>
-
+      </div>
     </div>
   );
 }
