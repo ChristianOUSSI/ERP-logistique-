@@ -768,6 +768,7 @@ def upgrade() -> None:
         batch_op.alter_column('statut',
                existing_type=sa.VARCHAR(length=9),
                type_=sa.Enum('BROUILLON', 'VALIDEE', 'ANNULEE', 'EN_TRANSIT', 'ARRIVEE', name='statutgoodsdeclaration'),
+               postgresql_using='statut::text::statutgoodsdeclaration',
                nullable=True)
         batch_op.alter_column('cree_par',
                existing_type=sa.VARCHAR(length=100),
@@ -935,10 +936,12 @@ def upgrade() -> None:
         batch_op.alter_column('categorie',
                existing_type=sa.VARCHAR(length=13),
                type_=sa.Enum('TRANSPORT', 'ACQUISITION', 'SERVICE', 'EQUIPEMENT', 'FOURNITURE', name='categoriesupplier'),
+               postgresql_using='categorie::text::categoriesupplier',
                nullable=True)
         batch_op.alter_column('statut',
                existing_type=sa.VARCHAR(length=7),
                type_=sa.Enum('ACTIF', 'BLOQUE', 'INACTIF', 'EN_VALIDATION', name='statutsupplier'),
+               postgresql_using='statut::text::statutsupplier',
                nullable=True)
         batch_op.alter_column('cree_par',
                existing_type=sa.VARCHAR(length=100),
