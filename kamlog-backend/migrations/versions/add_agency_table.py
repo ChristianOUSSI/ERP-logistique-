@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'add_agency_table'
-down_revision = 'a7b8c9d0e1f2'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -35,13 +35,7 @@ def upgrade():
     op.create_index(op.f('ix_agencies_code'), 'agencies', ['code'], unique=True)
     op.create_index(op.f('ix_agencies_id'), 'agencies', ['id'], unique=False)
 
-    # Add agency_id to users table if it doesn't exist
-    try:
-        op.add_column('users', sa.Column('agency_id', sa.Integer(), nullable=True))
-        op.create_foreign_key('fk_users_agency', 'users', 'agencies', ['agency_id'], ['id'])
-    except Exception:
-        # Column might already exist
-        pass
+    pass
 
     # Create audit_logs table if it doesn't exist
     try:
@@ -69,12 +63,7 @@ def upgrade():
 
 
 def downgrade():
-    # Remove foreign key and column from users
-    try:
-        op.drop_constraint('fk_users_agency', 'users', type_='foreignkey')
-        op.drop_column('users', 'agency_id')
-    except Exception:
-        pass
+    pass
 
     # Drop tables
     try:
