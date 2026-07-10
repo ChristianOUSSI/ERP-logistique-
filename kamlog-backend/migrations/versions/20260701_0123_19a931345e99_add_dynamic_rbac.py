@@ -936,6 +936,23 @@ def upgrade() -> None:
         batch_op.drop_column('solde_credit_xaf')
         batch_op.drop_column('site_web')
 
+    # Re-add foreign keys that were deferred from add_gateway_tables and add_new_models to break circular dependencies
+    op.create_foreign_key('fk_commande_factures_commande_id_commandes', 'commande_factures', 'commandes', ['commande_id'], ['id'])
+    op.create_foreign_key('fk_commande_factures_facture_id_factures', 'commande_factures', 'factures', ['facture_id'], ['id'])
+    
+    op.create_foreign_key('fk_commande_livraisons_commande_id_commandes', 'commande_livraisons', 'commandes', ['commande_id'], ['id'])
+    op.create_foreign_key('fk_commande_livraisons_livraison_id_bandes_livraison', 'commande_livraisons', 'bandes_livraison', ['livraison_id'], ['id'])
+    
+    op.create_foreign_key('fk_reception_stocks_reception_id_receptions', 'reception_stocks', 'receptions', ['reception_id'], ['id'])
+    op.create_foreign_key('fk_reception_stocks_stock_id_stocks', 'reception_stocks', 'stocks', ['stock_id'], ['id'])
+    
+    op.create_foreign_key('fk_facture_paiements_facture_id_factures', 'facture_paiements', 'factures', ['facture_id'], ['id'])
+    
+    op.create_foreign_key('fk_mission_factures_mission_id_missions', 'mission_factures', 'missions', ['mission_id'], ['id'])
+    op.create_foreign_key('fk_mission_factures_facture_id_factures', 'mission_factures', 'factures', ['facture_id'], ['id'])
+    
+    op.create_foreign_key('fk_goods_declaration_lines_article_id_articles', 'goods_declaration_lines', 'articles', ['article_id'], ['id'])
+
     # ### end Alembic commands ###
 
 
