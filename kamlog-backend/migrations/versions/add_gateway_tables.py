@@ -72,8 +72,8 @@ def upgrade():
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.Column('date_modification', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['commande_id'], ['commandes.id'], ),
-        sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
+        # sa.ForeignKeyConstraint(['commande_id'], ['commandes.id'], ),
+        # sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
         sa.ForeignKeyConstraint(['passerelle_id'], ['passerelles.id'], )
     )
     op.create_index(op.f('ix_commande_factures_id'), 'commande_factures', ['id'], unique=False)
@@ -90,8 +90,8 @@ def upgrade():
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.Column('date_modification', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['commande_id'], ['commandes.id'], ),
-        sa.ForeignKeyConstraint(['livraison_id'], ['bandes_livraison.id'], ),
+        # sa.ForeignKeyConstraint(['commande_id'], ['commandes.id'], ),
+        # sa.ForeignKeyConstraint(['livraison_id'], ['bandes_livraison.id'], ),
         sa.ForeignKeyConstraint(['passerelle_id'], ['passerelles.id'], )
     )
     op.create_index(op.f('ix_commande_livraisons_id'), 'commande_livraisons', ['id'], unique=False)
@@ -108,8 +108,8 @@ def upgrade():
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.Column('date_modification', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['reception_id'], ['receptions.id'], ),
-        sa.ForeignKeyConstraint(['stock_id'], ['stocks.id'], ),
+        # sa.ForeignKeyConstraint(['reception_id'], ['receptions.id'], ),
+        # sa.ForeignKeyConstraint(['stock_id'], ['stocks.id'], ),
         sa.ForeignKeyConstraint(['passerelle_id'], ['passerelles.id'], )
     )
     op.create_index(op.f('ix_reception_stocks_id'), 'reception_stocks', ['id'], unique=False)
@@ -128,7 +128,7 @@ def upgrade():
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.Column('date_modification', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
+        # sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
         sa.ForeignKeyConstraint(['passerelle_id'], ['passerelles.id'], )
     )
     op.create_index(op.f('ix_facture_paiements_id'), 'facture_paiements', ['id'], unique=False)
@@ -148,8 +148,8 @@ def upgrade():
         sa.Column('deleted_at', sa.DateTime(), nullable=True),
         sa.Column('date_modification', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(['mission_id'], ['missions.id'], ),
-        sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
+        # sa.ForeignKeyConstraint(['mission_id'], ['missions.id'], ),
+        # sa.ForeignKeyConstraint(['facture_id'], ['factures.id'], ),
         sa.ForeignKeyConstraint(['passerelle_id'], ['passerelles.id'], )
     )
     op.create_index(op.f('ix_mission_factures_id'), 'mission_factures', ['id'], unique=False)

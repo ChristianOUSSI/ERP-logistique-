@@ -91,7 +91,7 @@ def upgrade():
         sa.Column('date_creation', sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(['declaration_id'], ['goods_declarations.id'], ),
-        sa.ForeignKeyConstraint(['article_id'], ['articles.id'], )
+        # sa.ForeignKeyConstraint(['article_id'], ['articles.id'], )
     )
     op.create_index(op.f('ix_goods_declaration_lines_id'), 'goods_declaration_lines', ['id'], unique=False)
     op.create_index(op.f('ix_goods_declaration_lines_declaration_id'), 'goods_declaration_lines', ['declaration_id'], unique=False)
