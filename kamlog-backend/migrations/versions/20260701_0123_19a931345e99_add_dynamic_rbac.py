@@ -967,8 +967,6 @@ def upgrade() -> None:
     op.create_foreign_key('fk_facture_paiements_facture_id_factures', 'facture_paiements', 'factures', ['facture_id'], ['id'])
     
     op.create_foreign_key('fk_mission_factures_facture_id_factures', 'mission_factures', 'factures', ['facture_id'], ['id'])
-    
-    op.create_foreign_key('fk_goods_declaration_lines_article_id_articles', 'goods_declaration_lines', 'articles', ['article_id'], ['id'])
 
     # ### end Alembic commands ###
 
