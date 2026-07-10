@@ -793,7 +793,6 @@ def upgrade() -> None:
     with op.batch_alter_table('mission_factures', schema=None, reflect_kwargs={'resolve_fks': False}) as batch_op:
         batch_op.add_column(sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False))
         batch_op.add_column(sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False))
-        batch_op.drop_constraint(batch_op.f('fk_mission_factures_mission_id_missions'), type_='foreignkey')
         batch_op.create_foreign_key(batch_op.f('fk_mission_factures_mission_id_missions_transport'), 'missions_transport', ['mission_id'], ['id'])
         batch_op.drop_column('date_modification')
 
@@ -967,7 +966,6 @@ def upgrade() -> None:
     
     op.create_foreign_key('fk_facture_paiements_facture_id_factures', 'facture_paiements', 'factures', ['facture_id'], ['id'])
     
-    op.create_foreign_key('fk_mission_factures_mission_id_missions', 'mission_factures', 'missions', ['mission_id'], ['id'])
     op.create_foreign_key('fk_mission_factures_facture_id_factures', 'mission_factures', 'factures', ['facture_id'], ['id'])
     
     op.create_foreign_key('fk_goods_declaration_lines_article_id_articles', 'goods_declaration_lines', 'articles', ['article_id'], ['id'])
