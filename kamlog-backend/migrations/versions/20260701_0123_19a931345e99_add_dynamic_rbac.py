@@ -746,6 +746,11 @@ def upgrade() -> None:
         batch_op.create_foreign_key(batch_op.f('fk_facture_paiements_paiement_id_encaissements'), 'encaissements', ['paiement_id'], ['id'])
         batch_op.drop_column('date_modification')
 
+    try:
+        postgresql.ENUM('BROUILLON', 'VALIDEE', 'ANNULEE', 'EN_TRANSIT', 'ARRIVEE', name='statutgoodsdeclaration').create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
+
     with op.batch_alter_table('goods_declarations', schema=None) as batch_op:
         batch_op.add_column(sa.Column('code_article', sa.String(length=20), nullable=False))
         batch_op.add_column(sa.Column('code_transit', sa.String(length=20), nullable=False))
@@ -893,6 +898,16 @@ def upgrade() -> None:
         batch_op.drop_column('remise_pourcentage')
         batch_op.drop_column('conditions_paiement')
         batch_op.drop_column('email_contact')
+
+    try:
+        postgresql.ENUM('TRANSPORT', 'ACQUISITION', 'SERVICE', 'EQUIPEMENT', 'FOURNITURE', name='categoriesupplier').create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
+        
+    try:
+        postgresql.ENUM('ACTIF', 'BLOQUE', 'INACTIF', 'EN_VALIDATION', name='statutsupplier').create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
 
     with op.batch_alter_table('suppliers', schema=None) as batch_op:
         batch_op.add_column(sa.Column('acronyme', sa.String(length=50), nullable=True))
