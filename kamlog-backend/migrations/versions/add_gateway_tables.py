@@ -21,9 +21,15 @@ def upgrade():
     type_passerelle_enum = sa.Enum('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle')
     statut_passerelle_enum = sa.Enum('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle')
     
-    type_passerelle_enum.create(op.get_bind(), checkfirst=True)
-    statut_passerelle_enum.create(op.get_bind(), checkfirst=True)
+    try:
+        type_passerelle_enum.create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
     
+    try:
+        statut_passerelle_enum.create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
     # Create passerelles table
     op.create_table(
         'passerelles',
