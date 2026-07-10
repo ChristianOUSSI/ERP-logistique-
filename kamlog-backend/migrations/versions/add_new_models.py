@@ -18,29 +18,29 @@ depends_on = None
 
 def upgrade():
     # Create enum types for goods_declaration
-    statut_declaration_enum = sa.Enum('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutdeclaration')
+    statut_declaration_enum = postgresql.ENUM('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutdeclaration', create_type=False)
     try:
         statut_declaration_enum.create(op.get_bind(), checkfirst=True)
     except sa.exc.ProgrammingError:
         pass
     
     # Create enum types for removal_slip
-    statut_removal_slip_enum = sa.Enum('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE', name='statutremovalslip')
+    statut_removal_slip_enum = postgresql.ENUM('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE', name='statutremovalslip', create_type=False)
     try:
         statut_removal_slip_enum.create(op.get_bind(), checkfirst=True)
     except sa.exc.ProgrammingError:
         pass
     
     # Create enum types for reception_mag3
-    statut_reception_mag3_enum = sa.Enum('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutreceptionmag3')
+    statut_reception_mag3_enum = postgresql.ENUM('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutreceptionmag3', create_type=False)
     try:
         statut_reception_mag3_enum.create(op.get_bind(), checkfirst=True)
     except sa.exc.ProgrammingError:
         pass
     
     # Create enum types for suppliers
-    statut_fournisseur_enum = sa.Enum('ACTIF', 'INACTIF', 'BLOQUE', name='statutfournisseur')
-    categorie_fournisseur_enum = sa.Enum('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL', name='categoriefournisseur')
+    statut_fournisseur_enum = postgresql.ENUM('ACTIF', 'INACTIF', 'BLOQUE', name='statutfournisseur', create_type=False)
+    categorie_fournisseur_enum = postgresql.ENUM('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL', name='categoriefournisseur', create_type=False)
     try:
         statut_fournisseur_enum.create(op.get_bind(), checkfirst=True)
     except sa.exc.ProgrammingError:

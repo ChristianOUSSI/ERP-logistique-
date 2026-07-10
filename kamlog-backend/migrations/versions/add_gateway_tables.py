@@ -18,8 +18,8 @@ depends_on = None
 
 def upgrade():
     # Create enum types
-    type_passerelle_enum = sa.Enum('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle')
-    statut_passerelle_enum = sa.Enum('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle')
+    type_passerelle_enum = postgresql.ENUM('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle', create_type=False)
+    statut_passerelle_enum = postgresql.ENUM('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle', create_type=False)
     
     try:
         type_passerelle_enum.create(op.get_bind(), checkfirst=True)
