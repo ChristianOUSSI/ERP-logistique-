@@ -8,6 +8,7 @@ Create Date: 2026-07-01 01:23:03.815539
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import sqlite
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '19a931345e99'
@@ -287,7 +288,7 @@ def upgrade() -> None:
     sa.Column('numero_conteneur', sa.String(length=50), nullable=True),
     sa.Column('date_declaration', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('date_arrivee_prevue', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('statut', sa.Enum('BROUILLON', 'VALIDEE', 'ANNULEE', name='statutdeclaration'), nullable=True),
+    sa.Column('statut', postgresql.ENUM('BROUILLON', 'VALIDEE', 'ANNULEE', name='statutdeclaration', create_type=False), nullable=True),
     sa.Column('notes', sa.String(length=500), nullable=True),
     sa.Column('cree_par', sa.String(length=100), nullable=True),
     sa.Column('date_creation', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
