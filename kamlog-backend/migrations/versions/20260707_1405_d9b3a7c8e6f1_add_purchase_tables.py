@@ -19,8 +19,15 @@ depends_on = None
 
 def upgrade() -> None:
     # ENUMS creation
-    op.execute("CREATE TYPE statutfichebesoin AS ENUM ('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE')")
-    op.execute("CREATE TYPE prioritefichebesoin AS ENUM ('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE')")
+    try:
+        postgresql.ENUM('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE', name='statutfichebesoin').create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
+
+    try:
+        postgresql.ENUM('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE', name='prioritefichebesoin').create(op.get_bind(), checkfirst=True)
+    except sa.exc.ProgrammingError:
+        pass
 
     op.create_table('fiches_besoin',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -29,8 +36,8 @@ def upgrade() -> None:
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column('demandeur_id', sa.Integer(), nullable=False),
         sa.Column('agence_id', sa.Integer(), nullable=False),
-        sa.Column('statut', sa.Enum('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE', name='statutfichebesoin'), nullable=False),
-        sa.Column('priorite', sa.Enum('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE', name='prioritefichebesoin'), nullable=False),
+        sa.Column('statut', sa.Enum('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE', name='statutfichebesoin', create_type=False), nullable=False),
+        sa.Column('priorite', sa.Enum('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE', name='prioritefichebesoin', create_type=False), nullable=False),
         sa.Column('montant_estime', sa.Numeric(precision=15, scale=2), nullable=True),
         sa.Column('devise', sa.String(length=3), nullable=False),
         sa.Column('date_soumission', sa.DateTime(timezone=True), nullable=True),
