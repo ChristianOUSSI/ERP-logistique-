@@ -7,6 +7,7 @@ Create Date: 2026-06-15
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 # revision identifiers, used by Alembic.
 revision = 'add_new_models'
 down_revision = 'add_gateway_tables'
@@ -22,11 +23,11 @@ def upgrade():
     bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutreceptionmag3') THEN CREATE TYPE statutreceptionmag3 AS ENUM ('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE'); END IF; END $$;"))
     bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutfournisseur') THEN CREATE TYPE statutfournisseur AS ENUM ('ACTIF', 'INACTIF', 'BLOQUE'); END IF; END $$;"))
     bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'categoriefournisseur') THEN CREATE TYPE categoriefournisseur AS ENUM ('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL'); END IF; END $$;"))
-    statut_declaration_enum = sa.Enum('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutdeclaration', create_type=False)
-    statut_removal_slip_enum = sa.Enum('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE', name='statutremovalslip', create_type=False)
-    statut_reception_mag3_enum = sa.Enum('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutreceptionmag3', create_type=False)
-    statut_fournisseur_enum = sa.Enum('ACTIF', 'INACTIF', 'BLOQUE', name='statutfournisseur', create_type=False)
-    categorie_fournisseur_enum = sa.Enum('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL', name='categoriefournisseur', create_type=False)
+    statut_declaration_enum = postgresql.ENUM('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutdeclaration', create_type=False)
+    statut_removal_slip_enum = postgresql.ENUM('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE', name='statutremovalslip', create_type=False)
+    statut_reception_mag3_enum = postgresql.ENUM('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutreceptionmag3', create_type=False)
+    statut_fournisseur_enum = postgresql.ENUM('ACTIF', 'INACTIF', 'BLOQUE', name='statutfournisseur', create_type=False)
+    categorie_fournisseur_enum = postgresql.ENUM('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL', name='categoriefournisseur', create_type=False)
     
     # Create goods_declarations table
     op.create_table(
@@ -218,8 +219,8 @@ def downgrade():
     op.drop_table('goods_declarations')
     
     # Drop enum types
-    sa.Enum(name='categoriefournisseur').drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name='statutfournisseur').drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name='statutreceptionmag3').drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name='statutremovalslip').drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name='statutdeclaration').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='categoriefournisseur').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='statutfournisseur').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='statutreceptionmag3').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='statutremovalslip').drop(op.get_bind(), checkfirst=True)
+    postgresql.ENUM(name='statutdeclaration').drop(op.get_bind(), checkfirst=True)
