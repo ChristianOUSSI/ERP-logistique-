@@ -15,9 +15,9 @@ depends_on = None
 
 
 def upgrade():
-    # Create enum types idempotently
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'typepasserelle') THEN CREATE TYPE typepasserelle AS ENUM ('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutpasserelle') THEN CREATE TYPE statutpasserelle AS ENUM ('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE'); END IF; END $$;")
+    bind = op.get_bind()
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'typepasserelle') THEN CREATE TYPE typepasserelle AS ENUM ('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE'); END IF; END $$;"))
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutpasserelle') THEN CREATE TYPE statutpasserelle AS ENUM ('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE'); END IF; END $$;"))
     type_passerelle_enum = sa.Enum('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle', create_type=False)
     statut_passerelle_enum = sa.Enum('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle', create_type=False)
     # Create passerelles table

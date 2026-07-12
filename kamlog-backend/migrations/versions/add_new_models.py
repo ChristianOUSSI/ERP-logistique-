@@ -15,12 +15,13 @@ depends_on = None
 
 
 def upgrade():
+    bind = op.get_bind()
     # Create enum types idempotently
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutdeclaration') THEN CREATE TYPE statutdeclaration AS ENUM ('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutremovalslip') THEN CREATE TYPE statutremovalslip AS ENUM ('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutreceptionmag3') THEN CREATE TYPE statutreceptionmag3 AS ENUM ('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutfournisseur') THEN CREATE TYPE statutfournisseur AS ENUM ('ACTIF', 'INACTIF', 'BLOQUE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'categoriefournisseur') THEN CREATE TYPE categoriefournisseur AS ENUM ('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL'); END IF; END $$;")
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutdeclaration') THEN CREATE TYPE statutdeclaration AS ENUM ('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE'); END IF; END $$;"))
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutremovalslip') THEN CREATE TYPE statutremovalslip AS ENUM ('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE'); END IF; END $$;"))
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutreceptionmag3') THEN CREATE TYPE statutreceptionmag3 AS ENUM ('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE'); END IF; END $$;"))
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutfournisseur') THEN CREATE TYPE statutfournisseur AS ENUM ('ACTIF', 'INACTIF', 'BLOQUE'); END IF; END $$;"))
+    bind.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'categoriefournisseur') THEN CREATE TYPE categoriefournisseur AS ENUM ('LOGISTIQUE', 'IMPORT_EXPORT', 'SERVICES', 'MATERIEL'); END IF; END $$;"))
     statut_declaration_enum = sa.Enum('BROUILLON', 'SOUMISE', 'VALIDEE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutdeclaration', create_type=False)
     statut_removal_slip_enum = sa.Enum('EN_ATTENTE', 'AUTORISE', 'EN_TRANSIT', 'LIVRE', 'ANNULE', name='statutremovalslip', create_type=False)
     statut_reception_mag3_enum = sa.Enum('EN_ATTENTE', 'EN_COURS', 'COMPLETEE', 'ANNULEE', name='statutreceptionmag3', create_type=False)
