@@ -17,10 +17,6 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # ENUMS creation - using raw SQL with IF NOT EXISTS to avoid asyncpg DuplicateObjectError
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutfichebesoin') THEN CREATE TYPE statutfichebesoin AS ENUM ('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE'); END IF; END $$;")
-    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'prioritefichebesoin') THEN CREATE TYPE prioritefichebesoin AS ENUM ('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE'); END IF; END $$;")
-
     op.create_table('fiches_besoin',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
         sa.Column('matricule', sa.String(length=50), nullable=False),
@@ -28,8 +24,8 @@ def upgrade() -> None:
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column('demandeur_id', sa.Integer(), nullable=False),
         sa.Column('agence_id', sa.Integer(), nullable=False),
-        sa.Column('statut', sa.Enum('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE', name='statutfichebesoin', create_type=False), nullable=False),
-        sa.Column('priorite', sa.Enum('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE', name='prioritefichebesoin', create_type=False), nullable=False),
+        sa.Column('statut', sa.String(length=50), nullable=False),
+        sa.Column('priorite', sa.String(length=20), nullable=False),
         sa.Column('montant_estime', sa.Numeric(precision=15, scale=2), nullable=True),
         sa.Column('devise', sa.String(length=3), nullable=False),
         sa.Column('date_soumission', sa.DateTime(timezone=True), nullable=True),
