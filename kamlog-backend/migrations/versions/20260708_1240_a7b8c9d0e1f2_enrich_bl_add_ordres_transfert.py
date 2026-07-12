@@ -53,23 +53,7 @@ def upgrade() -> None:
     _add_col_if_missing('declarations', 'code_hs', 'VARCHAR(10)')
     _add_col_if_missing('declarations', 'numero_declaration_douane', 'VARCHAR(50)')
 
-    # FK escale_id
-    op.execute("""
-        DO $$ BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.table_constraints tc
-                JOIN information_schema.key_column_usage kcu
-                  ON tc.constraint_name = kcu.constraint_name
-                WHERE tc.constraint_type = 'FOREIGN KEY'
-                  AND tc.table_name = 'declarations'
-                  AND kcu.column_name = 'escale_id'
-            ) THEN
-                ALTER TABLE declarations
-                ADD CONSTRAINT fk_declarations_escale_id
-                FOREIGN KEY (escale_id) REFERENCES escales(id);
-            END IF;
-        END $$;
-    """)
+    # escale_id est une référence future (table escales pas encore créée) — pas de FK pour l'instant
 
     # Index numero_bl_externe
     op.execute("""

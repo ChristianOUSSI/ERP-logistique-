@@ -7,8 +7,6 @@ Create Date: 2026-06-07
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
-
 # revision identifiers, used by Alembic.
 revision = 'add_gateway_tables'
 down_revision = 'add_agency_table'
@@ -17,19 +15,11 @@ depends_on = None
 
 
 def upgrade():
-    # Create enum types
-    type_passerelle_enum = postgresql.ENUM('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle', create_type=False)
-    statut_passerelle_enum = postgresql.ENUM('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle', create_type=False)
-    
-    try:
-        type_passerelle_enum.create(op.get_bind(), checkfirst=True)
-    except sa.exc.ProgrammingError:
-        pass
-    
-    try:
-        statut_passerelle_enum.create(op.get_bind(), checkfirst=True)
-    except sa.exc.ProgrammingError:
-        pass
+    # Create enum types idempotently
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'typepasserelle') THEN CREATE TYPE typepasserelle AS ENUM ('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE'); END IF; END $$;")
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutpasserelle') THEN CREATE TYPE statutpasserelle AS ENUM ('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE'); END IF; END $$;")
+    type_passerelle_enum = sa.Enum('COMMANDE_FACTURE', 'COMMANDE_LIVRAISON', 'RECEPTION_STOCK', 'FACTURE_PAIEMENT', 'MISSION_FACTURE', 'BON_LIVRAISON_FACTURE', name='typepasserelle', create_type=False)
+    statut_passerelle_enum = sa.Enum('EN_ATTENTE', 'TRAITE', 'ECHOUE', 'ANNULE', name='statutpasserelle', create_type=False)
     # Create passerelles table
     op.create_table(
         'passerelles',
