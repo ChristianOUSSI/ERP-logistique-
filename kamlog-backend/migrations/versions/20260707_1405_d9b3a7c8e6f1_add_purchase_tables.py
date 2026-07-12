@@ -7,7 +7,6 @@ Create Date: 2026-07-07 14:05:00.000000
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
@@ -18,16 +17,9 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # ENUMS creation
-    try:
-        postgresql.ENUM('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE', name='statutfichebesoin').create(op.get_bind(), checkfirst=True)
-    except sa.exc.ProgrammingError:
-        pass
-
-    try:
-        postgresql.ENUM('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE', name='prioritefichebesoin').create(op.get_bind(), checkfirst=True)
-    except sa.exc.ProgrammingError:
-        pass
+    # ENUMS creation - using raw SQL with IF NOT EXISTS to avoid asyncpg DuplicateObjectError
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutfichebesoin') THEN CREATE TYPE statutfichebesoin AS ENUM ('BROUILLON', 'EN_ATTENTE_APPROBATION', 'APPROUVEE', 'REJETEE', 'TRANSFORMEE_EN_COMMANDE'); END IF; END $$;")
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'prioritefichebesoin') THEN CREATE TYPE prioritefichebesoin AS ENUM ('BASSE', 'NORMALE', 'HAUTE', 'CRITIQUE'); END IF; END $$;")
 
     op.create_table('fiches_besoin',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
