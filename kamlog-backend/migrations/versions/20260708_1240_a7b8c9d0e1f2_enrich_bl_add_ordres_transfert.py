@@ -16,108 +16,108 @@ branch_labels = None
 depends_on = None
 
 
+def _add_col_if_missing(table, col_name, col_sql):
+    op.execute(f"""
+        DO $$ BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name='{table}' AND column_name='{col_name}'
+            ) THEN
+                ALTER TABLE {table} ADD COLUMN {col_name} {col_sql};
+            END IF;
+        END $$;
+    """)
+
+
 def upgrade() -> None:
-    conn = op.get_bind()
-    inspector = sa.inspect(conn)
-
     # ── 1. Enrichir la table declarations avec les champs BL maritimes ──
-    existing_columns = [col['name'] for col in inspector.get_columns('declarations')]
+    _add_col_if_missing('declarations', 'numero_bl_externe', 'VARCHAR(50)')
+    _add_col_if_missing('declarations', 'reference_booking', 'VARCHAR(50)')
+    _add_col_if_missing('declarations', 'numero_scelle', 'VARCHAR(50)')
+    _add_col_if_missing('declarations', 'escale_id', 'INTEGER')
+    _add_col_if_missing('declarations', 'nom_navire', 'VARCHAR(100)')
+    _add_col_if_missing('declarations', 'numero_voyage', 'VARCHAR(50)')
+    _add_col_if_missing('declarations', 'expediteur_shipper', 'VARCHAR(200)')
+    _add_col_if_missing('declarations', 'destinataire_consignee', 'VARCHAR(200)')
+    _add_col_if_missing('declarations', 'notify_party', 'VARCHAR(200)')
+    _add_col_if_missing('declarations', 'port_chargement', 'VARCHAR(100)')
+    _add_col_if_missing('declarations', 'port_dechargement', 'VARCHAR(100)')
+    _add_col_if_missing('declarations', 'lieu_livraison', 'VARCHAR(200)')
+    _add_col_if_missing('declarations', 'description_marchandises', 'VARCHAR(1000)')
+    _add_col_if_missing('declarations', 'poids_brut_kg', 'NUMERIC(12,3)')
+    _add_col_if_missing('declarations', 'poids_net_kg', 'NUMERIC(12,3)')
+    _add_col_if_missing('declarations', 'volume_m3', 'NUMERIC(10,3)')
+    _add_col_if_missing('declarations', 'nombre_colis', 'INTEGER')
+    _add_col_if_missing('declarations', 'type_emballage', 'VARCHAR(100)')
+    _add_col_if_missing('declarations', 'mode_fret', 'VARCHAR(10)')
+    _add_col_if_missing('declarations', 'code_hs', 'VARCHAR(10)')
+    _add_col_if_missing('declarations', 'numero_declaration_douane', 'VARCHAR(50)')
 
-    new_declaration_columns = [
-        # Identification & Traçabilité
-        ('numero_bl_externe', sa.String(50), True),
-        ('reference_booking', sa.String(50), True),
-        ('numero_scelle', sa.String(50), True),
-        # Liaison Navire
-        ('escale_id', sa.Integer(), True),
-        ('nom_navire', sa.String(100), True),
-        ('numero_voyage', sa.String(50), True),
-        # Parties prenantes
-        ('expediteur_shipper', sa.String(200), True),
-        ('destinataire_consignee', sa.String(200), True),
-        ('notify_party', sa.String(200), True),
-        # Logistique & Ports
-        ('port_chargement', sa.String(100), True),
-        ('port_dechargement', sa.String(100), True),
-        ('lieu_livraison', sa.String(200), True),
-        ('description_marchandises', sa.String(1000), True),
-        # Poids, volumes, conditionnement
-        ('poids_brut_kg', sa.Numeric(12, 3), True),
-        ('poids_net_kg', sa.Numeric(12, 3), True),
-        ('volume_m3', sa.Numeric(10, 3), True),
-        ('nombre_colis', sa.Integer(), True),
-        ('type_emballage', sa.String(100), True),
-        # Données commerciales & douanières
-        ('mode_fret', sa.String(10), True),
-        ('code_hs', sa.String(10), True),
-        ('numero_declaration_douane', sa.String(50), True),
-    ]
+    # FK escale_id
+    op.execute("""
+        DO $$ BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.table_constraints tc
+                JOIN information_schema.key_column_usage kcu
+                  ON tc.constraint_name = kcu.constraint_name
+                WHERE tc.constraint_type = 'FOREIGN KEY'
+                  AND tc.table_name = 'declarations'
+                  AND kcu.column_name = 'escale_id'
+            ) THEN
+                ALTER TABLE declarations
+                ADD CONSTRAINT fk_declarations_escale_id
+                FOREIGN KEY (escale_id) REFERENCES escales(id);
+            END IF;
+        END $$;
+    """)
 
-    for col_name, col_type, nullable in new_declaration_columns:
-        if col_name not in existing_columns:
-            op.add_column('declarations', sa.Column(col_name, col_type, nullable=nullable))
-
-    # Ajouter la FK vers escales si la colonne vient d'être créée
-    if 'escale_id' not in existing_columns:
-        try:
-            op.create_foreign_key(
-                'fk_declarations_escale_id', 'declarations',
-                'escales', ['escale_id'], ['id']
-            )
-        except Exception:
-            pass  # La FK peut déjà exister
-
-    # Ajouter un index sur numero_bl_externe
-    if 'numero_bl_externe' not in existing_columns:
-        try:
-            op.create_index('ix_declarations_bl_externe', 'declarations', ['numero_bl_externe'])
-        except Exception:
-            pass
+    # Index numero_bl_externe
+    op.execute("""
+        CREATE INDEX IF NOT EXISTS ix_declarations_bl_externe
+        ON declarations (numero_bl_externe);
+    """)
 
     # ── 2. Créer la table ordres_transfert ──
-    if not inspector.has_table('ordres_transfert'):
-        op.create_table('ordres_transfert',
-            sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
-            sa.Column('numero_ot', sa.String(30), unique=True, nullable=False, index=True),
-            sa.Column('declaration_id', sa.Integer(), sa.ForeignKey('declarations.id'), nullable=True),
-            sa.Column('magasin_source_id', sa.Integer(), sa.ForeignKey('magasins.id'), nullable=False),
-            sa.Column('magasin_dest_id', sa.Integer(), sa.ForeignKey('magasins.id'), nullable=False),
-            sa.Column('date_transfert', sa.DateTime(timezone=True), server_default=sa.func.now()),
-            sa.Column('date_validation', sa.DateTime(timezone=True), nullable=True),
-            sa.Column('date_expedition', sa.DateTime(timezone=True), nullable=True),
-            sa.Column('date_reception', sa.DateTime(timezone=True), nullable=True),
-            sa.Column('statut', sa.String(20), nullable=False, server_default='BROUILLON', index=True),
-            sa.Column('motif', sa.String(500), nullable=True),
-            sa.Column('autorise_par', sa.String(100), nullable=True),
-            sa.Column('notes', sa.String(500), nullable=True),
-            sa.Column('cree_par', sa.String(100), nullable=True),
-            sa.Column('date_creation', sa.DateTime(timezone=True), server_default=sa.func.now()),
-            sa.Column('date_modification', sa.DateTime(timezone=True), nullable=True),
-        )
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS ordres_transfert (
+            id SERIAL PRIMARY KEY,
+            numero_ot VARCHAR(30) UNIQUE NOT NULL,
+            declaration_id INTEGER REFERENCES declarations(id),
+            magasin_source_id INTEGER NOT NULL REFERENCES magasins(id),
+            magasin_dest_id INTEGER NOT NULL REFERENCES magasins(id),
+            date_transfert TIMESTAMPTZ DEFAULT now(),
+            date_validation TIMESTAMPTZ,
+            date_expedition TIMESTAMPTZ,
+            date_reception TIMESTAMPTZ,
+            statut VARCHAR(20) NOT NULL DEFAULT 'BROUILLON',
+            motif VARCHAR(500),
+            autorise_par VARCHAR(100),
+            notes VARCHAR(500),
+            cree_par VARCHAR(100),
+            date_creation TIMESTAMPTZ DEFAULT now(),
+            date_modification TIMESTAMPTZ
+        );
+    """)
+    op.execute("CREATE INDEX IF NOT EXISTS ix_ordres_transfert_numero_ot ON ordres_transfert (numero_ot);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_ordres_transfert_statut ON ordres_transfert (statut);")
 
     # ── 3. Créer la table lignes_ordre_transfert ──
-    if not inspector.has_table('lignes_ordre_transfert'):
-        op.create_table('lignes_ordre_transfert',
-            sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
-            sa.Column('ordre_transfert_id', sa.Integer(), sa.ForeignKey('ordres_transfert.id'), nullable=False),
-            sa.Column('article_id', sa.Integer(), sa.ForeignKey('articles.id'), nullable=False),
-            sa.Column('quantite', sa.Numeric(15, 3), nullable=False),
-            sa.Column('unite_mesure', sa.String(10), nullable=False),
-            sa.Column('quantite_recue', sa.Numeric(15, 3), server_default='0'),
-        )
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS lignes_ordre_transfert (
+            id SERIAL PRIMARY KEY,
+            ordre_transfert_id INTEGER NOT NULL REFERENCES ordres_transfert(id),
+            article_id INTEGER NOT NULL REFERENCES articles(id),
+            quantite NUMERIC(15,3) NOT NULL,
+            unite_mesure VARCHAR(10) NOT NULL,
+            quantite_recue NUMERIC(15,3) DEFAULT 0
+        );
+    """)
 
 
 def downgrade() -> None:
-    conn = op.get_bind()
-    inspector = sa.inspect(conn)
+    op.execute("DROP TABLE IF EXISTS lignes_ordre_transfert;")
+    op.execute("DROP TABLE IF EXISTS ordres_transfert;")
 
-    # Supprimer les tables OT
-    if inspector.has_table('lignes_ordre_transfert'):
-        op.drop_table('lignes_ordre_transfert')
-    if inspector.has_table('ordres_transfert'):
-        op.drop_table('ordres_transfert')
-
-    # Supprimer les colonnes enrichies de declarations
     columns_to_drop = [
         'numero_bl_externe', 'reference_booking', 'numero_scelle',
         'escale_id', 'nom_navire', 'numero_voyage',
@@ -127,7 +127,14 @@ def downgrade() -> None:
         'volume_m3', 'nombre_colis', 'type_emballage',
         'mode_fret', 'code_hs', 'numero_declaration_douane',
     ]
-    existing_columns = [col['name'] for col in inspector.get_columns('declarations')]
     for col_name in columns_to_drop:
-        if col_name in existing_columns:
-            op.drop_column('declarations', col_name)
+        op.execute(f"""
+            DO $$ BEGIN
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='declarations' AND column_name='{col_name}'
+                ) THEN
+                    ALTER TABLE declarations DROP COLUMN {col_name};
+                END IF;
+            END $$;
+        """)
