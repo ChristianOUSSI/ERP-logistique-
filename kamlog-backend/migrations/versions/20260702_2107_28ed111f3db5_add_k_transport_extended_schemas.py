@@ -78,9 +78,9 @@ def upgrade() -> None:
     # sa.ForeignKeyConstraint(['chauffeur_id'], ['chauffeurs.id'], name=op.f('fk_chauffeur_documents_chauffeur_id_chauffeurs')),
     # sa.PrimaryKeyConstraint('id', name=op.f('pk_chauffeur_documents'))
     # )
-    op.execute("CREATE TYPE typemateriel AS ENUM ('TRACTEUR', 'REMORQUE', 'SEMI_REMORQUE')")
-    op.execute("CREATE TYPE statutcamion AS ENUM ('DISPONIBLE', 'EN_MAINTENANCE', 'EN_ROUTE', 'EN_CHARGEMENT', 'BLOQUE_HSE')")
-    op.execute("CREATE TYPE statutchauffeur AS ENUM ('EN_SERVICE', 'EN_REPOS', 'EN_MISSION', 'EN_FORMATION')")
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'typemateriel') THEN CREATE TYPE typemateriel AS ENUM ('TRACTEUR', 'REMORQUE', 'SEMI_REMORQUE'); END IF; END $$;")
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutcamion') THEN CREATE TYPE statutcamion AS ENUM ('DISPONIBLE', 'EN_MAINTENANCE', 'EN_ROUTE', 'EN_CHARGEMENT', 'BLOQUE_HSE'); END IF; END $$;")
+    op.execute("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statutchauffeur') THEN CREATE TYPE statutchauffeur AS ENUM ('EN_SERVICE', 'EN_REPOS', 'EN_MISSION', 'EN_FORMATION'); END IF; END $$;")
 
     with op.batch_alter_table('tiers', schema=None) as batch_op:
         batch_op.add_column(sa.Column('sigle_ou_enseigne', sa.String(length=50), nullable=True))
