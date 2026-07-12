@@ -74,5 +74,3 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_fiches_besoin_statut'), table_name='fiches_besoin')
     op.drop_index(op.f('ix_fiches_besoin_matricule'), table_name='fiches_besoin')
     op.drop_table('fiches_besoin')
-    op.execute('DROP TYPE prioritefichebesoin')
-    op.execute('DROP TYPE statutfichebesoin')
