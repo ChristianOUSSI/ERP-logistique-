@@ -30,7 +30,7 @@ def upgrade():
         sa.Column('cible_module', sa.String(length=50), nullable=False),
         sa.Column('cible_id', sa.Integer(), nullable=True),
         sa.Column('statut', statut_passerelle_enum, nullable=True),
-        sa.Column('donnees', postgresql.JSON(), nullable=True),
+        sa.Column('donnees', sa.JSON(), nullable=True),
         sa.Column('message_erreur', sa.Text(), nullable=True),
         sa.Column('date_creation', sa.DateTime(), nullable=False),
         sa.Column('date_traitement', sa.DateTime(), nullable=True),
