@@ -10,8 +10,10 @@ from sqlalchemy.orm import selectinload
 from app.models.tiers import Tiers, StatutTiers
 from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule
 from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock
-import secrets
-from app.utils.security import get_password_hash
+from app.utils.security import get_password_hash, verify_password
+
+# ── Default seed password (overridable per-user via env vars) ─────
+DEFAULT_SEED_PASSWORD = os.getenv("DEFAULT_SEED_PASSWORD", "admin123")
 
 
 def seed_agency() -> int:
@@ -53,49 +55,49 @@ def seed_users(agency_id: int):
                 {
                     "email": "admin@kamlog.cm",
                     "username": "admin",
-                    "password": os.getenv("ADMIN_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("ADMIN_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Administrateur Système",
                     "role": "admin",
                 },
                 {
                     "email": "dispatcher@kamlog.cm",
                     "username": "dispatcher",
-                    "password": os.getenv("DISPATCHER_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("DISPATCHER_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Chef Dispatch",
                     "role": "dispatcher",
                 },
                 {
                     "email": "finance@kamlog.cm",
                     "username": "finance",
-                    "password": os.getenv("FINANCE_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("FINANCE_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Comptable",
                     "role": "finance",
                 },
                 {
                     "email": "douane@kamlog.cm",
                     "username": "douane",
-                    "password": os.getenv("DOUANE_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("DOUANE_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Agent Douane",
                     "role": "douane",
                 },
                 {
                     "email": "gate@kamlog.cm",
                     "username": "gate",
-                    "password": os.getenv("GATE_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("GATE_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Agent Guérite",
                     "role": "gate_agent",
                 },
                 {
                     "email": "magasin@kamlog.cm",
                     "username": "magasin",
-                    "password": os.getenv("MAGASIN_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("MAGASIN_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Chef Magasinier",
                     "role": "magasin",
                 },
                 {
                     "email": "auditor@kamlog.cm",
                     "username": "auditor",
-                    "password": os.getenv("AUDITOR_PASSWORD", secrets.token_urlsafe(12)),
+                    "password": os.getenv("AUDITOR_PASSWORD", DEFAULT_SEED_PASSWORD),
                     "full_name": "Auditeur Interne",
                     "role": "auditor",
                 },
@@ -108,6 +110,10 @@ def seed_users(agency_id: int):
                 user = result.scalar_one_or_none()
                 if user:
                     print(f"  → User {u['email']} already exists.")
+                    # Sync password if it doesn't match the expected value
+                    if not verify_password(u["password"], user.password_hash):
+                        user.password_hash = get_password_hash(u["password"])
+                        print(f"    → Password reset for {u['email']}.")
                     # Assigner le rôle s'il n'en a pas
                     role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
                     role_db = role_result.scalar_one_or_none()
