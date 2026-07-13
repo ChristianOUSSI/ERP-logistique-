@@ -172,6 +172,15 @@ export const parcAPI = {
     apiClient.get('/api/parc/stock', { params }),
   gateIn: (data: unknown) => apiClient.post('/api/parc/gate-in', data),
   gateOut: (data: unknown) => apiClient.post('/api/parc/gate-out', data),
+  extractOCR: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiClient.post('/api/parc/ocr-extract', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
   getWorkshopRepairs: () =>
     apiClient.get('/api/parc/workshop'),
 };
