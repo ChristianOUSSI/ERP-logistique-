@@ -184,7 +184,7 @@ class ChauffeurProfilService:
 
     @staticmethod
     def create_chauffeur(db: Session, chauffeur: ChauffeurProfilCreate, cree_par: str) -> ChauffeurProfil:
-        db_chauffeur = ChauffeurProfil(**chauffeur.dict(), cree_par=cree_par)
+        db_chauffeur = ChauffeurProfil(**chauffeur.dict())
         db.add(db_chauffeur)
         db.commit()
         db.refresh(db_chauffeur)
