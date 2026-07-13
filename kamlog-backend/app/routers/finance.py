@@ -77,19 +77,23 @@ async def get_finance_kpis(
         Facture.statut == StatutFacture.PAYEE
     ).scalar() or Decimal('0')
     
-    # Impayés = factures impayées ou en attente
+    # Impayés = factures validées non payées ou émises (non encore réglées)
+    statuts_impayes = [
+        StatutFacture.VALIDEE_NON_PAYEE,
+        StatutFacture.EMISE,
+        StatutFacture.PARTIELLEMENT_PAYEE,
+        StatutFacture.PAYE_PARTIEL,
+    ]
     impayes = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
-        Facture.statut.in_([StatutFacture.IMPAYEE, StatutFacture.EN_ATTENTE])
+        Facture.statut.in_(statuts_impayes)
     ).scalar() or Decimal('0')
     
     impayes_count = db.query(func.count(Facture.id)).filter(
-        Facture.statut.in_([StatutFacture.IMPAYEE, StatutFacture.EN_ATTENTE])
+        Facture.statut.in_(statuts_impayes)
     ).scalar() or 0
     
-    # Dépenses = factures de type ACHAT ou DEPENSE
-    depenses = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
-        Facture.type.in_(["ACHAT", "DEPENSE"])
-    ).scalar() or Decimal('0')
+    # Dépenses — pas de colonne type sur Facture pour l'instant, placeholder à 0
+    depenses = Decimal('0')
     
     tresorerie = ca_mois - depenses
     
@@ -123,17 +127,15 @@ async def get_analytics_chart_data(
         if month > datetime.now().month:
             break
             
+        # CA = toutes les factures payées du mois (pas de colonne type pour filtrer)
         ca = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
             extract('year', Facture.date_emission) == current_year,
             extract('month', Facture.date_emission) == month,
-            Facture.type.notin_(["ACHAT", "DEPENSE"]) # Everything except purchases/expenses is revenue
+            Facture.statut.in_([StatutFacture.PAYEE, StatutFacture.PAYE_TOTAL]),
         ).scalar() or Decimal('0')
         
-        depenses = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
-            extract('year', Facture.date_emission) == current_year,
-            extract('month', Facture.date_emission) == month,
-            Facture.type.in_(["ACHAT", "DEPENSE"])
-        ).scalar() or Decimal('0')
+        # Dépenses — placeholder à 0 tant que Facture n'a pas de colonne type_facture
+        depenses = Decimal('0')
         
         marge = ca - depenses
         
