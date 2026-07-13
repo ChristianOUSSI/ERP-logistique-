@@ -47,7 +47,7 @@ class ZoneParcService:
 
     @staticmethod
     def create_zone(db: Session, zone: ZoneParcCreate, cree_par: str) -> ZoneParc:
-        db_zone = ZoneParc(**zone.dict(), cree_par=cree_par)
+        db_zone = ZoneParc(**zone.dict())
         db.add(db_zone)
         db.commit()
         db.refresh(db_zone)
@@ -134,7 +134,7 @@ class EmplacementParcService:
 
     @staticmethod
     def create_emplacement(db: Session, emplacement: EmplacementParcCreate, cree_par: str) -> EmplacementParc:
-        db_emplacement = EmplacementParc(**emplacement.dict(), cree_par=cree_par)
+        db_emplacement = EmplacementParc(**emplacement.dict())
         db.add(db_emplacement)
         db.commit()
         db.refresh(db_emplacement)
@@ -225,7 +225,7 @@ class StockPhysiqueParcService:
 
     @staticmethod
     def create_stock(db: Session, stock: StockPhysiqueParcCreate, cree_par: str) -> StockPhysiqueParc:
-        db_stock = StockPhysiqueParc(**stock.dict(), cree_par=cree_par)
+        db_stock = StockPhysiqueParc(**stock.dict())
         db.add(db_stock)
         db.commit()
         db.refresh(db_stock)

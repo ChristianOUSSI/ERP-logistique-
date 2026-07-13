@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from 'react'
 import { useComingSoon } from '@/contexts/ComingSoonContext'
-import { gatewayAPI, Passerelle } from '@/lib/api/gateway'
+import { gatewayAPI } from '@/lib/api-client';
+import { Passerelle } from '@/types/gateway';
 import { toast } from 'sonner'
 
 export default function KFinanceGatewayMonitor() {

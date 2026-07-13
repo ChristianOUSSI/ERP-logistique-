@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Wrench, Calendar, Clock, CheckCircle, Search, Plus } from 'lucide-react';
-import { parcAPI, WorkshopRepair } from '@/lib/api/parc';
+import { parcAPI } from '@/lib/api-client';
+import { WorkshopRepair } from '@/types/parc';
 import { toast } from 'sonner';
 
 export default function WorkshopPage() {
