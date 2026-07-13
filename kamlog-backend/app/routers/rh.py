@@ -40,18 +40,7 @@ def get_my_employe_profile(db: Session = Depends(get_db), current_user: User = D
     # Simulation: find employee by email or mock mapping
     employe = db.query(Employe).filter(Employe.email == current_user.email).first()
     if not employe:
-        # Mocking an employee profile if not mapped yet for demo purposes
-        return Employe(
-            id=1,
-            matricule="KAM-001",
-            nom=current_user.nom or "KAMLOG",
-            prenom="User",
-            email=current_user.email,
-            poste="Manager",
-            departement="Direction",
-            date_embauche="2020-01-01",
-            statut="ACTIF"
-        )
+        raise HTTPException(status_code=404, detail="Profil employé non configuré pour cet utilisateur")
     return employe
 
 # --- Congés ---

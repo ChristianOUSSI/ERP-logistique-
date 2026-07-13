@@ -8,7 +8,7 @@ from app.schemas.transport import MissionResponse
 
 router = APIRouter(tags=["Public API & Webhooks"])
 
-# Mock d'un système de clé d'API pour les clients externes B2B
+# Système de validation de la clé d'API pour les clients externes B2B
 def verify_api_key(x_api_key: str = Header(...)):
     if x_api_key != "KAMLOG_PUB_KEY_DEMO_2026":
         raise HTTPException(status_code=401, detail="Invalid API Key")
@@ -25,5 +25,5 @@ def public_track_mission(reference: str, db: Session = Depends(get_db), api_key:
 @router.post("/webhooks/kamlog-events")
 def webhook_receiver(event_data: dict, api_key: str = Depends(verify_api_key)):
     """Point d'entrée générique pour les webhooks externes (ex: tracking GPS externe, IoT)."""
-    # Traitement simulé du webhook
+    # TODO: Intégrer l'enregistrement de l'événement dans la base de données de journalisation
     return {"status": "success", "message": "Event received and processed", "event_type": event_data.get("type", "unknown")}

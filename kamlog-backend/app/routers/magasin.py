@@ -34,15 +34,16 @@ router = APIRouter(tags=["K-Magasin"])
 def get_magasin_kpis(db: Session = Depends(get_db)):
     """Calcule les KPIs magasin côté serveur."""
     from sqlalchemy import func
-    from app.models.magasin import Stock, Article
+    from app.models.magasin import Stock, Article, Magasin
     
     # Valeur totale du stock
-    # Normalement, on multiplierait la quantité par le prix unitaire, mais comme on n'a pas le prix dans le modèle Article/Stock, on peut simuler ou faire la somme des quantités pour l'instant.
-    total_stock_value = db.query(func.sum(Stock.quantite_disponible)).scalar() or 0
+    # On fait la jointure avec Article pour obtenir la valeur unitaire
+    total_stock_value = db.query(func.sum(Stock.quantite_disponible * Article.valeur_unitaire)).join(Article).scalar() or 0
     
     # Taux d'occupation = total_stock / capacite_totale
-    # Comme la capacité totale n'est pas dans le modèle Magasin, on donne un taux factice côté serveur pour l'instant
-    occupation_rate = 68.5  
+    capacite_totale = db.query(func.sum(Magasin.capacite_max_m3)).scalar() or 1000.0
+    stock_total = db.query(func.sum(Stock.quantite_disponible)).scalar() or 0
+    occupation_rate = (stock_total / capacite_totale) * 100 if capacite_totale > 0 else 0
     
     low_stock_alerts = db.query(func.count(Stock.id)).filter(
         Stock.quantite_disponible < 50
@@ -55,8 +56,8 @@ def get_magasin_kpis(db: Session = Depends(get_db)):
     ).scalar() or 0
     
     return {
-        "totalStockValue": float(total_stock_value * 15000), # Simuler une valeur en FCFA (qty * prix moyen)
-        "occupationRate": occupation_rate,
+        "totalStockValue": float(total_stock_value),
+        "occupationRate": float(occupation_rate),
         "activeOrders": active_orders,
         "lowStockAlerts": low_stock_alerts
     }

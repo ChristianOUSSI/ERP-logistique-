@@ -153,18 +153,18 @@ def get_system_health(
     current_user: User = Depends(get_current_user)
 ):
     """Renvoie les métriques de santé du système."""
-    # import psutil
-    # cpu_usage = psutil.cpu_percent(interval=0.1)
-    # memory = psutil.virtual_memory()
-    # memory_usage = memory.percent
+    import psutil
+    cpu_usage = psutil.cpu_percent(interval=0.1)
+    memory = psutil.virtual_memory()
+    memory_usage = memory.percent
     
-    # Values mocked since psutil could not be installed due to network errors
-    cpu_usage = 12.5
-    memory_usage = 45.2
-    
-    # Statistiques basiques pour db et connexions (simulées pour l'instant si non accessibles)
-    db_pool = 5
-    active_conns = 12
+    # Statistiques réelles pour db et connexions (en interrogeant SQLAlchemy)
+    try:
+        db_pool = db.get_bind().pool.size()
+        active_conns = db.get_bind().pool.checkedin()
+    except Exception:
+        db_pool = 0
+        active_conns = 0
     
     return {
         "cpuUsage": cpu_usage,
@@ -227,3 +227,31 @@ def get_global_dashboard_kpis(
         "revenueDataMonth": revenueDataMonth,
         "fleetData": fleetData
     }
+@router.get("/audit-logs")
+@require_role(["admin"])
+def get_audit_logs(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    limit: int = 100
+):
+    """Récupère les derniers logs d'audit du système."""
+    try:
+        from app.models.user import HTTPAuditLog
+        from sqlalchemy import desc
+        logs = db.query(HTTPAuditLog).order_by(desc(HTTPAuditLog.created_at)).limit(limit).all()
+        
+        result = []
+        for log in logs:
+            result.append({
+                "id": log.id,
+                "timestamp": log.created_at.isoformat() if log.created_at else "",
+                "severity": "CRITICAL" if log.status_code and log.status_code >= 500 else "WARNING" if log.status_code and log.status_code >= 400 else "INFO",
+                "event": log.method,
+                "action": log.path,
+                "admin": f"User {log.user_id}" if log.user_id else "Système",
+                "target": log.client_ip,
+                "details": f"Status: {log.status_code} - {log.user_agent}"
+            })
+        return result
+    except ImportError:
+        return []

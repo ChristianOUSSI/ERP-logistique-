@@ -74,44 +74,28 @@ export default function AuditHealthDashboard() {
     setIsRefreshing(true)
     try {
       // Fetch system health
-      const healthRes = await adminAPI.getAuditLogs().catch(() => null)
-      
-      // Try system health endpoint
-      let healthData: HealthData | null = null
-      try {
-        const hRes = await (adminAPI as any).getSystemHealth?.()
-        if (hRes?.data) healthData = hRes.data
-      } catch {
-        // Endpoint may not exist, use defaults
-      }
-
-      if (healthData) {
-        setHealth(healthData)
+      const hRes = await adminAPI.getSystemHealth()
+      if (hRes?.data) {
+        setHealth(hRes.data)
         setApiOnline(true)
       } else {
-        // Smart fallback: generate realistic data
-        setHealth({
-          cpuUsage: 18 + Math.random() * 15,
-          memoryUsage: 45 + Math.random() * 20,
-          dbConnectionPool: 70 + Math.random() * 25,
-          activeConnections: Math.floor(80 + Math.random() * 100),
-        })
-        setApiOnline(true)
+        setHealth({ cpuUsage: 0, memoryUsage: 0, dbConnectionPool: 0, activeConnections: 0 })
+        setApiOnline(false)
       }
 
       // Fetch audit logs
-      try {
-        const logsRes = await adminAPI.getAuditLogs()
-        const logs = logsRes?.data || []
-        if (Array.isArray(logs) && logs.length > 0) {
-          setAuditLogs(logs.slice(0, 8))
-        } else {
-          // Use smart fallback
-          setAuditLogs(getDefaultLogs())
-        }
-      } catch {
-        setAuditLogs(getDefaultLogs())
+      const logsRes = await adminAPI.getAuditLogs()
+      if (logsRes?.data && Array.isArray(logsRes.data)) {
+        setAuditLogs(logsRes.data.slice(0, 8))
+      } else {
+        setAuditLogs([])
       }
+    } catch (err) {
+      console.error(err)
+      setHealth({ cpuUsage: 0, memoryUsage: 0, dbConnectionPool: 0, activeConnections: 0 })
+      setApiOnline(false)
+      setAuditLogs([])
+    }
 
       // Generate uptime chart data
       const now = new Date()

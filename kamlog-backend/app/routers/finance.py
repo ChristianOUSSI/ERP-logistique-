@@ -39,8 +39,8 @@ async def get_drivers_payroll(
     chauffeurs = db.query(ChauffeurProfil).filter(ChauffeurProfil.est_actif == True).all()
     result = []
     for chauffeur in chauffeurs:
-        # Base arbitraire (si pas définie en DB)
-        base = 150000
+        # Base réelle du profil ou fallback
+        base = float(chauffeur.salaire_base or 150000)
         
         # Primes basées sur les missions LIVRÉES
         missions = db.query(MissionTransport).filter(
@@ -48,17 +48,17 @@ async def get_drivers_payroll(
             MissionTransport.statut == StatutMission.LIVREE
         ).all()
         
-        primes = sum(m.frais_mission or 0 for m in missions)
-        peages = 10000 * len(missions)  # Mock logique de péage par mission
+        primes = sum(float(m.montant_fret or 0) * 0.05 for m in missions)  # Exemple de règle métier réelle : 5% du fret
+        peages = sum(float(m.frais_peage or 0) for m in missions)
         
         result.append({
             "id": chauffeur.id,
             "nom": chauffeur.nom,
-            "prenoms": chauffeur.prenoms,
+            "prenoms": chauffeur.prenom,  # Correction : c'est prenom et non prenoms dans le modèle
             "base": base,
             "primes": primes,
             "peages": peages,
-            "statut": "PAYE" if primes > 0 else "EN_ATTENTE"
+            "statut": "PAYE" if (primes + base) > 0 else "EN_ATTENTE"
         })
     return result
 

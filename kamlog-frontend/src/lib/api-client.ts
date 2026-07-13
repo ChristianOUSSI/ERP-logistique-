@@ -313,3 +313,10 @@ export const rhAPI = {
   getPaie: (params?: Record<string, unknown>) => apiClient.get('/api/rh/paie', { params }),
   createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
 };
+
+// ─── Service Admin (System Health, Audit, etc) ────────────
+export const adminAPI = {
+  getSystemHealth: () => apiClient.get('/api/admin/system-health'),
+  getGlobalKpis: () => apiClient.get('/api/admin/dashboard/global-kpis'),
+  getAuditLogs: (params?: Record<string, unknown>) => apiClient.get('/api/admin/audit-logs', { params }),
+};

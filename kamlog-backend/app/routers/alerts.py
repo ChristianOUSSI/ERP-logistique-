@@ -90,9 +90,13 @@ async def check_fuel_siphoning_alerts(
     alerts = []
     
     for mission in missions:
-        # Simuler une consommation réelle (en production, viendrait des données IoT)
-        # Pour l'instant, on utilise une valeur fictive pour démonstration
-        consommation_reelle_litres = mission.distance_km * 0.5  # 0.5 L/km
+        from app.models.transport import CamionFlotte, TicketCarburant
+        from sqlalchemy import func
+        # Consommation réelle basée sur les tickets de carburant du camion
+        total_litres = db.query(func.sum(TicketCarburant.quantite_litres)).filter(
+            TicketCarburant.camion_id == mission.camion_id
+        ).scalar() or Decimal('0')
+        consommation_reelle_litres = total_litres
         
         # Récupérer la conso théorique du camion
         from app.models.transport import CamionFlotte

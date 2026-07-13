@@ -80,6 +80,7 @@ class Magasin(Base):
     pays = Column(String(100), default="Cameroun")
     telephone = Column(String(20))
     email = Column(String(100))
+    capacite_max_m3 = Column(Float, nullable=True, default=1000.0)
     est_actif = Column(Boolean, default=True)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
@@ -126,6 +127,7 @@ class Article(Base):
     poids_unitaire = Column(Float, nullable=True)  # Poids en kg si applicable
     volume_unitaire = Column(Float, nullable=True)  # Volume en m³ si applicable
     est_actif = Column(Boolean, default=True)
+    valeur_unitaire = Column(Float, nullable=True, default=0.0)
     proprietes_dynamiques = Column(JSON, nullable=True, comment="Variables libres dynamiques (Température, HS Code...)")
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
