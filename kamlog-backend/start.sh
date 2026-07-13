@@ -51,6 +51,34 @@ echo "✅ PostgreSQL is ready!"
 echo "📌 Running Alembic migrations..."
 alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
 
+# ─── Vérifier que les tables critiques existent ─────────────
+python - <<'PY'
+import os
+import sys
+from sqlalchemy import create_engine, text
+from app.utils.bootstrap import get_missing_required_tables
+
+url = os.environ.get('DATABASE_URL', '')
+if not url:
+    print('⚠️ DATABASE_URL not set; skipping bootstrap table check', flush=True)
+    sys.exit(0)
+
+engine = create_engine(url.replace('+asyncpg', '').replace('+aiosqlite', ''), future=True)
+with engine.connect() as conn:
+    result = conn.execute(text("SELECT tablename FROM pg_tables WHERE schemaname = current_schema()"))
+    existing_tables = {row[0] for row in result.fetchall()}
+    missing = get_missing_required_tables(existing_tables)
+    if missing:
+        print(f'⚠️ Required tables missing after migrations: {missing}', flush=True)
+        sys.exit(2)
+    print('✅ Core tables present; proceeding with seed if enabled', flush=True)
+PY
+bootstrap_status=$?
+if [ "$bootstrap_status" -ne 0 ]; then
+    echo "⚠️ Bootstrap table check failed; skipping seed to avoid startup errors"
+    exit 0
+fi
+
 # ─── Seeders si SEED_DATA=true ───────────────────────────────
 if [ "$SEED_DATA" = "true" ]; then
     echo "🌱 Running seed data..."

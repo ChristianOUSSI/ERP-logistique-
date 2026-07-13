@@ -2,6 +2,7 @@
 import os
 
 from sqlalchemy import select
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from app.database import SessionLocal, engine
 from app.models.agency import Agency
 from app.models.user import User, RoleModel, PermissionModel
@@ -15,184 +16,194 @@ from app.utils.security import get_password_hash
 
 def seed_agency() -> int:
     """Crée l'agence par défaut (multi-tenancy). Retourne son ID."""
-    with SessionLocal() as session:
-        # Vérifier si l'agence existe déjà
-        result = session.execute(select(Agency).where(Agency.code == "KAM-DLA"))
-        existing = result.scalar_one_or_none()
-        if existing:
-            print(f"✅ Agency already exists (id={existing.id}), skipping")
-            return existing.id
+    try:
+        with SessionLocal() as session:
+            # Vérifier si l'agence existe déjà
+            result = session.execute(select(Agency).where(Agency.code == "KAM-DLA"))
+            existing = result.scalar_one_or_none()
+            if existing:
+                print(f"✅ Agency already exists (id={existing.id}), skipping")
+                return existing.id
 
-        agency = Agency(
-            code="KAM-DLA",
-            nom="KAMLOG - Agence de Douala",
-            adresse="Port de Douala, Zone Industrielle",
-            ville="Douala",
-            pays="Cameroun",
-            telephone="+237 233 40 00 00",
-            email="agence.douala@kamlog.cm",
-            is_active=True,
-        )
-        session.add(agency)
-        session.commit()
-        session.refresh(agency)
-        print(f"✅ Agency seeded successfully (id={agency.id})")
-        return agency.id
+            agency = Agency(
+                code="KAM-DLA",
+                nom="KAMLOG - Agence de Douala",
+                adresse="Port de Douala, Zone Industrielle",
+                ville="Douala",
+                pays="Cameroun",
+                telephone="+237 233 40 00 00",
+                email="agence.douala@kamlog.cm",
+                is_active=True,
+            )
+            session.add(agency)
+            session.commit()
+            session.refresh(agency)
+            print(f"✅ Agency seeded successfully (id={agency.id})")
+            return agency.id
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping agency seed because database is not ready: {exc}")
+        return 0
 
 
 def seed_users(agency_id: int):
     """Crée les utilisateurs par défaut. Idempotent : ignore les doublons."""
-    with SessionLocal() as session:
-        users_data = [
-            {
-                "email": "admin@kamlog.cm",
-                "username": "admin",
-                "password": os.getenv("ADMIN_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Administrateur Système",
-                "role": "admin",
-            },
-            {
-                "email": "dispatcher@kamlog.cm",
-                "username": "dispatcher",
-                "password": os.getenv("DISPATCHER_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Chef Dispatch",
-                "role": "dispatcher",
-            },
-            {
-                "email": "finance@kamlog.cm",
-                "username": "finance",
-                "password": os.getenv("FINANCE_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Comptable",
-                "role": "finance",
-            },
-            {
-                "email": "douane@kamlog.cm",
-                "username": "douane",
-                "password": os.getenv("DOUANE_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Agent Douane",
-                "role": "douane",
-            },
-            {
-                "email": "gate@kamlog.cm",
-                "username": "gate",
-                "password": os.getenv("GATE_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Agent Guérite",
-                "role": "gate_agent",
-            },
-            {
-                "email": "magasin@kamlog.cm",
-                "username": "magasin",
-                "password": os.getenv("MAGASIN_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Chef Magasinier",
-                "role": "magasin",
-            },
-            {
-                "email": "auditor@kamlog.cm",
-                "username": "auditor",
-                "password": os.getenv("AUDITOR_PASSWORD", secrets.token_urlsafe(12)),
-                "full_name": "Auditeur Interne",
-                "role": "auditor",
-            },
-        ]
+    try:
+        with SessionLocal() as session:
+            users_data = [
+                {
+                    "email": "admin@kamlog.cm",
+                    "username": "admin",
+                    "password": os.getenv("ADMIN_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Administrateur Système",
+                    "role": "admin",
+                },
+                {
+                    "email": "dispatcher@kamlog.cm",
+                    "username": "dispatcher",
+                    "password": os.getenv("DISPATCHER_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Chef Dispatch",
+                    "role": "dispatcher",
+                },
+                {
+                    "email": "finance@kamlog.cm",
+                    "username": "finance",
+                    "password": os.getenv("FINANCE_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Comptable",
+                    "role": "finance",
+                },
+                {
+                    "email": "douane@kamlog.cm",
+                    "username": "douane",
+                    "password": os.getenv("DOUANE_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Agent Douane",
+                    "role": "douane",
+                },
+                {
+                    "email": "gate@kamlog.cm",
+                    "username": "gate",
+                    "password": os.getenv("GATE_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Agent Guérite",
+                    "role": "gate_agent",
+                },
+                {
+                    "email": "magasin@kamlog.cm",
+                    "username": "magasin",
+                    "password": os.getenv("MAGASIN_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Chef Magasinier",
+                    "role": "magasin",
+                },
+                {
+                    "email": "auditor@kamlog.cm",
+                    "username": "auditor",
+                    "password": os.getenv("AUDITOR_PASSWORD", secrets.token_urlsafe(12)),
+                    "full_name": "Auditeur Interne",
+                    "role": "auditor",
+                },
+            ]
 
-        created = 0
-        for u in users_data:
-            # Vérifier si l'utilisateur existe déjà
-            result = session.execute(select(User).options(selectinload(User.roles)).where(User.email == u["email"]))
-            user = result.scalar_one_or_none()
-            if user:
-                print(f"  → User {u['email']} already exists.")
-                # Assigner le rôle s'il n'en a pas
+            created = 0
+            for u in users_data:
+                # Vérifier si l'utilisateur existe déjà
+                result = session.execute(select(User).options(selectinload(User.roles)).where(User.email == u["email"]))
+                user = result.scalar_one_or_none()
+                if user:
+                    print(f"  → User {u['email']} already exists.")
+                    # Assigner le rôle s'il n'en a pas
+                    role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
+                    role_db = role_result.scalar_one_or_none()
+                    if role_db and role_db not in user.roles:
+                        user.roles.append(role_db)
+                        print(f"    → Role {u['role']} assigned to {u['email']}.")
+                    continue
+
+                print(f"  → Creating User {u['email']} with password: {u['password']} (SAVE THIS!)")
+                user = User(
+                    email=u["email"],
+                    username=u["username"],
+                    password_hash=get_password_hash(u["password"]),
+                    full_name=u["full_name"],
+                    agency_id=agency_id,
+                    is_active=True,
+                )
+
+                # Find the RoleModel and add it to user.roles
                 role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
                 role_db = role_result.scalar_one_or_none()
-                if role_db and role_db not in user.roles:
+                if role_db:
                     user.roles.append(role_db)
-                    print(f"    → Role {u['role']} assigned to {u['email']}.")
-                continue
 
-            print(f"  → Creating User {u['email']} with password: {u['password']} (SAVE THIS!)")
-            user = User(
-                email=u["email"],
-                username=u["username"],
-                password_hash=get_password_hash(u["password"]),
-                full_name=u["full_name"],
-                agency_id=agency_id,
-                is_active=True,
-            )
-            
-            # Find the RoleModel and add it to user.roles
-            role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
-            role_db = role_result.scalar_one_or_none()
-            if role_db:
-                user.roles.append(role_db)
-                
-            session.add(user)
-            created += 1
+                session.add(user)
+                created += 1
 
-        session.commit()
-        print(f"✅ Users seeded: {created} created, {len(users_data) - created} already existed")
+            session.commit()
+            print(f"✅ Users seeded: {created} created, {len(users_data) - created} already existed")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping users seed because database is not ready: {exc}")
 
 
 def seed_tiers():
     """Crée les clients de test. Idempotent."""
-    with SessionLocal() as session:
-        clients_data = [
-            {
-                "code_tiers": "CLI001",
-                "raison_sociale": "SABC - Société Africaine de Brasserie",
-                "niu": "1234567890123",
-                "rccm": "CM/DLA/2023/B/1234",
-                "email": "contact@sabc.cm",
-                "telephone": "+237 233 42 34 56",
-                "ville": "Douala",
-                "pays": "Cameroun",
-                "statut": StatutTiers.ACTIF,
-                "autorise_transport": True,
-                "autorise_transit": True,
-                "autorise_acconage": True,
-                "limite_credit_xaf": 50000000,
-            },
-            {
-                "code_tiers": "CLI002",
-                "raison_sociale": "TOTAL Cameroun",
-                "niu": "1234567890124",
-                "rccm": "CM/DLA/2023/B/5678",
-                "email": "logistique@total.cm",
-                "telephone": "+237 233 42 78 90",
-                "ville": "Douala",
-                "pays": "Cameroun",
-                "statut": StatutTiers.ACTIF,
-                "autorise_transport": True,
-                "autorise_magasinage": True,
-                "limite_credit_xaf": 100000000,
-            },
-            {
-                "code_tiers": "CLI003",
-                "raison_sociale": "CIMENCAM",
-                "niu": "1234567890125",
-                "rccm": "CM/DLA/2023/B/9012",
-                "email": "transport@cimencam.cm",
-                "telephone": "+237 233 43 21 09",
-                "ville": "Douala",
-                "pays": "Cameroun",
-                "statut": StatutTiers.ACTIF,
-                "autorise_transport": True,
-                "autorise_acconage": True,
-                "limite_credit_xaf": 75000000,
-            },
-        ]
+    try:
+        with SessionLocal() as session:
+            clients_data = [
+                {
+                    "code_tiers": "CLI001",
+                    "raison_sociale": "SABC - Société Africaine de Brasserie",
+                    "niu": "1234567890123",
+                    "rccm": "CM/DLA/2023/B/1234",
+                    "email": "contact@sabc.cm",
+                    "telephone": "+237 233 42 34 56",
+                    "ville": "Douala",
+                    "pays": "Cameroun",
+                    "statut": StatutTiers.ACTIF,
+                    "autorise_transport": True,
+                    "autorise_transit": True,
+                    "autorise_acconage": True,
+                    "limite_credit_xaf": 50000000,
+                },
+                {
+                    "code_tiers": "CLI002",
+                    "raison_sociale": "TOTAL Cameroun",
+                    "niu": "1234567890124",
+                    "rccm": "CM/DLA/2023/B/5678",
+                    "email": "logistique@total.cm",
+                    "telephone": "+237 233 42 78 90",
+                    "ville": "Douala",
+                    "pays": "Cameroun",
+                    "statut": StatutTiers.ACTIF,
+                    "autorise_transport": True,
+                    "autorise_magasinage": True,
+                    "limite_credit_xaf": 100000000,
+                },
+                {
+                    "code_tiers": "CLI003",
+                    "raison_sociale": "CIMENCAM",
+                    "niu": "1234567890125",
+                    "rccm": "CM/DLA/2023/B/9012",
+                    "email": "transport@cimencam.cm",
+                    "telephone": "+237 233 43 21 09",
+                    "ville": "Douala",
+                    "pays": "Cameroun",
+                    "statut": StatutTiers.ACTIF,
+                    "autorise_transport": True,
+                    "autorise_acconage": True,
+                    "limite_credit_xaf": 75000000,
+                },
+            ]
 
-        created = 0
-        for c in clients_data:
-            result = session.execute(select(Tiers).where(Tiers.code_tiers == c["code_tiers"]))
-            if result.scalar_one_or_none():
-                print(f"  → Tiers {c['code_tiers']} already exists, skipping")
-                continue
-            session.add(Tiers(**c))
-            created += 1
+            created = 0
+            for c in clients_data:
+                result = session.execute(select(Tiers).where(Tiers.code_tiers == c["code_tiers"]))
+                if result.scalar_one_or_none():
+                    print(f"  → Tiers {c['code_tiers']} already exists, skipping")
+                    continue
+                session.add(Tiers(**c))
+                created += 1
 
-        session.commit()
-        print(f"✅ Tiers seeded: {created} created")
+            session.commit()
+            print(f"✅ Tiers seeded: {created} created")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping tiers seed because database is not ready: {exc}")
 
 
 def seed_camions():
