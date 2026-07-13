@@ -52,12 +52,13 @@ export const adminAPI = {
   createUser: (data: any) => apiClient.post('/api/admin/users', data),
   getRoles: () => apiClient.get('/api/admin/roles'),
   createRole: (data: any) => apiClient.post('/api/admin/roles', data),
-  getAuditLogs: () => apiClient.get('/api/admin/audit-logs'),
+  getAuditLogs: (params?: Record<string, unknown>) => apiClient.get('/api/admin/audit-logs', { params }),
   getAgencies: (params?: Record<string, unknown>) => apiClient.get('/api/admin/agencies', { params }),
   createAgency: (data: unknown) => apiClient.post('/api/admin/agencies', data),
   updateAgency: (id: number, data: unknown) => apiClient.put(`/api/admin/agencies/${id}`, data),
   deleteAgency: (id: number) => apiClient.delete(`/api/admin/agencies/${id}`),
   getDashboardKpis: () => apiClient.get('/api/admin/dashboard/global-kpis'),
+  getSystemHealth: () => apiClient.get('/api/admin/system-health'),
 };
 
 // ─── Service Auth ─────────────────────────────────────────
@@ -312,11 +313,4 @@ export const rhAPI = {
   updateCongeStatut: (id: number, statut: string) => apiClient.patch(`/api/rh/conges/${id}/statut`, { statut }),
   getPaie: (params?: Record<string, unknown>) => apiClient.get('/api/rh/paie', { params }),
   createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
-};
-
-// ─── Service Admin (System Health, Audit, etc) ────────────
-export const adminAPI = {
-  getSystemHealth: () => apiClient.get('/api/admin/system-health'),
-  getGlobalKpis: () => apiClient.get('/api/admin/dashboard/global-kpis'),
-  getAuditLogs: (params?: Record<string, unknown>) => apiClient.get('/api/admin/audit-logs', { params }),
 };

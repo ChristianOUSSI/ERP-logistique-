@@ -107,12 +107,8 @@ export default function AuditHealthDashboard() {
       )
 
       setLastRefresh(new Date())
-    } catch {
-      setApiOnline(false)
-    } finally {
       setLoading(false)
       setIsRefreshing(false)
-    }
   }, [])
 
   useEffect(() => {
