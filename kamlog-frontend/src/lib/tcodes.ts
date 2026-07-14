@@ -30,7 +30,6 @@ export const T_CODES: Record<string, string> = {
   // Finance (F)
   'F01': '/finance/overview',
   'F02': '/finance/invoicing/create',
-  'F03': '/finance/reconciliation',
   'F04': '/finance/gateway',
 
   // Master Data (MD)

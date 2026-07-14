@@ -40,7 +40,6 @@ export const TCODE_MAP: Record<string, string> = {
   // 🟣 Finance
   'KFIN_TAX': '/finance/analytics',
   'KFIN_FAC': '/finance/factures',
-  'KFIN_BNK': '/finance/banking/reconciliation',
   'KFIN_OVR': '/finance/overview',
 
   // 🔴 Parc

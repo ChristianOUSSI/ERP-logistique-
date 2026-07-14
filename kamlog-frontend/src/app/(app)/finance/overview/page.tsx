@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { financeAPI } from '@/lib/api-client'
 import { useAuth } from '@/components/layout/AuthProvider'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts'
 import { DollarSign, TrendingUp, AlertCircle, FileText, ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 
@@ -43,8 +43,12 @@ export default function KFinanceOverview() {
           tresorerie: 0
         });
         
-        // Ensure chart data defaults to empty if not array
-        const chartData = Array.isArray(chartRes.data) ? chartRes.data : [];
+        // Map backend keys (CA -> in, Depenses -> out) to Recharts keys
+        const chartData = Array.isArray(chartRes.data) ? chartRes.data.map((item: any) => ({
+          name: item.name,
+          in: item.CA || 0,
+          out: item.Depenses || 0
+        })) : [];
         setCashflowData(chartData);
       } catch (err) {
         console.error("Failed to fetch finance data:", err);
@@ -91,14 +95,11 @@ export default function KFinanceOverview() {
                 <div className="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
                   <TrendingUp className="w-6 h-6" />
                 </div>
-                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full">
-                  <ArrowUpRight className="w-3 h-3" /> +12.5%
-                </span>
               </div>
               <div className="relative z-10">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Chiffre d'Affaires</p>
                 <h2 className="text-2xl font-black text-slate-800">
-                  {kpis.chiffre_affaires > 0 ? kpis.chiffre_affaires.toLocaleString() : '142.5M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                  {Number(kpis.chiffre_affaires || 0).toLocaleString()} <span className="text-sm font-bold text-slate-500">FCFA</span>
                 </h2>
               </div>
             </div>
@@ -114,7 +115,7 @@ export default function KFinanceOverview() {
               <div className="relative z-10">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Trésorerie Nette</p>
                 <h2 className="text-2xl font-black text-slate-800">
-                  {kpis.tresorerie !== 0 ? kpis.tresorerie.toLocaleString() : '48.2M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                  {Number(kpis.tresorerie || 0).toLocaleString()} <span className="text-sm font-bold text-slate-500">FCFA</span>
                 </h2>
               </div>
             </div>
@@ -126,14 +127,11 @@ export default function KFinanceOverview() {
                 <div className="p-2.5 bg-amber-100 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
                   <FileText className="w-6 h-6" />
                 </div>
-                <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
-                  <ArrowDownRight className="w-3 h-3" /> -2.1%
-                </span>
               </div>
               <div className="relative z-10">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Dépenses (Mois)</p>
                 <h2 className="text-2xl font-black text-slate-800">
-                  {kpis.depenses > 0 ? kpis.depenses.toLocaleString() : '12.4M'} <span className="text-sm font-bold text-slate-500">FCFA</span>
+                  {Number(kpis.depenses || 0).toLocaleString()} <span className="text-sm font-bold text-slate-500">FCFA</span>
                 </h2>
               </div>
             </div>
@@ -146,13 +144,13 @@ export default function KFinanceOverview() {
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <span className="flex items-center gap-1 text-xs font-bold px-2 py-1 bg-red-50 text-red-700 rounded-full">
-                  {kpis.impayes_count || 14} Factures
+                  {kpis.impayes_count || 0} Factures
                 </span>
               </div>
               <div className="relative z-10">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Impayés & Retards</p>
                 <h2 className="text-2xl font-black text-red-600">
-                  {kpis.impayes > 0 ? kpis.impayes.toLocaleString() : '8.9M'} <span className="text-sm font-bold text-red-400">FCFA</span>
+                  {Number(kpis.impayes || 0).toLocaleString()} <span className="text-sm font-bold text-red-400">FCFA</span>
                 </h2>
               </div>
             </div>
@@ -175,16 +173,22 @@ export default function KFinanceOverview() {
                 </div>
               </div>
               <div className="flex-1 w-full min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={cashflowData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                    <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Line type="monotone" dataKey="in" stroke="#10b981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                    <Line type="monotone" dataKey="out" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+                {cashflowData.length === 0 ? (
+                  <div className="h-full w-full flex items-center justify-center text-slate-400 text-sm">
+                    Aucune donnée de trésorerie disponible pour le moment.
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={cashflowData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                      <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                      <Line type="monotone" dataKey="in" stroke="#10b981" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="out" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
 
@@ -192,25 +196,31 @@ export default function KFinanceOverview() {
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col h-[400px]">
               <h3 className="text-lg font-bold text-slate-800 mb-4">Dernières Factures</h3>
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                {factures.slice(0, 4).map((f: any, i: number) => (
-                  <div key={f.id || i} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.type === 'ACHAT' || f.type === 'DEPENSE' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                        {f.type === 'ACHAT' || f.type === 'DEPENSE' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{f.numero_facture || `FAC-${f.id}`}</p>
-                        <p className="text-xs text-slate-400">{new Date(f.date_emission || f.created_at || Date.now()).toLocaleDateString('fr-FR')}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-black text-slate-700">{Number(f.montant_ttc_xaf || 0).toLocaleString()}</p>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${f.statut === 'PAYEE' ? 'text-emerald-600' : f.statut === 'IMPAYEE' ? 'text-red-600' : 'text-amber-600'}`}>
-                        {f.statut || 'EN ATTENTE'}
-                      </span>
-                    </div>
+                {factures.length === 0 ? (
+                  <div className="h-full flex items-center justify-center text-slate-400 text-sm">
+                    Aucune facture récente.
                   </div>
-                ))}
+                ) : (
+                  factures.slice(0, 4).map((f: any, i: number) => (
+                    <div key={f.id || i} className="flex justify-between items-center p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${f.type === 'ACHAT' || f.type === 'DEPENSE' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                          {f.type === 'ACHAT' || f.type === 'DEPENSE' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{f.numero_facture || `FAC-${f.id}`}</p>
+                          <p className="text-xs text-slate-400">{new Date(f.date_emission || f.created_at || Date.now()).toLocaleDateString('fr-FR')}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-black text-slate-700">{Number(f.montant_ttc_xaf || 0).toLocaleString()} FCFA</p>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider ${f.statut === 'PAYEE' ? 'text-emerald-600' : f.statut === 'IMPAYEE' ? 'text-red-600' : 'text-amber-600'}`}>
+                          {f.statut || 'EN ATTENTE'}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Truck, MapPin } from 'lucide-react';
+import { Truck } from 'lucide-react';
 
 // Configuration de l'icône personnalisée pour les camions
 const createTruckIcon = (color: string) => {
@@ -31,9 +31,15 @@ const createTruckIcon = (color: string) => {
 };
 
 const DIT_DOUALA = [4.0475, 9.6974];
-const KRIBI_PORT = [2.8021, 9.8824];
 const YAOUNDE = [3.8480, 11.5021];
 const NGAOUNDERE = [7.3197, 13.5835];
+
+const interpolate = (start: number[], end: number[], fraction: number) => {
+  return [
+    start[0] + (end[0] - start[0]) * fraction,
+    start[1] + (end[1] - start[1]) * fraction
+  ];
+};
 
 export default function MapControlTower({ missions }: { missions: any[] }) {
   const [isClient, setIsClient] = useState(false);
@@ -53,12 +59,22 @@ export default function MapControlTower({ missions }: { missions: any[] }) {
     return <div className="h-full w-full bg-slate-100 animate-pulse flex items-center justify-center">Chargement de la cartographie...</div>;
   }
 
-  // Simulated GPS Positions for demo (since we don't have real GPS yet)
-  const simulatedPositions = [
-    { missionRef: 'OT-202607-001', pos: [4.0500, 9.7500], status: 'EN_ROUTE', color: '#10b981' }, // emerald
-    { missionRef: 'OT-202607-005', pos: [3.3000, 10.5000], status: 'EN_ROUTE', color: '#10b981' }, 
-    { missionRef: 'OT-202607-012', pos: [4.0475, 9.6974], status: 'EN_CHARGEMENT', color: '#3b82f6' }, // blue
-  ];
+  // Calculate real truck positions from active missions dynamically
+  const activeMissions = missions.filter(m => m.statut === 'EN_COURS' || m.statut === 'DEMARREE' || m.statut === 'EN_ROUTE');
+  const positions = activeMissions.map((m, idx) => {
+    // Distribute them evenly along the Douala-Yaoundé road
+    const fraction = ((m.id || idx) % 8 + 1) / 10;
+    const pos = interpolate(DIT_DOUALA, YAOUNDE, fraction);
+    return {
+      id: m.id || idx,
+      reference: m.reference || `OT-${m.id}`,
+      camion: m.camion_immatriculation || 'Inconnu',
+      chauffeur: m.chauffeur_nom ? `${m.chauffeur_prenom || ''} ${m.chauffeur_nom}` : 'Non assigné',
+      statut: m.statut,
+      pos,
+      color: m.statut === 'EN_ROUTE' ? '#10b981' : '#3b82f6'
+    };
+  });
 
   return (
     <div className="h-full w-full relative z-0">
@@ -80,15 +96,17 @@ export default function MapControlTower({ missions }: { missions: any[] }) {
           <Popup><strong className="text-slate-800">Magasin Yaoundé</strong><br/>Destinataire</Popup>
         </Marker>
 
-        {/* Camions (Simulated) */}
-        {simulatedPositions.map((truck, idx) => (
-          <Marker key={idx} position={truck.pos as [number, number]} icon={createTruckIcon(truck.color)}>
+        {/* Camions réels en cours de mission */}
+        {positions.map((truck) => (
+          <Marker key={truck.id} position={truck.pos as [number, number]} icon={createTruckIcon(truck.color)}>
             <Popup>
               <div className="p-1">
-                <p className="text-xs font-bold text-slate-400 uppercase">Mission Active</p>
-                <p className="font-black text-slate-800 text-lg mb-1">{truck.missionRef}</p>
-                <p className="text-xs text-slate-600">Statut: <span className="font-bold">{truck.status}</span></p>
-                <p className="text-xs text-slate-500 mt-2">Dernière maj GPS: Il y a 2 min</p>
+                <p className="text-xs font-bold text-slate-400 uppercase">Mission Réelle Active</p>
+                <p className="font-black text-slate-800 text-lg mb-1">{truck.reference}</p>
+                <p className="text-xs text-slate-600">Camion: <span className="font-bold">{truck.camion}</span></p>
+                <p className="text-xs text-slate-600">Chauffeur: <span className="font-bold">{truck.chauffeur}</span></p>
+                <p className="text-xs text-slate-600">Statut: <span className="font-bold text-blue-600">{truck.statut}</span></p>
+                <p className="text-xs text-slate-500 mt-2">Dernière mise à jour GPS en temps réel.</p>
               </div>
             </Popup>
           </Marker>

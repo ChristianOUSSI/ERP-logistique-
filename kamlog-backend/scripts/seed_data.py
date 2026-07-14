@@ -8,8 +8,14 @@ from app.models.agency import Agency
 from app.models.user import User, RoleModel, PermissionModel
 from sqlalchemy.orm import selectinload
 from app.models.tiers import Tiers, StatutTiers
-from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule
-from app.models.magasin import Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock
+from app.models.transport import CamionFlotte, ChauffeurProfil, TypeVehicule, TicketCarburant, MissionTransport, StatutMission
+from app.models.magasin import (
+    Magasin, Article, Stock, UniteMesure, CategorieArticle, StatutStock,
+    ClientMagasin, Declaration, LigneDeclaration, Commande, LigneCommande,
+    StatutCommande, StatutDeclaration
+)
+from app.models.finance import Facture, StatutFacture
+from app.models.rh import Employe, Contrat, Conge, FichePaie
 from app.utils.security import get_password_hash, verify_password
 
 # ── Default seed password (overridable per-user via env vars) ─────
@@ -182,18 +188,31 @@ def seed_tiers():
                     "limite_credit_xaf": 100000000,
                 },
                 {
-                    "code_tiers": "CLI003",
-                    "raison_sociale": "CIMENCAM",
-                    "niu": "1234567890125",
-                    "rccm": "CM/DLA/2023/B/9012",
-                    "email": "transport@cimencam.cm",
-                    "telephone": "+237 233 43 21 09",
+                    "code_tiers": "FOU001",
+                    "raison_sociale": "TRACTAFRIC Motors",
+                    "niu": "9876543210123",
+                    "rccm": "CM/DLA/2010/B/0011",
+                    "email": "sales@tractafric.cm",
+                    "telephone": "+237 233 44 55 66",
                     "ville": "Douala",
                     "pays": "Cameroun",
                     "statut": StatutTiers.ACTIF,
                     "autorise_transport": True,
-                    "autorise_acconage": True,
-                    "limite_credit_xaf": 75000000,
+                    "limite_credit_xaf": 200000000,
+                },
+                {
+                    "code_tiers": "FOU002",
+                    "raison_sociale": "CAMRAIL S.A.",
+                    "niu": "9876543210124",
+                    "rccm": "CM/DLA/1999/B/0022",
+                    "email": "fret@camrail.net",
+                    "telephone": "+237 233 40 12 34",
+                    "ville": "Douala",
+                    "pays": "Cameroun",
+                    "statut": StatutTiers.ACTIF,
+                    "autorise_transport": True,
+                    "autorise_transit": True,
+                    "limite_credit_xaf": 500000000,
                 },
             ]
 
@@ -249,6 +268,39 @@ def seed_camions():
                 "statut": "DISPONIBLE",
                 "actif": True,
             },
+            {
+                "immatriculation": "LT 001 TR",
+                "type_vehicule": TypeVehicule.CITERNE,
+                "marque": "RENAULT",
+                "modele": "K 430",
+                "charge_utile_kg": 20000,
+                "volume_reservoir_litres": 300,
+                "conso_theorique_l_100": 32,
+                "statut": "DISPONIBLE",
+                "actif": True,
+            },
+            {
+                "immatriculation": "LT 002 TR",
+                "type_vehicule": TypeVehicule.PORTE_CONTENEUR,
+                "marque": "MERCEDES",
+                "modele": "ACTROS 2045",
+                "charge_utile_kg": 35000,
+                "volume_reservoir_litres": 500,
+                "conso_theorique_l_100": 36,
+                "statut": "DISPONIBLE",
+                "actif": True,
+            },
+            {
+                "immatriculation": "CE 999 ZL",
+                "type_vehicule": TypeVehicule.PORTE_CONTENEUR,
+                "marque": "DAF",
+                "modele": "XF 480",
+                "charge_utile_kg": 29000,
+                "volume_reservoir_litres": 400,
+                "conso_theorique_l_100": 34,
+                "statut": "EN_MAINTENANCE",
+                "actif": True,
+            },
         ]
 
         created = 0
@@ -292,6 +344,14 @@ def seed_chauffeurs():
                 "numero_permis": "DLA-2023-001236",
                 "categorie_permis": "C",
                 "telephone": "+237 655 43 21 09",
+                "actif": True,
+            },
+            {
+                "nom": "Fouda",
+                "prenom": "Luc",
+                "numero_permis": "DLA-2023-001237",
+                "categorie_permis": "CE",
+                "telephone": "+237 690 11 22 33",
                 "actif": True,
             },
         ]
@@ -338,28 +398,42 @@ def seed_magasin():
                 session.flush()  # Pour avoir l'ID
             magasins_map[m["code"]] = mag
 
-        # 2. Articles
         articles_data = [
             {
-                "code_article": "ART-001",
-                "nom": "Pièces de rechange Camion",
-                "categorie": CategorieArticle.PIECES_DETACHEES,
-                "unite_mesure": UniteMesure.UDB,
-                "poids_unitaire": 5.0,
+                "code_article": "ART-001", "nom": "Filtre à Huile MAN", "categorie": CategorieArticle.PIECES_DETACHEES, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 1.2
             },
             {
-                "code_article": "ART-002",
-                "nom": "Equipement de Protection Individuelle (EPI)",
-                "categorie": CategorieArticle.EQUIPEMENT,
-                "unite_mesure": UniteMesure.UNITE,
-                "poids_unitaire": 1.5,
+                "code_article": "ART-002", "nom": "Pneu Poids Lourd 315/80R22.5", "categorie": CategorieArticle.PIECES_DETACHEES, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 65.0
             },
             {
-                "code_article": "ART-003",
-                "nom": "Carburant Diesel (Fût)",
-                "categorie": CategorieArticle.MATIERES_PREMIERES,
-                "unite_mesure": UniteMesure.M3,
-                "volume_unitaire": 0.2,
+                "code_article": "ART-003", "nom": "Huile Moteur 15W40 (Fût 200L)", "categorie": CategorieArticle.PRODUITS_DANGEREUX, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 185.0
+            },
+            {
+                "code_article": "ART-004", "nom": "Plaquettes de frein DAF", "categorie": CategorieArticle.PIECES_DETACHEES, "unite_mesure": UniteMesure.KG, "poids_unitaire": 5.5
+            },
+            {
+                "code_article": "ART-005", "nom": "Câble de remorquage Acier 50T", "categorie": CategorieArticle.PIECES_DETACHEES, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 25.0
+            },
+            {
+                "code_article": "ART-006", "nom": "Casque de sécurité Chantier", "categorie": CategorieArticle.EQUIPEMENT, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 0.4
+            },
+            {
+                "code_article": "ART-007", "nom": "Gilet réfléchissant Haute Visibilité", "categorie": CategorieArticle.EQUIPEMENT, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 0.2
+            },
+            {
+                "code_article": "ART-008", "nom": "Chaussures de sécurité S3", "categorie": CategorieArticle.EQUIPEMENT, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 1.5
+            },
+            {
+                "code_article": "ART-009", "nom": "Extincteur Poudre ABC 6Kg", "categorie": CategorieArticle.PRODUITS_DANGEREUX, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 9.5
+            },
+            {
+                "code_article": "ART-010", "nom": "Sangles d'arrimage 5T (10m)", "categorie": CategorieArticle.PIECES_DETACHEES, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 3.0
+            },
+            {
+                "code_article": "ART-011", "nom": "Clé dynamométrique PL", "categorie": CategorieArticle.EQUIPEMENT, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 4.5
+            },
+            {
+                "code_article": "ART-012", "nom": "Liquide de refroidissement (-25°C) 20L", "categorie": CategorieArticle.PRODUITS_DANGEREUX, "unite_mesure": UniteMesure.UNITE, "poids_unitaire": 22.0
             }
         ]
 
@@ -411,8 +485,400 @@ def seed_magasin():
                 if not stk:
                     session.add(Stock(**s))
 
+        # 4. Clients Magasin
+        clients_mag_data = [
+            {
+                "code": "CLI001",
+                "nom": "SABC",
+                "raison_sociale": "Société Anonyme des Brasseries du Cameroun",
+                "telephone": "+237 233 42 34 56",
+                "email": "contact@sabc.cm",
+                "ville": "Douala",
+                "pays": "Cameroun",
+                "est_actif": True
+            },
+            {
+                "code": "CLI002",
+                "nom": "TOTAL",
+                "raison_sociale": "TOTAL Cameroun",
+                "telephone": "+237 233 42 78 90",
+                "email": "logistique@total.cm",
+                "ville": "Douala",
+                "pays": "Cameroun",
+                "est_actif": True
+            }
+        ]
+        
+        clients_mag_map = {}
+        for c in clients_mag_data:
+            result = session.execute(select(ClientMagasin).where(ClientMagasin.code == c["code"]))
+            cli = result.scalar_one_or_none()
+            if not cli:
+                cli = ClientMagasin(**c)
+                session.add(cli)
+                session.flush()
+            clients_mag_map[c["code"]] = cli
+
+        # 5. Declarations
+        dec_data = [
+            {
+                "numero_bl": "BL-SABC-2026-001",
+                "client_id": clients_mag_map["CLI001"].id,
+                "code_article": "ART-001",
+                "numero_conteneur": "MSCU1234567",
+                "statut": StatutDeclaration.VALIDEE,
+                "cree_par": "system",
+                "nom_navire": "MSC ADRIANA",
+                "port_chargement": "Anvers",
+                "port_dechargement": "Douala"
+            },
+            {
+                "numero_bl": "BL-TOTAL-2026-001",
+                "client_id": clients_mag_map["CLI002"].id,
+                "code_article": "ART-002",
+                "numero_conteneur": "CMAU7654321",
+                "statut": StatutDeclaration.VALIDEE,
+                "cree_par": "system",
+                "nom_navire": "CMA CGM JULES VERNE",
+                "port_chargement": "Le Havre",
+                "port_dechargement": "Douala"
+            }
+        ]
+
+        dec_map = {}
+        for d in dec_data:
+            result = session.execute(select(Declaration).where(Declaration.numero_bl == d["numero_bl"]))
+            dec = result.scalar_one_or_none()
+            if not dec:
+                dec = Declaration(**d)
+                session.add(dec)
+                session.flush()
+                # Create line for declaration
+                ligne = LigneDeclaration(
+                    declaration_id=dec.id,
+                    article_id=articles_map[d["code_article"]].id,
+                    quantite_declaree=100,
+                    unite_mesure=UniteMesure.UNITE,
+                    quantite_udb=100
+                )
+                session.add(ligne)
+            dec_map[d["numero_bl"]] = dec
+
+        # 6. Commandes (Orders)
+        cmd_data = [
+            {
+                "numero_commande": "CMD-SABC-2026-001",
+                "client_id": clients_mag_map["CLI001"].id,
+                "statut": StatutCommande.PAYEE,
+                "est_verrouille": False,
+                "paiement_valide": True,
+                "cree_par": "system"
+            },
+            {
+                "numero_commande": "CMD-TOTAL-2026-001",
+                "client_id": clients_mag_map["CLI002"].id,
+                "statut": StatutCommande.EN_PREPARATION,
+                "est_verrouille": True,
+                "paiement_valide": False,
+                "cree_par": "system"
+            }
+        ]
+
+        for cmd in cmd_data:
+            result = session.execute(select(Commande).where(Commande.numero_commande == cmd["numero_commande"]))
+            c_db = result.scalar_one_or_none()
+            if not c_db:
+                c_db = Commande(**cmd)
+                session.add(c_db)
+                session.flush()
+                # Ligne de commande
+                # SABC orders filters, TOTAL orders tires
+                art_code = "ART-001" if cmd["numero_commande"] == "CMD-SABC-2026-001" else "ART-002"
+                ligne_cmd = LigneCommande(
+                    commande_id=c_db.id,
+                    article_id=articles_map[art_code].id,
+                    quantite_demandee=10,
+                    unite_mesure=UniteMesure.UNITE,
+                    prix_unitaire=articles_map[art_code].poids_unitaire * 1000 # Dummy price
+                )
+                session.add(ligne_cmd)
+
         session.commit()
-        print("✅ Magasins, Articles et Stocks seeded")
+        print("✅ Magasins, Articles, Stocks, Clients, Declarations, Commandes seeded")
+
+
+def seed_finance():
+    """Crée les factures de test. Idempotent."""
+    try:
+        from datetime import datetime, timedelta
+        with SessionLocal() as session:
+            # Récupérer l'agence et les tiers
+            agency = session.execute(select(Agency).where(Agency.code == "KAM-DLA")).scalar_one_or_none()
+            if not agency:
+                print("⚠️ Agency missing, skipping finance seed.")
+                return
+
+            tiers = session.execute(select(Tiers)).scalars().all()
+            if not tiers:
+                print("⚠️ Tiers missing, skipping finance seed.")
+                return
+            
+            clients = [t for t in tiers if "CLI" in t.code_tiers]
+            fournisseurs = [t for t in tiers if "FOU" in t.code_tiers]
+
+            factures_data = []
+            
+            if clients:
+                factures_data.append({
+                    "numero_facture": f"FAC-VEN-{datetime.now().strftime('%Y%m')}-001",
+                    "tiers_id": clients[0].id,
+                    "montant_ht_xaf": 1500000,
+                    "tva_xaf": 288750, # 19.25%
+                    "montant_ttc_xaf": 1788750,
+                    "statut": StatutFacture.EMISE,
+                    "date_emission": datetime.now() - timedelta(days=5),
+                    "date_echeance": datetime.now() + timedelta(days=25),
+                })
+            if fournisseurs:
+                factures_data.append({
+                    "numero_facture": f"FAC-ACH-{datetime.now().strftime('%Y%m')}-001",
+                    "tiers_id": fournisseurs[0].id,
+                    "montant_ht_xaf": 3000000,
+                    "tva_xaf": 577500,
+                    "montant_ttc_xaf": 3577500,
+                    "statut": StatutFacture.PARTIELLEMENT_PAYEE,
+                    "date_emission": datetime.now() - timedelta(days=15),
+                    "date_echeance": datetime.now() + timedelta(days=15),
+                })
+
+            created = 0
+            for f in factures_data:
+                result = session.execute(select(Facture).where(Facture.numero_facture == f["numero_facture"]))
+                if result.scalar_one_or_none():
+                    print(f"  → Facture {f['numero_facture']} already exists, skipping")
+                    continue
+                facture = Facture(**f)
+                session.add(facture)
+                created += 1
+
+            session.commit()
+            print(f"✅ Factures seeded: {created} created")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping finance seed because database is not ready: {exc}")
+
+def seed_rh():
+    """Crée les profils d'employés et les données RH associées. Idempotent."""
+    try:
+        from datetime import date, timedelta
+        with SessionLocal() as session:
+            # Récupérer l'utilisateur admin pour le lier
+            admin_user = session.execute(select(User).where(User.email == "admin@kamlog.cm")).scalar_one_or_none()
+            
+            employes_data = [
+                {
+                    "matricule": "EMP001",
+                    "nom": "System",
+                    "prenom": "Admin",
+                    "email": "admin@kamlog.cm",
+                    "telephone": "+237 699 00 11 22",
+                    "departement": "ADMINISTRATION",
+                    "poste": "Administrateur Système",
+                    "date_embauche": date(2020, 1, 1),
+                    "statut": "ACTIF",
+                    "user_id": admin_user.id if admin_user else None
+                },
+                {
+                    "matricule": "EMP002",
+                    "nom": "Mbarga",
+                    "prenom": "Jean",
+                    "email": "j.mbarga@kamlog.cm",
+                    "telephone": "+237 699 12 34 56",
+                    "departement": "LOGISTIQUE",
+                    "poste": "Chauffeur Principal",
+                    "date_embauche": date(2023, 5, 15),
+                    "statut": "ACTIF",
+                    "user_id": None
+                },
+                {
+                    "matricule": "EMP003",
+                    "nom": "Nkodo",
+                    "prenom": "Paul",
+                    "email": "p.nkodo@kamlog.cm",
+                    "telephone": "+237 677 98 76 54",
+                    "departement": "LOGISTIQUE",
+                    "poste": "Chauffeur",
+                    "date_embauche": date(2024, 2, 10),
+                    "statut": "ACTIF",
+                    "user_id": None
+                }
+            ]
+
+            created = 0
+            for emp in employes_data:
+                result = session.execute(select(Employe).where(Employe.matricule == emp["matricule"]))
+                if result.scalar_one_or_none():
+                    print(f"  → Employe {emp['matricule']} already exists, skipping")
+                    continue
+                db_emp = Employe(**emp)
+                session.add(db_emp)
+                session.flush() # Pour avoir l'ID pour le contrat
+                
+                # Créer un contrat actif pour l'employé
+                contrat = Contrat(
+                    employe_id=db_emp.id,
+                    type_contrat="CDI",
+                    salaire_base=500000 if emp["matricule"] == "EMP001" else 200000,
+                    date_debut=emp["date_embauche"],
+                    est_actif=True
+                )
+                session.add(contrat)
+                
+                # Créer une fiche de paie de test
+                fiche = FichePaie(
+                    employe_id=db_emp.id,
+                    periode="2026-06",
+                    salaire_base=contrat.salaire_base,
+                    primes=50000 if emp["matricule"] != "EMP001" else 0,
+                    deductions=10000,
+                    net_a_payer=(contrat.salaire_base + (50000 if emp["matricule"] != "EMP001" else 0)) - 10000,
+                    statut="PAYEE"
+                )
+                session.add(fiche)
+                
+                # Créer un congé approuvé pour le fun
+                if emp["matricule"] == "EMP003":
+                    conge = Conge(
+                        employe_id=db_emp.id,
+                        type_conge="ANNUEL",
+                        date_debut=date.today() - timedelta(days=2),
+                        date_fin=date.today() + timedelta(days=5),
+                        statut="APPROUVE",
+                        motif="Congés annuels de détente"
+                    )
+                    session.add(conge)
+
+                created += 1
+
+            session.commit()
+            print(f"✅ RH (Employes, Contrats, Conges, Fiches) seeded: {created} profiles created")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping RH seed because database is not ready: {exc}")
+
+def seed_fuel():
+    """Crée les tickets de carburant de test pour la flotte de camions. Idempotent."""
+    try:
+        with SessionLocal() as session:
+            camions = session.execute(select(CamionFlotte)).scalars().all()
+            chauffeurs = session.execute(select(ChauffeurProfil)).scalars().all()
+            
+            if not camions or not chauffeurs:
+                print("⚠️ Camions or Chauffeurs missing, skipping fuel seed.")
+                return
+
+            created = 0
+            # Créer des tickets pour les 3 premiers camions
+            for idx, c in enumerate(camions[:3]):
+                ch = chauffeurs[idx % len(chauffeurs)]
+                # Vérifier si un ticket existe déjà pour ce camion et ce kilométrage
+                km = 120000 + (idx * 500)
+                result = session.execute(
+                    select(TicketCarburant).where(
+                        TicketCarburant.camion_id == c.id, 
+                        TicketCarburant.kilometrage == km
+                    )
+                )
+                if result.scalar_one_or_none():
+                    continue
+                
+                ticket = TicketCarburant(
+                    camion_id=c.id,
+                    chauffeur_id=ch.id,
+                    quantite_litres=120 + (idx * 20),
+                    prix_unitaire=650, # FCFA par litre
+                    montant_total=(120 + (idx * 20)) * 650,
+                    date_plein="2026-07-12",
+                    kilometrage=km,
+                    station_service="TOTAL Douala Bassa",
+                    notes="Plein hebdomadaire de routine"
+                )
+                session.add(ticket)
+                created += 1
+                
+            session.commit()
+            print(f"✅ Fuel tickets seeded: {created} created")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping fuel seed because database is not ready: {exc}")
+
+def seed_missions():
+    """Crée les missions de transport de test liées aux clients réels. Idempotent."""
+    try:
+        from datetime import datetime, timedelta
+        with SessionLocal() as session:
+            tiers = session.execute(select(Tiers)).scalars().all()
+            camions = session.execute(select(CamionFlotte)).scalars().all()
+            chauffeurs = session.execute(select(ChauffeurProfil)).scalars().all()
+            
+            if not tiers or not camions or not chauffeurs:
+                print("⚠️ Tiers, Camions or Chauffeurs missing, skipping missions seed.")
+                return
+
+            clients = [t for t in tiers if "CLI" in t.code_tiers]
+            if not clients:
+                print("⚠️ No clients found for missions, skipping missions seed.")
+                return
+
+            # Trouver des clients précis
+            sabc = next((c for c in clients if "CLI001" in c.code_tiers), clients[0])
+            total = next((c for c in clients if "CLI002" in c.code_tiers), clients[0])
+
+            missions_data = [
+                {
+                    "reference": "MS-2026-07-001",
+                    "tiers_id": sabc.id,
+                    "camion_id": camions[0].id,
+                    "chauffeur_id": chauffeurs[0].id,
+                    "origine": "Douala (Port Autonome)",
+                    "destination": "Yaoundé (Dépôt SABC)",
+                    "distance_km": 250.0,
+                    "nature_fret": "Boissons & Matières premières",
+                    "montant_fret": 450000,
+                    "frais_peage": 10000,
+                    "statut": StatutMission.EN_ROUTE,
+                    "date_chargement_prevue": datetime.now() - timedelta(hours=4),
+                    "notes": "Livraison express de brasserie"
+                },
+                {
+                    "reference": "MS-2026-07-002",
+                    "tiers_id": total.id,
+                    "camion_id": camions[1].id,
+                    "chauffeur_id": chauffeurs[1].id,
+                    "origine": "Douala (Dépôt SCDP)",
+                    "destination": "Kribi (Station TOTAL)",
+                    "distance_km": 170.0,
+                    "nature_fret": "Hydrocarbures (Super)",
+                    "montant_fret": 350000,
+                    "frais_peage": 5000,
+                    "statut": StatutMission.TERMINEE,
+                    "date_chargement_prevue": datetime.now() - timedelta(days=2),
+                    "date_livraison_reelle": datetime.now() - timedelta(days=1),
+                    "notes": "Transport de produits sensibles"
+                }
+            ]
+
+            created = 0
+            for m in missions_data:
+                result = session.execute(select(MissionTransport).where(MissionTransport.reference == m["reference"]))
+                if result.scalar_one_or_none():
+                    print(f"  → Mission {m['reference']} already exists, skipping")
+                    continue
+                mission = MissionTransport(**m)
+                session.add(mission)
+                created += 1
+
+            session.commit()
+            print(f"✅ Transport missions seeded: {created} created")
+    except (OperationalError, ProgrammingError) as exc:
+        print(f"⚠️ Skipping missions seed because database is not ready: {exc}")
 
 
 def seed_rbac():
@@ -582,6 +1048,10 @@ def main():
         seed_camions()
         seed_chauffeurs()
         seed_magasin()
+        seed_finance()
+        seed_rh()
+        seed_fuel()
+        seed_missions()
         print("✅ All seed data completed successfully!")
     except Exception as e:
         print(f"❌ Error during seed: {e}")

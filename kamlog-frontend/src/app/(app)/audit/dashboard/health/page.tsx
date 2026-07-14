@@ -102,7 +102,7 @@ export default function AuditHealthDashboard() {
       setUptimeData(
         Array.from({ length: 24 }).map((_, i) => ({
           time: `${String((now.getHours() - 23 + i + 24) % 24).padStart(2, '0')}:00`,
-          uptime: 97.5 + Math.random() * 2.5,
+          uptime: (hRes && hRes.data) ? 100 : 0,
         }))
       )
 
