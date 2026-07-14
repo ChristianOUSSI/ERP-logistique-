@@ -5,6 +5,7 @@
 
 import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function MfaPage() {
   const router = useRouter()
@@ -165,7 +166,7 @@ export default function MfaPage() {
 
                 {/* ── Alternative actions ── */}
                 <div className="pt-sm border-t border-outline-variant flex flex-col gap-sm text-center">
-                  <a className="text-body-sm text-primary font-medium hover:underline flex items-center justify-center gap-xxs cursor-pointer" href="#">
+                  <a className="text-body-sm text-primary font-medium hover:underline flex items-center justify-center gap-xxs cursor-pointer" onClick={(e) => { e.preventDefault(); toast.info('Codes de secours en cours de construction'); }}>
                     <span className="material-symbols-outlined text-[16px]">key</span>
                     Enter backup code
                   </a>
