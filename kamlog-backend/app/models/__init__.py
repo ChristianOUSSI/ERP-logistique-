@@ -113,6 +113,7 @@ from app.models.notification import (
     PrioriteNotification,
     StatutNotification,
 )
+from app.models.rh import Employe, Contrat, Conge, FichePaie
 
 __all__ = [
     "Base",
@@ -216,4 +217,8 @@ __all__ = [
     "TypeNotification",
     "PrioriteNotification",
     "StatutNotification",
+    "Employe",
+    "Contrat",
+    "Conge",
+    "FichePaie",
 ]

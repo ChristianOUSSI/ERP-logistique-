@@ -52,12 +52,13 @@ export const adminAPI = {
   createUser: (data: any) => apiClient.post('/api/admin/users', data),
   getRoles: () => apiClient.get('/api/admin/roles'),
   createRole: (data: any) => apiClient.post('/api/admin/roles', data),
-  getAuditLogs: () => apiClient.get('/api/admin/audit-logs'),
+  getAuditLogs: (params?: Record<string, unknown>) => apiClient.get('/api/admin/audit-logs', { params }),
   getAgencies: (params?: Record<string, unknown>) => apiClient.get('/api/admin/agencies', { params }),
   createAgency: (data: unknown) => apiClient.post('/api/admin/agencies', data),
   updateAgency: (id: number, data: unknown) => apiClient.put(`/api/admin/agencies/${id}`, data),
   deleteAgency: (id: number) => apiClient.delete(`/api/admin/agencies/${id}`),
   getDashboardKpis: () => apiClient.get('/api/admin/dashboard/global-kpis'),
+  getSystemHealth: () => apiClient.get('/api/admin/system-health'),
 };
 
 // ─── Service Auth ─────────────────────────────────────────
@@ -172,6 +173,15 @@ export const parcAPI = {
     apiClient.get('/api/parc/stock', { params }),
   gateIn: (data: unknown) => apiClient.post('/api/parc/gate-in', data),
   gateOut: (data: unknown) => apiClient.post('/api/parc/gate-out', data),
+  extractOCR: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiClient.post('/api/parc/ocr-extract', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
   getWorkshopRepairs: () =>
     apiClient.get('/api/parc/workshop'),
 };
@@ -228,6 +238,14 @@ export const magasinAPI = {
     apiClient.get('/api/magasin/stocks', { params }),
   getKpis: () =>
     apiClient.get('/api/magasin/kpis'),
+  getClients: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/clients', { params }),
+  createClient: (data: unknown) =>
+    apiClient.post('/api/magasin/clients', data),
+  updateClient: (id: number, data: unknown) =>
+    apiClient.put(`/api/magasin/clients/${id}`, data),
+  deleteClient: (id: number) =>
+    apiClient.delete(`/api/magasin/clients/${id}`),
   getReceptions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/receptions', { params }),
   createReception: async (data: any) => {
@@ -303,4 +321,10 @@ export const rhAPI = {
   updateCongeStatut: (id: number, statut: string) => apiClient.patch(`/api/rh/conges/${id}/statut`, { statut }),
   getPaie: (params?: Record<string, unknown>) => apiClient.get('/api/rh/paie', { params }),
   createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
+};
+
+// ─── Service Gateway ──────────────────────────────────────
+export const gatewayAPI = {
+  getPasserellesEnAttente: () => apiClient.get('/api/passerelles/en-attente').then(r => r.data),
+  getPasserelles: () => apiClient.get('/api/passerelles').then(r => r.data),
 };

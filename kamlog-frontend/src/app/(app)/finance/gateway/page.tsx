@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from 'react'
 import { useComingSoon } from '@/contexts/ComingSoonContext'
-import { gatewayAPI, Passerelle } from '@/lib/api/gateway'
+import { gatewayAPI } from '@/lib/api-client';
+import { Passerelle } from '@/types/gateway';
 import { toast } from 'sonner'
 
 export default function KFinanceGatewayMonitor() {
@@ -20,8 +21,8 @@ export default function KFinanceGatewayMonitor() {
   const fetchPasserelles = async () => {
     try {
       setLoading(true)
-      const data = await gatewayAPI.getPasserellesEnAttente()
-      setPasserelles(data)
+      const data = await gatewayAPI.getPasserelles()
+      setPasserelles(data || [])
     } catch (error) {
       toast.error("Erreur lors du chargement des passerelles")
       console.error(error)
@@ -33,6 +34,18 @@ export default function KFinanceGatewayMonitor() {
   const handleBulkValidate = () => {
     showComingSoon('Validation groupée K-Finance')
   }
+
+  const successfulCount = passerelles.filter(p => p.statut === 'TRAITE').length
+  const pendingCount = passerelles.filter(p => p.statut === 'EN_ATTENTE' || p.statut === 'EN_COURS').length
+  const failedCount = passerelles.filter(p => p.statut === 'ECHOUE').length
+  const totalCount = passerelles.length
+  
+  const successRate = totalCount > 0 ? ((successfulCount / totalCount) * 100).toFixed(1) : '100.0'
+  const strokeDashoffset = totalCount > 0 ? (282.7 * (1 - (successfulCount / totalCount))) : 0
+
+  const totalRevenue = passerelles.reduce((acc, curr) => acc + (curr.donnees_json?.montant || 0), 0)
+  const taxAccrual = totalRevenue * 0.1925 // 19.25% TVA Cameroun
+  const netTransfer = totalRevenue - taxAccrual
 
   return (
     <>
@@ -117,24 +130,30 @@ export default function KFinanceGatewayMonitor() {
                   </div>
                 </div>
                 <div className="h-64 flex items-end justify-between gap-xs px-md">
-                  {/* Simplified bar chart representation */}
-                  <div className="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[40%]"></div>
-                  <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[65%]"></div>
-                  <div className="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[20%]"></div>
-                  <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[90%]"></div>
-                  <div className="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[55%]"></div>
-                  <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[75%]"></div>
-                  <div className="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[45%]"></div>
-                  <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[85%]"></div>
-                  <div className="group relative flex-1 bg-surface-container-low rounded-t-lg transition-all hover:bg-primary-container h-[35%]"></div>
-                  <div className="group relative flex-1 bg-primary rounded-t-lg transition-all hover:bg-primary/80 h-[60%]"></div>
+                  {passerelles.length === 0 ? (
+                    <div className="w-full h-full flex items-center justify-center text-on-surface-variant text-body-sm">
+                      No live data available. Add invoices or trigger missions to process transfers.
+                    </div>
+                  ) : (
+                    passerelles.slice(0, 10).map((p, idx) => {
+                      const amount = p.donnees_json?.montant || 0;
+                      const maxAmount = Math.max(...passerelles.map(x => x.donnees_json?.montant || 1), 1);
+                      const heightPercent = Math.max(10, Math.min(100, (amount / maxAmount) * 100));
+                      return (
+                        <div 
+                          key={p.id || idx} 
+                          className={`group relative flex-1 ${idx % 2 === 0 ? 'bg-primary' : 'bg-surface-container-low'} rounded-t-lg transition-all hover:bg-primary-container`} 
+                          style={{ height: `${heightPercent}%` }}
+                          title={`FCFA ${amount.toLocaleString()}`}
+                        />
+                      )
+                    })
+                  )}
                 </div>
-                <div className="grid grid-cols-5 mt-md border-t border-outline-variant pt-md">
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA42k</span><span className="text-label-sm text-on-surface-variant">Mon</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA68k</span><span className="text-label-sm text-on-surface-variant">Tue</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA39k</span><span className="text-label-sm text-on-surface-variant">Wed</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA92k</span><span className="text-label-sm text-on-surface-variant">Thu</span></div>
-                  <div className="text-center"><span className="block text-title-md font-bold text-primary">FCFA54k</span><span className="text-label-sm text-on-surface-variant">Fri</span></div>
+                <div className="grid grid-cols-5 mt-md border-t border-outline-variant pt-md text-center">
+                  <div className="col-span-5 text-label-sm text-on-surface-variant font-bold">
+                    Total Volume Traité : FCFA {totalRevenue.toLocaleString()}
+                  </div>
                 </div>
               </div>
               {/* Circular Gateway Status */}
@@ -143,25 +162,25 @@ export default function KFinanceGatewayMonitor() {
                 <div className="relative w-40 h-40">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                     <circle className="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" strokeWidth="8"></circle>
-                    <circle className="text-primary" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" strokeDasharray="282.7" strokeDashoffset="30" strokeWidth="8"></circle>
+                    <circle className="text-primary" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" strokeDasharray="282.7" strokeDashoffset={strokeDashoffset} strokeWidth="8"></circle>
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-headline-md font-headline-md text-on-surface">94.2%</span>
-                    <span className="text-label-md text-primary font-bold">OPTIMIZED</span>
+                    <span className="text-headline-md font-headline-md text-on-surface">{successRate}%</span>
+                    <span className="text-label-md text-primary font-bold">{parseFloat(successRate) > 90 ? 'OPTIMIZED' : 'MONITORED'}</span>
                   </div>
                 </div>
                 <div className="w-full space-y-xs pt-xs">
                   <div className="flex justify-between text-body-sm">
                     <span className="text-on-surface-variant">Successful</span>
-                    <span className="font-bold">1,482</span>
+                    <span className="font-bold">{successfulCount}</span>
                   </div>
                   <div className="flex justify-between text-body-sm">
                     <span className="text-on-surface-variant">Pending</span>
-                    <span className="font-bold">24</span>
+                    <span className="font-bold">{pendingCount}</span>
                   </div>
                   <div className="flex justify-between text-body-sm">
                     <span className="text-on-surface-variant">Failed</span>
-                    <span className="font-bold text-error">12</span>
+                    <span className="font-bold text-error">{failedCount}</span>
                   </div>
                 </div>
               </div>
@@ -201,7 +220,7 @@ export default function KFinanceGatewayMonitor() {
                     {loading ? (
                       <tr><td colSpan={8} className="px-md py-8 text-center text-on-surface-variant">Chargement des transactions...</td></tr>
                     ) : passerelles.length === 0 ? (
-                      <tr><td colSpan={8} className="px-md py-8 text-center text-on-surface-variant">Aucune transaction en attente</td></tr>
+                      <tr><td colSpan={8} className="px-md py-8 text-center text-on-surface-variant">Aucune transaction</td></tr>
                     ) : (
                       passerelles.map((passerelle) => (
                         <tr key={passerelle.id} className="hover:bg-surface-container-low transition-colors">
@@ -236,16 +255,6 @@ export default function KFinanceGatewayMonitor() {
                   </tbody>
                 </table>
               </div>
-              <div className="p-md bg-surface-container-low flex justify-between items-center text-label-md border-t border-outline-variant">
-                <span className="text-on-surface-variant">Showing 1-5 of 152 transactions</span>
-                <div className="flex gap-xs">
-                  <button className="p-1.5 rounded hover:bg-surface-dim transition-colors"><span className="material-symbols-outlined text-[18px]">chevron_left</span></button>
-                  <button className="px-2 rounded bg-primary text-white font-bold">1</button>
-                  <button className="px-2 rounded hover:bg-surface-dim transition-colors">2</button>
-                  <button className="px-2 rounded hover:bg-surface-dim transition-colors">3</button>
-                  <button className="p-1.5 rounded hover:bg-surface-dim transition-colors"><span className="material-symbols-outlined text-[18px]">chevron_right</span></button>
-                </div>
-              </div>
             </div>
             {/* Operational Pane */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
@@ -253,18 +262,16 @@ export default function KFinanceGatewayMonitor() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 -mr-16 -mt-16 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
                 <h3 className="text-title-md font-title-md text-on-surface mb-md">System Log Insight</h3>
                 <div className="space-y-sm">
-                  <div className="flex gap-md text-body-sm font-mono p-xs bg-surface-container rounded">
-                    <span className="text-primary font-bold">[11:04:22]</span>
-                    <span className="text-on-surface">GATEWAY: COMMANDE_FACTURE validated (ID: TR-9921-X)</span>
-                  </div>
-                  <div className="flex gap-md text-body-sm font-mono p-xs">
-                    <span className="text-tertiary font-bold">[10:58:10]</span>
-                    <span className="text-on-surface">SECURITY: Authentication handshake from K-PARC confirmed.</span>
-                  </div>
-                  <div className="flex gap-md text-body-sm font-mono p-xs bg-surface-container rounded">
-                    <span className="text-error font-bold">[10:45:00]</span>
-                    <span className="text-on-surface">ERROR: Mission FI-2026-002 timeout - Retrying in 300s.</span>
-                  </div>
+                  {passerelles.length === 0 ? (
+                    <div className="text-body-sm text-on-surface-variant">No logs generated.</div>
+                  ) : (
+                    passerelles.slice(0, 3).map((p, idx) => (
+                      <div key={p.id || idx} className="flex gap-md text-body-sm font-mono p-xs bg-surface-container rounded">
+                        <span className="text-primary font-bold">[{new Date(p.date_creation).toLocaleTimeString()}]</span>
+                        <span className="text-on-surface">GATEWAY: {p.type_passerelle} processed ({p.source_module} → {p.cible_module})</span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
               {/* Financial Summary Card */}
@@ -274,33 +281,21 @@ export default function KFinanceGatewayMonitor() {
                     <span className="text-label-md font-label-md opacity-80 uppercase tracking-widest">Gateway Cashflow (24h)</span>
                     <span className="material-symbols-outlined opacity-60">trending_up</span>
                   </div>
-                  <div className="text-headline-lg font-headline-lg leading-none">FCFA 482,904.55</div>
-                  <div className="mt-xs text-label-sm flex items-center gap-xs">
-                    <span className="material-symbols-outlined text-[14px]">arrow_upward</span>
-                    <span>+12.4% vs previous period</span>
-                  </div>
+                  <div className="text-headline-lg font-headline-lg leading-none">FCFA {totalRevenue.toLocaleString()}</div>
                 </div>
                 <div className="pt-lg flex gap-md">
                   <div className="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
-                    <div className="text-label-sm opacity-70">Tax Accrual</div>
-                    <div className="text-title-md font-bold">FCFA 91.5k</div>
+                    <div className="text-label-sm opacity-70">Tax Accrual (TVA)</div>
+                    <div className="text-title-md font-bold">FCFA {taxAccrual.toLocaleString()}</div>
                   </div>
                   <div className="flex-1 p-md bg-white/10 rounded-lg backdrop-blur-sm">
                     <div className="text-label-sm opacity-70">Net Transfer</div>
-                    <div className="text-title-md font-bold">FCFA 391.4k</div>
+                    <div className="text-title-md font-bold">FCFA {netTransfer.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
             </div>
           </main>
-        </div>
-        {/* Micro-interaction: Toast */}
-        <div className={`fixed bottom-8 right-8 bg-inverse-surface text-inverse-on-surface px-lg py-md rounded-xl shadow-2xl transition-all duration-300 flex items-center gap-md z-[100] ${showToast ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0'}`}>
-          <span className="material-symbols-outlined text-secondary-fixed">check_circle</span>
-          <div>
-            <div className="font-bold text-label-md">Operation Successful</div>
-            <div className="text-body-sm opacity-80">14 pending transactions have been processed.</div>
-          </div>
         </div>
       </div>
     </>

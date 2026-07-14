@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { masterDataAPI } from '@/lib/api-client'
 import { Combobox, ComboboxOption } from '@/components/ui/combobox'
+import { toast } from 'sonner'
 
 export default function MouvementDeStockManuelPage() {
   const [articleCode, setArticleCode] = useState('')
@@ -70,10 +71,10 @@ export default function MouvementDeStockManuelPage() {
           <h2 className="font-title-md text-title-md font-bold text-on-surface mb-md">Magasin Ops</h2>
           <div className="flex flex-col gap-xs">
             <div className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xxs mt-sm">Transactions</div>
-            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MIGO - Réception</a>
-            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MIRO - Facturation</a>
-            <a className="font-body-sm text-body-sm text-magasin-main font-semibold bg-magasin-bg py-1 px-2 rounded border-l-2 border-magasin-main" href="#">MB1A - Mvt Stock</a>
-            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low" href="#">MB52 - État Stock</a>
+            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low cursor-pointer" onClick={(e) => { e.preventDefault(); toast.info('Module en cours de construction'); }}>MIGO - Réception</a>
+            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low cursor-pointer" onClick={(e) => { e.preventDefault(); toast.info('Module en cours de construction'); }}>MIRO - Facturation</a>
+            <a className="font-body-sm text-body-sm text-magasin-main font-semibold bg-magasin-bg py-1 px-2 rounded border-l-2 border-magasin-main cursor-pointer" onClick={(e) => { e.preventDefault(); toast.info('Module en cours de construction'); }}>MB1A - Mvt Stock</a>
+            <a className="font-body-sm text-body-sm text-on-surface hover:text-magasin-main transition-colors py-1 px-2 rounded hover:bg-surface-container-low cursor-pointer" onClick={(e) => { e.preventDefault(); toast.info('Module en cours de construction'); }}>MB52 - État Stock</a>
           </div>
         </aside>
 

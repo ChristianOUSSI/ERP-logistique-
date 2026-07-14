@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminAPI, DbRole, Permission } from '@/lib/api/admin';
+import { adminAPI } from '@/lib/api-client';
+import { DbRole, Permission } from '@/types/admin';
 
 export default function ConfigurationDesRolesRbacPage() {
   const queryClient = useQueryClient();

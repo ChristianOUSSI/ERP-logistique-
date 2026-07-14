@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Search, Edit, Trash2, Phone, Mail, MapPin } from 'lucide-react'
@@ -8,6 +8,8 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ClientMagasin, ClientMagasinCreate, ClientMagasinUpdate } from '@/types/magasin'
 import { PortIllustration } from '@/components/illustrations/PortIllustration'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
+import { magasinAPI } from '@/lib/api-client'
+import { toast } from 'sonner'
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<ClientMagasin[]>([])
@@ -16,6 +18,23 @@ export default function ClientsPage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedClient, setSelectedClient] = useState<ClientMagasin | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  const fetchClients = async () => {
+    setIsLoading(true)
+    try {
+      const res = await magasinAPI.getClients()
+      setClients(res.data || [])
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+      toast.error('Erreur de chargement des clients')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchClients()
+  }, [])
 
   const columns = [
     {
@@ -107,11 +126,12 @@ export default function ClientsPage() {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {
       setIsLoading(true)
       try {
-        // API call to delete client
-        // await apiClient.delete(`/api/magasin/clients/${clientId}`)
-        setClients(clients.filter(c => c.id !== clientId))
+        await magasinAPI.deleteClient(clientId)
+        toast.success('Client supprimé avec succès')
+        fetchClients()
       } catch (error) {
         console.error('Error deleting client:', error)
+        toast.error('Erreur lors de la suppression du client')
       } finally {
         setIsLoading(false)
       }
@@ -170,12 +190,13 @@ export default function ClientsPage() {
                 onSubmit={async (data) => {
                   setIsLoading(true)
                   try {
-                    // API call to create client
-                    // const response = await apiClient.post('/api/magasin/clients', data)
-                    // setClients([...clients, response.data])
+                    await magasinAPI.createClient(data)
+                    toast.success('Client créé avec succès')
                     setShowCreateModal(false)
+                    fetchClients()
                   } catch (error) {
                     console.error('Error creating client:', error)
+                    toast.error('Erreur lors de la création du client')
                   } finally {
                     setIsLoading(false)
                   }
@@ -196,13 +217,14 @@ export default function ClientsPage() {
                 onSubmit={async (data) => {
                   setIsLoading(true)
                   try {
-                    // API call to update client
-                    // const response = await apiClient.put(`/api/magasin/clients/${selectedClient.id}`, data)
-                    // setClients(clients.map(c => c.id === selectedClient.id ? response.data : c))
+                    await magasinAPI.updateClient(selectedClient.id, data)
+                    toast.success('Client mis à jour avec succès')
                     setShowEditModal(false)
                     setSelectedClient(null)
+                    fetchClients()
                   } catch (error) {
                     console.error('Error updating client:', error)
+                    toast.error('Erreur lors de la mise à jour du client')
                   } finally {
                     setIsLoading(false)
                   }
@@ -354,7 +376,7 @@ function ClientForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Annuler
         </Button>
-        <Button type="submit" disabled={false}>
+        <Button type="submit">
           Enregistrer
         </Button>
       </div>

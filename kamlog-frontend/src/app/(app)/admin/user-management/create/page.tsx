@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { adminAPI } from '@/lib/api/admin'
+import { adminAPI } from '@/lib/api-client';
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { useAuth } from '@/components/layout/AuthProvider'
 

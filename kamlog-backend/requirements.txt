@@ -32,6 +32,7 @@ flower==2.0.1
 weasyprint==62.3
 jinja2==3.1.4
 pillow==10.3.0
+pytesseract==0.3.10
 
 # --- Stockage objet (MinIO/S3) ---
 minio==7.2.7
@@ -58,6 +59,7 @@ python-dotenv==1.0.1
 loguru==0.7.2
 python-dateutil==2.9.0.post0
 pytz==2026.1
+
 prometheus-client==0.20.0
 prometheus-fastapi-instrumentator==7.0.0
 

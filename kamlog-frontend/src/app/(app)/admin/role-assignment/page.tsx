@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminAPI, User, DbRole } from '@/lib/api/admin';
+import { adminAPI } from '@/lib/api-client';
+import { User, DbRole } from '@/types/admin';
 
 export default function RoleAssignmentPage() {
   const queryClient = useQueryClient();

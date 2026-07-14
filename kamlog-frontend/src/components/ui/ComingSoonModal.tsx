@@ -14,9 +14,17 @@ export function ComingSoonModal({ isOpen, onClose, featureName }: ComingSoonModa
   const t = useI18n();
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const handleClose = (e?: React.MouseEvent | KeyboardEvent) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    onClose();
+  };
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose(e);
     };
     if (isOpen) document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
@@ -28,7 +36,7 @@ export function ComingSoonModal({ isOpen, onClose, featureName }: ComingSoonModa
     <>
       <div 
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] animate-in fade-in duration-200" 
-        onClick={onClose}
+        onClick={handleClose}
       />
       <div className="fixed inset-0 flex items-center justify-center z-[110] p-4 pointer-events-none">
         <div 
@@ -36,7 +44,8 @@ export function ComingSoonModal({ isOpen, onClose, featureName }: ComingSoonModa
           className="bg-surface border border-outline w-full max-w-md rounded-2xl shadow-2xl p-6 pointer-events-auto flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
         >
           <button 
-            onClick={onClose}
+            type="button"
+            onClick={handleClose}
             className="absolute top-4 right-4 p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
@@ -55,7 +64,8 @@ export function ComingSoonModal({ isOpen, onClose, featureName }: ComingSoonModa
           </p>
           
           <button 
-            onClick={onClose}
+            type="button"
+            onClick={handleClose}
             className="w-full py-2.5 bg-primary text-on-primary font-bold rounded-xl hover:opacity-90 transition-opacity"
           >
             {t.common?.close || 'Fermer'}

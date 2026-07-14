@@ -69,8 +69,8 @@ async def get_transport_kpis(
     active_missions = sum(1 for m in missions if m.statut == "EN_ROUTE")
     completed_missions = sum(1 for m in missions if m.statut == "TERMINEE")
     
-    # Simuler le carburant consommé pour le dashboard si l'API fuel n'est pas encore faite
-    total_fuel_consumed = 0
+    # Vrai calcul du carburant consommé via les tickets
+    total_fuel_consumed = db.query(func.sum(TicketCarburant.quantite_litres)).scalar() or 0
     
     return {
         "activeVehicles": active_vehicles,
@@ -471,9 +471,12 @@ async def update_mission_statut(
     
     # WhatsApp Integration
     if update_data.statut in ["EN_ROUTE", "LIVREE", "EN_CHARGEMENT"]:
-        client_phone = "+237600000000" # Fallback/Mock phone number
-        message = f"Bonjour, votre mission de transport #{mission.reference} vient de passer au statut: {update_data.statut}."
-        WhatsAppService.send_message(client_phone, message)
+        from app.models.tiers import Tiers
+        tiers = db.query(Tiers).filter(Tiers.id == mission.tiers_id).first()
+        client_phone = tiers.telephone if tiers and tiers.telephone else ""
+        if client_phone:
+            message = f"Bonjour, votre mission de transport #{mission.reference} vient de passer au statut: {update_data.statut}."
+            WhatsAppService.send_message(client_phone, message)
     
     return mission
 
@@ -500,30 +503,27 @@ async def calculer_ecart_carburant_endpoint(
 @router.get("/gps")
 @require_permission("transport:read")
 async def get_gps_positions(db: Session = Depends(get_db)):
-    """Retourne les dernières positions GPS connues des camions."""
-    # In a real app this would query a PostGIS database or an external telematics provider.
-    # For now, we return dynamic simulated data so the frontend map is not hardcoded.
-    import random
-    
+    # Vraie récupération depuis la table des positions GPS
+    from app.models.transport import PositionGPS
+    from sqlalchemy import desc
     camions = db.query(CamionFlotte).all()
     positions = []
     
-    # Base coordinate (Douala, Cameroon)
-    base_lat = 4.0511
-    base_lng = 9.7679
-    
     for c in camions:
         if c.actif:
-            positions.append({
-                "camion_id": c.id,
-                "immatriculation": c.immatriculation,
-                "statut": c.statut,
-                "latitude": base_lat + (random.random() - 0.5) * 0.1,
-                "longitude": base_lng + (random.random() - 0.5) * 0.1,
-                "vitesse_kmh": random.randint(0, 80) if c.statut == "EN_ROUTE" else 0,
-                "derniere_mise_a_jour": "Il y a quelques instants"
-            })
+            latest_pos = db.query(PositionGPS).filter(
+                PositionGPS.camion_id == c.id
+            ).order_by(desc(PositionGPS.timestamp)).first()
             
+            if latest_pos:
+                positions.append({
+                    "id": c.id,
+                    "immatriculation": c.immatriculation,
+                    "statut": c.statut,
+                    "chauffeur": c.chauffeur_actuel.nom if hasattr(c, 'chauffeur_actuel') and c.chauffeur_actuel else "Non assigné",
+                    "lat": float(latest_pos.latitude),
+                    "lng": float(latest_pos.longitude)
+                })
     return positions
 
 # ─── Documents Véhicule ────────────────────────────────────────

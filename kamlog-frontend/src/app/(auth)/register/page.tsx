@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { apiClient } from '@/lib/api-client'
 
 const registerSchema = z.object({
@@ -314,7 +315,7 @@ export default function RegisterPage() {
                 />
                 <label className="text-sm text-slate-600 dark:text-slate-300 cursor-pointer leading-relaxed" htmlFor="terms">
                   J'accepte les{' '}
-                  <a className="text-blue-600 hover:underline font-semibold" href="#">conditions d'utilisation</a>
+                  <a className="text-blue-600 hover:underline font-semibold cursor-pointer" onClick={() => toast.info('Conditions en cours de rédaction')}>conditions d'utilisation</a>
                   {' '}et la politique de confidentialité de KAMLOG ERP.
                 </label>
               </div>

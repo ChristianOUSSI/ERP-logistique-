@@ -395,7 +395,7 @@ class GrilleTarifaireService:
 
     @staticmethod
     def create_grille(db: Session, grille: GrilleTarifaireCreate, cree_par: str) -> GrilleTarifaire:
-        db_grille = GrilleTarifaire(**grille.dict(), cree_par=cree_par)
+        db_grille = GrilleTarifaire(**grille.dict())
         db.add(db_grille)
         db.commit()
         db.refresh(db_grille)

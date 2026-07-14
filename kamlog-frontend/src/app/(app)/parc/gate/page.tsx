@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { ScanText, UploadCloud, Truck, CheckCircle2, ShieldAlert } from 'lucide-react';
-import { parcAPI, EmplacementParc } from '@/lib/api/parc';
+import { parcAPI } from '@/lib/api-client';
+import { EmplacementParc } from '@/types/parc';
 import { toast } from 'sonner';
 
 export default function GateOperationsPage() {
@@ -29,20 +30,21 @@ export default function GateOperationsPage() {
     }).catch(console.error);
   }, []);
 
-  const handleSimulateOCR = () => {
+  const handleExtractOCR = async () => {
     if (!file) return;
     setIsScanning(true);
-    setTimeout(() => {
-      setIsScanning(false);
-      setScanResult({
-        immatriculation: 'LT-123-AB',
-        containerId: `MSKU${Math.floor(Math.random()*10000000)}`,
-        driverName: 'Jean Dupont',
-        confidence: 96
-      });
+    try {
+      const res = await parcAPI.extractOCR(file);
+      setScanResult(res.data);
       setIsManual(true);
-      setForm(prev => ({...prev, numero_conteneur: `MSKU${Math.floor(Math.random()*10000000)}`}));
-    }, 2000);
+      setForm(prev => ({...prev, numero_conteneur: res.data.containerId}));
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || "Erreur lors de l'extraction OCR");
+      // Fallback gracefull
+      setIsManual(true);
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   const handleGateIn = async () => {
@@ -147,7 +149,7 @@ export default function GateOperationsPage() {
             </div>
 
             <button 
-              onClick={handleSimulateOCR}
+              onClick={handleExtractOCR}
               disabled={!file || isScanning}
               className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 mb-4 ${file && !isScanning ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
             >

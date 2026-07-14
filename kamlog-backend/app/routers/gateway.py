@@ -92,6 +92,17 @@ def get_passerelles_en_attente(
     return gateway_service.get_passerelles_en_attente(db)
 
 
+@router.get("/passerelles", response_model=List[Passerelle])
+@check_permission("admin")
+def get_all_passerelles(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(check_permission("admin"))
+):
+    """Récupère toutes les passerelles."""
+    from app.models.gateway import Passerelle as PasserelleModel
+    return db.query(PasserelleModel).all()
+
+
 @router.put("/passerelles/{passerelle_id}", response_model=Passerelle)
 @check_permission("admin")
 def update_passerelle(

@@ -204,7 +204,6 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'billing', href: '/finance/factures', icon: 'receipt_long' },
     { labelKey: 'encaissements', href: '/finance/encaissements', icon: 'account_balance_wallet', badge: 'New' },
     { labelKey: 'purchases', href: '/finance/requisitions', icon: 'shopping_bag' },
-    { labelKey: 'reconciliation', href: '/finance/banking/reconciliation', icon: 'account_balance' },
     { labelKey: 'gateway', href: '/finance/gateway', icon: 'settings_input_component' },
     { labelKey: 'transactions', href: '/finance/saisie-transaction-bancaire', icon: 'add_card' },
   ],

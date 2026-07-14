@@ -65,7 +65,7 @@ class CamionFlotteService:
 
     @staticmethod
     def create_camion(db: Session, camion: CamionFlotteCreate, cree_par: str) -> CamionFlotte:
-        db_camion = CamionFlotte(**camion.dict(), cree_par=cree_par)
+        db_camion = CamionFlotte(**camion.dict())
         db.add(db_camion)
         db.commit()
         db.refresh(db_camion)
@@ -295,7 +295,7 @@ class MissionTransportService:
         # Valider les règles métier
         MissionTransportService.valider_creation_mission(db, mission)
         
-        db_mission = MissionTransport(**mission.dict(), cree_par=cree_par)
+        db_mission = MissionTransport(**mission.dict())
         db.add(db_mission)
         
         # Mettre le camion en chargement
@@ -542,7 +542,7 @@ class BandeLivraisonService:
 
     @staticmethod
     def create_bande(db: Session, bande: BandeLivraisonCreate, cree_par: str) -> BandeLivraison:
-        db_bande = BandeLivraison(**bande.dict(), cree_par=cree_par)
+        db_bande = BandeLivraison(**bande.dict())
         db.add(db_bande)
         db.commit()
         db.refresh(db_bande)

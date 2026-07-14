@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { tiersAPI, financeAPI } from '@/lib/api-client'
-import type { Tier } from '@/lib/api/master-data'
+import type { Tier } from '@/types/master-data'
 import GenericDataPage from '@/components/ui/GenericDataPage'
 import { Building2, Users, Briefcase, Handshake, CreditCard, X, AlertCircle, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'

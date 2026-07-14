@@ -2,7 +2,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { adminAPI, User, DbRole } from '@/lib/api/admin'
+import { adminAPI } from '@/lib/api-client';
+import { User, DbRole } from '@/types/admin';
 import { TCodeSearch } from '@/components/ui/TCodeSearch'
 import { toast } from 'sonner'
 

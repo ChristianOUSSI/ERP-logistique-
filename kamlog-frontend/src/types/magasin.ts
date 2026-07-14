@@ -459,3 +459,77 @@ export interface OperationTrace {
   date_annulation?: string;
   annule_par?: string;
 }
+
+// API Service for Magasin Module
+
+export interface StockItem {
+  id: string;
+  code: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  location: string;
+  category: string;
+  minStock: number;
+  maxStock: number;
+}
+
+export interface StockMovement {
+  id: string;
+  itemId: string;
+  type: 'in' | 'out' | 'transfer';
+  quantity: number;
+  date: string;
+  reason: string;
+  userId: string;
+}
+
+export interface Reception {
+  id: string;
+  reference: string;
+  supplier: string;
+  date: string;
+  status: 'pending' | 'received' | 'validated';
+  items: Array<{ itemId: string; quantity: number; unitPrice: number }>;
+}
+
+export interface RemovalSlip {
+  id: string;
+  numero_bon: string;
+  magasin_source: string;
+  magasin_destination: string;
+  article_id: string;
+  quantite: number;
+  unite: string;
+  declaration_douaniere: string;
+  motif: string;
+  observations: string;
+  statut: string;
+  autorise_par: string;
+  date_autorisation: string;
+  date_bon: string;
+  cree_par: string;
+  date_creation: string;
+  date_modification: string;
+}
+
+export interface ReceptionMag3 {
+  id: string;
+  numero_reception: string;
+  removal_slip_id: string;
+  magasin_source: string;
+  magasin_destination: string;
+  article_id: string;
+  quantite_attendue: number;
+  quantite_recue: number;
+  unite: string;
+  declaration_douaniere: string;
+  recu_par: string;
+  date_reception: string;
+  observations: string;
+  statut: string;
+  cree_par: string;
+  date_creation: string;
+  date_modification: string;
+}
+

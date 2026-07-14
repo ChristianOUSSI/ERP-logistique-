@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Package, Search, TrendingUp, Calendar, ArrowRight, FileText, CheckCircle, Clock, ShieldCheck } from 'lucide-react';
 import { transportAPI } from '@/lib/api-client';
-import { financeAPI } from '@/lib/api/finance';
+import { financeAPI } from '@/lib/api-client';
 
 export default function ClientPortalHome() {
   const [loading, setLoading] = useState(true);

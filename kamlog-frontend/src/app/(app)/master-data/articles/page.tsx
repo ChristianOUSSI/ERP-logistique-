@@ -40,17 +40,18 @@ function CreateArticleModal({ isOpen, onClose, onCreated }: { isOpen: boolean; o
     setSubmitting(true)
     try {
       await masterDataAPI.createArticle({
-        designation: form.designation,
-        type_article: form.type_article,
-        unite: form.unite,
-        prix_unitaire: form.prix_unitaire,
+        nom: form.designation,
+        categorie: form.type_article === 'STANDARD' ? 'PIECES_DETACHEES' : form.type_article,
+        unite_mesure: form.unite === 'UN' ? 'UNITE' : form.unite,
+        poids_unitaire: form.prix_unitaire,
+        est_actif: true,
       } as any)
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
         onCreated()
         onClose()
-        setForm({ code_article: '', designation: '', type_article: 'STANDARD', unite: 'UN', prix_unitaire: 0 })
+        setForm({ code_article: '', designation: '', type_article: 'STANDARD', unite: 'UNITE', prix_unitaire: 0 })
       }, 1200)
     } catch (err: any) {
       setError(err?.response?.data?.detail || 'Erreur lors de la création de l\'article.')
