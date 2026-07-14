@@ -8,20 +8,38 @@ import { toast } from 'sonner';
 
 export default function MonEspaceRHPage() {
   const [profile, setProfile] = useState<any>(null);
+  const [conges, setConges] = useState<any[]>([]);
+  const [paies, setPaies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCongeModal, setShowCongeModal] = useState(false);
   const [congeData, setCongeData] = useState({ type_conge: 'ANNUEL', date_debut: '', date_fin: '', motif: '' });
 
   useEffect(() => {
-    loadProfile();
+    loadProfileAndData();
   }, []);
 
-  const loadProfile = async () => {
+  const loadProfileAndData = async () => {
     try {
-      const res = await rhAPI.getMyProfile();
-      setProfile(res.data);
-    } catch (e) {
-      toast.error("Erreur lors du chargement du profil");
+      setLoading(true);
+      const profileRes = await rhAPI.getMyProfile();
+      const userProfile = profileRes.data;
+      setProfile(userProfile);
+
+      if (userProfile) {
+        const [congesRes, paiesRes] = await Promise.all([
+          rhAPI.getConges().catch(() => ({ data: [] })),
+          rhAPI.getPaie().catch(() => ({ data: [] }))
+        ]);
+        
+        // Filter by logged-in employee ID
+        const myConges = (congesRes.data || []).filter((c: any) => c.employe_id === userProfile.id);
+        const myPaies = (paiesRes.data || []).filter((p: any) => p.employe_id === userProfile.id);
+        
+        setConges(myConges);
+        setPaies(myPaies);
+      }
+    } catch (e: any) {
+      toast.error(e?.response?.data?.detail || "Erreur lors du chargement de l'espace personnel");
     } finally {
       setLoading(false);
     }
@@ -34,12 +52,15 @@ export default function MonEspaceRHPage() {
       await rhAPI.createConge({ ...congeData, employe_id: profile.id });
       toast.success("Demande de congé envoyée");
       setShowCongeModal(false);
+      setCongeData({ type_conge: 'ANNUEL', date_debut: '', date_fin: '', motif: '' });
+      loadProfileAndData();
     } catch (e) {
       toast.error("Erreur lors de la soumission");
     }
   };
 
   if (loading) return <ModuleLayout module="rh"><div className="p-8 text-center text-slate-500">Chargement de votre espace...</div></ModuleLayout>;
+  if (!profile) return <ModuleLayout module="rh"><div className="p-8 text-center text-red-500 font-bold">Profil employé non configuré. Veuillez contacter un administrateur pour lier votre compte utilisateur à un profil employé.</div></ModuleLayout>;
 
   return (
     <ModuleLayout module="rh">
@@ -80,20 +101,19 @@ export default function MonEspaceRHPage() {
               <h2 className="text-xl font-bold text-slate-800">Mes Fiches de Paie</h2>
             </div>
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border border-slate-100 hover:border-teal-200 bg-slate-50 transition-colors flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-slate-700">Août 2026</p>
-                  <p className="text-sm text-slate-500">Généré le 25 Août</p>
-                </div>
-                <button className="text-teal-600 font-bold hover:underline">Télécharger PDF</button>
-              </div>
-              <div className="p-4 rounded-xl border border-slate-100 hover:border-teal-200 bg-slate-50 transition-colors flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-slate-700">Juillet 2026</p>
-                  <p className="text-sm text-slate-500">Généré le 25 Juillet</p>
-                </div>
-                <button className="text-teal-600 font-bold hover:underline">Télécharger PDF</button>
-              </div>
+              {paies.length === 0 ? (
+                <p className="text-sm text-slate-500 py-4 text-center">Aucune fiche de paie générée.</p>
+              ) : (
+                paies.map((p, idx) => (
+                  <div key={p.id || idx} className="p-4 rounded-xl border border-slate-100 hover:border-teal-200 bg-slate-50 transition-colors flex justify-between items-center">
+                    <div>
+                      <p className="font-bold text-slate-700">Période : {p.periode}</p>
+                      <p className="text-sm text-slate-500">Net à payer : {Number(p.net_a_payer).toLocaleString()} FCFA</p>
+                    </div>
+                    <button className="text-teal-600 font-bold hover:underline text-sm">Visualiser</button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -104,13 +124,23 @@ export default function MonEspaceRHPage() {
               <h2 className="text-xl font-bold text-slate-800">Historique des Absences</h2>
             </div>
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex flex-col gap-2">
-                <div className="flex justify-between items-start">
-                  <span className="font-bold text-slate-700">Congé Annuel</span>
-                  <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">APPROUVÉ</span>
-                </div>
-                <p className="text-sm text-slate-500">Du 01 Septembre 2026 au 15 Septembre 2026</p>
-              </div>
+              {conges.length === 0 ? (
+                <p className="text-sm text-slate-500 py-4 text-center">Aucune demande de congé enregistrée.</p>
+              ) : (
+                conges.map((c, idx) => (
+                  <div key={c.id || idx} className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <span className="font-bold text-slate-700">Congé {c.type_conge}</span>
+                      <span className={`px-2 py-1 text-xs font-bold rounded ${
+                        c.statut === 'APPROUVE' ? 'bg-emerald-100 text-emerald-700' :
+                        c.statut === 'REFUSE' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-700'
+                      }`}>{c.statut}</span>
+                    </div>
+                    <p className="text-sm text-slate-500">Du {new Date(c.date_debut).toLocaleDateString()} au {new Date(c.date_fin).toLocaleDateString()}</p>
+                    {c.motif && <p className="text-xs italic text-slate-400">Motif : {c.motif}</p>}
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

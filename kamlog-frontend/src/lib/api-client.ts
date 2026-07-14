@@ -238,6 +238,14 @@ export const magasinAPI = {
     apiClient.get('/api/magasin/stocks', { params }),
   getKpis: () =>
     apiClient.get('/api/magasin/kpis'),
+  getClients: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/clients', { params }),
+  createClient: (data: unknown) =>
+    apiClient.post('/api/magasin/clients', data),
+  updateClient: (id: number, data: unknown) =>
+    apiClient.put(`/api/magasin/clients/${id}`, data),
+  deleteClient: (id: number) =>
+    apiClient.delete(`/api/magasin/clients/${id}`),
   getReceptions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/receptions', { params }),
   createReception: async (data: any) => {
@@ -313,4 +321,10 @@ export const rhAPI = {
   updateCongeStatut: (id: number, statut: string) => apiClient.patch(`/api/rh/conges/${id}/statut`, { statut }),
   getPaie: (params?: Record<string, unknown>) => apiClient.get('/api/rh/paie', { params }),
   createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
+};
+
+// ─── Service Gateway ──────────────────────────────────────
+export const gatewayAPI = {
+  getPasserellesEnAttente: () => apiClient.get('/api/passerelles/en-attente').then(r => r.data),
+  getPasserelles: () => apiClient.get('/api/passerelles').then(r => r.data),
 };
