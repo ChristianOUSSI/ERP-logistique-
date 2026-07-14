@@ -43,13 +43,17 @@ done
 echo "✅ PostgreSQL is ready!"
 
 # ─── Créer les tables via SQLAlchemy ─────────────────────────
-# Désactivé: Alembic doit gérer le schéma pour éviter DuplicateTableError
-# python create_tables.py
-# echo "✅ Tables created (or already exist)"
+python create_tables.py
+echo "✅ Tables created (or already exist)"
 
 # ─── Alembic upgrade (appliquer les migrations) ───
 echo "📌 Running Alembic migrations..."
-alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
+if [ "$SEED_DATA" = "true" ]; then
+    echo "SEED_DATA=true: stamping Alembic migrations to head..."
+    alembic stamp head || echo "⚠️  Alembic stamp failed"
+else
+    alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
+fi
 
 # ─── Vérifier que les tables critiques existent ─────────────
 python - <<'PY'
