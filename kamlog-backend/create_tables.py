@@ -1,3 +1,4 @@
+import os
 import logging
 logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
 from app.database import engine, Base
@@ -9,6 +10,9 @@ def main():
     try:
         # The engine is synchronous (create_engine), so we use a sync block
         with engine.begin() as conn:
+            if os.environ.get("SEED_DATA") == "true":
+                print("SEED_DATA=true: dropping all tables first to align schemas...")
+                Base.metadata.drop_all(conn)
             Base.metadata.create_all(conn)
         print("Database tables created successfully.")
     except Exception as e:
