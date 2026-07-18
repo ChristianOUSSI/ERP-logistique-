@@ -26,7 +26,7 @@ fiche_besoin_service = FicheBesoinService()
 
 @router.post("/", response_model=FicheBesoinResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("purchase:create")
-async def create_fiche_besoin(
+def create_fiche_besoin(
     fiche_data: FicheBesoinCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -39,7 +39,7 @@ async def create_fiche_besoin(
 
 @router.get("/", response_model=List[FicheBesoinResponse])
 @require_permission("purchase:read")
-async def list_fiches_besoin(
+def list_fiches_besoin(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -54,7 +54,7 @@ async def list_fiches_besoin(
 
 @router.get("/{fiche_id}", response_model=FicheBesoinResponse)
 @require_permission("purchase:read")
-async def get_fiche_besoin(
+def get_fiche_besoin(
     fiche_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -67,7 +67,7 @@ async def get_fiche_besoin(
 
 @router.put("/{fiche_id}", response_model=FicheBesoinResponse)
 @require_permission("purchase:update")
-async def update_fiche_besoin(
+def update_fiche_besoin(
     fiche_id: int,
     fiche_data: FicheBesoinUpdate,
     db: Session = Depends(get_db),
@@ -81,7 +81,7 @@ async def update_fiche_besoin(
 
 @router.delete("/{fiche_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_permission("purchase:delete")
-async def delete_fiche_besoin(
+def delete_fiche_besoin(
     fiche_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -98,7 +98,7 @@ async def delete_fiche_besoin(
 
 @router.post("/{fiche_id}/submit", response_model=FicheBesoinResponse)
 @require_permission("purchase:submit")
-async def submit_fiche_besoin_for_approval(
+def submit_fiche_besoin_for_approval(
     fiche_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -113,7 +113,7 @@ async def submit_fiche_besoin_for_approval(
 @router.post("/{fiche_id}/review", response_model=FicheBesoinResponse)
 @require_role(["admin", "approver"]) # Seuls les approbateurs peuvent utiliser cet endpoint
 @require_permission("purchase:approve")
-async def review_fiche_besoin(
+def review_fiche_besoin(
     fiche_id: int,
     review_data: FicheBesoinApproveReject,
     db: Session = Depends(get_db),

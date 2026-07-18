@@ -63,6 +63,18 @@ class CamionResponse(CamionBase):
     statut: StatutCamion
     actif: bool
     created_at: datetime
+    immatriculation_couplee: str | None = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class HistoriqueCouplageResponse(BaseModel):
+    id: int
+    tracteur_id: int
+    remorque_id: int
+    date_association: datetime
+    date_dissociation: datetime | None = None
+    tracteur_immatriculation: str | None = None
+    remorque_immatriculation: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 

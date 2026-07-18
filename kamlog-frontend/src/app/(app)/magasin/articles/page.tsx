@@ -1,46 +1,59 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { masterDataAPI } from '@/lib/api-client'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { Package, Search, Plus, Edit, Trash2, Layers, HardHat } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { toast } from 'sonner'
 
+// ── Validation Schema (Zod) ───────────────────────────────────────────────────
+const articleSchema = z.object({
+  code_article: z.string().regex(/^\d+$/, "Le code article doit être uniquement numérique"),
+  nom: z.string().min(1, "Le nom est requis"),
+  description: z.string().optional(),
+  categorie: z.string(),
+  unite_mesure: z.string(),
+  poids_unitaire: z.coerce.number().optional().nullable(),
+  volume_unitaire: z.coerce.number().optional().nullable()
+})
+
+type ArticleFormValues = z.infer<typeof articleSchema>
+
+
 export default function ArticlesPage() {
-  const [articles, setArticles] = useState<any[]>([])
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editingArticle, setEditingArticle] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
   const [filterType, setFilterType] = useState('MARCHANDISE')
 
-  useEffect(() => {
-    fetchArticles()
-  }, [])
-
-  const fetchArticles = async () => {
-    try {
-      const res = await fetch('http://localhost:8000/api/magasin/articles', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (res.ok) setArticles(await res.json())
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+  const { data: articles = [], isLoading: loading } = useQuery({
+    queryKey: ['articles'],
+    queryFn: async () => {
+      const res = await masterDataAPI.getArticles()
+      return res.data || []
     }
-  }
+  })
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Voulez-vous vraiment désactiver cet article ?')) return
-    try {
-      const res = await fetch(`http://localhost:8000/api/magasin/articles/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (res.ok) fetchArticles()
-    } catch (error) {
-      console.error(error)
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => masterDataAPI.deleteArticle(id),
+    onSuccess: () => {
+      toast.success('Article supprimé avec succès.')
+      queryClient.invalidateQueries({ queryKey: ['articles'] })
+    },
+    onError: () => {
+      toast.error("Erreur lors de la suppression de l'article.")
+    }
+  })
+
+  const handleDelete = (id: number) => {
+    if (confirm('Voulez-vous vraiment désactiver cet article ?')) {
+      deleteMutation.mutate(id)
     }
   }
 
@@ -159,61 +172,43 @@ export default function ArticlesPage() {
 
         {/* Modal Form */}
         {showModal && (
-          <ArticleModal 
-            article={editingArticle} 
-            onClose={() => setShowModal(false)} 
-            onSuccess={() => { setShowModal(false); fetchArticles(); }} 
-            filterType={filterType}
-          />
+          <ArticleModal article={editingArticle} onClose={() => setShowModal(false)} filterType={filterType} />
         )}
       </div>
     </ModuleLayout>
   )
 }
 
-function ArticleModal({ article, onClose, onSuccess, filterType }: { article: any, onClose: () => void, onSuccess: () => void, filterType: string }) {
-  const [formData, setFormData] = useState(article || {
-    code_article: '',
-    nom: '',
-    description: '',
-    categorie: filterType === 'ACHAT' ? 'EQUIPEMENT' : 'ALIMENTAIRE',
-    unite_mesure: 'KG',
-    poids_unitaire: '',
-    volume_unitaire: ''
+function ArticleModal({ article, onClose, filterType }: { article: any, onClose: () => void, filterType: string }) {
+  const queryClient = useQueryClient()
+  
+  const { register, handleSubmit, formState: { errors } } = useForm<ArticleFormValues>({
+    resolver: zodResolver(articleSchema),
+    defaultValues: article || {
+      code_article: '',
+      nom: '',
+      description: '',
+      categorie: filterType === 'ACHAT' ? 'EQUIPEMENT' : 'ALIMENTAIRE',
+      unite_mesure: 'KG',
+      poids_unitaire: null,
+      volume_unitaire: null
+    }
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    // Ensure code is numeric
-    if (!/^\d+$/.test(formData.code_article)) {
-      toast.error("Le code article doit être uniquement numérique (ex: 1234567).");
-      return
+  const mutation = useMutation({
+    mutationFn: (data: any) => article ? masterDataAPI.updateArticle(article.id, data) : masterDataAPI.createArticle(data),
+    onSuccess: () => {
+      toast.success(`Article ${article ? 'modifié' : 'créé'} avec succès !`)
+      queryClient.invalidateQueries({ queryKey: ['articles'] })
+      onClose()
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.detail || "Erreur lors de l'enregistrement.")
     }
+  })
 
-    const payload = {
-      ...formData,
-      poids_unitaire: formData.poids_unitaire ? parseFloat(formData.poids_unitaire) : null,
-      volume_unitaire: formData.volume_unitaire ? parseFloat(formData.volume_unitaire) : null,
-    }
-
-    try {
-      const url = article ? `http://localhost:8000/api/magasin/articles/${article.id}` : `http://localhost:8000/api/magasin/articles`
-      const method = article ? 'PUT' : 'POST'
-      
-      const res = await fetch(url, {
-        method,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` 
-        },
-        body: JSON.stringify(payload)
-      })
-      if (res.ok) onSuccess()
-      else toast.error("Erreur lors de l'enregistrement.");
-    } catch (err) {
-      console.error(err)
-    }
+  const onSubmit = (data: ArticleFormValues) => {
+    mutation.mutate(data)
   }
 
   return (
@@ -226,40 +221,36 @@ function ArticleModal({ article, onClose, onSuccess, filterType }: { article: an
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-1">Code Article (Chiffres uniquement) *</label>
             <input 
               type="text" 
-              pattern="\d+"
-              required
-              value={formData.code_article}
-              onChange={e => setFormData({...formData, code_article: e.target.value.replace(/\D/g, '')})}
+              {...register('code_article')}
               placeholder="ex: 1234567"
-              className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none font-mono text-lg"
+              className={`w-full px-4 py-2 rounded-xl border ${errors.code_article ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none font-mono text-lg`}
             />
+            {errors.code_article && <p className="text-xs text-red-500 mt-1">{errors.code_article.message}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-1">Nom du Produit *</label>
             <input 
               type="text" 
-              required
-              value={formData.nom}
-              onChange={e => setFormData({...formData, nom: e.target.value})}
+              {...register('nom')}
               placeholder="ex: Riz Bella Luna 50 Kg"
-              className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+              className={`w-full px-4 py-2 rounded-xl border ${errors.nom ? 'border-red-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none`}
             />
+            {errors.nom && <p className="text-xs text-red-500 mt-1">{errors.nom.message}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Unité de Mesure</label>
               <select 
-                value={formData.unite_mesure}
-                onChange={e => setFormData({...formData, unite_mesure: e.target.value})}
-                className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                {...register('unite_mesure')}
+                className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white"
               >
                 <option value="UDB">Cartons/Sacs (UDB)</option>
                 <option value="KG">Kilogrammes (Kg)</option>
@@ -272,9 +263,8 @@ function ArticleModal({ article, onClose, onSuccess, filterType }: { article: an
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Catégorie</label>
               <select 
-                value={formData.categorie}
-                onChange={e => setFormData({...formData, categorie: e.target.value})}
-                className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                {...register('categorie')}
+                className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white"
               >
                 {filterType === 'ACHAT' ? (
                   <>
@@ -298,16 +288,15 @@ function ArticleModal({ article, onClose, onSuccess, filterType }: { article: an
             <label className="block text-sm font-bold text-slate-700 mb-1">Description (Optionnel)</label>
             <input 
               type="text" 
-              value={formData.description}
-              onChange={e => setFormData({...formData, description: e.target.value})}
+              {...register('description')}
               className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
             />
           </div>
 
           <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-slate-100">
             <button type="button" onClick={onClose} className="px-5 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Annuler</button>
-            <button type="submit" className="px-5 py-2 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm">
-              Enregistrer
+            <button type="submit" disabled={mutation.isPending} className="px-5 py-2 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-50">
+              {mutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
             </button>
           </div>
         </form>

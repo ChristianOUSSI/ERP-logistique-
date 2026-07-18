@@ -23,6 +23,7 @@ from app.models.transport import (
     TypeVehicule,
     StatutMission,
     StatutCamion,
+    PositionGPS,
 )
 from app.models.finance import (
     Facture,
@@ -113,7 +114,23 @@ from app.models.notification import (
     PrioriteNotification,
     StatutNotification,
 )
+
+from app.models.rate_table import (
+    RateTable,
+    RateRule,
+    PricingBasis,
+    TransportMode,
+)
+
+from app.models.storage_slot import StorageSlot
 from app.models.rh import Employe, Contrat, Conge, FichePaie
+
+
+from app.models.bill_of_loading import (
+    BillOfLoading,
+    ContainerDetail,
+    GoodsDetail,
+)
 
 __all__ = [
     "Base",
@@ -140,6 +157,7 @@ __all__ = [
     "CamionFlotte",
     "ChauffeurProfil",
     "MissionTransport",
+    "HistoriqueCouplage",
     "TypeVehicule",
     "StatutMission",
     "StatutCamion",
@@ -220,5 +238,15 @@ __all__ = [
     "Employe",
     "Contrat",
     "Conge",
+    "RateTable",
+    "RateRule",
+    "PricingBasis",
+    "TransportMode",
+    "StorageSlot",
     "FichePaie",
+    "BillOfLoading",
+    "ContainerDetail",
+    "GoodsDetail",
 ]
+
+

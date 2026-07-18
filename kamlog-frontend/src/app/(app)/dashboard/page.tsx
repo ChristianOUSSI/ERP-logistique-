@@ -52,8 +52,8 @@ export default function GlobalDashboard() {
         setTotalRevenue(financeKpis.data.chiffre_affaires || 0);
         setPendingMissions(transportKpis.data.activeMissions || 0);
         const stocks = stocksRes.data || [];
-        setAlerts(stocks.filter((s: any) => parseFloat(s.quantite_udb) < 10).map((s: any) => ({
-          id: s.id || Math.random(),
+        setAlerts(stocks.filter((s: any) => parseFloat(s.quantite_udb) < 10).map((s: any, index: number) => ({
+          id: `alert-${Date.now()}-${index}`,
           message: `${t.magasin.lowStock} — ${s.article_id || t.common.unknown}`,
           type: 'warning'
         })));

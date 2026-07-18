@@ -4,11 +4,16 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import List, Dict, Any
 from app.config import settings
+from app.tasks.email_tasks import send_email_async
 
-def send_email(subject: str, recipients: List[str], html_content: str):
-    """Envoie un email via SMTP."""
-    if not settings.SMTP_HOST or settings.SMTP_HOST == "smtp.example.com":
-        print(f"MOCK EMAIL [to: {recipients}]: {subject}")
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+def _send_email_sync(subject: str, recipients: list, html_content: str):
+    """Envoie un email via SMTP (synchronous version)."""
+    if not settings.SMTP_HOST:
+        logger.warning(f"SMTP host not configured. Email not sent: {subject}")
         return
 
     msg = MIMEMultipart("alternative")
@@ -25,9 +30,14 @@ def send_email(subject: str, recipients: List[str], html_content: str):
             if settings.SMTP_PASSWORD:
                 server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
             server.sendmail(settings.SMTP_FROM, recipients, msg.as_string())
-        print(f"Email sent successfully to {recipients}")
+        logger.info(f"Email sent successfully to {recipients}")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        logger.error(f"Failed to send email: {e}")
+
+def send_email(subject: str, recipients: list, html_content: str):
+    """Envoie un email de maniere asynchrone via Celery."""
+    # Delegue a la tache Celery
+    send_email_async.delay(subject, recipients, html_content)
 
 class NotificationTemplates:
     @staticmethod
@@ -80,19 +90,22 @@ class NotificationService:
     }
 
     @classmethod
-    def trigger_transport_alert(cls, mission_id: int, message: str, extra_recipients: List[str] = []):
+    def trigger_transport_alert(cls, mission_id: int, message: str, extra_recipients: list = []):
         html = NotificationTemplates.get_transport_alert(mission_id, message)
         recipients = cls.RECIPIENTS["transport"] + extra_recipients
-        send_email(f"Alerte Transport #{mission_id}", recipients, html)
+        from app.tasks.email_tasks import send_email_async
+        send_email_async.delay(f"Alerte Transport #{mission_id}", recipients, html)
 
     @classmethod
-    def trigger_payment_validation(cls, invoice_id: str, amount: str, extra_recipients: List[str] = []):
+    def trigger_payment_validation(cls, invoice_id: str, amount: str, extra_recipients: list = []):
         html = NotificationTemplates.get_finance_payment_validation(invoice_id, amount)
         recipients = cls.RECIPIENTS["finance"] + extra_recipients
-        send_email(f"Paiement Validé - {invoice_id}", recipients, html)
+        from app.tasks.email_tasks import send_email_async
+        send_email_async.delay(f"Paiement Validé - {invoice_id}", recipients, html)
 
     @classmethod
-    def trigger_stock_alert(cls, article_name: str, current_stock: int, min_stock: int, extra_recipients: List[str] = []):
+    def trigger_stock_alert(cls, article_name: str, current_stock: int, min_stock: int, extra_recipients: list = []):
         html = NotificationTemplates.get_magasin_stock_alert(article_name, current_stock, min_stock)
         recipients = cls.RECIPIENTS["magasin"] + extra_recipients
-        send_email(f"Alerte Stock - {article_name}", recipients, html)
+        from app.tasks.email_tasks import send_email_async
+        send_email_async.delay(f"Alerte Stock - {article_name}", recipients, html)

@@ -9,6 +9,7 @@ import io
 
 from app.database import get_db
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture
+from app.models.tiers import Tiers
 from app.models.transport import MissionTransport, ChauffeurProfil, StatutMission
 from app.models.user import User
 from app.schemas.finance import (
@@ -31,7 +32,7 @@ router = APIRouter()
 
 @router.get("/payroll/drivers")
 @require_permission("finance:read")
-async def get_drivers_payroll(
+def get_drivers_payroll(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -65,7 +66,7 @@ async def get_drivers_payroll(
 
 @router.get("/kpis")
 @require_permission("finance:read")
-async def get_finance_kpis(
+def get_finance_kpis(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -92,8 +93,8 @@ async def get_finance_kpis(
         Facture.statut.in_(statuts_impayes)
     ).scalar() or 0
     
-    # Dépenses — pas de colonne type sur Facture pour l'instant, placeholder à 0
-    depenses = Decimal('0')
+    # Dépenses — somme des factures où le compte du tiers indique un fournisseur (non client)
+    depenses = db.query(func.sum(Facture.montant_ttc_xaf)).join(Tiers, Facture.tiers_id == Tiers.id).filter(Tiers.compte_collectif_syscohada.notlike('411%')).scalar() or Decimal('0')
     
     tresorerie = ca_mois - depenses
     
@@ -107,7 +108,7 @@ async def get_finance_kpis(
 
 @router.get("/analytics/chart-data")
 @require_permission("finance:read")
-async def get_analytics_chart_data(
+def get_analytics_chart_data(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -127,15 +128,20 @@ async def get_analytics_chart_data(
         if month > datetime.now().month:
             break
             
-        # CA = toutes les factures payées du mois (pas de colonne type pour filtrer)
-        ca = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+        # CA = factures clients (compte tiers commençant par 411) payées du mois
+        ca = db.query(func.sum(Facture.montant_ttc_xaf)).join(Tiers, Facture.tiers_id == Tiers.id).filter(
             extract('year', Facture.date_emission) == current_year,
             extract('month', Facture.date_emission) == month,
             Facture.statut.in_([StatutFacture.PAYEE, StatutFacture.PAYE_TOTAL]),
+            Tiers.compte_collectif_syscohada.like('411%')
         ).scalar() or Decimal('0')
-        
-        # Dépenses — placeholder à 0 tant que Facture n'a pas de colonne type_facture
-        depenses = Decimal('0')
+        # Dépenses = factures fournisseurs (non 411) payées du mois
+        depenses = db.query(func.sum(Facture.montant_ttc_xaf)).join(Tiers, Facture.tiers_id == Tiers.id).filter(
+            extract('year', Facture.date_emission) == current_year,
+            extract('month', Facture.date_emission) == month,
+            Facture.statut.in_([StatutFacture.PAYEE, StatutFacture.PAYE_TOTAL]),
+            Tiers.compte_collectif_syscohada.notlike('411%')
+        ).scalar() or Decimal('0')
         
         marge = ca - depenses
         
@@ -158,7 +164,7 @@ async def get_analytics_chart_data(
 
 @router.get("/factures", response_model=List[FactureResponse])
 @require_permission("finance:read")
-async def list_factures(
+def list_factures(
     skip: int = 0,
     limit: int = 100,
     statut: str | None = None,
@@ -174,7 +180,7 @@ async def list_factures(
 
 @router.get("/factures/{facture_id}", response_model=FactureResponse)
 @require_permission("finance:read")
-async def get_facture(
+def get_facture(
     facture_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -188,7 +194,7 @@ async def get_facture(
 
 @router.get("/factures/tiers/{tiers_id}", response_model=List[FactureResponse])
 @require_permission("finance:read")
-async def get_factures_by_tiers(
+def get_factures_by_tiers(
     tiers_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -200,7 +206,7 @@ async def get_factures_by_tiers(
 @router.post("/factures", response_model=FactureResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def create_facture(
+def create_facture(
     facture_data: FactureCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -221,7 +227,7 @@ async def create_facture(
 @router.put("/factures/{facture_id}", response_model=FactureResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def update_facture(
+def update_facture(
     facture_id: int,
     facture_data: FactureUpdate,
     db: Session = Depends(get_db),
@@ -237,7 +243,7 @@ async def update_facture(
 @router.delete("/factures/{facture_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("finance:delete")
-async def delete_facture(
+def delete_facture(
     facture_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -252,7 +258,7 @@ async def delete_facture(
 @router.post("/factures/{facture_id}/valider", response_model=FactureResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:validate")
-async def valider_facture(
+def valider_facture(
     facture_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -267,7 +273,7 @@ async def valider_facture(
 @router.post("/factures/{facture_id}/annuler", response_model=FactureResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:validate")
-async def annuler_facture(
+def annuler_facture(
     facture_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -281,7 +287,7 @@ async def annuler_facture(
 
 @router.get("/encaissements", response_model=List[EncaissementResponse])
 @require_permission("finance:read")
-async def list_encaissements(
+def list_encaissements(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -293,7 +299,7 @@ async def list_encaissements(
 
 @router.get("/encaissements/{encaissement_id}", response_model=EncaissementResponse)
 @require_permission("finance:read")
-async def get_encaissement(
+def get_encaissement(
     encaissement_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -307,7 +313,7 @@ async def get_encaissement(
 
 @router.get("/encaissements/tiers/{tiers_id}", response_model=List[EncaissementResponse])
 @require_permission("finance:read")
-async def get_encaissements_by_tiers(
+def get_encaissements_by_tiers(
     tiers_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -318,7 +324,7 @@ async def get_encaissements_by_tiers(
 
 @router.get("/encaissements/non-lettrés", response_model=List[EncaissementResponse])
 @require_permission("finance:read")
-async def get_encaissements_non_lettrés(
+def get_encaissements_non_lettrés(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -329,7 +335,7 @@ async def get_encaissements_non_lettrés(
 @router.post("/encaissements", response_model=EncaissementResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def create_encaissement(
+def create_encaissement(
     encaissement_data: EncaissementCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -341,7 +347,7 @@ async def create_encaissement(
 @router.put("/encaissements/{encaissement_id}", response_model=EncaissementResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def update_encaissement(
+def update_encaissement(
     encaissement_id: int,
     encaissement_data: EncaissementUpdate,
     db: Session = Depends(get_db),
@@ -357,7 +363,7 @@ async def update_encaissement(
 @router.delete("/encaissements/{encaissement_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("finance:delete")
-async def delete_encaissement(
+def delete_encaissement(
     encaissement_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -372,7 +378,7 @@ async def delete_encaissement(
 @router.post("/encaissements/{encaissement_id}/lettrer/{facture_id}", response_model=EncaissementResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def lettrer_encaissement(
+def lettrer_encaissement(
     encaissement_id: int,
     facture_id: int,
     db: Session = Depends(get_db),
@@ -387,7 +393,7 @@ async def lettrer_encaissement(
 
 @router.get("/encours/{tiers_id}", response_model=EncoursResponse)
 @require_permission("finance:read")
-async def get_encours(
+def get_encours(
     tiers_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -398,7 +404,7 @@ async def get_encours(
 
 @router.get("/tarifs", response_model=List[GrilleTarifaireResponse])
 @require_permission("finance:read")
-async def list_tarifs(
+def list_tarifs(
     skip: int = 0,
     limit: int = 100,
     type_service: str | None = None,
@@ -413,7 +419,7 @@ async def list_tarifs(
 
 @router.get("/tarifs/{grille_id}", response_model=GrilleTarifaireResponse)
 @require_permission("finance:read")
-async def get_tarif(
+def get_tarif(
     grille_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -432,7 +438,7 @@ avoir_service = AvoirService()
 @router.post("/avoirs", response_model=AvoirResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def create_avoir(
+def create_avoir(
     avoir_data: AvoirCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -446,7 +452,7 @@ async def create_avoir(
 
 @router.get("/avoirs", response_model=List[AvoirResponse])
 @require_permission("finance:read")
-async def list_avoirs(
+def list_avoirs(
     skip: int = 0,
     limit: int = 100,
     tiers_id: Optional[int] = None,
@@ -461,7 +467,7 @@ async def list_avoirs(
 
 @router.get("/avoirs/{avoir_id}", response_model=AvoirResponse)
 @require_permission("finance:read")
-async def get_avoir(
+def get_avoir(
     avoir_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -476,7 +482,7 @@ async def get_avoir(
 @router.post("/avoirs/{avoir_id}/mark-used", response_model=AvoirResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def mark_avoir_as_used(
+def mark_avoir_as_used(
     avoir_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -491,7 +497,7 @@ async def mark_avoir_as_used(
 
 @router.get("/avoirs/unutilized/{tiers_id}", response_model=List[AvoirResponse])
 @require_permission("finance:read")
-async def get_unutilized_avoirs_by_tiers(
+def get_unutilized_avoirs_by_tiers(
     tiers_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -501,7 +507,7 @@ async def get_unutilized_avoirs_by_tiers(
 
 @router.get("/tarifs/active/{type_service}", response_model=GrilleTarifaireResponse)
 @require_permission("finance:read")
-async def get_tarif_active(
+def get_tarif_active(
     type_service: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -516,7 +522,7 @@ async def get_tarif_active(
 @router.post("/tarifs", response_model=GrilleTarifaireResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def create_tarif(
+def create_tarif(
     tarif_data: GrilleTarifaireCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -528,7 +534,7 @@ async def create_tarif(
 @router.put("/tarifs/{grille_id}", response_model=GrilleTarifaireResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def update_tarif(
+def update_tarif(
     grille_id: int,
     tarif_data: GrilleTarifaireUpdate,
     db: Session = Depends(get_db),
@@ -544,7 +550,7 @@ async def update_tarif(
 @router.delete("/tarifs/{grille_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("finance:delete")
-async def delete_tarif(
+def delete_tarif(
     grille_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -559,7 +565,7 @@ async def delete_tarif(
 @router.post("/tarifs/{grille_id}/activer", response_model=GrilleTarifaireResponse)
 @require_role(["admin", "finance"])
 @require_permission("finance:write")
-async def activer_tarif(
+def activer_tarif(
     grille_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -573,7 +579,7 @@ async def activer_tarif(
 
 @router.post("/calculer-tva")
 @require_permission("finance:read")
-async def calculer_tva_endpoint(
+def calculer_tva_endpoint(
     montant_ht: Decimal,
 ):
     """Calcule la TVA pour un montant HT."""

@@ -1,4 +1,5 @@
 # app/routers/goods_declaration.py - Routes API pour les déclarations de marchandises
+from app.utils.rbac import require_role
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -43,6 +44,7 @@ def get_goods_declaration(declaration_id: int, db: Session = Depends(get_db), cu
 
 
 @router.post("/", response_model=GoodsDeclarationResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("transport:create")
 def create_goods_declaration(
@@ -55,6 +57,7 @@ def create_goods_declaration(
 
 
 @router.put("/{declaration_id}", response_model=GoodsDeclarationResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("transport:update")
 def update_goods_declaration(
@@ -71,6 +74,7 @@ def update_goods_declaration(
 
 
 @router.delete("/{declaration_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("transport:delete")
 def delete_goods_declaration(
@@ -87,6 +91,7 @@ def delete_goods_declaration(
 
 # ============ LIGNES GOODS DECLARATION ============
 @router.post("/{declaration_id}/lignes", response_model=LigneGoodsDeclarationResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("transport:create")
 def add_ligne_goods_declaration(

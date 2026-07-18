@@ -1,6 +1,6 @@
 # app/schemas/magasin.py - Schémas Pydantic pour le module K-magasin
 from pydantic import BaseModel, Field, validator, ConfigDict
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 from typing import Optional, List, Annotated
 from enum import Enum
@@ -209,6 +209,9 @@ class LigneDeclarationBase(BaseModel):
     quantite_declaree: Decimal = Field(..., gt=0, decimal_places=3)
     unite_mesure: UniteMesure
     quantite_udb: Optional[ConstrainedDecimal3] = None
+    numero_lot: Optional[str] = None
+    date_fabrication: Optional[date] = None
+    date_expiration: Optional[date] = None
 
 
 class LigneDeclarationCreate(LigneDeclarationBase):
@@ -580,26 +583,38 @@ class LigneBandeLivraison(LigneBandeLivraisonBase):
 
 # ============ BANDE LIVRAISON ============
 class BandeLivraisonBase(BaseModel):
-    commande_id: int
+    commande_id: Optional[int] = None
+    ordre_transfert_id: Optional[int] = None
     magasin_id: int
     date_livraison: Optional[datetime] = None
     statut: str = Field(default="EN_PREPARATION", max_length=20)
     nombre_camions: int = Field(default=0, ge=0)
     notes: Optional[str] = Field(None, max_length=500)
+    # Transport detail fields
+    chauffeur_nom: Optional[str] = Field(None, max_length=200)
+    matricule_vehicule: Optional[str] = Field(None, max_length=50)
+    signature_chauffeur: Optional[str] = Field(None, max_length=500)
+    signature_magasinier: Optional[str] = Field(None, max_length=500)
+    signature_transporteur: Optional[str] = Field(None, max_length=500)
 
 
 class BandeLivraisonCreate(BandeLivraisonBase):
     lignes: List[LigneBandeLivraisonCreate] = []
-    
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "commande_id": 1,
-                "magasin_id": 1,
+                "ordre_transfert_id": 1,
+                "magasin_id": 2,
                 "date_livraison": "2026-06-21T09:00:00",
                 "statut": "EN_PREPARATION",
                 "nombre_camions": 3,
                 "notes": "Livraison avec camions de 20 tonnes",
+                "chauffeur_nom": "Jean Dupont",
+                "matricule_vehicule": "LT-123-AB",
+                "signature_chauffeur": "signature_chauffeur_data",
+                "signature_magasinier": "signature_magasinier_data",
+                "signature_transporteur": "signature_transporteur_data",
                 "lignes": [
                     {
                         "article_id": 1,
@@ -617,6 +632,12 @@ class BandeLivraisonUpdate(BaseModel):
     statut: Optional[str] = Field(None, max_length=20)
     nombre_camions: Optional[int] = Field(None, ge=0)
     notes: Optional[str] = Field(None, max_length=500)
+    # Transport detail fields
+    chauffeur_nom: Optional[str] = Field(None, max_length=200)
+    matricule_vehicule: Optional[str] = Field(None, max_length=50)
+    signature_chauffeur: Optional[str] = Field(None, max_length=500)
+    signature_magasinier: Optional[str] = Field(None, max_length=500)
+    signature_transporteur: Optional[str] = Field(None, max_length=500)
 
 
 class BandeLivraison(BandeLivraisonBase):
@@ -625,6 +646,7 @@ class BandeLivraison(BandeLivraisonBase):
     date_creation: datetime
     prepare_par: Optional[str] = None
     commande: Optional[Commande] = None
+    ordre_transfert: Optional[OrdreTransfert] = None
     magasin: Optional[Magasin] = None
     lignes_bande: List[LigneBandeLivraison] = []
     model_config = ConfigDict(from_attributes=True)
@@ -817,6 +839,8 @@ class OrdreTransfertBase(BaseModel):
     magasin_dest_id: int
     motif: Optional[str] = Field(None, max_length=500)
     notes: Optional[str] = Field(None, max_length=500)
+    validation_service_client: bool = False
+    paiement_effectue: bool = False
 
 
 class OrdreTransfertCreate(OrdreTransfertBase):

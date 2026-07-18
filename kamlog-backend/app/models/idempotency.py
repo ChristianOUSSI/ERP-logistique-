@@ -13,11 +13,11 @@ class IdempotencyKey(BaseModel):
     idempotency_key: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     
     # Utilisateur qui a fait la requête
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     user = relationship("User")
     
     # Multi-tenancy
-    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id"), nullable=False)
+    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id", ondelete="CASCADE"), nullable=False)
     agency = relationship("Agency")
     
     # Endpoint et méthode HTTP

@@ -1,4 +1,5 @@
 # app/routers/reception_mag3.py - Routes API pour les réceptions Mag3
+from app.utils.rbac import require_role
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -47,6 +48,7 @@ def get_reception_mag3(reception_id: int, db: Session = Depends(get_db), current
 
 
 @router.post("/", response_model=ReceptionMag3Response)
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:create")
 def create_reception_mag3(
@@ -59,6 +61,7 @@ def create_reception_mag3(
 
 
 @router.put("/{reception_id}", response_model=ReceptionMag3Response)
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:update")
 def update_reception_mag3(
@@ -75,6 +78,7 @@ def update_reception_mag3(
 
 
 @router.delete("/{reception_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:delete")
 def delete_reception_mag3(
@@ -90,6 +94,7 @@ def delete_reception_mag3(
 
 
 @router.post("/{reception_id}/valider", response_model=ReceptionMag3Response)
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:validate")
 def validate_reception_mag3(
@@ -106,6 +111,7 @@ def validate_reception_mag3(
 
 # ============ WORKFLOW ENDPOINTS ============
 @router.post("/from-slip/{slip_id}", response_model=ReceptionMag3Response)
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:create")
 def create_reception_from_slip(
@@ -119,6 +125,7 @@ def create_reception_from_slip(
 
 
 @router.post("/{reception_id}/workflow-validate", response_model=ReceptionMag3Response)
+    @require_role(["admin", "manager"])
 
 @check_permission("magasin:validate")
 def validate_reception_workflow(

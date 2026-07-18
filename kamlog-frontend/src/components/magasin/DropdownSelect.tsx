@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { magasinAPI } from '@/lib/api-client'
+import { masterDataAPI } from '@/lib/api-client'
 
 interface DropdownOption {
   value: string | number
@@ -58,14 +60,65 @@ export function DropdownSelect({
   )
 }
 
-// Composants spécialisés pour chaque type de dropdown
+// Composants spécialisés pour chaque type de dropdown avec données dynamiques
 
 export function MagasinDropdown({ value, onChange, required = false }: { value?: string; onChange: (value: string) => void; required?: boolean }) {
-  const magasins = [
-    { value: '1', label: 'MAG3 - Magasin 3' },
-    { value: '2', label: 'DNW1 - Depot Nord West 1' },
-    { value: '3', label: 'DNW2 - Depot Nord West 2' },
-  ]
+  const [magasins, setMagasins] = useState<Array<{value: string; label: string}>>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadMagasins = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await magasinAPI.getMagasins()
+        // Assuming API returns { id, code, nom } objects
+        const data = res.data || []
+        setMagasins(
+          data.map((m: any) => ({
+            value: m.id.toString(),
+            label: `${m.code} - ${m.nom}`
+          }))
+        )
+      } catch (err) {
+        console.error('Failed to load magasins', err)
+        setError('Failed to load magasins')
+        setMagasins([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadMagasins()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-Magasin">
+          Magasin
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="flex items-center space-x-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+          <span>Chargement des magasins...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-Magasin">
+          Magasin
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <DropdownSelect
@@ -80,20 +133,56 @@ export function MagasinDropdown({ value, onChange, required = false }: { value?:
 }
 
 export function CategorieArticleDropdown({ value, onChange, required = false }: { value?: string; onChange: (value: string) => void; required?: boolean }) {
-  const categories = [
-    { value: 'ALIMENTAIRE', label: 'Alimentaire' },
-    { value: 'PHARMACEUTIQUE', label: 'Produits Pharmaceutiques' },
-    { value: 'MATIERES_PREMIERES', label: 'Matières Premières' },
-    { value: 'PRODUITS_FINIS', label: 'Produits Finis' },
-    { value: 'EMBALLAGES_PALETES', label: 'Emballages et Palettes' },
-    { value: 'EQUIPEMENT', label: 'Équipement' },
-    { value: 'PIECES_DETACHEES', label: 'Pièces Détachées' },
-    { value: 'MOBILIER_BUREAU_INFORMATIQUE', label: 'Mobilier de Bureau / Informatique' },
-    { value: 'PRODUITS_DANGEREUX', label: 'Produits Dangereux (HAZMAT)' },
-    { value: 'PRODUITS_LUXE_VALEUR', label: 'Produits de Luxe / Valeur' },
-    { value: 'VRAC', label: 'Vrac (Bulk)' },
-    { value: 'HORS_GABARIT', label: 'Hors-Gabarit (OOG)' },
-  ]
+  const [categories, setCategories] = useState<DropdownOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await masterDataAPI.getArticleCategories()
+        // API returns { value, label } objects directly
+        setCategories(res.data || [])
+      } catch (err) {
+        console.error('Failed to load categories', err)
+        setError('Failed to load categories')
+        setCategories([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadCategories()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-CategorieArticle">
+          Catégorie d'Article
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="flex items-center space-x-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+          <span>Chargement des catégories...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-CategorieArticle">
+          Catégorie d'Article
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <DropdownSelect
@@ -108,19 +197,62 @@ export function CategorieArticleDropdown({ value, onChange, required = false }: 
 }
 
 export function IncotermDropdown({ value, onChange, required = false }: { value?: string; onChange: (value: string) => void; required?: boolean }) {
-  const incoterms = [
-    { value: '1', label: 'EXW - Ex Works' },
-    { value: '2', label: 'FCA - Free Carrier' },
-    { value: '3', label: 'FAS - Free Alongside Ship' },
-    { value: '4', label: 'FOB - Free On Board' },
-    { value: '5', label: 'CPT - Carriage Paid To' },
-    { value: '6', label: 'CIP - Carriage and Insurance Paid To' },
-    { value: '7', label: 'CFR - Cost and Freight' },
-    { value: '8', label: 'CIF - Cost, Insurance and Freight' },
-    { value: '9', label: 'DAP - Delivered At Place' },
-    { value: '10', label: 'DPU - Delivered at Place Unloaded' },
-    { value: '11', label: 'DDP - Delivered Duty Paid' },
-  ]
+  const [incoterms, setIncoterms] = useState<DropdownOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadIncoterms = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await masterDataAPI.getIncoterms()
+        // Assuming API returns objects with code and nom fields
+        const data = res.data || []
+        setIncoterms(
+          data.map((i: any) => ({
+            value: i.code,
+            label: `${i.code} - ${i.nom}`
+          }))
+        )
+      } catch (err) {
+        console.error('Failed to load incoterms', err)
+        setError('Failed to load incoterms')
+        setIncoterms([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadIncoterms()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-Incoterm">
+          Incoterm
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="flex items-center space-x-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+          <span>Chargement des incoterms...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-Incoterm">
+          Incoterm
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <DropdownSelect
@@ -135,22 +267,67 @@ export function IncotermDropdown({ value, onChange, required = false }: { value?
 }
 
 export function TypeConteneurDropdown({ value, onChange, required = false }: { value?: string; onChange: (value: string) => void; required?: boolean }) {
-  const typesConteneur = [
-    { value: '1', label: '20\' Dry' },
-    { value: '2', label: '40\' Dry' },
-    { value: '3', label: '40\' High Cube' },
-    { value: '4', label: '40\' Reefer' },
-    { value: '5', label: 'Open Top' },
-    { value: '6', label: 'Flat Rack' },
-    { value: '7', label: 'Tank' },
-    { value: '8', label: 'Ventilated' },
-    { value: '9', label: 'Insulated' },
-  ]
+  const [types, setTypes] = useState<DropdownOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadTypes = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await masterDataAPI.getContainerTypes()
+        // Assuming API returns objects with longueur and type_conteneur fields
+        const data = res.data || []
+        setTypes(
+          data.map((t: any) => ({
+            value: t.code || t.id?.toString() || '',
+            label: `${t.longueur} ${t.type_conteneur}`
+          }))
+        )
+      } catch (err) {
+        console.error('Failed to load container types', err)
+        setError('Failed to load container types')
+        setTypes([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTypes()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-TypeConteneur">
+          Type de Conteneur
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="flex items-center space-x-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+          <span>Chargement des types de conteneur...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-TypeConteneur">
+          Type de Conteneur
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <DropdownSelect
       label="Type de Conteneur"
-      options={typesConteneur}
+      options={types}
       value={value}
       onChange={onChange}
       placeholder="Sélectionner un type de conteneur"
@@ -160,15 +337,62 @@ export function TypeConteneurDropdown({ value, onChange, required = false }: { v
 }
 
 export function StatutStockDropdown({ value, onChange, required = false }: { value?: string; onChange: (value: string) => void; required?: boolean }) {
-  const statuts = [
-    { value: 'NORMAL', label: 'Normal' },
-    { value: 'DECHIRE', label: 'Déchiré' },
-    { value: 'MOUILLE', label: 'Mouillé' },
-    { value: 'ENDOMMAGE', label: 'Endommagé' },
-    { value: 'PERIME', label: 'Périmé' },
-    { value: 'EN_ATTENTE', label: 'En attente' },
-    { value: 'RESERVE', label: 'Réservé' },
-  ]
+  const [statuts, setStatuts] = useState<DropdownOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadStatuts = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await magasinAPI.getStockStatuses()
+        // API returns array of strings (statut values)
+        const data = res.data || []
+        setStatuts(
+          data.map((s: string) => ({
+            value: s,
+            label: s // We could map to a more readable label, but keep as is for now
+          }))
+        )
+      } catch (err) {
+        console.error('Failed to load stock statuses', err)
+        setError('Failed to load stock statuses')
+        setStatuts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadStatuts()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-StatutStock">
+          Statut du Stock
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="flex items-center space-x-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+          <span>Chargement des statuts de stock...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="select-StatutStock">
+          Statut du Stock
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        <div className="text-red-500">{error}</div>
+      </div>
+    )
+  }
 
   return (
     <DropdownSelect

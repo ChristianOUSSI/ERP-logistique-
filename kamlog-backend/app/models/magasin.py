@@ -1,5 +1,5 @@
 # app/models/magasin.py - Modèles pour le module K-magasin
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint, JSON
+from sqlalchemy import Column, Integer, String, Numeric(18, 4), DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint, JSON, Text, CheckConstraint, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -80,7 +80,7 @@ class Magasin(Base):
     pays = Column(String(100), default="Cameroun")
     telephone = Column(String(20))
     email = Column(String(100))
-    capacite_max_m3 = Column(Float, nullable=True, default=1000.0)
+    capacite_max_m3 = Column(Numeric(18, 4), nullable=True, default=1000.0)
     est_actif = Column(Boolean, default=True)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
@@ -124,10 +124,10 @@ class Article(Base):
     description = Column(String(500))
     categorie = Column(Enum(CategorieArticle), nullable=True)
     unite_mesure = Column(Enum(UniteMesure), default=UniteMesure.UDB)
-    poids_unitaire = Column(Float, nullable=True)  # Poids en kg si applicable
-    volume_unitaire = Column(Float, nullable=True)  # Volume en m³ si applicable
+    poids_unitaire = Column(Numeric(18, 4), nullable=True)  # Poids en kg si applicable
+    volume_unitaire = Column(Numeric(18, 4), nullable=True)  # Volume en m³ si applicable
     est_actif = Column(Boolean, default=True)
-    valeur_unitaire = Column(Float, nullable=True, default=0.0)
+    valeur_unitaire = Column(Numeric(18, 4), nullable=True, default=0.0)
     proprietes_dynamiques = Column(JSON, nullable=True, comment="Variables libres dynamiques (Température, HS Code...)")
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
@@ -160,9 +160,9 @@ class Declaration(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     numero_bl = Column(String(50), unique=True, nullable=False, index=True)
-    client_id = Column(Integer, ForeignKey("clients_magasin.id"), nullable=False)
-    incoterm_id = Column(Integer, ForeignKey("incoterms.id"), nullable=True)
-    type_conteneur_id = Column(Integer, ForeignKey("types_conteneur.id"), nullable=True)
+    client_id = Column(Integer, ForeignKey("clients_magasin.id", ondelete="CASCADE"), nullable=False)
+    incoterm_id = Column(Integer, ForeignKey("incoterms.id", ondelete="CASCADE"), nullable=True)
+    type_conteneur_id = Column(Integer, ForeignKey("types_conteneur.id", ondelete="CASCADE"), nullable=True)
     # Code article remplace numero_conteneur comme clé principale pour la marchandise
     code_article = Column(String(20), nullable=False, index=True, comment="Code article principal de la déclaration")
     numero_conteneur = Column(String(50), nullable=True, comment="Numéro conteneur (optionnel)")
@@ -184,7 +184,7 @@ class Declaration(Base):
         comment="Numéro de scellé du conteneur")
 
     # Liaison Navire / Escale
-    escale_id = Column(Integer, ForeignKey("escales.id"), nullable=True,
+    escale_id = Column(Integer, ForeignKey("escales.id", ondelete="CASCADE"), nullable=True,
         comment="Liaison vers l'escale du navire")
     nom_navire = Column(String(100), nullable=True,
         comment="Nom du navire (texte libre si pas d'escale liée)")
@@ -214,7 +214,7 @@ class Declaration(Base):
         comment="Poids brut déclaré en kg")
     poids_net_kg = Column(Numeric(12, 3), nullable=True,
         comment="Poids net déclaré en kg")
-    volume_m3 = Column(Numeric(10, 3), nullable=True,
+    volume_m3 = Column(Numeric(18, 4), nullable=True,
         comment="Volume en mètres cubes")
     nombre_colis = Column(Integer, nullable=True,
         comment="Nombre de colis / emballages")
@@ -242,13 +242,18 @@ class LigneDeclaration(Base):
     __tablename__ = "lignes_declaration"
 
     id = Column(Integer, primary_key=True, index=True)
-    declaration_id = Column(Integer, ForeignKey("declarations.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    declaration_id = Column(Integer, ForeignKey("declarations.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite_declaree = Column(Numeric(15, 3), nullable=False)
     unite_mesure = Column(Enum(UniteMesure), nullable=False)
     quantite_udb = Column(Numeric(15, 3), nullable=True)  # Quantité en UDB calculée
     quantite_recue = Column(Numeric(15, 3), default=0, comment="Quantité totale reçue (tous magasins)")
     quantite_restante = Column(Numeric(15, 3), nullable=True, comment="Quantité restante à recevoir (calculée)")
+    
+    # Nouveaux champs pour le vrac / sacs
+    numero_lot = Column(String(100), nullable=True, comment="Numéro de lot pour traçabilité")
+    date_fabrication = Column(Date, nullable=True)
+    date_expiration = Column(Date, nullable=True)
 
     # Relations
     declaration = relationship("Declaration", back_populates="lignes")
@@ -261,8 +266,8 @@ class Reception(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     numero_reception = Column(String(50), unique=True, nullable=False, index=True)
-    declaration_id = Column(Integer, ForeignKey("declarations.id"), nullable=False)
-    magasin_id = Column(Integer, ForeignKey("magasins.id"), nullable=False)
+    declaration_id = Column(Integer, ForeignKey("declarations.id", ondelete="CASCADE"), nullable=False)
+    magasin_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False)
     date_reception = Column(DateTime(timezone=True), server_default=func.now())
     statut = Column(Enum(StatutReception), default=StatutReception.EN_COURS)
     notes = Column(String(500))
@@ -281,11 +286,16 @@ class LigneReception(Base):
     __tablename__ = "lignes_reception"
 
     id = Column(Integer, primary_key=True, index=True)
-    reception_id = Column(Integer, ForeignKey("receptions.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    reception_id = Column(Integer, ForeignKey("receptions.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite_recue = Column(Numeric(15, 3), nullable=False)
     unite_mesure = Column(Enum(UniteMesure), nullable=False)
     quantite_udb = Column(Numeric(15, 3), nullable=True)
+
+    # Nouveaux champs pour le vrac / sacs
+    numero_lot = Column(String(100), nullable=True, comment="Numéro de lot réceptionné")
+    date_fabrication = Column(Date, nullable=True)
+    date_expiration = Column(Date, nullable=True)
 
     # Relations
     reception = relationship("Reception", back_populates="lignes")
@@ -297,8 +307,8 @@ class Stock(Base):
     __tablename__ = "stocks"
 
     id = Column(Integer, primary_key=True, index=True)
-    magasin_id = Column(Integer, ForeignKey("magasins.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    magasin_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite_disponible = Column(Numeric(15, 3), default=0)
     quantite_udb = Column(Numeric(15, 3), default=0)
     statut = Column(Enum(StatutStock), default=StatutStock.NORMAL)
@@ -322,7 +332,7 @@ class Commande(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     numero_commande = Column(String(50), unique=True, nullable=False, index=True)
-    client_id = Column(Integer, ForeignKey("clients_magasin.id"), nullable=False)
+    client_id = Column(Integer, ForeignKey("clients_magasin.id", ondelete="CASCADE"), nullable=False)
     date_commande = Column(DateTime(timezone=True), server_default=func.now())
     date_livraison_souhaitee = Column(DateTime(timezone=True))
     statut = Column(Enum(StatutCommande), default=StatutCommande.EN_ATTENTE)
@@ -346,12 +356,12 @@ class LigneCommande(Base):
     __tablename__ = "lignes_commande"
 
     id = Column(Integer, primary_key=True, index=True)
-    commande_id = Column(Integer, ForeignKey("commandes.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    commande_id = Column(Integer, ForeignKey("commandes.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite_demandee = Column(Numeric(15, 3), nullable=False)
     quantite_livree = Column(Numeric(15, 3), default=0)
     unite_mesure = Column(Enum(UniteMesure), nullable=False)
-    prix_unitaire = Column(Numeric(15, 2), nullable=True)
+    prix_unitaire = Column(Numeric(18, 4), nullable=True)
 
     # Relations
     commande = relationship("Commande", back_populates="lignes")
@@ -364,17 +374,34 @@ class BandeLivraison(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     numero_bande = Column(String(50), unique=True, nullable=False, index=True)
-    commande_id = Column(Integer, ForeignKey("commandes.id"), nullable=False)
-    magasin_id = Column(Integer, ForeignKey("magasins.id"), nullable=False)
+    commande_id = Column(Integer, ForeignKey("commandes.id", ondelete="CASCADE"), nullable=True)
+    ordre_transfert_id = Column(Integer, ForeignKey("ordres_transfert.id", ondelete="CASCADE"), nullable=True)
+    magasin_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_livraison = Column(DateTime(timezone=True))
     statut = Column(String(20), default="EN_PREPARATION")
     nombre_camions = Column(Integer, default=0)
     notes = Column(String(500))
     prepare_par = Column(String(100))
+    # Transport detail fields
+    chauffeur_nom = Column(String(200))
+    matricule_vehicule = Column(String(50))
+    signature_chauffeur = Column(Text)
+    signature_magasinier = Column(Text)
+    signature_transporteur = Column(Text)
+
+    # Constraint: either commande_id OR ordre_transfert_id must be set (not both, not neither)
+    __table_args__ = (
+        CheckConstraint(
+            "(commande_id IS NULL AND ordre_transfert_id IS NOT NULL) OR "
+            "(commande_id IS NOT NULL AND ordre_transfert_id IS NULL)",
+            name="check_bande_livraison_commande_or_ordre_transfert"
+        ),
+    )
 
     # Relations
     commande = relationship("Commande", back_populates="bandes_livraison")
+    ordre_transfert = relationship("OrdreTransfert", back_populates="bandes_livraison")
     lignes_bande = relationship("LigneBandeLivraison", back_populates="bande", cascade="all, delete-orphan")
 
 
@@ -383,8 +410,8 @@ class LigneBandeLivraison(Base):
     __tablename__ = "lignes_bande_livraison"
 
     id = Column(Integer, primary_key=True, index=True)
-    bande_id = Column(Integer, ForeignKey("bandes_livraison.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    bande_id = Column(Integer, ForeignKey("bandes_livraison.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite = Column(Numeric(15, 3), nullable=False)
     unite_mesure = Column(Enum(UniteMesure), nullable=False)
 
@@ -464,13 +491,13 @@ class OrdreTransfert(Base):
         comment="Format: OT-2026-0001")
 
     # Liaison vers la déclaration BL d'origine (traçabilité)
-    declaration_id = Column(Integer, ForeignKey("declarations.id"), nullable=True,
+    declaration_id = Column(Integer, ForeignKey("declarations.id", ondelete="SET NULL"), nullable=True,
         comment="BL de référence pour la traçabilité")
 
     # Magasins source et destination
-    magasin_source_id = Column(Integer, ForeignKey("magasins.id"), nullable=False,
+    magasin_source_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False,
         comment="Magasin d'où partent les marchandises")
-    magasin_dest_id = Column(Integer, ForeignKey("magasins.id"), nullable=False,
+    magasin_dest_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False,
         comment="Magasin de destination")
 
     # Dates et statut
@@ -493,12 +520,17 @@ class OrdreTransfert(Base):
     cree_par = Column(String(100), nullable=True)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Nouveaux verrous Customer Service
+    validation_service_client = Column(Boolean, default=False, comment="Validé par le Service Client")
+    paiement_effectue = Column(Boolean, default=False, comment="Paiement vérifié")
 
     # Relations
     declaration = relationship("Declaration", back_populates="ordres_transfert")
     magasin_source = relationship("Magasin", foreign_keys=[magasin_source_id], backref="ot_sortants")
     magasin_dest = relationship("Magasin", foreign_keys=[magasin_dest_id], backref="ot_entrants")
     lignes = relationship("LigneOrdreTransfert", back_populates="ordre_transfert", cascade="all, delete-orphan")
+    bandes_livraison = relationship("BandeLivraison", back_populates="ordre_transfert")
 
 
 class LigneOrdreTransfert(Base):
@@ -506,8 +538,8 @@ class LigneOrdreTransfert(Base):
     __tablename__ = "lignes_ordre_transfert"
 
     id = Column(Integer, primary_key=True, index=True)
-    ordre_transfert_id = Column(Integer, ForeignKey("ordres_transfert.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    ordre_transfert_id = Column(Integer, ForeignKey("ordres_transfert.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite = Column(Numeric(15, 3), nullable=False,
         comment="Quantité à transférer")
     unite_mesure = Column(Enum(UniteMesure), nullable=False)

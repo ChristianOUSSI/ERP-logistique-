@@ -88,6 +88,12 @@ class EmplacementParc(BaseModel):
         Integer, comment="Position verticale (hauteur d'empilement)"
     )
 
+    # Capacités pour le WMS
+    capacite_maximale_kg: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    capacite_utilisee_kg: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0.0)
+    volume_max_m3: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    volume_utilise_m3: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=0.0)
+
     statut: Mapped[StatutEmplacement] = mapped_column(
         default=StatutEmplacement.LIBRE
     )
@@ -156,11 +162,11 @@ class MouvementParc(BaseModel):
 
     # Traçabilité origine ↔ destination
     emplacement_source_id: Mapped[int | None] = mapped_column(
-        ForeignKey("emplacements_parc.id"),
+        ForeignKey("emplacements_parc.id", ondelete="CASCADE"),
         comment="NULL si entrée initiale (Gate In)"
     )
     emplacement_dest_id: Mapped[int | None] = mapped_column(
-        ForeignKey("emplacements_parc.id"),
+        ForeignKey("emplacements_parc.id", ondelete="CASCADE"),
         comment="NULL si sortie définitive (Gate Out)"
     )
 
@@ -170,7 +176,7 @@ class MouvementParc(BaseModel):
     engin_identifiant: Mapped[str | None] = mapped_column(
         String(30), comment="ID du Reach Stacker, élévateur ou grue"
     )
-    operateur_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    operateur_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     operateur_identifiant: Mapped[str | None] = mapped_column(
         String(50), comment="ID de l'agent ou du cariste"
     )
@@ -181,7 +187,7 @@ class MouvementParc(BaseModel):
     # Anciens champs conservés pour compatibilité
     reference: Mapped[str | None] = mapped_column(String(30), unique=True)
     conteneur_id: Mapped[int | None] = mapped_column(
-        ForeignKey("stock_physique_parc.id")
+        ForeignKey("stock_physique_parc.id", ondelete="CASCADE")
     )
     notes: Mapped[str | None] = mapped_column(String(500))
 

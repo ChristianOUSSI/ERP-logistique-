@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database import Base
 
 class Incident(Base):
@@ -14,11 +14,11 @@ class Incident(Base):
     priorite = Column(String(50), default="MOYENNE") # BASSE, MOYENNE, HAUTE, URGENTE
     
     # Relations
-    tiers_id = Column(Integer, ForeignKey("tiers.id"), nullable=False)
-    mission_id = Column(Integer, ForeignKey("missions_transport.id"), nullable=True)
+    tiers_id = Column(Integer, ForeignKey("tiers.id", ondelete="CASCADE"), nullable=False)
+    mission_id = Column(Integer, ForeignKey("missions_transport.id", ondelete="CASCADE"), nullable=True)
     
     # Dates
-    date_creation = Column(DateTime, default=datetime.utcnow)
+    date_creation = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     date_resolution = Column(DateTime, nullable=True)
     
     # Relationships

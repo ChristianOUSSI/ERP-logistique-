@@ -144,7 +144,7 @@ class PlanningCotation(BaseModel):
 
     # Volet Chiffre d'Affaires Planifié (Ventes)
     montant_estime_recette: Mapped[Decimal] = mapped_column(
-        Numeric(15, 2), default=0.00,
+        Numeric(18, 4), default=0.00,
         comment="Ce que le client va payer (XAF)"
     )
 

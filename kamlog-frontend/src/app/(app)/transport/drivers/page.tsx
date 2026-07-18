@@ -1,31 +1,24 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { transportAPI } from '@/lib/api-client';
 import { UserPlus, Search, Phone, FileText, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import { CardSkeletonLoader } from '@/components/ui/Loaders';
 
 export default function DriversListPage() {
   const router = useRouter();
-  const [chauffeurs, setChauffeurs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchChauffeurs();
-  }, []);
-
-  const fetchChauffeurs = async () => {
-    try {
-      const response = await transportAPI.getChauffeurs();
-      setChauffeurs(response.data || []);
-    } catch (error) {
-      console.error("Failed to fetch drivers:", error);
-    } finally {
-      setLoading(false);
+  const { data: chauffeurs = [], isLoading: loading } = useQuery({
+    queryKey: ['chauffeurs'],
+    queryFn: async () => {
+      const res = await transportAPI.getChauffeurs();
+      return res.data || [];
     }
-  };
+  });
 
   const filteredChauffeurs = chauffeurs.filter(c => 
     c.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -82,14 +75,7 @@ export default function DriversListPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-                      Chargement des chauffeurs...
-                    </div>
-                  </td>
-                </tr>
+                <tr><td colSpan={6} className="px-6 py-12"><CardSkeletonLoader /></td></tr>
               ) : filteredChauffeurs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500">

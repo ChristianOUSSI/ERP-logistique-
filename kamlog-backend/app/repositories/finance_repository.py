@@ -73,11 +73,11 @@ class FactureRepository(BaseRepository[Facture]):
         Returns:
             Liste des factures en retard
         """
-        from datetime import datetime
+        from datetime import datetime, timezone
         return db.query(Facture).filter(
             and_(
                 Facture.statut == StatutFacture.EN_ATTENTE,
-                Facture.date_echeance < datetime.utcnow(),
+                Facture.date_echeance < datetime.now(timezone.utc),
                 Facture.deleted_at == None
             )
         ).all()

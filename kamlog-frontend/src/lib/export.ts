@@ -1,33 +1,31 @@
 export function exportToCSV(data: any[], filename: string) {
   if (!data || !data.length) return;
 
-  const separator = ',';
-  const keys = Object.keys(data[0]);
-  
-  const csvContent =
-    keys.join(separator) +
-    '\n' +
-    data.map(row => {
-      return keys.map(k => {
-        let cell = row[k] === null || row[k] === undefined ? '' : row[k];
-        cell = cell instanceof Date ? cell.toLocaleString() : cell.toString().replace(/"/g, '""');
-        if (cell.search(/("|,|\n)/g) >= 0) {
-          cell = `"${cell}"`;
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => 
+      headers.map(fieldName => {
+        let value = row[fieldName];
+        if (value === null || value === undefined) {
+          return '';
         }
-        return cell;
-      }).join(separator);
-    }).join('\n');
+        value = String(value).replace(/"/g, '""');
+        if (value.search(/("|,|\n)/g) >= 0) {
+          value = `"${value}"`;
+        }
+        return value;
+      }).join(',')
+    )
+  ].join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   
-  const link = document.createElement("a");
-  if (link.download !== undefined) { 
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename.endsWith('.csv') ? filename : `${filename}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `${filename}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }

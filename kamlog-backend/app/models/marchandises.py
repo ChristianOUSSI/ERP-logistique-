@@ -75,7 +75,7 @@ class Marchandise(BaseModel):
         comment="Issu du pesage physique / Pont-Bascule KAMLOG"
     )
     volume_m3: Mapped[Decimal | None] = mapped_column(
-        Numeric(10, 3),
+        Numeric(18, 4),
         comment="Crucial pour le vrac liquide et le conventionnel"
     )
     nombre_colis: Mapped[int] = mapped_column(

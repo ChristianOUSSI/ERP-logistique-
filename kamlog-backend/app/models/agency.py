@@ -1,8 +1,15 @@
 # app/models/agency.py - Modèle pour les agences (multi-tenancy)
-from sqlalchemy import String, Boolean, DateTime, Integer
+from sqlalchemy import String, Boolean, DateTime, Integer, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from app.models.base import BaseModel
+from enum import Enum as PyEnum
+
+
+class PlanType(PyEnum):
+    BASIC = "BASIC"
+    PROFESSIONAL = "PROFESSIONAL"
+    ENTERPRISE = "ENTERPRISE"
 
 
 class Agency(BaseModel):
@@ -16,6 +23,7 @@ class Agency(BaseModel):
     telephone: Mapped[str] = mapped_column(String(20), nullable=True)
     email: Mapped[str] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    plan: Mapped[PlanType] = mapped_column(Enum(PlanType), default=PlanType.BASIC, nullable=False)
     date_creation: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     date_modification: Mapped[DateTime] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 

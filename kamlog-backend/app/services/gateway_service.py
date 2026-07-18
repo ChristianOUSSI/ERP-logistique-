@@ -1,7 +1,7 @@
 # app/services/gateway_service.py - Service pour les passerelles inter-modules
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.gateway import Passerelle, CommandeFacture, CommandeLivraison, ReceptionStock, FacturePaiement, MissionFacture
 from app.schemas.shared import (
@@ -40,7 +40,7 @@ class GatewayService:
         """
         db_passerelle = Passerelle(**passerelle.model_dump())
         db.add(db_passerelle)
-        db.commit()
+        db.flush()
         db.refresh(db_passerelle)
         
         logger.info(
@@ -112,14 +112,14 @@ class GatewayService:
         
         # Si le statut passe à TRAITE, mettre à jour la date de traitement
         if passerelle_update.statut == StatutPasserelle.TRAITE:
-            update_data["date_traitement"] = datetime.utcnow()
+            update_data["date_traitement"] = datetime.now(timezone.utc)
             if user_id:
                 update_data["traite_par"] = user_id
         
         for field, value in update_data.items():
             setattr(db_passerelle, field, value)
         
-        db.commit()
+        db.flush()
         db.refresh(db_passerelle)
         
         logger.info(

@@ -1,7 +1,7 @@
 # app/models/tiers.py  Modèle SQLAlchemy Tiers (Refonte SAP-Style)
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Boolean, Numeric, Text, Integer, Index, JSON
+from sqlalchemy import String, Boolean, Numeric, Text, Integer, Index, JSON, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseModel
 
@@ -66,7 +66,7 @@ class Tiers(BaseModel):
     # Alias
     compte_syscohada: Mapped[str | None] = mapped_column(String(20))
     limite_credit_maximum: Mapped[Decimal] = mapped_column(
-        Numeric(15, 2), default=0.00, comment="Limite de crédit en XAF"
+        Numeric(18, 4), default=0.00, comment="Limite de crédit en XAF"
     )
     # Alias
     limite_credit_xaf: Mapped[Decimal] = mapped_column(Numeric(15, 0), default=0)
@@ -95,3 +95,23 @@ class Tiers(BaseModel):
         Index("ix_tiers_statut", "statut"),
         Index("ix_tiers_code", "code_tiers"),
     )
+
+
+class AbonnementTenant(BaseModel):
+    """
+    SLA & API Rate Limiting pour le Multi-Tenant.
+    Gère les quotas d'utilisation de l'API.
+    """
+    __tablename__ = "abonnements_tenant"
+
+    tiers_id: Mapped[int] = mapped_column(ForeignKey("tiers.id", ondelete="CASCADE"), unique=True)
+    
+    # Limites (0 = illimité)
+    requetes_par_minute: Mapped[int] = mapped_column(Integer, default=60, comment="Limite de requêtes par minute")
+    bande_passante_mensuelle_mb: Mapped[int] = mapped_column(Integer, default=1024, comment="Limite en Mo/mois")
+    
+    # SLA
+    sla_disponibilite: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=99.9, comment="Ex: 99.9%")
+    
+    # Relations
+    tiers: Mapped['Tiers'] = relationship()

@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session
 from typing import Type, TypeVar, Generic, Optional, List
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.base import BaseModel as DBBaseModel
 
@@ -101,7 +101,7 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in_data = obj_in.dict()
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
-        db.commit()
+        db.flush()
         db.refresh(db_obj)
         return db_obj
     
@@ -125,7 +125,7 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_data = obj_in.dict(exclude_unset=True)
         for field, value in obj_data.items():
             setattr(db_obj, field, value)
-        db.commit()
+        db.flush()
         db.refresh(db_obj)
         return db_obj
     
@@ -142,8 +142,8 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         obj = self.get(db, id)
         if obj:
-            obj.deleted_at = datetime.utcnow()
-            db.commit()
+            obj.deleted_at = datetime.now(timezone.utc)
+            db.flush()
             db.refresh(obj)
         return obj
     

@@ -100,7 +100,7 @@ def cancel_operation_by_ot(db: Session, numero_ot: str, annule_par: str) -> bool
     Returns:
         bool: True si l'opération a été annulée, False sinon
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
     
     operation = db.query(OperationTrace).filter(
         OperationTrace.numero_ot == numero_ot,
@@ -112,7 +112,7 @@ def cancel_operation_by_ot(db: Session, numero_ot: str, annule_par: str) -> bool
     
     # Marquer l'opération comme annulée
     operation.est_annule = True
-    operation.date_annulation = datetime.utcnow()
+    operation.date_annulation = datetime.now(timezone.utc)
     operation.annule_par = annule_par
     
     db.commit()

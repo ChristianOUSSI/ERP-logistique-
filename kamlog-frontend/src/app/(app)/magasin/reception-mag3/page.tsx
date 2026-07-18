@@ -285,7 +285,7 @@ function ReceptionDashboard({ declaration, currentMagasin, onRefresh }: { declar
           <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
             <Box className="w-5 h-5 text-slate-400" /> Détail du stockage par entrepôt
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8">
             {Object.entries(summary.receptions_par_magasin).map(([nomMag, qte]) => (
               <div key={nomMag} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 bg-slate-50">
                 <span className="font-bold text-slate-700">{nomMag}</span>
@@ -293,9 +293,54 @@ function ReceptionDashboard({ declaration, currentMagasin, onRefresh }: { declar
               </div>
             ))}
           </div>
+          
+          {/* History */}
+          <HistoryTable declarationId={declaration.id} currentMagasinId={currentMagasin.id} refreshTrigger={summary} />
         </div>
       )}
 
+    </div>
+  )
+}
+
+function HistoryTable({ declarationId, currentMagasinId, refreshTrigger }: { declarationId: number, currentMagasinId: number, refreshTrigger: any }) {
+  const [history, setHistory] = useState<any[]>([])
+  
+  useEffect(() => {
+    magasinAPI.getDeclarationReceptionsHistory(declarationId)
+      .then(res => setHistory(res.data.historique || []))
+      .catch(console.error)
+  }, [declarationId, refreshTrigger])
+
+  if (history.length === 0) return null;
+
+  return (
+    <div className="mt-6 border-t border-slate-100 pt-6">
+      <h4 className="text-sm font-bold text-slate-800 mb-4">Historique des mouvements liés à ce BL</h4>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 text-slate-500 font-bold">
+            <tr>
+              <th className="px-4 py-2 rounded-tl-lg">Date</th>
+              <th className="px-4 py-2">Magasin</th>
+              <th className="px-4 py-2">Quantité</th>
+              <th className="px-4 py-2">Lot</th>
+              <th className="px-4 py-2 rounded-tr-lg">Par</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {history.map((h, i) => (
+              <tr key={i} className={h.magasin_id === currentMagasinId ? 'bg-blue-50/30' : ''}>
+                <td className="px-4 py-3 text-slate-600">{new Date(h.date_reception).toLocaleString()}</td>
+                <td className="px-4 py-3 font-bold text-slate-800">{h.magasin_nom}</td>
+                <td className="px-4 py-3 font-black text-slate-900">{h.quantite_recue} <span className="text-xs text-slate-400">{h.unite_mesure}</span></td>
+                <td className="px-4 py-3 text-slate-500">{h.numero_lot || '-'}</td>
+                <td className="px-4 py-3 text-slate-600 text-xs">{h.recu_par}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

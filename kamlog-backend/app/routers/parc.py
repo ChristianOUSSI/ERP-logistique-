@@ -45,7 +45,7 @@ router = APIRouter()
 
 @router.get("/zones", response_model=List[ZoneParcResponse])
 @require_permission("parc:read")
-async def list_zones(
+def list_zones(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -57,7 +57,7 @@ async def list_zones(
 
 @router.get("/zones/{zone_id}", response_model=ZoneParcResponse)
 @require_permission("parc:read")
-async def get_zone(
+def get_zone(
     zone_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -72,7 +72,7 @@ async def get_zone(
 @router.post("/zones", response_model=ZoneParcResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin"])
 @require_permission("parc:write")
-async def create_zone(
+def create_zone(
     zone_data: ZoneParcCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -84,7 +84,7 @@ async def create_zone(
 @router.put("/zones/{zone_id}", response_model=ZoneParcResponse)
 @require_role(["admin"])
 @require_permission("parc:write")
-async def update_zone(
+def update_zone(
     zone_id: int,
     zone_data: ZoneParcCreate,
     db: Session = Depends(get_db),
@@ -100,7 +100,7 @@ async def update_zone(
 @router.delete("/zones/{zone_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("parc:delete")
-async def delete_zone(
+def delete_zone(
     zone_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -114,7 +114,7 @@ async def delete_zone(
 
 @router.get("/emplacements", response_model=List[EmplacementParcResponse])
 @require_permission("parc:read")
-async def list_emplacements(
+def list_emplacements(
     skip: int = 0,
     limit: int = 100,
     zone_id: int | None = None,
@@ -132,7 +132,7 @@ async def list_emplacements(
 
 @router.get("/emplacements/{emplacement_id}", response_model=EmplacementParcResponse)
 @require_permission("parc:read")
-async def get_emplacement(
+def get_emplacement(
     emplacement_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -147,7 +147,7 @@ async def get_emplacement(
 @router.post("/emplacements", response_model=EmplacementParcResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin"])
 @require_permission("parc:write")
-async def create_emplacement(
+def create_emplacement(
     emplacement_data: EmplacementParcCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -159,7 +159,7 @@ async def create_emplacement(
 @router.put("/emplacements/{emplacement_id}", response_model=EmplacementParcResponse)
 @require_role(["admin"])
 @require_permission("parc:write")
-async def update_emplacement(
+def update_emplacement(
     emplacement_id: int,
     emplacement_data: EmplacementParcCreate,
     db: Session = Depends(get_db),
@@ -175,7 +175,7 @@ async def update_emplacement(
 @router.delete("/emplacements/{emplacement_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("parc:delete")
-async def delete_emplacement(
+def delete_emplacement(
     emplacement_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -189,7 +189,7 @@ async def delete_emplacement(
 
 @router.get("/stock", response_model=List[StockPhysiqueParcResponse])
 @require_permission("parc:read")
-async def list_stock(
+def list_stock(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -201,7 +201,7 @@ async def list_stock(
 
 @router.get("/stock/{stock_id}", response_model=StockPhysiqueParcResponse)
 @require_permission("parc:read")
-async def get_stock(
+def get_stock(
     stock_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -215,7 +215,7 @@ async def get_stock(
 
 @router.get("/stock/actifs", response_model=List[StockPhysiqueParcResponse])
 @require_permission("parc:read")
-async def list_stock_actifs(
+def list_stock_actifs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -226,7 +226,7 @@ async def list_stock_actifs(
 @router.post("/gate-in")
 @require_role(["admin", "gate_agent"])
 @require_permission("parc:gate")
-async def gate_in(
+def gate_in(
     gate_in_data: GateInRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -242,7 +242,7 @@ async def gate_in(
 @router.post("/gate-out")
 @require_role(["admin", "gate_agent"])
 @require_permission("parc:gate")
-async def gate_out(
+def gate_out(
     gate_out_data: GateOutRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -256,7 +256,7 @@ async def gate_out(
 
 @router.post("/ocr-extract")
 @require_permission("parc:write")
-async def extract_ocr(
+def extract_ocr(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
@@ -269,37 +269,40 @@ async def extract_ocr(
         raise HTTPException(status_code=400, detail="Format de fichier non supporté. Veuillez envoyer une image.")
 
     try:
-        # Tente l'extraction réelle si pytesseract est configuré (optionnel, pour l'instant fallback direct)
-        # return {"plaques": "LT-123-AB", "chauffeur": "MOCK", "confiance": 98}
-        
-        # Fallback pour ne jamais crasher en l'absence de moteur d'IA sur le serveur host
+        # Simulation d'extraction intelligente par une IA Cloud (Fallback)
+        # On lit juste le nom du fichier pour simuler une analyse dynamique ou on renvoie des data random
+        import time
         import random
-        # Fake processing time
-        import asyncio
-        await asyncio.sleep(1.5)
-
-        plaques_mock = ["LT-582-AB", "CE-104-XT", "OU-999-CM"]
-        chauffeurs_mock = ["Jean Dupont", "Paul Kamga", "Marc Oumarou"]
+        
+        # Simule le temps de traitement de l'IA (1.5 secondes)
+        time.sleep(1.5)
+        
+        # Numéros de conteneurs factices réalistes
+        mock_containers = ["CMAU1234567", "MSCU8910234", "MAEU5678901", "HLCU1122334"]
         
         return {
-            "plaques": random.choice(plaques_mock),
-            "chauffeur": random.choice(chauffeurs_mock),
-            "confiance": random.randint(85, 99),
-            "message": "Extraction OCR réussie (Fallback AI)"
+            "success": True,
+            "containerId": random.choice(mock_containers),
+            "plaques": "LT-1234-A",
+            "chauffeur": "Reconnu",
+            "confidence": random.randint(88, 98),
+            "message": "Extraction réussie via IA Cloud (Mode Simulation MVP)."
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur OCR: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur OCR: {str(e)}")
 
 # ─── Workshop ───────────────────────────────────────────────
 @router.get("/workshop", response_model=List[ReparationAtelierResponse])
 @require_permission("parc:read")
-async def get_workshop_repairs(db: Session = Depends(get_db)):
+def get_workshop_repairs(db: Session = Depends(get_db)):
     """Récupère les réparations de l'atelier"""
     return db.query(ReparationAtelier).all()
 
 @router.post("/workshop", response_model=ReparationAtelierResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("parc:write")
-async def create_workshop_repair(repair: ReparationAtelierCreate, db: Session = Depends(get_db)):
+def create_workshop_repair(repair: ReparationAtelierCreate, db: Session = Depends(get_db)):
     """Créer une réparation d'atelier"""
     db_repair = ReparationAtelier(**repair.dict())
     db.add(db_repair)

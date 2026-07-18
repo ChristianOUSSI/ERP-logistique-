@@ -1,0 +1,51 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+  schedule:
+    - cron: '0 0 * * 0' # Weekly
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install security tools
+        run: |
+          pip install bandit safety semgrep
+
+      - name: Run Bandit (SAST)
+        run: bandit -r kamlog-backend/app -ll -ii
+
+      - name: Run Safety (Dependencies)
+        run: safety check -r kamlog-backend/requirements.txt || echo "Safety found vulnerabilities, please review."
+
+      - name: Run Semgrep
+        run: semgrep scan --config auto kamlog-backend/app --error || echo "Semgrep found issues."
+
+  docker-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker Image
+        run: docker build -t kamlog-backend:test ./kamlog-backend
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'kamlog-backend:test'
+          format: 'table'
+          exit-code: '0' # Don't break build for now, just report
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

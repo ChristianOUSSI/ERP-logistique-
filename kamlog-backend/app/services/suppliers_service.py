@@ -72,7 +72,7 @@ class SupplierService:
         )
         
         db.add(db_supplier)
-        db.commit()
+        db.flush()
         db.refresh(db_supplier)
         return db_supplier
     
@@ -87,7 +87,7 @@ class SupplierService:
         for field, value in update_data.items():
             setattr(db_supplier, field, value)
         
-        db.commit()
+        db.flush()
         db.refresh(db_supplier)
         return db_supplier
     
@@ -99,7 +99,7 @@ class SupplierService:
             return False
         
         db.delete(db_supplier)
-        db.commit()
+        db.flush()
         return True
     
     @staticmethod
@@ -116,6 +116,6 @@ class SupplierService:
         )
         
         db.add(db_profile)
-        db.commit()
+        db.flush()
         db.refresh(db_profile)
         return db_profile

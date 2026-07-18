@@ -1,8 +1,11 @@
-# app/utils/monitoring.py - Configuration Prometheus pour le monitoring
+# app/utils/monitoring.py - Configuration Prometheus pour le monitoring amélioré
 from prometheus_client import Counter, Histogram, Gauge, Info
 from prometheus_fastapi_instrumentator import Instrumentator
 from fastapi import FastAPI
+from app.config import settings
+import logging
 
+logger = logging.getLogger(__name__)
 
 # Métriques de comptage
 http_requests_total = Counter(
@@ -21,7 +24,7 @@ http_requests_errors = Counter(
 http_request_duration_seconds = Histogram(
     'http_request_duration_seconds',
     'HTTP request duration in seconds',
-    ['method', 'endpoint']
+    ['method', 'endpoint', 'status']
 )
 
 # Métriques de base de données
@@ -59,6 +62,25 @@ receptions_created_total = Counter(
     'Total number of receptions created'
 )
 
+# Métriques d'authentification
+auth_logins_total = Counter(
+    'auth_logins_total',
+    'Total number of authentication attempts',
+    ['status']  # success, failure
+)
+
+auth_logins_duration_seconds = Histogram(
+    'auth_logins_duration_seconds',
+    'Authentication duration in seconds'
+)
+
+# Métriques de taux de limitation
+rate_limit_exceeded_total = Counter(
+    'rate_limit_exceeded_total',
+    'Total number of rate limit exceeded events',
+    ['endpoint']
+)
+
 # Métriques système
 app_info = Info(
     'app_info',
@@ -69,7 +91,7 @@ app_info = Info(
 def setup_monitoring(app: FastAPI):
     """
     Configure le monitoring Prometheus pour l'application FastAPI.
-    
+
     Args:
         app: Instance FastAPI
     """
@@ -82,11 +104,14 @@ def setup_monitoring(app: FastAPI):
         env_var_name="PROMETHEUS_MULTIPROC_DIR",
         inprogress_labels=True,
     )
-    
+
     instrumentator.instrument(app).expose(app, include_in_schema=False)
-    
+
     # Définir les informations de l'application
     app_info.info({
         'version': '1.0.0',
-        'environment': 'production' if not app.debug else 'development'
+        'environment': 'production' if not settings.DEBUG else 'development',
+        'debug_mode': str(settings.DEBUG)
     })
+
+    logger.info("Prometheus monitoring configured successfully")

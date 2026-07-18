@@ -48,6 +48,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
   const suggestionRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const soundEnabledRef = useRef(true)
+  const notificationIdRef = useRef(0)
 
   const { soundEnabled, toggleSound, showSoundBadge, triggerSoundBadge, language, setLanguage } = useSettings()
   const { theme: uiTheme, setTheme } = useTheme()
@@ -107,7 +108,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
     socket.onopen = () => { reconnectAttemptsRef.current = 0; setWsStatus('connected') }
     socket.onmessage = (event) => {
       const alert = JSON.parse(event.data)
-      const newNotif: ERPNotification = { ...alert, id: Math.random().toString(36).substr(2, 9), read: false, timestamp: alert.timestamp || new Date().toISOString() }
+      const newNotif: ERPNotification = { ...alert, id: alert.id || `notif-${notificationIdRef.current++}`, read: false, timestamp: alert.timestamp || new Date().toISOString() }
       setNotifications((prev) => [newNotif, ...prev])
       if (alert.severity === 'CRITICAL' && soundEnabledRef.current) {
         const audio = new Audio('/assets/sounds/critical-alert.mp3')

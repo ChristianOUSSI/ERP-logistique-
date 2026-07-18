@@ -25,15 +25,6 @@ class DashboardKpisResponse(BaseModel):
     fleetData: List[dict]
 
 
-@router.get("/audit-logs", response_model=List[AuditLogResponse])
-@require_role(["admin", "super_admin"])
-async def get_audit_logs(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """
-    Returns the system audit logs. 
-    Currently returns empty list as AuditMiddleware is disabled due to missing DB models.
-    """
-    # TODO: Implement real DB fetching once AuditLog model is ready.
-    return []
 
 
 class RoleResponse(BaseModel):
@@ -182,34 +173,56 @@ def get_global_dashboard_kpis(
     """Retourne les KPIs consolidés pour le tableau de bord global, formatés pour les graphiques."""
     from app.models.finance import Facture, StatutFacture
     from app.models.transport import CamionFlotte, StatutCamion
-    from sqlalchemy import func
+    from sqlalchemy import and_, extract, func
     import datetime
 
-    # Revenue Data Week (Mocked aggregation logic -> Real DB grouping)
-    # Pour l'instant on simule l'agrégation sur la semaine en cours avec de vraies valeurs par jour
-    # (Un vrai group by par jour sur Facture)
-    revenueDataWeek = [
-        {'name': 'Lun', 'value': 0},
-        {'name': 'Mar', 'value': 0},
-        {'name': 'Mer', 'value': 0},
-        {'name': 'Jeu', 'value': 0},
-        {'name': 'Ven', 'value': 0},
-        {'name': 'Sam', 'value': 0},
-        {'name': 'Dim', 'value': 0},
-    ]
-    # Simple fallback real data summation (total CA / 7 for demo of DB connectivity)
-    ca_total = db.query(func.sum(Facture.montant_ttc_xaf)).filter(Facture.statut == StatutFacture.PAYEE).scalar() or 0
-    daily_avg = float(ca_total) / 7 if ca_total else 0
-    for day in revenueDataWeek:
-        day['value'] = daily_avg
+    # Revenue Data Week: real group by day of the week (Monday to Sunday)
+    today = datetime.today()
+    start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday
+    end_of_week = start_of_week + datetime.timedelta(days=6)        # Sunday
 
-    # Revenue Data Month
-    revenueDataMonth = [
-        {'name': 'Sem 1', 'value': daily_avg * 7},
-        {'name': 'Sem 2', 'value': daily_avg * 7},
-        {'name': 'Sem 3', 'value': daily_avg * 7},
-        {'name': 'Sem 4', 'value': daily_avg * 7},
-    ]
+    revenue_data = db.query(
+        extract('dow', Facture.date_facture).label('day_of_week'),
+        func.sum(Facture.montant_ttc_xaf).label('total')
+    ).filter(
+        Facture.statut == StatutFacture.PAYEE,
+        Facture.date_facture >= start_of_week,
+        Facture.date_facture <= end_of_week
+    ).group_by(
+        extract('dow', Facture.date_facture)
+    ).all()
+
+    # Map day_of_week (0=Sunday, 1=Monday, ..., 6=Saturday) to our order: Lun, Mar, Mer, Jeu, Ven, Sam, Dim
+    revenueDataWeek = [{'name': name, 'value': 0} for name in ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']]
+    for day in revenue_data:
+        dow = int(day.day_of_week)
+        if dow == 0:  # Sunday
+            index = 6
+        else:
+            index = dow - 1
+        revenueDataWeek[index]['value'] = float(day.total) if day.total else 0
+
+    # Revenue Data Month: real group by week of the month (4 weeks)
+    start_of_month = datetime(today.year, today.month, 1)
+    # Calculate end of month
+    if today.month == 12:
+        end_of_month = datetime(today.year + 1, 1, 1) - datetime.timedelta(days=1)
+    else:
+        end_of_month = datetime(today.year, today.month + 1, 1) - datetime.timedelta(days=1)
+
+    revenueDataMonth = []
+    for week in range(1, 5):  # Weeks 1 to 4
+        week_start = start_of_month + datetime.timedelta(days=(week-1)*7)
+        week_end = min(week_start + datetime.timedelta(days=6), end_of_month)
+        week_total = db.query(func.sum(Facture.montant_ttc_xaf)).filter(
+            Facture.statut == StatutFacture.PAYEE,
+            Facture.date_facture >= week_start,
+            Facture.date_facture <= week_end
+        ).scalar() or 0
+        revenueDataMonth.append({
+            'name': f'Sem {week}',
+            'value': float(week_total)
+        })
 
     # Fleet Data
     en_route = db.query(func.count(CamionFlotte.id)).filter(CamionFlotte.statut == StatutCamion.EN_ROUTE).scalar() or 0

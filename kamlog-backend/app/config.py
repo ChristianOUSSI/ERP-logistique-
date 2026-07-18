@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "KAMLOG EM-ERP"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+    TESTING: bool = False
 
     # Business Logic
     TVA_RATE: str = "0.1925"  # 19.25%
@@ -37,15 +38,15 @@ class Settings(BaseSettings):
     MINIO_ENDPOINT: str = Field(default="localhost:9000", description="MinIO endpoint")
     MINIO_ACCESS_KEY: str = Field(default="kamlog_minio", description="MinIO access key")
     MINIO_SECRET_KEY: str = Field(default="", description="MinIO secret key (optionnel)")
-    MINIO_BUCKET_DOCUMENTS: str = "kamlog-documents"
-    MINIO_SECURE: bool = False
+    MINIO_BUCKET_DOCUMENTS: str = Field(default="kamlog-documents", description="MinIO bucket documents")
+    MINIO_SECURE: bool = Field(default=False, description="Use secure connection for MinIO")
 
     # Email
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = "noreply@kamlog.cm"
+    SMTP_HOST: str = Field(default="smtp.gmail.com", description="SMTP Host")
+    SMTP_PORT: int = Field(default=587, description="SMTP Port")
+    SMTP_USER: str = Field(default="noreply@kamlog.cm", description="SMTP User")
     SMTP_PASSWORD: str = Field(default="", description="SMTP password (optional)")
-    SMTP_FROM: str = "KAMLOG ERP <noreply@kamlog.cm>"
+    SMTP_FROM: str = Field(default="KAMLOG ERP <noreply@kamlog.cm>", description="SMTP From address")
 
     # CORS
     ALLOWED_ORIGINS: str | List[str] = "http://localhost:3000,https://kamlog-erp.cm,https://kamlog.vercel.app"
@@ -53,6 +54,7 @@ class Settings(BaseSettings):
     # Celery - optionnel, utilise REDIS_URL par défaut
     CELERY_BROKER_URL: str = Field(default="", description="Celery broker URL")
     CELERY_RESULT_BACKEND: str = Field(default="", description="Celery result backend")
+    SENTRY_DSN: str = Field(default="", description="Sentry DSN for error tracking")
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
@@ -116,3 +118,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

@@ -9,6 +9,7 @@ from app.database import SessionLocal
 from app.models.audit import HTTPAuditLog
 from app.schemas.audit import AuditLogCreate
 import logging
+from app.utils.tracing import get_request_id
 
 logger = logging.getLogger(__name__)
 _missing_http_audit_table_logged = False
@@ -76,6 +77,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
             ip_address=request.client.host if request.client else None,
             tcode=tcode,
             module=module,
+            request_id=get_request_id(request)
         )
 
         db = None

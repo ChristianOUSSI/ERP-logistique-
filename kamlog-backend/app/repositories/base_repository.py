@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session
 from typing import Type, TypeVar, Generic, Optional, List
 from sqlalchemy import select, and_, or_
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.base import BaseModel as DBBaseModel
 
@@ -144,7 +144,7 @@ class BaseRepository(Generic[ModelType]):
         """
         obj = self.get(db, id)
         if obj:
-            obj.deleted_at = datetime.utcnow()
+            obj.deleted_at = datetime.now(timezone.utc)
             db.commit()
             db.refresh(obj)
         return obj

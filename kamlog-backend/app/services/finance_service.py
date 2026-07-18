@@ -4,6 +4,7 @@ from decimal import Decimal
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import and_, or_
 from typing import List, Optional
+import asyncio
 from datetime import datetime
 
 from app.models.finance import Facture, Encaissement, GrilleTarifaire, StatutFacture, Avoir, FactureLigne
@@ -23,6 +24,7 @@ from app.utils.audit import AuditService
 from app.utils.logger import get_logger
 from app.utils.cache import cache_service, invalidate_cache_pattern
 from app.config import settings
+from app.services.events import event_service, EventType
 
 logger = get_logger(__name__)
 
@@ -89,7 +91,7 @@ class FactureService:
             montant_ttc_xaf=montant_ttc
         )
         db.add(db_facture)
-        db.commit()
+        db.flush()
         db.refresh(db_facture)
         
         # Invalider le cache
@@ -104,7 +106,7 @@ class FactureService:
         if db_facture:
             for field, value in facture.dict(exclude_unset=True).items():
                 setattr(db_facture, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_facture)
             
             # Invalider le cache
@@ -116,7 +118,7 @@ class FactureService:
         db_facture = FactureService.get_facture(db, facture_id)
         if db_facture:
             db.delete(db_facture)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("finance:factures:*")
@@ -131,7 +133,7 @@ class FactureService:
             db_facture.statut = StatutFacture.EMISE
             db_facture.valide_par = valide_par
             db_facture.date_validation = datetime.now()
-            db.commit()
+            db.flush()
             db.refresh(db_facture)
             
             # Invalider le cache
@@ -144,7 +146,7 @@ class FactureService:
         db_facture = FactureService.get_facture(db, facture_id)
         if db_facture:
             db_facture.statut = StatutFacture.ANNULEE
-            db.commit()
+            db.flush()
             db.refresh(db_facture)
             
             # Invalider le cache
@@ -234,10 +236,17 @@ class FactureService:
             db_facture.lignes.append(ligne)
 
         db.add(db_facture)
-        db.commit()
+        db.flush()
         db.refresh(db_facture)
         
         invalidate_cache_pattern("finance:factures:*")
+        # Diffuser l'événement de facture créée via le service d'événements
+        asyncio.create_task(event_service.broadcast_invoice_created(
+            facture_id=db_facture.id,
+            numéro_facture=db_facture.numero_facture,
+            montant_ttc=float(db_facture.montant_ttc_xaf),
+            client_nom=db_facture.tiers.raison_sociale if db_facture.tiers else "Inconnu"
+        ))
         logger.info(f"Facture auto générée: {numero} pour mission {mission.id} avec variables dynamiques.")
         return db_facture
 
@@ -292,7 +301,7 @@ class EncaissementService:
     def create_encaissement(db: Session, encaissement: EncaissementCreate, cree_par: str) -> Encaissement:
         db_encaissement = Encaissement(**encaissement.model_dump())
         db.add(db_encaissement)
-        db.commit()
+        db.flush()
         db.refresh(db_encaissement)
         
         # Invalider le cache
@@ -308,7 +317,7 @@ class EncaissementService:
         if db_encaissement:
             for field, value in encaissement.model_dump(exclude_unset=True).items():
                 setattr(db_encaissement, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_encaissement)
             
             # Invalider le cache
@@ -321,7 +330,7 @@ class EncaissementService:
         db_encaissement = EncaissementService.get_encaissement(db, encaissement_id)
         if db_encaissement:
             db.delete(db_encaissement)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("finance:encaissements:*")
@@ -336,7 +345,7 @@ class EncaissementService:
         if db_encaissement:
             db_encaissement.lettree = True
             db_encaissement.facture_id = facture_id
-            db.commit()
+            db.flush()
             db.refresh(db_encaissement)
             
             # Invalider le cache
@@ -397,7 +406,7 @@ class GrilleTarifaireService:
     def create_grille(db: Session, grille: GrilleTarifaireCreate, cree_par: str) -> GrilleTarifaire:
         db_grille = GrilleTarifaire(**grille.dict())
         db.add(db_grille)
-        db.commit()
+        db.flush()
         db.refresh(db_grille)
         
         # Invalider le cache
@@ -412,7 +421,7 @@ class GrilleTarifaireService:
         if db_grille:
             for field, value in grille.dict(exclude_unset=True).items():
                 setattr(db_grille, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_grille)
             
             # Invalider le cache
@@ -424,7 +433,7 @@ class GrilleTarifaireService:
         db_grille = GrilleTarifaireService.get_grille(db, grille_id)
         if db_grille:
             db.delete(db_grille)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("finance:grilles:*")
@@ -443,7 +452,7 @@ class GrilleTarifaireService:
             ).update({"active": False})
             
             db_grille.active = True
-            db.commit()
+            db.flush()
             db.refresh(db_grille)
             
             # Invalider le cache
@@ -616,7 +625,7 @@ class AvoirService:
         if avoir.est_utilise:
             raise BusinessLogicException("Cet avoir est déjà utilisé.")
         avoir.est_utilise = True
-        db.commit()
+        db.flush()
         db.refresh(avoir)
         return avoir
 

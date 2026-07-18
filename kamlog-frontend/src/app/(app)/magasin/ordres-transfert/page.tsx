@@ -1,54 +1,50 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
-import { ArrowRightLeft, Search, Plus, Calendar, Edit, FileText, CheckCircle2, Truck, Box } from 'lucide-react'
+import { ArrowRightLeft, Search, Plus, Calendar, Edit, FileText, CheckCircle2, Truck, Box, Link as LinkIcon } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { magasinAPI } from '@/lib/api-client'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 export default function OrdresTransfertPage() {
-  const [ordres, setOrdres] = useState<any[]>([])
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchOrdres()
-  }, [])
-
-  const fetchOrdres = async () => {
-    try {
+  const { data: ordres = [], isLoading: loading } = useQuery({
+    queryKey: ['ordres_transfert'],
+    queryFn: async () => {
       const res = await magasinAPI.getOrdresTransfert()
-      if (res.data) setOrdres(res.data)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+      return res.data || []
+    }
+  })
+
+  const actionMutation = useMutation({
+    mutationFn: async ({ otId, action }: { otId: number, action: 'valider' | 'expedier' | 'receptionner' | 'annuler' }) => {
+      if (action === 'valider') return magasinAPI.validerOrdreTransfert(otId);
+      if (action === 'expedier') return magasinAPI.expedierOrdreTransfert(otId);
+      if (action === 'receptionner') return magasinAPI.receptionnerOrdreTransfert(otId);
+      if (action === 'annuler') return magasinAPI.annulerOrdreTransfert(otId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ordres_transfert'] })
+    },
+    onError: (error: any) => {
+      toast.error(`Erreur: ${error.response?.data?.detail || "Erreur de connexion"}`)
+    }
+  })
+
+  const handleAction = (otId: number, action: 'valider' | 'expedier' | 'receptionner' | 'annuler') => {
+    if (confirm(`Voulez-vous vraiment ${action} cet ordre de transfert ?`)) {
+      actionMutation.mutate({ otId, action })
     }
   }
 
-  const handleAction = async (otId: number, action: 'valider' | 'expedier' | 'receptionner' | 'annuler') => {
-    if (!confirm(`Voulez-vous vraiment ${action} cet ordre de transfert ?`)) return
-    
-    try {
-      let res;
-      if (action === 'valider') res = await magasinAPI.validerOrdreTransfert(otId);
-      else if (action === 'expedier') res = await magasinAPI.expedierOrdreTransfert(otId);
-      else if (action === 'receptionner') res = await magasinAPI.receptionnerOrdreTransfert(otId);
-      else if (action === 'annuler') res = await magasinAPI.annulerOrdreTransfert(otId);
-      
-      if (res && res.status === 200) {
-        fetchOrdres()
-      }
-    } catch (error: any) {
-      console.error(error)
-      toast.error(`Erreur: ${error.response?.data?.detail || "Erreur de connexion"}`);
-    }
-  }
-
-  const filteredOrdres = ordres.filter(o => 
-    o.numero_ot.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredOrdres = ordres.filter(o =>
+    o.numero_ot.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (o.magasin_source?.nom || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
     (o.magasin_dest?.nom || '').toLowerCase().includes(searchQuery.toLowerCase())
   ).sort((a, b) => b.id - a.id)
@@ -71,7 +67,7 @@ export default function OrdresTransfertPage() {
   return (
     <ModuleLayout module="magasin">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
-        
+
         {/* Header */}
         <div className="flex justify-between items-end mb-8">
           <div>
@@ -81,7 +77,7 @@ export default function OrdresTransfertPage() {
             </h1>
             <p className="text-sm text-slate-500 mt-2">Gérez les transferts de marchandises entre vos différents magasins.</p>
           </div>
-          <button 
+          <button
             onClick={() => setShowModal(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
           >
@@ -94,9 +90,9 @@ export default function OrdresTransfertPage() {
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Rechercher (Numéro OT, Magasin)..." 
+            <input
+              type="text"
+              placeholder="Rechercher (Numéro OT, Magasin)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm outline-none bg-slate-50"
@@ -128,7 +124,9 @@ export default function OrdresTransfertPage() {
               ) : filteredOrdres.map((ot) => (
                 <tr key={ot.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-mono font-black text-blue-600">{ot.numero_ot}</div>
+                    <Link href={`/magasin/ordres-transfert/${ot.id}`}>
+                      <div className="font-mono font-black text-blue-600">{ot.numero_ot}</div>
+                    </Link>
                     <div className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-bold">
                       <Calendar className="w-3.5 h-3.5" />
                       {new Date(ot.date_transfert).toLocaleDateString()}
@@ -161,6 +159,9 @@ export default function OrdresTransfertPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
+                      <Link href={`/magasin/ordres-transfert/${ot.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Voir les détails">
+                        <FileText className="w-4 h-4" />
+                      </Link>
                       {ot.statut === 'BROUILLON' && (
                         <button onClick={() => handleAction(ot.id, 'valider')} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Valider (Déstocker source)">
                           <CheckCircle2 className="w-5 h-5" />
@@ -186,9 +187,9 @@ export default function OrdresTransfertPage() {
 
         {/* Modal Form */}
         {showModal && (
-          <OTModal 
-            onClose={() => setShowModal(false)} 
-            onSuccess={() => { setShowModal(false); fetchOrdres(); }} 
+          <OTModal
+            onClose={() => setShowModal(false)}
+            onSuccess={() => { setShowModal(false); fetchOrdres(); }}
           />
         )}
       </div>
@@ -197,6 +198,7 @@ export default function OrdresTransfertPage() {
 }
 
 function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     magasin_source_id: '',
     magasin_dest_id: '',
@@ -206,7 +208,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
     code_article: '',
     quantite: ''
   })
-  
+
   const [magasins, setMagasins] = useState<any[]>([])
   const [declarations, setDeclarations] = useState<any[]>([])
   const [articleInfo, setArticleInfo] = useState<any>(null)
@@ -239,6 +241,18 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
     }
   }, [formData.code_article])
 
+  const mutation = useMutation({
+    mutationFn: (data: any) => magasinAPI.createOrdreTransfert(data),
+    onSuccess: () => {
+      toast.success('Ordre de transfert créé avec succès')
+      queryClient.invalidateQueries({ queryKey: ['ordres_transfert'] })
+      onSuccess()
+    },
+    onError: (err: any) => {
+      toast.error(`Erreur: ${err.response?.data?.detail || "Erreur inconnue"}`)
+    }
+  })
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!articleInfo) {
@@ -266,23 +280,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
       ]
     }
 
-    try {
-      const res = await fetch(`http://localhost:8000/api/magasin/ordres-transfert`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` 
-        },
-        body: JSON.stringify(payload)
-      })
-      if (res.ok) onSuccess()
-      else {
-        const errorData = await res.json()
-        toast.error(`Erreur: ${errorData.detail || "Erreur inconnue"}`);
-      }
-    } catch (err) {
-      console.error(err)
-    }
+    mutation.mutate(payload)
   }
 
   return (
@@ -296,11 +294,11 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><span className="material-symbols-outlined">close</span></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          
+
           <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Magasin Source *</label>
-              <select 
+              <select
                 required
                 value={formData.magasin_source_id}
                 onChange={e => setFormData({...formData, magasin_source_id: e.target.value})}
@@ -314,7 +312,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Magasin Destination *</label>
-              <select 
+              <select
                 required
                 value={formData.magasin_dest_id}
                 onChange={e => setFormData({...formData, magasin_dest_id: e.target.value})}
@@ -330,7 +328,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
 
           <div className="border-t border-slate-100 pt-6">
             <label className="block text-sm font-bold text-slate-700 mb-1">Déclaration BL (Origine / Traçabilité)</label>
-            <select 
+            <select
               value={formData.declaration_id}
               onChange={e => setFormData({...formData, declaration_id: e.target.value})}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
@@ -347,8 +345,8 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Code Article (7 chiffres) *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   pattern="\d{7}"
                   maxLength={7}
@@ -361,7 +359,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Quantité *</label>
                 <div className="flex gap-2">
-                  <input 
+                  <input
                     type="number" step="0.001" required disabled={!articleInfo}
                     value={formData.quantite}
                     onChange={e => setFormData({...formData, quantite: e.target.value})}
@@ -388,7 +386,7 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
 
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-1">Motif du transfert</label>
-            <input 
+            <input
               type="text"
               value={formData.motif}
               onChange={e => setFormData({...formData, motif: e.target.value})}
@@ -399,8 +397,8 @@ function OTModal({ onClose, onSuccess }: { onClose: () => void, onSuccess: () =>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
             <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors">Annuler</button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={!articleInfo}
               className="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >

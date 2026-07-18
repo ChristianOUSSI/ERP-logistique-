@@ -12,14 +12,23 @@ export default function MagasinAnalyticsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      magasinAPI.getStocks().then(res => res.data).catch(() => []),
-      magasinAPI.getHistory().catch(() => [])
-    ]).then(([stocksData, historyData]) => {
-      setStocks(stocksData)
-      setMouvements(historyData)
-      setIsLoading(false)
-    })
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const [stocksRes, historyRes] = await Promise.all([
+          magasinAPI.getStocks(),
+          magasinAPI.getHistory()
+        ]);
+        setStocks(stocksRes.data);
+        setMouvements(historyRes.data);
+      } catch (error) {
+        console.error('Error fetching analytics data:', error);
+        // Keep empty arrays but stop loading
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
   }, [])
 
   // Derived metrics
@@ -46,12 +55,22 @@ export default function MagasinAnalyticsPage() {
       description: s.article?.nom || 'Inconnu',
       qte: s.quantite_disponible,
       jours,
-      zone: s.emplacement || 'Z1-A1',
+      zone: s.emplacement || 'Inconnu',
     };
   }).sort((a, b) => b.jours - a.jours).slice(0, 10)
 
-  const occupationRate = stocks.length > 0 ? Math.min(100, 45 + (stocks.length * 2)) : 0
-  const stockValue = stocks.reduce((acc, s) => acc + (Number(s.quantite_disponible) * (s.article?.prix_unitaire || 0)), 0)
+  // Occupation rate: percentage of articles with stock > 0
+  const articlesEnStock = stocks.filter(s => s.quantite_disponible > 0).length;
+  const occupationRate = stocks.length > 0 ? (articlesEnStock / stocks.length) * 100 : 0;
+  const stockValue = stocks.reduce((acc, s) => acc + (Number(s.quantite_disponible) * (s.article?.prix_unitaire || 0)), 0);
+
+  // Stock by zone for heatmap replacement
+  const zoneStocks: Record<string, number> = {};
+  stocks.forEach(s => {
+    const zone = s.emplacement || 'Inconnu';
+    zoneStocks[zone] = (zoneStocks[zone] || 0) + Number(s.quantite_disponible);
+  });
+  const zoneStocksArray = Object.entries(zoneStocks).sort(([,a], [,b]) => b - a);
 
   return (
     <>
@@ -122,7 +141,7 @@ export default function MagasinAnalyticsPage() {
                 {/* KPI Cards (Row 1, span 3 each) */}
                 <div className="col-span-12 md:col-span-3 bg-white border border-outline-variant rounded shadow-sm p-4 flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Taux d'Occupation</span>
+                    <span className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Articles en stock</span>
                     <span className="material-symbols-outlined text-error text-[20px]">dataset</span>
                   </div>
                   <div className="flex items-end gap-2">
@@ -219,38 +238,32 @@ export default function MagasinAnalyticsPage() {
 
                 {/* Right Column: Heat Map & Composition (Span 4) */}
                 <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
-                  {/* Heat Map Card */}
+                  {/* Zone Stock Card */}
                   <div className="bg-white border border-outline-variant rounded shadow-sm p-4 flex-1 flex flex-col min-h-[400px]">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-title-md font-title-md text-on-surface flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px] text-primary">map</span>
-                        Occupation Entrepôt Z1
+                        <span className="material-symbols-outlined text-[18px] text-primary">location_on</span>
+                        Répartition par Zone
                       </h3>
                     </div>
-                    {/* Simplified CSS Grid Heatmap */}
-                    <div className="flex-1 bg-surface-container-low rounded border border-outline-variant p-2 grid grid-cols-5 gap-1 min-h-[300px]">
-                      {/* Random opacities for heatmap simulation */}
-                      <div className="bg-error opacity-90 rounded"></div>
-                      <div className="bg-error opacity-80 rounded"></div>
-                      <div className="bg-error opacity-100 rounded"></div>
-                      <div className="bg-error opacity-40 rounded"></div>
-                      <div className="bg-error opacity-20 rounded"></div>
-                      <div className="bg-error opacity-70 rounded"></div>
-                      <div className="bg-error opacity-60 rounded"></div>
-                      <div className="bg-error opacity-90 rounded"></div>
-                      <div className="bg-error opacity-30 rounded"></div>
-                      <div className="bg-surface-container-high rounded"></div>
-                      <div className="col-span-5 flex items-center justify-center text-[10px] text-outline tracking-widest font-bold">ALLÉE CENTRALE</div>
-                      <div className="bg-error opacity-80 rounded"></div>
-                      <div className="bg-error opacity-70 rounded"></div>
-                      <div className="bg-error opacity-50 rounded"></div>
-                      <div className="bg-error opacity-40 rounded"></div>
-                      <div className="bg-error opacity-60 rounded"></div>
-                    </div>
-                    <div className="flex justify-between items-center mt-2 text-[10px] font-label-md text-outline">
-                      <span>Vide</span>
-                      <div className="flex-1 mx-2 h-1 bg-gradient-to-r from-surface-container-high to-error rounded-full"></div>
-                      <span>Saturé</span>
+                    <div className="flex-1 bg-surface-container-low rounded border border-outline-variant p-2">
+                      {zoneStocksArray.length > 0 ? (
+                        zoneStocksArray.map(([zone, stock], index) => {
+                          const maxStock = Math.max(...zoneStocksArray.map(([,s]) => s));
+                          const percentage = maxStock > 0 ? (stock / maxStock) * 100 : 0;
+                          return (
+                            <div key={zone} className="flex items-center mb-2">
+                              <div className="flex-shrink-0 w-20 text-right text-[12px]">{zone}:</div>
+                              <div className="flex-1 bg-surface-container-high rounded h-2.5 relative">
+                                <div className="bg-primary h-full rounded" style={{ width: `${percentage}%` }}></div>
+                              </div>
+                              <div className="flex-shrink-0 w-20 text-left text-[12px]">{stock.toFixed(0)} kg</div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-center py-4 text-on-surface-variant">Aucune donnée de zone disponible</p>
+                      )}
                     </div>
                   </div>
                 </div>

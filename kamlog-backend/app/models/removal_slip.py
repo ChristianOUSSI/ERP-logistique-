@@ -27,7 +27,7 @@ class RemovalSlip(Base):
     magasin_destination = Column(String(20), nullable=False)
     
     # Article et quantité
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite = Column(Numeric(15, 3), nullable=False)
     unite = Column(String(20), nullable=False)
     

@@ -11,6 +11,53 @@ export default function TransportPage() {
   const [missions, setMissions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [filterValue, setFilterValue] = useState('')
+  const [truckPositions, setTruckPositions] = useState<any[]>([])
+
+  useEffect(() => {
+    // Connexion au WebSocket pour la Télématique IoT
+    let ws: WebSocket | null = null;
+    const connectWs = () => {
+      // In production, use wss:// and the actual domain
+      const wsUrl = process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws') || 'ws://localhost:8000';
+      ws = new WebSocket(`${wsUrl}/api/v1/ws/events`);
+
+      ws.onopen = () => {
+        console.log("Connecté au WebSocket Télématique");
+        ws?.send(JSON.stringify({ type: 'SUBSCRIBE', event_types: ['GPS_UPDATE'] }));
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'GPS_UPDATE') {
+            setTruckPositions(prev => {
+              // Mettre à jour ou ajouter la position du camion
+              const existingIndex = prev.findIndex(t => t.device_id === data.device_id);
+              if (existingIndex >= 0) {
+                const newPos = [...prev];
+                newPos[existingIndex] = data;
+                return newPos;
+              }
+              return [...prev, data];
+            });
+          }
+        } catch (e) {
+          console.error("Erreur WS message:", e);
+        }
+      };
+
+      ws.onclose = () => {
+        // Reconnexion automatique après 5 secondes
+        setTimeout(connectWs, 5000);
+      };
+    };
+
+    connectWs();
+
+    return () => {
+      if (ws) ws.close();
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -236,11 +283,31 @@ export default function TransportPage() {
               <span className="text-base font-bold text-on-surface-variant/60">{t.transport.liveMapView}</span>
               <span className="text-xs text-on-surface-variant/40 mt-1">{t.transport.trackingTrucks}</span>
             </div>
-            {/* Truck blips */}
-            <div className="absolute w-3 h-3 bg-orange-400 rounded-full top-[30%] left-[40%] shadow-[0_0_10px_rgba(251,146,60,0.7)] animate-pulse" />
-            <div className="absolute w-3 h-3 bg-orange-400 rounded-full top-[60%] left-[20%] shadow-[0_0_10px_rgba(251,146,60,0.7)] animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="absolute w-3 h-3 bg-blue-400 rounded-full top-[45%] left-[70%] shadow-[0_0_10px_rgba(96,165,250,0.7)] animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute w-3 h-3 bg-orange-400 rounded-full top-[80%] left-[55%] shadow-[0_0_10px_rgba(251,146,60,0.7)] animate-pulse" style={{ animationDelay: '0.2s' }} />
+            {/* Dynamic Truck blips via WebSockets */}
+            {truckPositions.length === 0 && (
+              <div className="absolute top-[45%] left-[45%] text-xs font-bold text-on-surface-variant/40">
+                En attente des signaux GPS...
+              </div>
+            )}
+            {truckPositions.map((truck, idx) => {
+              // Simulation très basique d'une projection GPS vers XY (pour centrer sur la carte)
+              // Normalement, vous utiliseriez Mapbox ou Leaflet ici
+              const top = typeof truck.value?.lat === 'number' ? Math.abs((truck.value.lat % 100)) + '%' : `${30 + (idx * 15)}%`;
+              const left = typeof truck.value?.lng === 'number' ? Math.abs((truck.value.lng % 100)) + '%' : `${40 + (idx * 10)}%`;
+              
+              return (
+                <div 
+                  key={truck.device_id}
+                  className="absolute w-3 h-3 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(251,146,60,0.8)] animate-pulse" 
+                  style={{ top, left }}
+                  title={`${truck.device_id}: ${new Date(truck.timestamp).toLocaleTimeString()}`}
+                >
+                  <span className="absolute -top-4 -left-2 text-[9px] font-bold text-orange-500 whitespace-nowrap bg-surface px-1 rounded-sm shadow-sm">
+                    {truck.device_id}
+                  </span>
+                </div>
+              );
+            })}
             {/* Map controls */}
             <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5">
               <button className="bg-surface border border-outline p-2 rounded-lg shadow-sm hover:bg-surface-container transition-colors">

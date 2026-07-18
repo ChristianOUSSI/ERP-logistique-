@@ -10,8 +10,17 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 export const metadata: Metadata = {
   title: 'KAMLOG EM-ERP',
   description: 'Système de Gestion Logistique Intégré  Port de Douala',
-  icons: { icon: '/logo-kamlog.svg' },
+  icons: { icon: '/logo-kamlog.svg', apple: '/logo-kamlog.svg' },
   manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'KAMLOG EM-ERP',
+  },
+}
+
+export const viewport = {
+  themeColor: '#0ea5e9',
 }
 
 export default function RootLayout({

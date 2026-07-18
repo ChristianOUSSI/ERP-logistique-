@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Date
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database import Base
 
 class Employe(Base):
@@ -18,7 +18,7 @@ class Employe(Base):
     statut = Column(String(50), default="ACTIF") # ACTIF, EN_CONGE, SUSPENDU, ANCIEN
     
     # User linkage (optional, for portal access)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     user = relationship("User")
     
     contrats = relationship("Contrat", back_populates="employe", cascade="all, delete-orphan")
@@ -30,7 +30,7 @@ class Contrat(Base):
     __tablename__ = "contrats"
 
     id = Column(Integer, primary_key=True, index=True)
-    employe_id = Column(Integer, ForeignKey("employes.id"), nullable=False)
+    employe_id = Column(Integer, ForeignKey("employes.id", ondelete="CASCADE"), nullable=False)
     type_contrat = Column(String(50)) # CDI, CDD, PRESTATION
     salaire_base = Column(Numeric(12, 2), nullable=False)
     date_debut = Column(Date, nullable=False)
@@ -44,7 +44,7 @@ class Conge(Base):
     __tablename__ = "conges"
 
     id = Column(Integer, primary_key=True, index=True)
-    employe_id = Column(Integer, ForeignKey("employes.id"), nullable=False)
+    employe_id = Column(Integer, ForeignKey("employes.id", ondelete="CASCADE"), nullable=False)
     type_conge = Column(String(50)) # ANNUEL, MALADIE, MATERNITE, SANS_SOLDE
     date_debut = Column(Date, nullable=False)
     date_fin = Column(Date, nullable=False)
@@ -58,13 +58,13 @@ class FichePaie(Base):
     __tablename__ = "fiches_paie"
 
     id = Column(Integer, primary_key=True, index=True)
-    employe_id = Column(Integer, ForeignKey("employes.id"), nullable=False)
+    employe_id = Column(Integer, ForeignKey("employes.id", ondelete="CASCADE"), nullable=False)
     periode = Column(String(7), nullable=False) # Format YYYY-MM
     salaire_base = Column(Numeric(12, 2), nullable=False)
     primes = Column(Numeric(12, 2), default=0)
     deductions = Column(Numeric(12, 2), default=0)
     net_a_payer = Column(Numeric(12, 2), nullable=False)
-    date_generation = Column(DateTime, default=datetime.utcnow)
+    date_generation = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     statut = Column(String(50), default="BROUILLON") # BROUILLON, VALIDEE, PAYEE
 
     employe = relationship("Employe", back_populates="fiches_paie")

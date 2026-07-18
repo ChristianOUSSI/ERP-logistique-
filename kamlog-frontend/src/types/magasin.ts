@@ -463,7 +463,7 @@ export interface OperationTrace {
 // API Service for Magasin Module
 
 export interface StockItem {
-  id: string;
+  id: number;
   code: string;
   description: string;
   quantity: number;
@@ -475,7 +475,7 @@ export interface StockItem {
 }
 
 export interface StockMovement {
-  id: string;
+  id: number;
   itemId: string;
   type: 'in' | 'out' | 'transfer';
   quantity: number;
@@ -485,7 +485,7 @@ export interface StockMovement {
 }
 
 export interface Reception {
-  id: string;
+  id: number;
   reference: string;
   supplier: string;
   date: string;
@@ -494,7 +494,7 @@ export interface Reception {
 }
 
 export interface RemovalSlip {
-  id: string;
+  id: number;
   numero_bon: string;
   magasin_source: string;
   magasin_destination: string;
@@ -514,7 +514,7 @@ export interface RemovalSlip {
 }
 
 export interface ReceptionMag3 {
-  id: string;
+  id: number;
   numero_reception: string;
   removal_slip_id: string;
   magasin_source: string;

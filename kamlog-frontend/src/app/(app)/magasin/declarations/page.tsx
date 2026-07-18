@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
 import { FileText, Search, Plus, Calendar, Edit, Ship, PackageSearch, Package } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
-import { transportAPI } from '@/lib/api-client' // Assuming we can use general fetch if needed
+import { magasinAPI } from '@/lib/api-client'
 import { toast } from 'sonner'
 
 export default function DeclarationsPage() {
@@ -19,12 +19,12 @@ export default function DeclarationsPage() {
 
   const fetchDeclarations = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/magasin/declarations', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (res.ok) setDeclarations(await res.json())
+      setLoading(true)
+      const res = await magasinAPI.getDeclarations()
+      setDeclarations(res.data || [])
     } catch (error) {
       console.error(error)
+      toast.error('Erreur lors du chargement des déclarations')
     } finally {
       setLoading(false)
     }
@@ -177,7 +177,10 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
     notify_party: '',
     mode_fret: '',
     code_hs: '',
-    numero_declaration_douane: ''
+    numero_declaration_douane: '',
+    numero_lot: '',
+    date_fabrication: '',
+    date_expiration: ''
   })
   
   const [clients, setClients] = useState<any[]>([])
@@ -185,33 +188,28 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
   const [articleError, setArticleError] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/magasin/clients', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    }).then(r => r.json()).then(setClients).catch(console.error)
+    magasinAPI.getClients()
+      .then(res => setClients(res.data || []))
+      .catch(console.error)
   }, [])
 
   useEffect(() => {
     if (formData.code_article.length === 7) {
-      fetch(`http://localhost:8000/api/magasin/articles/by-code/${formData.code_article}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      .then(async r => {
-        if (!r.ok) throw new Error("Article introuvable")
-        return r.json()
-      })
-      .then(data => {
-        setArticleInfo(data)
-        setArticleError('')
-      })
-      .catch(e => {
-        setArticleInfo(null)
-        setArticleError(e.message)
-      })
+      magasinAPI
+        .getArticleByCode(formData.code_article)
+        .then(res => {
+          setArticleInfo(res.data);
+          setArticleError('');
+        })
+        .catch(e => {
+          setArticleInfo(null);
+          setArticleError(e.response?.data?.detail || 'Article introuvable');
+        });
     } else {
-      setArticleInfo(null)
-      setArticleError('')
+      setArticleInfo(null);
+      setArticleError('');
     }
-  }, [formData.code_article])
+  }, [formData.code_article]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -233,7 +231,10 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
         {
           article_id: articleInfo.id,
           quantite_declaree: parseFloat(formData.quantite_declaree),
-          unite_mesure: articleInfo.unite_mesure
+          unite_mesure: articleInfo.unite_mesure,
+          numero_lot: formData.numero_lot || null,
+          date_fabrication: formData.date_fabrication || null,
+          date_expiration: formData.date_expiration || null
         }
       ]
     }
@@ -246,21 +247,12 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
     })
 
     try {
-      const res = await fetch(`http://localhost:8000/api/magasin/declarations`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` 
-        },
-        body: JSON.stringify(payload)
-      })
-      if (res.ok) onSuccess()
-      else {
-        const errorData = await res.json()
-        toast.error(`Erreur: ${errorData.detail || "Erreur inconnue"}`);
-      }
+      await magasinAPI.createDeclaration(payload)
+      toast.success('Déclaration créée avec succès')
+      onSuccess()
     } catch (err) {
       console.error(err)
+      toast.error(`Erreur: ${err.response?.data?.detail || "Erreur inconnue"}`);
     }
   }
 
@@ -394,6 +386,15 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
               <InputField label="Volume (m³)" field="volume_m3" type="number" />
               <InputField label="Nombre de Colis" field="nombre_colis" type="number" />
               <InputField label="Type Emballage" field="type_emballage" placeholder="Ex: Sacs de 50kg" />
+            </div>
+
+            <div className="mt-6 border-t border-slate-100 pt-4">
+              <h4 className="text-sm font-bold text-slate-800 mb-4">Informations de Lot (Vrac / Sacs)</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <InputField label="Numéro de Lot" field="numero_lot" placeholder="Ex: L-2026-001" />
+                <InputField label="Date de Fabrication" field="date_fabrication" type="date" />
+                <InputField label="Date d'Expiration" field="date_expiration" type="date" />
+              </div>
             </div>
             <div className="mt-4">
               <label className="block text-sm font-bold text-slate-700 mb-1">Description Détaillée</label>

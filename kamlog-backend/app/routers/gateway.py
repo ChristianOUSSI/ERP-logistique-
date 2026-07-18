@@ -1,4 +1,5 @@
 # app/routers/gateway.py - Router pour les passerelles inter-modules
+from app.utils.rbac import require_role
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -19,6 +20,7 @@ router = APIRouter(tags=["Gateway"])
 
 
 @router.post("/passerelles", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def create_passerelle(
     passerelle: PasserelleCreate,
@@ -104,6 +106,7 @@ def get_all_passerelles(
 
 
 @router.put("/passerelles/{passerelle_id}", response_model=Passerelle)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def update_passerelle(
     passerelle_id: int,
@@ -124,6 +127,7 @@ def update_passerelle(
 # ============ Passerelles spécifiques ============
 
 @router.post("/passerelles/commande-facture", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def creer_commande_facture(
     dto: CommandeFactureDTO,
@@ -148,6 +152,7 @@ def creer_commande_facture(
 
 
 @router.post("/passerelles/commande-livraison", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def creer_commande_livraison(
     dto: CommandeLivraisonDTO,
@@ -172,6 +177,7 @@ def creer_commande_livraison(
 
 
 @router.post("/passerelles/reception-stock", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def creer_reception_stock(
     dto: ReceptionStockDTO,
@@ -196,6 +202,7 @@ def creer_reception_stock(
 
 
 @router.post("/passerelles/facture-paiement", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def creer_facture_paiement(
     dto: FacturePaiementDTO,
@@ -220,6 +227,7 @@ def creer_facture_paiement(
 
 
 @router.post("/passerelles/mission-facture", response_model=Passerelle, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def creer_mission_facture(
     dto: MissionFactureDTO,
@@ -244,6 +252,7 @@ def creer_mission_facture(
 
 
 @router.post("/passerelles/{passerelle_id}/traiter/{cible_id}", response_model=Passerelle)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def traiter_passerelle(
     passerelle_id: int,
@@ -267,6 +276,7 @@ def traiter_passerelle(
 
 
 @router.post("/passerelles/{passerelle_id}/echouer", response_model=Passerelle)
+    @require_role(["admin", "manager"])
 @check_permission("admin")
 def echouer_passerelle(
     passerelle_id: int,

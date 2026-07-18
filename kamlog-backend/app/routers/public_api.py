@@ -1,3 +1,4 @@
+from app.utils.rbac import require_role
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from typing import List
@@ -23,6 +24,7 @@ def public_track_mission(reference: str, db: Session = Depends(get_db), api_key:
     return mission
 
 @router.post("/webhooks/kamlog-events")
+    @require_role(["admin", "manager"])
 def webhook_receiver(event_data: dict, api_key: str = Depends(verify_api_key)):
     """Point d'entrée générique pour les webhooks externes (ex: tracking GPS externe, IoT)."""
     # TODO: Intégrer l'enregistrement de l'événement dans la base de données de journalisation

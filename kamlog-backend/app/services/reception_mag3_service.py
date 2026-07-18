@@ -52,7 +52,7 @@ class ReceptionMag3Service:
         )
         
         db.add(db_reception)
-        db.commit()
+        db.flush()
         db.refresh(db_reception)
         return db_reception
     
@@ -67,7 +67,7 @@ class ReceptionMag3Service:
         for field, value in update_data.items():
             setattr(db_reception, field, value)
         
-        db.commit()
+        db.flush()
         db.refresh(db_reception)
         return db_reception
     
@@ -79,7 +79,7 @@ class ReceptionMag3Service:
             return False
         
         db.delete(db_reception)
-        db.commit()
+        db.flush()
         return True
     
     @staticmethod
@@ -92,6 +92,6 @@ class ReceptionMag3Service:
         db_reception.statut = StatutReceptionMag3.COMPLETEE
         db_reception.recu_par = received_by
         
-        db.commit()
+        db.flush()
         db.refresh(db_reception)
         return db_reception

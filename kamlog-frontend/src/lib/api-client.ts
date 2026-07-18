@@ -114,6 +114,10 @@ export const transportAPI = {
     apiClient.put(`/api/transport/camions/${camionId}/debloquer`),
   associerRemorque: (camionId: number, remorqueId: number | null) =>
     apiClient.put(`/api/transport/camions/${camionId}/associer-remorque?remorque_id=${remorqueId || ''}`),
+  dissocierRemorque: (camionId: number) =>
+    apiClient.put(`/api/transport/camions/${camionId}/dissocier-remorque`),
+  getHistoriqueCouplage: (camionId: number) =>
+    apiClient.get(`/api/transport/camions/${camionId}/historique-couplage`),
 };
 
 // ─── Service Finance ──────────────────────────────────────
@@ -184,6 +188,12 @@ export const parcAPI = {
   },
   getWorkshopRepairs: () =>
     apiClient.get('/api/parc/workshop'),
+  createZone: (data: unknown) => apiClient.post('/api/parc/zones', data),
+  updateZone: (id: number, data: unknown) => apiClient.put(`/api/parc/zones/${id}`, data),
+  deleteZone: (id: number) => apiClient.delete(`/api/parc/zones/${id}`),
+  createEmplacement: (data: unknown) => apiClient.post('/api/parc/emplacements', data),
+  updateEmplacement: (id: number, data: unknown) => apiClient.put(`/api/parc/emplacements/${id}`, data),
+  deleteEmplacement: (id: number) => apiClient.delete(`/api/parc/emplacements/${id}`),
 };
 
 // ─── Service Tiers ────────────────────────────────────────
@@ -228,6 +238,12 @@ export const masterDataAPI = {
     apiClient.get('/api/tiers', { params }),
   getTier: (id: number) =>
     apiClient.get(`/api/tiers/${id}`),
+  getArticleCategories: () =>
+    apiClient.get('/api/master-data/article-categories'),
+  getIncoterms: () =>
+    apiClient.get('/api/master-data/incoterms'),
+  getContainerTypes: () =>
+    apiClient.get('/api/master-data/container-types'),
 };
 
 // ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
@@ -260,20 +276,18 @@ export const magasinAPI = {
     apiClient.post('/api/magasin/receptions-mag3', data),
   getDeclarations: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/declarations', { params }),
+  getDeclaration: (id: number) =>
+    apiClient.get(`/api/magasin/declarations/${id}`),
   getDeclarationReceptionsSummary: (id: number) =>
     apiClient.get(`/api/magasin/declarations/${id}/receptions-summary`),
+  getDeclarationReceptionsHistory: (id: number) =>
+    apiClient.get(`/api/magasin/declarations/${id}/receptions-history`),
   completeReception: (data: unknown) =>
     apiClient.post('/api/magasin/receptions', data),
   getCommandes: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/commandes', { params }),
-  getHistory: async (params?: Record<string, unknown>) => {
-    try {
-      const response = await apiClient.get('/api/magasin/history', { params })
-      return response.data
-    } catch {
-      return [] // Fallback since history endpoint might not exist yet
-    }
-  },
+  getHistory: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/history', { params }),
   // Ordres de Transfert
   getOrdresTransfert: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/ordres-transfert', { params }),
@@ -281,12 +295,70 @@ export const magasinAPI = {
     apiClient.post('/api/magasin/ordres-transfert', data),
   validerOrdreTransfert: (id: number) =>
     apiClient.post(`/api/magasin/ordres-transfert/${id}/valider`),
+  validerPaiementOT: (id: number) =>
+    apiClient.post(`/api/magasin/ordres-transfert/${id}/valider-paiement`),
   expedierOrdreTransfert: (id: number) =>
     apiClient.post(`/api/magasin/ordres-transfert/${id}/expedier`),
   receptionnerOrdreTransfert: (id: number) =>
     apiClient.post(`/api/magasin/ordres-transfert/${id}/receptionner`),
   annulerOrdreTransfert: (id: number) =>
     apiClient.post(`/api/magasin/ordres-transfert/${id}/annuler`),
+  getTransactions: () =>
+    apiClient.get('/api/magasin/transactions'),
+  getStockStatuses: () =>
+    apiClient.get('/api/magasin/stock-statuses'),
+  getArticleByCode: (code: string) =>
+    apiClient.get(`/api/magasin/articles/by-code/${code}`),
+  createDeclaration: (data: any) =>
+    apiClient.post('/api/magasin/declarations', data),
+  // New BandeLivraison endpoints
+  getBandes: (params?: Record<string, unknown>) =>
+    apiClient.get('/api/magasin/bandes-livraison', { params }),
+  getBande: (id: number) =>
+    apiClient.get(`/api/magasin/bandes-livraison/${id}`),
+  createBande: async (data: any) => {
+    const response = await apiClient.post('/api/magasin/bandes-livraison', data)
+    return response.data
+  },
+  updateBande: (id: number, data: unknown) =>
+    apiClient.put(`/api/magasin/bandes-livraison/${id}`, data),
+  // Special endpoints
+  createBandeFromOrdreTransfert: (otId: number, prepare_par: string) =>
+    apiClient.post(`/api/magasin/bandes-livraison/from-ordre-transfert/${otId}`, { prepare_par }),
+  getBandeByOrdreTransfert: (otId: number) =>
+    apiClient.get(`/api/magasin/bandes-livraison/ordre-transfert/${otId}`),
+  // Predictive endpoint
+  getReceptionTimingPrediction: (declarationId: number) =>
+    apiClient.get(`/api/magasin/predictions/reception-timing/${declarationId}`)
+};
+
+// ─── Advanced Analytics Endpoints ────────────────────────
+export const analyticsAPI = {
+  postDemandForecast: (data: {
+    article_id: number;
+    magasin_id?: number;
+    horizon_days?: number;
+  }) =>
+    apiClient.post('/api/magasin/analytics/demand-forecast', data),
+  postStockTurnoverAnalysis: (data: {
+    article_id: number;
+    months?: number;
+  }) =>
+    apiClient.post('/api/magasin/analytics/stock-turnover', data),
+  postSafetyStockCalculation: (data: {
+    article_id: number;
+    magasin_id: number;
+    service_level?: number;
+    lead_time_days?: number;
+  }) =>
+    apiClient.post('/api/magasin/analytics/safety-stock', data),
+  postAnomalyDetection: (data: {
+    article_id: number;
+    magasin_id: number;
+    days?: number;
+    sensitivity?: number;
+  }) =>
+    apiClient.post('/api/magasin/analytics/anomaly-detection', data)
 };
 
 // ─── Service Notifications ───────────────────────────────

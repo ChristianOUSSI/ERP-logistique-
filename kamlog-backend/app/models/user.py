@@ -59,7 +59,7 @@ class User(BaseModel):
     roles = relationship("RoleModel", secondary=user_roles, back_populates="users", lazy="selectin")
     
     # Clé étrangère pour le multi-tenancy
-    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id"), nullable=False)
+    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id", ondelete="CASCADE"), nullable=False)
     agency = relationship("Agency", back_populates="users")
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

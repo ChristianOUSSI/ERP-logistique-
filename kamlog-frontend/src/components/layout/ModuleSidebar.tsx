@@ -91,6 +91,9 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     rh_module: 'Ressources Humaines',
     rh_mon_espace: 'Mon Espace',
     rh_dashboard: 'Administration RH',
+    analytics_avance: 'Analytics Avancé',
+    mag_import_export: 'Import/Export',
+    mag_ia_chat: 'Assistant IA',
   },
   en: {
     global_overview: 'System Overview',
@@ -160,7 +163,10 @@ const SIDEBAR_I18N: Record<string, Record<string, string>> = {
     rh_module: 'Human Resources',
     rh_mon_espace: 'My Space',
     rh_dashboard: 'HR Administration',
-  }
+    analytics_avance: 'Advanced Analytics',
+    mag_import_export: 'Import/Export',
+    mag_ia_chat: 'AI Assistant',
+  },
 };
 
 const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
@@ -219,10 +225,15 @@ const NAVIGATION_CONFIG: Record<ModuleType, NavItem[]> = {
     { labelKey: 'mag_stocks_search', href: '/magasin/stocks/search', icon: 'search' },
     { labelKey: 'inventory', href: '/magasin/inventory/physical', icon: 'checklist' },
     { labelKey: 'manual', href: '/magasin/mouvement-de-stock-manuel', icon: 'sync_alt' },
-    { labelKey: 'mag_capacity', href: '/magasin/capacity', icon: 'warehouse' },
+    { labelKey: 'mag_magasins', href: '/magasin/magasins', icon: 'building' },
+    { labelKey: 'mag_capacity', href: '/magasin/capacity', icon: 'archive' },
     { labelKey: 'mag_history', href: '/magasin/history', icon: 'history' },
     { labelKey: 'mag_transactions', href: '/magasin/transactions', icon: 'receipt_long' },
     { labelKey: 'analytics', href: '/magasin/analytics', icon: 'analytics' },
+    { labelKey: 'analytics_avance', href: '/magasin/advanced-analytics', icon: 'psychology_alt' },
+    { labelKey: 'mag_rapports', href: '/magasin/rapports', icon: 'bar_chart_3' },
+    { labelKey: 'mag_import_export', href: '/magasin/import-export', icon: 'upload' },
+    { labelKey: 'mag_ia_chat', href: '/magasin/ia-chat', icon: 'robot' },
   ],
   parc: [
     { labelKey: 'overview', href: '/parc/zones', icon: 'dashboard' },

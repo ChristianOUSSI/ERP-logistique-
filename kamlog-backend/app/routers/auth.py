@@ -3,20 +3,21 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from pydantic import BaseModel
+import time
 
 from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import UserCreate, UserLogin, UserResponse, Token
 from app.utils.security import verify_password, get_password_hash, create_access_token, create_refresh_token, decode_token
 from app.utils.mfa import generate_mfa_secret, generate_mfa_qr_code, verify_totp_token, generate_backup_codes, verify_backup_code, is_mfa_required_for_user
+from app.utils.rate_limiting import limiter, RATE_LIMITS
+from app.utils.monitoring import auth_logins_total, auth_logins_duration_seconds
+from app.utils.lockout import check_account_lockout, record_failed_attempt, clear_failed_attempts
 
 # Imports for seed data removed for security
 
 router = APIRouter()
-limiter = Limiter(key_func=get_remote_address)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
@@ -25,8 +26,8 @@ from app.utils.rbac import get_current_user
 
 # /force-seed endpoint removed for security
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-@limiter.limit("5/minute")
-async def register(
+@limiter.limit(RATE_LIMITS["auth"])
+def register(
     request: Request,
     user_data: UserCreate,
     db: Session = Depends(get_db)
@@ -83,14 +84,15 @@ async def register(
 
 
 @router.post("/login", response_model=Token)
-@limiter.limit("10/minute")
-async def login(
+@limiter.limit(RATE_LIMITS["login"])
+def login(
     request: Request,
     response: Response,
     credentials: UserLogin,
     mfa_token: str | None = None,
     db: Session = Depends(get_db)
 ):
+    start_time = time.time()
     from sqlalchemy import or_
     result = db.execute(
         select(User).where(
@@ -102,13 +104,25 @@ async def login(
     )
     user = result.scalar_one_or_none()
     
+    if check_account_lockout(credentials.username):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Trop de tentatives échouées. Compte temporairement verrouillé."
+        )
+
     if not user:
+        record_failed_attempt(credentials.username)
+        auth_logins_total.labels(status="failure").inc()
+        auth_logins_duration_seconds.observe(time.time() - start_time)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Utilisateur non trouvé"
         )
         
     if not verify_password(credentials.password, user.password_hash):
+        record_failed_attempt(credentials.username)
+        auth_logins_total.labels(status="failure").inc()
+        auth_logins_duration_seconds.observe(time.time() - start_time)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Mot de passe incorrect",
@@ -116,6 +130,8 @@ async def login(
         )
     
     if not user.is_active:
+        auth_logins_total.labels(status="failure").inc()
+        auth_logins_duration_seconds.observe(time.time() - start_time)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is disabled"
@@ -129,6 +145,8 @@ async def login(
         if user.mfa_enabled:
             # MFA est activé, vérifier le token
             if not mfa_token:
+                auth_logins_total.labels(status="failure").inc()
+                auth_logins_duration_seconds.observe(time.time() - start_time)
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="MFA token required",
@@ -136,17 +154,23 @@ async def login(
                 )
             
             if not verify_totp_token(user.mfa_secret, mfa_token):
+                auth_logins_total.labels(status="failure").inc()
+                auth_logins_duration_seconds.observe(time.time() - start_time)
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid MFA token"
                 )
         else:
             # MFA est requis mais pas encore activé
+            auth_logins_total.labels(status="failure").inc()
+            auth_logins_duration_seconds.observe(time.time() - start_time)
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="MFA setup required for this role",
                 headers={"X-MFA-Setup-Required": "true"}
             )
+    
+    clear_failed_attempts(credentials.username)
     
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
@@ -168,7 +192,11 @@ async def login(
         samesite="lax",
         max_age=7 * 24 * 60 * 60 # 7 jours
     )
-    
+
+    # Enregistrer les métriques de succès
+    auth_logins_total.labels(status="success").inc()
+    auth_logins_duration_seconds.observe(time.time() - start_time)
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -178,7 +206,7 @@ async def login(
 
 
 @router.post("/refresh", response_model=Token)
-async def refresh_token(response: Response, request: Request, refresh_token: str | None = None, db: Session = Depends(get_db)):
+def refresh_token(response: Response, request: Request, refresh_token: str | None = None, db: Session = Depends(get_db)):
     """Rafraîchit le access token avec le refresh token (soit dans le body, soit via cookie)."""
     token_to_use = refresh_token or request.cookies.get("refresh_token")
     if not token_to_use:
@@ -241,7 +269,7 @@ async def refresh_token(response: Response, request: Request, refresh_token: str
 
 
 @router.get("/me")
-async def get_me(request: Request, current_user: User = Depends(get_current_user)):
+def get_me(request: Request, current_user: User = Depends(get_current_user)):
     """Retourne les informations de l'utilisateur courant."""
     return {
         "id": current_user.id,
@@ -254,8 +282,29 @@ async def get_me(request: Request, current_user: User = Depends(get_current_user
     }
 
 @router.post("/logout")
-async def logout(response: Response):
-    """Déconnecte l'utilisateur en supprimant les cookies."""
+def logout(request: Request, response: Response):
+    """Déconnecte l'utilisateur en supprimant les cookies et en blacklistant les tokens."""
+    from app.utils.redis_client import blacklist_token
+    from datetime import datetime, timezone
+    
+    # Récupérer et blacklister l'access_token
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        payload = decode_token(access_token)
+        if payload and "jti" in payload and "exp" in payload:
+            expire_seconds = int(payload["exp"] - datetime.now(timezone.utc).timestamp())
+            if expire_seconds > 0:
+                blacklist_token(payload["jti"], expire_seconds)
+                
+    # Récupérer et blacklister le refresh_token
+    refresh_token = request.cookies.get("refresh_token")
+    if refresh_token:
+        payload = decode_token(refresh_token)
+        if payload and "jti" in payload and "exp" in payload:
+            expire_seconds = int(payload["exp"] - datetime.now(timezone.utc).timestamp())
+            if expire_seconds > 0:
+                blacklist_token(payload["jti"], expire_seconds)
+
     response.delete_cookie(key="access_token", httponly=True, secure=True, samesite="lax")
     response.delete_cookie(key="refresh_token", httponly=True, secure=True, samesite="lax")
     return {"message": "Logged out successfully"}
@@ -280,7 +329,7 @@ class MFASetupResponse(BaseModel):
 
 @router.post("/mfa/setup", response_model=MFASetupResponse)
 
-async def setup_mfa(
+def setup_mfa(
     request: Request,
     mfa_data: MFASetupRequest,
     current_user: User = Depends(get_current_user),
@@ -326,7 +375,7 @@ async def setup_mfa(
 
 @router.post("/mfa/enable")
 
-async def enable_mfa(
+def enable_mfa(
     request: Request,
     mfa_data: MFAVerifyRequest,
     current_user: User = Depends(get_current_user),
@@ -349,6 +398,13 @@ async def enable_mfa(
             detail="Invalid TOTP token"
         )
     
+    # ── Mettre à jour last_login, effacer les tentatives échouées ──
+    user.last_login = datetime.now(timezone.utc)
+    db.commit()
+    
+    clear_failed_attempts(credentials.username)
+
+    # ── Création des tokens ──
     # Activer MFA
     current_user.mfa_enabled = True
     db.commit()
@@ -358,7 +414,7 @@ async def enable_mfa(
 
 @router.post("/mfa/disable")
 
-async def disable_mfa(
+def disable_mfa(
     request: Request,
     password: str,
     current_user: User = Depends(get_current_user),
@@ -392,7 +448,7 @@ async def disable_mfa(
 
 @router.post("/mfa/verify-backup")
 
-async def verify_backup_code(
+def verify_backup_code(
     request: Request,
     code: str,
     current_user: User = Depends(get_current_user),
@@ -421,7 +477,7 @@ async def verify_backup_code(
 
 
 @router.get("/mfa/status")
-async def get_mfa_status(current_user: User = Depends(get_current_user)):
+def get_mfa_status(current_user: User = Depends(get_current_user)):
     """Retourne le statut MFA de l'utilisateur courant."""
     user_role_codes = [r.code for r in current_user.roles] if current_user.roles else []
     return {

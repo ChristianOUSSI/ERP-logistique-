@@ -1,4 +1,5 @@
 # app/routers/suppliers.py - Routes API pour les fournisseurs
+from app.utils.rbac import require_role
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -64,6 +65,7 @@ def get_supplier_by_niu(niu: str, db: Session = Depends(get_db), current_user = 
 
 
 @router.post("/", response_model=SupplierResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("master-data:create")
 def create_supplier(
@@ -76,6 +78,7 @@ def create_supplier(
 
 
 @router.put("/{supplier_id}", response_model=SupplierResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("master-data:update")
 def update_supplier(
@@ -92,6 +95,7 @@ def update_supplier(
 
 
 @router.delete("/{supplier_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("master-data:delete")
 def delete_supplier(
@@ -108,6 +112,7 @@ def delete_supplier(
 
 # ============ SUPPLIER PROFILES ============
 @router.post("/{supplier_id}/profiles", response_model=SupplierProfileResponse)
+    @require_role(["admin", "manager"])
 
 @check_permission("master-data:create")
 def create_supplier_profile(

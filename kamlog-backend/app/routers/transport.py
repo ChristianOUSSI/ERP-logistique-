@@ -54,7 +54,7 @@ router = APIRouter(tags=["Transport"])
 
 @router.get("/kpis")
 @require_permission("transport:read")
-async def get_transport_kpis(
+def get_transport_kpis(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -83,13 +83,13 @@ async def get_transport_kpis(
 # ─── Fuel ───────────────────────────────────────────────
 @router.get("/fuel", response_model=List[TicketCarburantResponse])
 @require_permission("transport:read")
-async def get_fuel_tickets(db: Session = Depends(get_db)):
+def get_fuel_tickets(db: Session = Depends(get_db)):
     """Récupère les tickets de carburant"""
     return db.query(TicketCarburant).all()
 
 @router.post("/fuel", response_model=TicketCarburantResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("transport:write")
-async def create_fuel_ticket(ticket: TicketCarburantCreate, db: Session = Depends(get_db)):
+def create_fuel_ticket(ticket: TicketCarburantCreate, db: Session = Depends(get_db)):
     """Créer un ticket de carburant"""
     db_ticket = TicketCarburant(**ticket.dict())
     db.add(db_ticket)
@@ -101,7 +101,7 @@ async def create_fuel_ticket(ticket: TicketCarburantCreate, db: Session = Depend
 # ─── Camions ─────────────────────────────────────────────
 @router.get("/camions", response_model=List[CamionResponse])
 @require_permission("transport:read")
-async def list_camions(
+def list_camions(
     skip: int = 0,
     limit: int = 100,
     statut: str | None = None,
@@ -116,7 +116,7 @@ async def list_camions(
 
 @router.get("/camions/{camion_id}", response_model=CamionResponse)
 @require_permission("transport:read")
-async def get_camion(
+def get_camion(
     camion_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -131,7 +131,7 @@ async def get_camion(
 @router.post("/camions", response_model=CamionResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def create_camion(
+def create_camion(
     camion_data: CamionFlotteCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -152,7 +152,7 @@ async def create_camion(
 @router.put("/camions/{camion_id}", response_model=CamionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def update_camion(
+def update_camion(
     camion_id: int,
     camion_data: CamionFlotteUpdate,
     db: Session = Depends(get_db),
@@ -168,7 +168,7 @@ async def update_camion(
 @router.delete("/camions/{camion_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("transport:delete")
-async def delete_camion(
+def delete_camion(
     camion_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -183,7 +183,7 @@ async def delete_camion(
 @router.post("/camions/{camion_id}/maintenance", response_model=CamionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def mettre_en_maintenance(
+def mettre_en_maintenance(
     camion_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -198,7 +198,7 @@ async def mettre_en_maintenance(
 @router.post("/camions/{camion_id}/disponible", response_model=CamionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def mettre_disponible(
+def mettre_disponible(
     camion_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -213,7 +213,7 @@ async def mettre_disponible(
 # ─── Chauffeurs ─────────────────────────────────────────────
 @router.get("/chauffeurs", response_model=List[ChauffeurResponse])
 @require_permission("transport:read")
-async def list_chauffeurs(
+def list_chauffeurs(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
@@ -225,7 +225,7 @@ async def list_chauffeurs(
 
 @router.get("/chauffeurs/{chauffeur_id}", response_model=ChauffeurResponse)
 @require_permission("transport:read")
-async def get_chauffeur(
+def get_chauffeur(
     chauffeur_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -239,7 +239,7 @@ async def get_chauffeur(
 
 @router.get("/chauffeurs/disponibles", response_model=List[ChauffeurResponse])
 @require_permission("transport:read")
-async def list_chauffeurs_disponibles(
+def list_chauffeurs_disponibles(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -250,7 +250,7 @@ async def list_chauffeurs_disponibles(
 @router.post("/chauffeurs", response_model=ChauffeurResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def create_chauffeur(
+def create_chauffeur(
     chauffeur_data: ChauffeurProfilCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -271,7 +271,7 @@ async def create_chauffeur(
 @router.put("/chauffeurs/{chauffeur_id}", response_model=ChauffeurResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def update_chauffeur(
+def update_chauffeur(
     chauffeur_id: int,
     chauffeur_data: ChauffeurProfilUpdate,
     db: Session = Depends(get_db),
@@ -287,7 +287,7 @@ async def update_chauffeur(
 @router.delete("/chauffeurs/{chauffeur_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("transport:delete")
-async def delete_chauffeur(
+def delete_chauffeur(
     chauffeur_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -302,7 +302,7 @@ async def delete_chauffeur(
 # ─── Missions ─────────────────────────────────────────────
 @router.get("/missions", response_model=List[MissionResponse])
 @require_permission("transport:read")
-async def list_missions(
+def list_missions(
     skip: int = 0,
     limit: int = 100,
     statut: str | None = None,
@@ -317,7 +317,7 @@ async def list_missions(
 
 @router.get("/missions/{mission_id}", response_model=MissionResponse)
 @require_permission("transport:read")
-async def get_mission(
+def get_mission(
     mission_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -336,7 +336,7 @@ async def get_mission(
 
 @router.get("/missions/chauffeur/{chauffeur_id}", response_model=List[MissionResponse])
 @require_permission("transport:read")
-async def get_missions_by_chauffeur(
+def get_missions_by_chauffeur(
     chauffeur_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -347,7 +347,7 @@ async def get_missions_by_chauffeur(
 
 @router.get("/missions/client/{client_id}", response_model=List[MissionResponse])
 @require_permission("transport:read")
-async def get_missions_by_client(
+def get_missions_by_client(
     client_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -359,7 +359,7 @@ async def get_missions_by_client(
 @router.post("/missions", response_model=MissionResponse, status_code=status.HTTP_201_CREATED)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def create_mission(
+def create_mission(
     mission_data: MissionCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -374,7 +374,7 @@ async def create_mission(
 @router.put("/missions/{mission_id}", response_model=MissionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def update_mission(
+def update_mission(
     mission_id: int,
     mission_data: MissionUpdate,
     db: Session = Depends(get_db),
@@ -390,7 +390,7 @@ async def update_mission(
 @router.delete("/missions/{mission_id}", status_code=status.HTTP_204_NO_CONTENT)
 @require_role(["admin"])
 @require_permission("transport:delete")
-async def delete_mission(
+def delete_mission(
     mission_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -405,7 +405,7 @@ async def delete_mission(
 @router.post("/missions/{mission_id}/demarrer", response_model=MissionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def demarrer_mission(
+def demarrer_mission(
     mission_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -420,7 +420,7 @@ async def demarrer_mission(
 @router.post("/missions/{mission_id}/terminer", response_model=MissionResponse)
 @require_role(["admin", "dispatcher"])
 @require_permission("transport:write")
-async def terminer_mission(
+def terminer_mission(
     mission_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -438,37 +438,34 @@ class StatutUpdate(BaseModel):
 @router.patch("/missions/{mission_id}/statut", response_model=MissionResponse)
 @require_role(["admin", "dispatcher", "chauffeur"])
 @require_permission("transport:write")
-async def update_mission_statut(
+def update_mission_statut(
     mission_id: int,
     update_data: StatutUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Met à jour le statut d'une mission et broadcast via WebSocket."""
-    from app.routers.ws import manager
-    from datetime import datetime
+    from app.services.events import event_service, EventType
+    from datetime import datetime, timezone
     import asyncio
-    
+
     # Récupérer et mettre à jour la mission via le service existant
     # Le service devrait être étendu, ou on met à jour directement.
     # Pour le moment, on utilise l'attribut statut si possible.
     mission = db.query(MissionTransport).filter(MissionTransport.id == mission_id).first()
     if not mission:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission introuvable")
-        
+
     mission.statut = update_data.statut
     db.commit()
     db.refresh(mission)
-    
-    # Broadcast l'événement en temps réel
-    asyncio.create_task(manager.broadcast({
-        "message": f"Mission {mission.id} passée au statut {update_data.statut}",
-        "severity": "INFO",
-        "timestamp": datetime.utcnow().isoformat(),
-        "mission_id": mission.id,
-        "nouveau_statut": update_data.statut
-    }))
-    
+
+    # Broadcast l'événement en temps réel via le service d'événements
+    asyncio.create_task(event_service.broadcast_mission_status_update(
+        mission_id=mission.id,
+        new_status=update_data.statut
+    ))
+
     # WhatsApp Integration
     if update_data.statut in ["EN_ROUTE", "LIVREE", "EN_CHARGEMENT"]:
         from app.models.tiers import Tiers
@@ -477,13 +474,13 @@ async def update_mission_statut(
         if client_phone:
             message = f"Bonjour, votre mission de transport #{mission.reference} vient de passer au statut: {update_data.statut}."
             WhatsAppService.send_message(client_phone, message)
-    
+
     return mission
 
 
 @router.post("/calculer-ecart-carburant")
 @require_permission("transport:read")
-async def calculer_ecart_carburant_endpoint(
+def calculer_ecart_carburant_endpoint(
     consommation_reelle_litres: float,
     distance_km: float,
     consommation_theorique_l_100: float,
@@ -502,7 +499,7 @@ async def calculer_ecart_carburant_endpoint(
 
 @router.get("/gps")
 @require_permission("transport:read")
-async def get_gps_positions(db: Session = Depends(get_db)):
+def get_gps_positions(db: Session = Depends(get_db)):
     # Vraie récupération depuis la table des positions GPS
     from app.models.transport import PositionGPS
     from sqlalchemy import desc
@@ -530,7 +527,7 @@ async def get_gps_positions(db: Session = Depends(get_db)):
 
 @router.post("/camions/{camion_id}/documents", response_model=VehiculeDocumentResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("transport:write")
-async def add_vehicule_document(camion_id: int, doc_data: VehiculeDocumentCreate, db: Session = Depends(get_db)):
+def add_vehicule_document(camion_id: int, doc_data: VehiculeDocumentCreate, db: Session = Depends(get_db)):
     doc = VehiculeDocument(**doc_data.model_dump(), cree_par="system")
     db.add(doc)
     db.commit()
@@ -539,31 +536,113 @@ async def add_vehicule_document(camion_id: int, doc_data: VehiculeDocumentCreate
 
 @router.get("/camions/{camion_id}/documents", response_model=List[VehiculeDocumentResponse])
 @require_permission("transport:read")
-async def get_vehicule_documents(camion_id: int, db: Session = Depends(get_db)):
+def get_vehicule_documents(camion_id: int, db: Session = Depends(get_db)):
     return db.query(VehiculeDocument).filter(VehiculeDocument.vehicule_id == camion_id).all()
 
 @router.put("/camions/{camion_id}/associer-remorque", response_model=CamionResponse)
 @require_permission("transport:write")
-async def associer_remorque(camion_id: int, remorque_id: int = None, db: Session = Depends(get_db)):
+def associer_remorque(camion_id: int, remorque_id: int, db: Session = Depends(get_db)):
+    from app.models.transport import TypeMateriel, HistoriqueCouplage
     camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
-    if not camion:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
+    if not camion or camion.type_materiel != TypeMateriel.TRACTEUR:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Tracteur introuvable ou invalide")
     
-    if remorque_id:
-        remorque = db.query(CamionFlotte).filter(CamionFlotte.id == remorque_id).first()
-        if not remorque:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, "Remorque introuvable")
-    
+    remorque = db.query(CamionFlotte).filter(CamionFlotte.id == remorque_id).first()
+    if not remorque or remorque.type_materiel not in [TypeMateriel.REMORQUE, TypeMateriel.SEMI_REMORQUE]:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Remorque introuvable ou invalide")
+        
+    # Vérifier si le tracteur avait déjà une remorque
+    if camion.remorque_id:
+        if camion.remorque_id == remorque_id:
+            return camion
+        # Clôturer l'historique précédent
+        ancien_hist = db.query(HistoriqueCouplage).filter(
+            HistoriqueCouplage.tracteur_id == camion.id,
+            HistoriqueCouplage.remorque_id == camion.remorque_id,
+            HistoriqueCouplage.date_dissociation == None
+        ).first()
+        if ancien_hist:
+            ancien_hist.date_dissociation = datetime.now(timezone.utc)
+
+    # Vérifier si la remorque était liée à un autre tracteur
+    autre_tracteur = db.query(CamionFlotte).filter(CamionFlotte.remorque_id == remorque_id).first()
+    if autre_tracteur:
+        autre_tracteur.remorque_id = None
+        # Clôturer son historique
+        ancien_hist_remorque = db.query(HistoriqueCouplage).filter(
+            HistoriqueCouplage.tracteur_id == autre_tracteur.id,
+            HistoriqueCouplage.remorque_id == remorque_id,
+            HistoriqueCouplage.date_dissociation == None
+        ).first()
+        if ancien_hist_remorque:
+            ancien_hist_remorque.date_dissociation = datetime.now(timezone.utc)
+
     camion.remorque_id = remorque_id
+    
+    # Nouvel historique
+    nouvel_hist = HistoriqueCouplage(tracteur_id=camion.id, remorque_id=remorque.id)
+    db.add(nouvel_hist)
+    
     db.commit()
     db.refresh(camion)
     return camion
+
+@router.put("/camions/{camion_id}/dissocier-remorque", response_model=CamionResponse)
+@require_permission("transport:write")
+def dissocier_remorque(camion_id: int, db: Session = Depends(get_db)):
+    from app.models.transport import HistoriqueCouplage
+    camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
+    if not camion:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
+        
+    if camion.remorque_id:
+        hist = db.query(HistoriqueCouplage).filter(
+            HistoriqueCouplage.tracteur_id == camion.id,
+            HistoriqueCouplage.remorque_id == camion.remorque_id,
+            HistoriqueCouplage.date_dissociation == None
+        ).first()
+        if hist:
+            hist.date_dissociation = datetime.now(timezone.utc)
+            
+        camion.remorque_id = None
+        db.commit()
+        db.refresh(camion)
+        
+    return camion
+
+@router.get("/camions/{camion_id}/historique-couplage", response_model=List[HistoriqueCouplageResponse])
+@require_permission("transport:read")
+def get_historique_couplage(camion_id: int, db: Session = Depends(get_db)):
+    from app.models.transport import HistoriqueCouplage
+    historiques = db.query(HistoriqueCouplage).filter(
+        (HistoriqueCouplage.tracteur_id == camion_id) | (HistoriqueCouplage.remorque_id == camion_id)
+    ).order_by(HistoriqueCouplage.date_association.desc()).all()
+    
+    result = []
+    for h in historiques:
+        # Resolve license plates
+        tracteur_imm = h.tracteur.immatriculation if h.tracteur else None
+        remorque_imm = h.remorque.immatriculation if h.remorque else None
+        
+        hist_dict = {
+            "id": h.id,
+            "tracteur_id": h.tracteur_id,
+            "remorque_id": h.remorque_id,
+            "date_association": h.date_association,
+            "date_dissociation": h.date_dissociation,
+            "tracteur_immatriculation": tracteur_imm,
+            "remorque_immatriculation": remorque_imm
+        }
+        result.append(hist_dict)
+        
+    return result
+
 
 # ─── Documents Chauffeur ───────────────────────────────────────
 
 @router.post("/chauffeurs/{chauffeur_id}/documents", response_model=ChauffeurDocumentResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("transport:write")
-async def add_chauffeur_document(chauffeur_id: int, doc_data: ChauffeurDocumentCreate, db: Session = Depends(get_db)):
+def add_chauffeur_document(chauffeur_id: int, doc_data: ChauffeurDocumentCreate, db: Session = Depends(get_db)):
     doc = ChauffeurDocument(**doc_data.model_dump(), cree_par="system")
     db.add(doc)
     db.commit()
@@ -572,14 +651,14 @@ async def add_chauffeur_document(chauffeur_id: int, doc_data: ChauffeurDocumentC
 
 @router.get("/chauffeurs/{chauffeur_id}/documents", response_model=List[ChauffeurDocumentResponse])
 @require_permission("transport:read")
-async def get_chauffeur_documents(chauffeur_id: int, db: Session = Depends(get_db)):
+def get_chauffeur_documents(chauffeur_id: int, db: Session = Depends(get_db)):
     return db.query(ChauffeurDocument).filter(ChauffeurDocument.chauffeur_id == chauffeur_id).all()
 
 # ─── Pannes & Maintenance ──────────────────────────────────────
 
 @router.post("/camions/{camion_id}/pannes", response_model=PanneVehiculeResponse, status_code=status.HTTP_201_CREATED)
 @require_permission("transport:write")
-async def declarer_panne(camion_id: int, panne_data: PanneVehiculeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def declarer_panne(camion_id: int, panne_data: PanneVehiculeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     panne = PanneVehicule(**panne_data.model_dump(), declare_par=current_user.username, cree_par=current_user.username)
     db.add(panne)
     
@@ -594,12 +673,12 @@ async def declarer_panne(camion_id: int, panne_data: PanneVehiculeCreate, db: Se
 
 @router.get("/camions/{camion_id}/pannes", response_model=List[PanneVehiculeResponse])
 @require_permission("transport:read")
-async def get_pannes(camion_id: int, db: Session = Depends(get_db)):
+def get_pannes(camion_id: int, db: Session = Depends(get_db)):
     return db.query(PanneVehicule).filter(PanneVehicule.vehicule_id == camion_id).all()
 
 @router.put("/camions/{camion_id}/pannes/{panne_id}", response_model=PanneVehiculeResponse)
 @require_permission("transport:write")
-async def update_panne(camion_id: int, panne_id: int, panne_update: PanneVehiculeUpdate, db: Session = Depends(get_db)):
+def update_panne(camion_id: int, panne_id: int, panne_update: PanneVehiculeUpdate, db: Session = Depends(get_db)):
     panne = PanneVehiculeService.update_panne(db, camion_id, panne_id, panne_update)
     if not panne:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Panne introuvable")
@@ -607,7 +686,7 @@ async def update_panne(camion_id: int, panne_id: int, panne_update: PanneVehicul
 
 @router.put("/camions/{camion_id}/debloquer", response_model=CamionResponse)
 @require_permission("transport:write")
-async def debloquer_camion(camion_id: int, db: Session = Depends(get_db)):
+def debloquer_camion(camion_id: int, db: Session = Depends(get_db)):
     try:
         camion = CamionFlotteService.mettre_disponible(db, camion_id)
         if not camion:
@@ -618,7 +697,7 @@ async def debloquer_camion(camion_id: int, db: Session = Depends(get_db)):
 
 @router.post("/camions/{camion_id}/hse-block")
 @require_permission("transport:write")
-async def bloquer_hse(camion_id: int, motif: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def bloquer_hse(camion_id: int, motif: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     camion = db.query(CamionFlotte).filter(CamionFlotte.id == camion_id).first()
     if not camion:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Camion introuvable")
@@ -643,7 +722,7 @@ class LivrerMissionPayload(PydanticBaseModel):
 
 @router.post("/missions/{mission_id}/livrer")
 @require_permission("transport:write")
-async def livrer_mission(mission_id: int, payload: LivrerMissionPayload, db: Session = Depends(get_db)):
+def livrer_mission(mission_id: int, payload: LivrerMissionPayload, db: Session = Depends(get_db)):
     """E-POD: Valide la livraison et déclenche la facturation automatique."""
     try:
         mission = MissionTransportService.valider_livraison(db, mission_id, payload.signature, payload.nom_receptionnaire)
@@ -653,6 +732,6 @@ async def livrer_mission(mission_id: int, payload: LivrerMissionPayload, db: Ses
 
 @router.get("/alertes/documents")
 @require_permission("transport:read")
-async def get_alertes_documents(db: Session = Depends(get_db)):
+def get_alertes_documents(db: Session = Depends(get_db)):
     """Retourne la liste des documents expirant dans moins de 30 jours."""
     return AlertesService.get_expiring_documents(db)

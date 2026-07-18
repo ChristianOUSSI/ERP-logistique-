@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from typing import Union
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class BusinessLogicException(AppException):
 def log_error(error: Exception, context: dict = None):
     """Log une erreur avec contexte"""
     error_data = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "error_type": type(error).__name__,
         "error_message": str(error),
         "context": context or {}
@@ -83,7 +83,7 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
             "error": {
                 "code": exc.code,
                 "message": exc.message,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path
             }
         }
@@ -100,7 +100,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
             "error": {
                 "code": "HTTP_ERROR",
                 "message": exc.detail,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path
             }
         }
@@ -125,7 +125,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "error": {
                 "code": "VALIDATION_ERROR",
                 "message": "Erreur de validation des données",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
                 "details": errors
             }
@@ -159,7 +159,7 @@ async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSON
             "error": {
                 "code": code,
                 "message": message,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
                 "details": error_message
             }
@@ -179,7 +179,7 @@ async def sqlalchemy_error_handler(request: Request, exc: SQLAlchemyError) -> JS
             "error": {
                 "code": "DATABASE_ERROR",
                 "message": "Erreur de base de données",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path,
                 "details": error_message
             }
@@ -197,7 +197,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
                 "message": "Une erreur interne est survenue",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "path": request.url.path
             }
         }

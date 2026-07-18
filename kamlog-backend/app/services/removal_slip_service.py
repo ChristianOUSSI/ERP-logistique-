@@ -1,7 +1,7 @@
 # app/services/removal_slip_service.py - Service pour les bons d'enlèvement
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.removal_slip import RemovalSlip, StatutRemovalSlip
 from app.schemas.removal_slip import RemovalSlipCreate, RemovalSlipUpdate
 import uuid
@@ -55,7 +55,7 @@ class RemovalSlipService:
         )
         
         db.add(db_slip)
-        db.commit()
+        db.flush()
         db.refresh(db_slip)
         return db_slip
     
@@ -70,7 +70,7 @@ class RemovalSlipService:
         for field, value in update_data.items():
             setattr(db_slip, field, value)
         
-        db.commit()
+        db.flush()
         db.refresh(db_slip)
         return db_slip
     
@@ -82,7 +82,7 @@ class RemovalSlipService:
             return False
         
         db.delete(db_slip)
-        db.commit()
+        db.flush()
         return True
     
     @staticmethod
@@ -94,8 +94,8 @@ class RemovalSlipService:
         
         db_slip.statut = StatutRemovalSlip.AUTORISE
         db_slip.autorise_par = authorized_by
-        db_slip.date_autorisation = datetime.utcnow()
+        db_slip.date_autorisation = datetime.now(timezone.utc)
         
-        db.commit()
+        db.flush()
         db.refresh(db_slip)
         return db_slip
