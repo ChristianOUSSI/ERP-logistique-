@@ -40,27 +40,33 @@ class AuditService:
             AuditLog: Enregistrement d'audit créé
         """
         try:
+            import hashlib
+            import json
+            
+            payload = f"{action}|stocks|{magasin_id}_{article_id}|{user_id}|{{\"quantite_disponible\": {quantite_avant}}}|{{\"quantite_disponible\": {quantite_apres}}}"
+            hash_signature = hashlib.sha256(payload.encode()).hexdigest()
+            
             audit_data = {
                 "user_id": user_id,
                 "action": action,
                 "table_name": "stocks",
                 "record_id": f"{magasin_id}_{article_id}",
-                "old_values": {"quantite_disponible": quantite_avant},
-                "new_values": {"quantite_disponible": quantite_apres},
+                "old_values": {"quantite_disponible": float(quantite_avant)},
+                "new_values": {"quantite_disponible": float(quantite_apres)},
                 "ip_address": None,  # Sera rempli par le middleware
                 "user_agent": None,  # Sera rempli par le middleware
                 "context": {
                     "article_id": article_id,
                     "magasin_id": magasin_id,
                     "raison": raison,
-                    "delta": quantite_apres - quantite_avant
-                }
+                    "delta": float(quantite_apres - quantite_avant)
+                },
+                "hash_signature": hash_signature
             }
             
             audit_entry = AuditLog(**audit_data)
             db.add(audit_entry)
-            db.commit()
-            db.refresh(audit_entry)
+            db.flush()  # Unit of Work pattern
             
             logger.info(f"Audit stock modification: {action} - Article {article_id} - Delta {quantite_apres - quantite_avant}")
             
@@ -99,6 +105,13 @@ class AuditService:
             AuditLog: Enregistrement d'audit créé
         """
         try:
+            import hashlib
+            import json
+            
+            # Signature cryptographique du log
+            payload = f"{action}|{table_name}|{record_id}|{user_id}|{json.dumps(old_values, sort_keys=True)}|{json.dumps(new_values, sort_keys=True)}"
+            hash_signature = hashlib.sha256(payload.encode()).hexdigest()
+            
             audit_data = {
                 "user_id": user_id,
                 "action": action,
@@ -106,13 +119,13 @@ class AuditService:
                 "record_id": record_id,
                 "old_values": old_values or {},
                 "new_values": new_values or {},
-                "context": context or {}
+                "context": context or {},
+                "hash_signature": hash_signature
             }
             
             audit_entry = AuditLog(**audit_data)
             db.add(audit_entry)
-            db.commit()
-            db.refresh(audit_entry)
+            db.flush()  # Respect de la transaction globale (Unit of Work)
             
             logger.info(f"Audit business operation: {action} on {table_name}({record_id})")
             

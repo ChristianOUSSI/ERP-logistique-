@@ -4,7 +4,6 @@ from sqlalchemy import and_, or_
 from typing import List, Optional
 from decimal import Decimal
 from datetime import datetime
-import random
 
 from app.exceptions import (
     InsufficientStockError,
@@ -72,7 +71,7 @@ class MagasinService:
     def create_magasin(db: Session, magasin: MagasinCreate) -> Magasin:
         db_magasin = Magasin(**magasin.dict())
         db.add(db_magasin)
-        db.commit()
+        db.flush()
         db.refresh(db_magasin)
         
         # Invalider le cache
@@ -86,7 +85,7 @@ class MagasinService:
         if db_magasin:
             for field, value in magasin.dict(exclude_unset=True).items():
                 setattr(db_magasin, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_magasin)
             
             # Invalider le cache
@@ -98,7 +97,7 @@ class MagasinService:
         db_magasin = MagasinService.get_magasin(db, magasin_id)
         if db_magasin:
             db_magasin.est_actif = False
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("magasin:magasins:*")
@@ -145,7 +144,7 @@ class ClientMagasinService:
     def create_client(db: Session, client: ClientMagasinCreate) -> ClientMagasin:
         db_client = ClientMagasin(**client.dict())
         db.add(db_client)
-        db.commit()
+        db.flush()
         db.refresh(db_client)
         
         # Invalider le cache
@@ -159,7 +158,7 @@ class ClientMagasinService:
         if db_client:
             for field, value in client.dict(exclude_unset=True).items():
                 setattr(db_client, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_client)
             
             # Invalider le cache
@@ -171,7 +170,7 @@ class ClientMagasinService:
         db_client = ClientMagasinService.get_client(db, client_id)
         if db_client:
             db_client.est_actif = False
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("magasin:clients:*")
@@ -281,7 +280,7 @@ class ArticleService:
         
         db_article = Article(**article.dict())
         db.add(db_article)
-        db.commit()
+        db.flush()
         db.refresh(db_article)
         
         # Invalider le cache
@@ -295,7 +294,7 @@ class ArticleService:
         if db_article:
             for field, value in article.dict(exclude_unset=True).items():
                 setattr(db_article, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_article)
             
             # Invalider le cache
@@ -307,7 +306,7 @@ class ArticleService:
         db_article = ArticleService.get_article(db, article_id)
         if db_article:
             db_article.est_actif = False
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("magasin:articles:*")
@@ -510,7 +509,7 @@ class DeclarationService:
         if db_declaration:
             for field, value in declaration.dict(exclude_unset=True).items():
                 setattr(db_declaration, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_declaration)
             
             # Invalider le cache
@@ -523,7 +522,7 @@ class DeclarationService:
         db_declaration = DeclarationService.get_declaration(db, declaration_id)
         if db_declaration:
             db_declaration.statut = StatutDeclaration.VALIDEE
-            db.commit()
+            db.flush()
             db.refresh(db_declaration)
             
             # Invalider le cache
@@ -536,7 +535,7 @@ class DeclarationService:
         db_declaration = DeclarationService.get_declaration(db, declaration_id)
         if db_declaration:
             db_declaration.statut = StatutDeclaration.ANNULEE
-            db.commit()
+            db.flush()
             db.refresh(db_declaration)
             
             # Invalider le cache
@@ -689,7 +688,7 @@ class ReceptionService:
         if db_reception:
             for field, value in reception.dict(exclude_unset=True).items():
                 setattr(db_reception, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_reception)
             
             # Invalider le cache
@@ -702,7 +701,7 @@ class ReceptionService:
         db_reception = ReceptionService.get_reception(db, reception_id)
         if db_reception:
             db_reception.statut = StatutReception.COMPLETEE
-            db.commit()
+            db.flush()
             db.refresh(db_reception)
             
             # Invalider le cache
@@ -716,7 +715,7 @@ class ReceptionService:
         if db_reception:
             db_reception.statut = StatutReception.ANNULEE
             StockService.annuler_reception_stock(db, db_reception)
-            db.commit()
+            db.flush()
             db.refresh(db_reception)
             
             # Invalider le cache
@@ -1019,7 +1018,7 @@ class CommandeService:
         if db_commande:
             for field, value in commande.dict(exclude_unset=True).items():
                 setattr(db_commande, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1036,7 +1035,7 @@ class CommandeService:
             db_commande.statut = StatutCommande.PAYEE
             db_commande.valide_par = valide_par
             db_commande.date_validation = datetime.now()
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1078,7 +1077,7 @@ class CommandeService:
         db_commande = CommandeService.get_commande(db, commande_id)
         if db_commande and db_commande.paiement_valide:
             db_commande.statut = StatutCommande.EN_PREPARATION
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1115,7 +1114,7 @@ class CommandeService:
         db_commande = CommandeService.get_commande(db, commande_id)
         if db_commande:
             db_commande.statut = StatutCommande.PRETE
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1128,7 +1127,7 @@ class CommandeService:
         db_commande = CommandeService.get_commande(db, commande_id)
         if db_commande:
             db_commande.statut = StatutCommande.LIVREE
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1141,7 +1140,7 @@ class CommandeService:
         db_commande = CommandeService.get_commande(db, commande_id)
         if db_commande:
             db_commande.statut = StatutCommande.ANNULEE
-            db.commit()
+            db.flush()
             db.refresh(db_commande)
             
             # Invalider le cache
@@ -1194,9 +1193,15 @@ class BandeLivraisonService:
 
     @staticmethod
     def create_bande(db: Session, bande: BandeLivraisonCreate, prepare_par: str, user_id: Optional[int] = None) -> BandeLivraison:
+        # Validate that exactly one of commande_id or ordre_transfert_id is set
+        if bande.commande_id is not None and bande.ordre_transfert_id is not None:
+            raise BusinessRuleViolationError("Une bande de livraison ne peut être liée à la fois à une commande et à un ordre de transfert")
+        if bande.commande_id is None and bande.ordre_transfert_id is None:
+            raise BusinessRuleViolationError("Une bande de livraison doit être liée soit à une commande soit à un ordre de transfert")
+
         # Générer le numéro de bande
         numero_bande = BandeLivraisonService.generate_numero_bande(db)
-        
+
         try:
             # Transaction explicite
             with db.begin():
@@ -1220,14 +1225,68 @@ class BandeLivraisonService:
                 StockService.mettre_a_jour_stock_apres_livraison(db, db_bande, user_id)
 
             db.refresh(db_bande)
-            
+
             # Invalider le cache
             invalidate_cache_pattern("magasin:bandes:*")
-            
+
             return db_bande
         except Exception as e:
             db.rollback()
             raise BusinessRuleViolationError(f"Erreur lors de la création de la bande de livraison: {str(e)}")
+
+    @staticmethod
+    def create_bande_from_ordre_transfert(db: Session, ot_id: int, prepare_par: str, user_id: Optional[int] = None) -> BandeLivraison:
+        """Crée une bande de livraison à partir d'un ordre de transfert validé"""
+        # Récupérer l'OT
+        db_ot = OrdreTransfertService.get_by_id(db, ot_id)
+        if not db_ot:
+            raise BusinessRuleViolationError(f"Ordre de transfert ID {ot_id} introuvable")
+        if db_ot.statut != StatutOrdreTransfert.VALIDE:
+            raise BusinessRuleViolationError(f"L'OT {db_ot.numero_ot} doit être en statut VALIDE pour générer une bande de livraison")
+
+        # Générer le numéro de bande
+        numero_bande = BandeLivraisonService.generate_numero_bande(db)
+
+        try:
+            # Transaction explicite
+            with db.begin():
+                db_bande = BandeLivraison(
+                    numero_bande=numero_bande,
+                    ordre_transfert_id=db_ot.id,
+                    magasin_id=db_ot.magasin_dest_id,
+                    prepare_par=prepare_par,
+                    date_livraison=None,  # To be set later
+                    statut="EN_PREPARATION",
+                    nombre_camions=0,
+                    notes=f"Bande générée automatiquement depuis l'OT {db_ot.numero_ot}",
+                    chauffeur_nom=None,
+                    matricule_vehicule=None,
+                    signature_chauffeur=None,
+                    signature_magasinier=None,
+                    signature_transporteur=None
+                )
+                db.add(db_bande)
+                db.flush()
+
+                # Ajouter les lignes depuis l'OT
+                for ligne_ot in db_ot.lignes:
+                    db_ligne = LigneBandeLivraison(
+                        bande_id=db_bande.id,
+                        article_id=ligne_ot.article_id,
+                        quantite=ligne_ot.quantite,
+                        unite_mesure=ligne_ot.unite_mesure
+                    )
+                    db.add(db_ligne)
+
+            db.refresh(db_bande)
+
+            # Invalider le cache
+            invalidate_cache_pattern("magasin:bandes:*")
+
+            return db_bande
+        except Exception as e:
+            db.rollback()
+            raise BusinessRuleViolationError(f"Erreur lors de la création de la bande de livraison depuis l'OT: {str(e)}")
 
     @staticmethod
     def update_bande(db: Session, bande_id: int, bande: BandeLivraisonUpdate) -> Optional[BandeLivraison]:
@@ -1235,9 +1294,9 @@ class BandeLivraisonService:
         if db_bande:
             for field, value in bande.dict(exclude_unset=True).items():
                 setattr(db_bande, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_bande)
-            
+
             # Invalider le cache
             invalidate_cache_pattern("magasin:bandes:*")
         return db_bande
@@ -1282,7 +1341,7 @@ class IncotermService:
     def create(db: Session, incoterm: IncotermCreate) -> Incoterm:
         db_incoterm = Incoterm(**incoterm.dict())
         db.add(db_incoterm)
-        db.commit()
+        db.flush()
         db.refresh(db_incoterm)
         invalidate_cache_pattern("magasin:incoterms:*")
         return db_incoterm
@@ -1293,7 +1352,7 @@ class IncotermService:
         if db_incoterm:
             for field, value in incoterm.dict(exclude_unset=True).items():
                 setattr(db_incoterm, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_incoterm)
             invalidate_cache_pattern("magasin:incoterms:*")
         return db_incoterm
@@ -1303,7 +1362,7 @@ class IncotermService:
         db_incoterm = IncotermService.get_by_id(db, incoterm_id)
         if db_incoterm:
             db_incoterm.est_actif = False
-            db.commit()
+            db.flush()
             invalidate_cache_pattern("magasin:incoterms:*")
             return True
         return False
@@ -1348,7 +1407,7 @@ class TypeConteneurService:
     def create(db: Session, type_conteneur: TypeConteneurCreate) -> TypeConteneur:
         db_type = TypeConteneur(**type_conteneur.dict())
         db.add(db_type)
-        db.commit()
+        db.flush()
         db.refresh(db_type)
         invalidate_cache_pattern("magasin:types_conteneur:*")
         return db_type
@@ -1359,7 +1418,7 @@ class TypeConteneurService:
         if db_type:
             for field, value in type_conteneur.dict(exclude_unset=True).items():
                 setattr(db_type, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_type)
             invalidate_cache_pattern("magasin:types_conteneur:*")
         return db_type
@@ -1369,7 +1428,7 @@ class TypeConteneurService:
         db_type = TypeConteneurService.get_by_id(db, type_id)
         if db_type:
             db_type.est_actif = False
-            db.commit()
+            db.flush()
             invalidate_cache_pattern("magasin:types_conteneur:*")
             return True
         return False
@@ -1484,7 +1543,7 @@ class OrdreTransfertService:
 
         for field, value in ot.dict(exclude_unset=True).items():
             setattr(db_ot, field, value)
-        db.commit()
+        db.flush()
         db.refresh(db_ot)
         invalidate_cache_pattern("magasin:ot:*")
         return db_ot
@@ -1540,6 +1599,18 @@ class OrdreTransfertService:
                 db_ot.autorise_par = autorise_par
                 db_ot.date_validation = datetime.now()
 
+                # Auto-générer la bande de livraison
+                try:
+                    bande = BandeLivraisonService.create_bande_from_ordre_transfert(
+                        db=db,
+                        ot_id=db_ot.id,
+                        prepare_par=autorise_par or "Système",
+                        user_id=user_id
+                    )
+                except Exception as e:
+                    # If bande creation fails, we still want to raise an error and rollback
+                    raise BusinessRuleViolationError(f"Échec de génération automatique de la bande de livraison: {str(e)}")
+
             db.refresh(db_ot)
             invalidate_cache_pattern("magasin:ot:*")
             invalidate_cache_pattern("magasin:stocks:*")
@@ -1561,7 +1632,7 @@ class OrdreTransfertService:
 
         db_ot.statut = StatutOrdreTransfert.EN_TRANSIT
         db_ot.date_expedition = datetime.now()
-        db.commit()
+        db.flush()
         db.refresh(db_ot)
         invalidate_cache_pattern("magasin:ot:*")
         return db_ot

@@ -33,7 +33,7 @@ export default function YardMapPage() {
         return {
           id: stock.numero_conteneur,
           label: `${stock.type_conteneur} - ${emp.code_emplacement}`,
-          position: [emp.coordonnee_x || 4.0511 + (Math.random()-0.5)*0.005, emp.coordonnee_y || 9.7679 + (Math.random()-0.5)*0.005], // fallback coords if missing
+          position: [emp.coordonnee_x || 4.0511 + (((emp.id || 0) % 100) - 50) * 0.0001, emp.coordonnee_y || 9.7679 + (Math.floor((emp.id || 0) / 100) % 100 - 50) * 0.0001], // fallback coords if missing
           status: stock.statut
         };
       }).filter(Boolean);

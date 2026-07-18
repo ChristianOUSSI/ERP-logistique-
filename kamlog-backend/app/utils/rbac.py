@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import selectinload
 from typing import List, Optional, Set
 from app.models.user import User, RoleModel
+from app.models.agency import Agency
 from app.database import get_db
 from app.config import settings
 
@@ -37,6 +38,16 @@ def get_current_user(
             )
             
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        
+        # Vérification Blacklist JWT
+        from app.utils.redis_client import is_token_blacklisted
+        jti = payload.get("jti")
+        if jti and is_token_blacklisted(jti):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token révoqué"
+            )
+            
         user_id_str = payload.get("sub")
         if user_id_str is None:
             raise HTTPException(
@@ -78,6 +89,91 @@ def get_user_permissions(user: User) -> Set[str]:
                 for p in role.permissions:
                     perms.add(p.code)
     return perms
+
+
+def get_user_agency_plan(user: User, db: Session) -> Optional[str]:
+    """Get the plan of the user's agency."""
+    if user.agency:
+        return user.agency.plan.value if hasattr(user.agency.plan, 'value') else str(user.agency.plan)
+    return None
+
+
+# Plan hierarchy: BASIC < PROFESSIONAL < ENTERPRISE
+PLAN_HIERARCHY = {
+    'BASIC': 0,
+    'PROFESSIONAL': 1,
+    'ENTERPRISE': 2
+}
+
+
+def get_plan_level(plan: str) -> int:
+    """Get the numeric level of a plan for comparison."""
+    return PLAN_HIERARCHY.get(plan, -1)
+
+
+def require_plan(min_plan: str):
+    """Decorator to require a minimum plan level."""
+    def decorator(func):
+        if inspect.iscoroutinefunction(func):
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                db: Session = kwargs.get("db")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+                user_plan = get_user_agency_plan(current_user, db)
+                if not user_plan:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="User agency plan not found"
+                    )
+
+                user_level = get_plan_level(user_plan)
+                required_level = get_plan_level(min_plan)
+
+                if user_level < required_level:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail=f"Insufficient plan level. Required: {min_plan}, Current: {user_plan}"
+                    )
+                return await func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
+        else:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                current_user: User = kwargs.get("current_user")
+                db: Session = kwargs.get("db")
+                if not current_user:
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+
+                user_plan = get_user_agency_plan(current_user, db)
+                if not user_plan:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="User agency plan not found"
+                    )
+
+                user_level = get_plan_level(user_plan)
+                required_level = get_plan_level(min_plan)
+
+                if user_level < required_level:
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail=f"Insufficient plan level. Required: {min_plan}, Current: {user_plan}"
+                    )
+                return func(*args, **kwargs)
+            return _setup_signature(func, wrapper)
+    return decorator
+
+
+def require_professional_plan_or_higher(func):
+    """Decorator to require professional plan or higher."""
+    return require_plan("PROFESSIONAL")(func)
+
+
+def require_enterprise_plan(func):
+    """Decorator to require enterprise plan."""
+    return require_plan("ENTERPRISE")(func)
 
 
 def _setup_signature(func, wrapper):

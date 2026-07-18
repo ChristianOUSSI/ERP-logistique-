@@ -36,15 +36,15 @@ class FicheBesoin(BaseModel):
     description: Column = Column(Text, nullable=True, comment="Description détaillée")
     
     # Relations
-    demandeur_id: Column = Column(Integer, ForeignKey("users.id"), nullable=False, comment="ID du demandeur")
-    agence_id: Column = Column(Integer, ForeignKey("agencies.id"), nullable=False, comment="ID de l'agence")
+    demandeur_id: Column = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, comment="ID du demandeur")
+    agence_id: Column = Column(Integer, ForeignKey("agencies.id", ondelete="CASCADE"), nullable=False, comment="ID de l'agence")
     
     # Workflow
     statut: Column = Column(Enum(StatutFicheBesoin), default=StatutFicheBesoin.BROUILLON, nullable=False, index=True)
     priorite: Column = Column(Enum(PrioriteFicheBesoin), default=PrioriteFicheBesoin.NORMALE, nullable=False)
     
     # Budget
-    montant_estime: Column = Column(Numeric(15, 2), nullable=True, comment="Montant estimé total")
+    montant_estime: Column = Column(Numeric(18, 4), nullable=True, comment="Montant estimé total")
     devise: Column = Column(String(3), default="XAF", nullable=False, comment="Devise (XAF, EUR, USD)")
     
     # Dates
@@ -53,7 +53,7 @@ class FicheBesoin(BaseModel):
     date_besoin: Column = Column(DateTime(timezone=True), nullable=True, comment="Date souhaitée de réception")
     
     # Approbation
-    approbateur_id: Column = Column(Integer, ForeignKey("users.id"), nullable=True, comment="ID de l'approbateur")
+    approbateur_id: Column = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, comment="ID de l'approbateur")
     notes_approbation: Column = Column(Text, nullable=True, comment="Notes de l'approbateur/rejet")
     
     # Transformation en commande
@@ -77,7 +77,7 @@ class LigneFicheBesoin(BaseModel):
     """
     __tablename__ = "lignes_fiches_besoin"
 
-    fiche_besoin_id: Column = Column(Integer, ForeignKey("fiches_besoin.id"), nullable=False)
+    fiche_besoin_id: Column = Column(Integer, ForeignKey("fiches_besoin.id", ondelete="CASCADE"), nullable=False)
     
     # Description de l'article/service
     code_article: Column = Column(String(50), nullable=True, comment="Code article si existant")
@@ -88,7 +88,7 @@ class LigneFicheBesoin(BaseModel):
     quantite_demandee: Column = Column(Integer, nullable=False, comment="Quantité demandée")
     unite: Column = Column(String(20), nullable=True, comment="Unité de mesure (UDB, KG, etc.)")
     prix_unitaire_estime: Column = Column(Numeric(12, 2), nullable=True, comment="Prix unitaire estimé")
-    montant_total_estime: Column = Column(Numeric(15, 2), nullable=True, comment="Montant total estimé (quantité * prix)")
+    montant_total_estime: Column = Column(Numeric(18, 4), nullable=True, comment="Montant total estimé (quantité * prix)")
     
     # Spécifications
     specifications: Column = Column(Text, nullable=True, comment="Spécifications techniques")

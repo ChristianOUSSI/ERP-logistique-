@@ -23,16 +23,27 @@ export default function TransportFuelPage() {
         const enrichedFuelData = camionsData.map((c: any) => {
           const cTickets = tickets.filter((t: any) => t.camion_id === c.id);
           const lastTicket = cTickets.length > 0 ? cTickets.sort((a: any, b: any) => new Date(b.date_plein).getTime() - new Date(a.date_plein).getTime())[0] : null;
-          
+
+          const dernier_plein = lastTicket ? new Date(lastTicket.date_plein).toLocaleDateString() : 'N/A';
+          const volume_ajoute = lastTicket ? lastTicket.quantite_litres : 0;
+          const conso_moy = c.conso_theorique_l_100 ? `${c.conso_theorique_l_100}` : 'N/A';
+          let statut_niveau = 'UNKNOWN';
+          if (lastTicket) {
+            const daysSince = (Date.now() - new Date(lastTicket.date_plein).getTime()) / (1000 * 60 * 60 * 24);
+            statut_niveau = daysSince <= 30 ? 'NORMAL' : 'OLD';
+          } else {
+            statut_niveau = 'NO_DATA';
+          }
+
           return {
             id: c.id,
             immatriculation: c.immatriculation,
             marque: c.marque,
             modele: c.modele,
-            dernier_plein: lastTicket ? new Date(lastTicket.date_plein).toLocaleDateString() : 'N/A',
-            volume_ajoute: lastTicket ? lastTicket.quantite_litres : 0,
-            conso_moy: lastTicket ? '15.5' : '0.0', // Approximate for now
-            statut_niveau: 'NORMAL'
+            dernier_plein,
+            volume_ajoute,
+            conso_moy,
+            statut_niveau
           };
         });
         setFuelData(enrichedFuelData);

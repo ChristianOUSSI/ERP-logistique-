@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import and_, or_
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.parc import (
     ZoneParc, EmplacementParc, StockPhysiqueParc, MouvementParc,
@@ -49,7 +49,7 @@ class ZoneParcService:
     def create_zone(db: Session, zone: ZoneParcCreate, cree_par: str) -> ZoneParc:
         db_zone = ZoneParc(**zone.dict())
         db.add(db_zone)
-        db.commit()
+        db.flush()
         db.refresh(db_zone)
         
         # Invalider le cache
@@ -64,7 +64,7 @@ class ZoneParcService:
         if db_zone:
             for field, value in zone.dict(exclude_unset=True).items():
                 setattr(db_zone, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_zone)
             
             # Invalider le cache
@@ -76,7 +76,7 @@ class ZoneParcService:
         db_zone = ZoneParcService.get_zone(db, zone_id)
         if db_zone:
             db.delete(db_zone)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("parc:zones:*")
@@ -136,7 +136,7 @@ class EmplacementParcService:
     def create_emplacement(db: Session, emplacement: EmplacementParcCreate, cree_par: str) -> EmplacementParc:
         db_emplacement = EmplacementParc(**emplacement.dict())
         db.add(db_emplacement)
-        db.commit()
+        db.flush()
         db.refresh(db_emplacement)
         
         # Invalider le cache
@@ -151,7 +151,7 @@ class EmplacementParcService:
         if db_emplacement:
             for field, value in emplacement.dict(exclude_unset=True).items():
                 setattr(db_emplacement, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_emplacement)
             
             # Invalider le cache
@@ -163,7 +163,7 @@ class EmplacementParcService:
         db_emplacement = EmplacementParcService.get_emplacement(db, emplacement_id)
         if db_emplacement:
             db.delete(db_emplacement)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("parc:emplacements:*")
@@ -227,7 +227,7 @@ class StockPhysiqueParcService:
     def create_stock(db: Session, stock: StockPhysiqueParcCreate, cree_par: str) -> StockPhysiqueParc:
         db_stock = StockPhysiqueParc(**stock.dict())
         db.add(db_stock)
-        db.commit()
+        db.flush()
         db.refresh(db_stock)
         
         # Invalider le cache
@@ -243,7 +243,7 @@ class StockPhysiqueParcService:
         if db_stock:
             for field, value in stock.dict(exclude_unset=True).items():
                 setattr(db_stock, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_stock)
             
             # Invalider le cache
@@ -255,7 +255,7 @@ class StockPhysiqueParcService:
         db_stock = StockPhysiqueParcService.get_stock(db, stock_id)
         if db_stock:
             db.delete(db_stock)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("parc:stocks:*")
@@ -317,7 +317,7 @@ class MouvementParcService:
     def create_mouvement(db: Session, mouvement: dict, operateur_id: int) -> MouvementParc:
         db_mouvement = MouvementParc(**mouvement, operateur_id=operateur_id)
         db.add(db_mouvement)
-        db.commit()
+        db.flush()
         db.refresh(db_mouvement)
         
         # Invalider le cache
@@ -360,7 +360,7 @@ class GateService:
             type_conteneur=data.type_conteneur,
             etat=data.etat,
             poids_tare_kg=data.poids_tare_kg,
-            date_gate_in=datetime.utcnow(),
+            date_gate_in=datetime.now(timezone.utc),
         )
         db.add(stock)
         db.flush()  # Pour obtenir l'ID du stock
@@ -370,16 +370,16 @@ class GateService:
         
         # Créer le mouvement
         mouvement = MouvementParc(
-            reference=f"GIN-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+            reference=f"GIN-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
             conteneur_id=stock.id,
             type_mouvement="GATE_IN",
             emplacement_dest_id=data.emplacement_id,
-            date_mouvement=datetime.utcnow(),
+            date_mouvement=datetime.now(timezone.utc),
             operateur_id=operateur_id,
         )
         db.add(mouvement)
         
-        db.commit()
+        db.flush()
         db.refresh(stock)
         
         # Invalider le cache
@@ -420,7 +420,7 @@ class GateService:
             raise ValueError("Conteneur non trouvé dans le parc")
         
         # Marquer la sortie
-        stock.date_gate_out = datetime.utcnow()
+        stock.date_gate_out = datetime.now(timezone.utc)
         
         # Libérer l'emplacement
         emplacement = EmplacementParcService.get_emplacement(db, stock.emplacement_id)
@@ -428,16 +428,16 @@ class GateService:
         
         # Créer le mouvement
         mouvement = MouvementParc(
-            reference=f"GOUT-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+            reference=f"GOUT-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
             conteneur_id=stock.id,
             type_mouvement="GATE_OUT",
             emplacement_source_id=stock.emplacement_id,
-            date_mouvement=datetime.utcnow(),
+            date_mouvement=datetime.now(timezone.utc),
             operateur_id=operateur_id,
         )
         db.add(mouvement)
         
-        db.commit()
+        db.flush()
         
         # Invalider le cache
         invalidate_cache_pattern("parc:*")

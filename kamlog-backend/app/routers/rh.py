@@ -51,6 +51,7 @@ def get_conges(db: Session = Depends(get_db)):
     return db.query(Conge).all()
 
 @router.post("/conges", response_model=CongeResponse, status_code=status.HTTP_201_CREATED)
+    @require_role(["admin", "manager"])
 def create_conge(conge: CongeCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     new_conge = Conge(**conge.model_dump())
     db.add(new_conge)

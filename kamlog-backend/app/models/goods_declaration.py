@@ -31,7 +31,7 @@ class GoodsDeclaration(Base):
     quantite = Column(Numeric(15, 3), nullable=False)
     unite = Column(String(20), nullable=False)
     poids_kg = Column(Numeric(15, 3))
-    valeur_xaf = Column(Numeric(15, 2))
+    valeur_xaf = Column(Numeric(18, 4))
     
     # Origine et destination
     origine = Column(String(100))
@@ -58,14 +58,14 @@ class LigneGoodsDeclaration(Base):
     __tablename__ = "lignes_goods_declaration"
 
     id = Column(Integer, primary_key=True, index=True)
-    declaration_id = Column(Integer, ForeignKey("goods_declarations.id"), nullable=False)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    declaration_id = Column(Integer, ForeignKey("goods_declarations.id", ondelete="CASCADE"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     
     quantite_declaree = Column(Numeric(15, 3), nullable=False)
     unite_mesure = Column(String(20), nullable=False)
     poids_kg = Column(Numeric(15, 3))
-    valeur_unitaire_xaf = Column(Numeric(15, 2))
-    valeur_totale_xaf = Column(Numeric(15, 2))
+    valeur_unitaire_xaf = Column(Numeric(18, 4))
+    valeur_totale_xaf = Column(Numeric(18, 4))
     
     # Relations
     declaration = relationship("GoodsDeclaration", back_populates="lignes")

@@ -67,7 +67,7 @@ class CamionFlotteService:
     def create_camion(db: Session, camion: CamionFlotteCreate, cree_par: str) -> CamionFlotte:
         db_camion = CamionFlotte(**camion.dict())
         db.add(db_camion)
-        db.commit()
+        db.flush()
         db.refresh(db_camion)
         
         # Invalider le cache
@@ -82,7 +82,7 @@ class CamionFlotteService:
         if db_camion:
             for field, value in camion.dict(exclude_unset=True).items():
                 setattr(db_camion, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_camion)
             
             # Invalider le cache
@@ -94,7 +94,7 @@ class CamionFlotteService:
         db_camion = CamionFlotteService.get_camion(db, camion_id)
         if db_camion:
             db.delete(db_camion)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("transport:camions:*")
@@ -107,7 +107,7 @@ class CamionFlotteService:
         db_camion = CamionFlotteService.get_camion(db, camion_id)
         if db_camion:
             db_camion.statut = StatutCamion.EN_MAINTENANCE
-            db.commit()
+            db.flush()
             db.refresh(db_camion)
             
             # Invalider le cache
@@ -129,7 +129,7 @@ class CamionFlotteService:
         db_camion = CamionFlotteService.get_camion(db, camion_id)
         if db_camion:
             db_camion.statut = StatutCamion.DISPONIBLE
-            db.commit()
+            db.flush()
             db.refresh(db_camion)
             
             # Invalider le cache
@@ -186,7 +186,7 @@ class ChauffeurProfilService:
     def create_chauffeur(db: Session, chauffeur: ChauffeurProfilCreate, cree_par: str) -> ChauffeurProfil:
         db_chauffeur = ChauffeurProfil(**chauffeur.dict())
         db.add(db_chauffeur)
-        db.commit()
+        db.flush()
         db.refresh(db_chauffeur)
         
         # Invalider le cache
@@ -201,7 +201,7 @@ class ChauffeurProfilService:
         if db_chauffeur:
             for field, value in chauffeur.dict(exclude_unset=True).items():
                 setattr(db_chauffeur, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_chauffeur)
             
             # Invalider le cache
@@ -213,7 +213,7 @@ class ChauffeurProfilService:
         db_chauffeur = ChauffeurProfilService.get_chauffeur(db, chauffeur_id)
         if db_chauffeur:
             db.delete(db_chauffeur)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("transport:chauffeurs:*")
@@ -303,7 +303,7 @@ class MissionTransportService:
         if camion:
             camion.statut = StatutCamion.EN_CHARGEMENT
         
-        db.commit()
+        db.flush()
         db.refresh(db_mission)
         
         # Invalider le cache
@@ -320,7 +320,7 @@ class MissionTransportService:
         if db_mission:
             for field, value in mission.dict(exclude_unset=True).items():
                 setattr(db_mission, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_mission)
             
             # Invalider le cache
@@ -332,7 +332,7 @@ class MissionTransportService:
         db_mission = MissionTransportService.get_mission(db, mission_id)
         if db_mission:
             db.delete(db_mission)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("transport:missions:*")
@@ -438,7 +438,7 @@ class MissionTransportService:
             if camion:
                 camion.statut = StatutCamion.EN_ROUTE
             
-            db.commit()
+            db.flush()
             db.refresh(db_mission)
             
             # Invalider le cache
@@ -456,7 +456,7 @@ class MissionTransportService:
             camion = CamionFlotteService.get_camion(db, db_mission.camion_id)
             if camion:
                 camion.statut = StatutCamion.DISPONIBLE
-            db.commit()
+            db.flush()
             db.refresh(db_mission)
             invalidate_cache_pattern("transport:missions:*")
             invalidate_cache_pattern("transport:camions:*")
@@ -494,7 +494,7 @@ class MissionTransportService:
             logger = get_logger(__name__)
             logger.error(f"Echec facturation auto pour mission {mission_id}: {str(e)}")
 
-        db.commit()
+        db.flush()
         db.refresh(db_mission)
         
         invalidate_cache_pattern("transport:missions:*")
@@ -544,7 +544,7 @@ class BandeLivraisonService:
     def create_bande(db: Session, bande: BandeLivraisonCreate, cree_par: str) -> BandeLivraison:
         db_bande = BandeLivraison(**bande.dict())
         db.add(db_bande)
-        db.commit()
+        db.flush()
         db.refresh(db_bande)
         
         # Invalider le cache
@@ -559,7 +559,7 @@ class BandeLivraisonService:
         if db_bande:
             for field, value in bande.dict(exclude_unset=True).items():
                 setattr(db_bande, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_bande)
             
             # Invalider le cache
@@ -571,7 +571,7 @@ class BandeLivraisonService:
         db_bande = BandeLivraisonService.get_bande(db, bande_id)
         if db_bande:
             db.delete(db_bande)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("transport:bandes:*")
@@ -607,7 +607,7 @@ class PanneVehiculeService:
         for field, value in panne_update.dict(exclude_unset=True).items():
             setattr(db_panne, field, value)
             
-        db.commit()
+        db.flush()
         db.refresh(db_panne)
         return db_panne
 

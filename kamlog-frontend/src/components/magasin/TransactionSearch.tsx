@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
+import { magasinAPI } from '@/lib/api-client'
 
 interface Transaction {
   code_transaction: string
@@ -13,23 +14,34 @@ interface Transaction {
   interface: string
 }
 
-const transactions: Transaction[] = [
-  { code_transaction: 'KC34', nom: 'Création profil client', description: 'Création d\'un nouveau profil client', interface: '/magasin/clients/create' },
-  { code_transaction: 'KM24', nom: 'Réception marchandise', description: 'Réception de marchandises dans un magasin', interface: '/magasin/receptions/create' },
-  { code_transaction: 'KM01', nom: 'Visualisation stock par client', description: 'Visualisation du stock par client', interface: '/magasin/stocks/client' },
-  { code_transaction: 'KM22', nom: 'Visualisation stock général', description: 'Visualisation du stock général tous magasins', interface: '/magasin/stocks' },
-  { code_transaction: 'KM32', nom: 'Taux d\'occupation magasin', description: 'Visualisation du taux d\'occupation des magasins', interface: '/magasin/occupation' },
-  { code_transaction: 'KT10', nom: 'Déclaration conteneur', description: 'Déclaration des conteneurs à venir', interface: '/magasin/declarations/create' },
-  { code_transaction: 'KT32', nom: 'Lecture marchandises à arriver', description: 'Consultation des marchandises déclarées', interface: '/magasin/declarations' },
-  { code_transaction: 'KA01', nom: 'Création article', description: 'Création d\'un nouvel article', interface: '/magasin/articles/create' },
-  { code_transaction: 'KA02', nom: 'Recherche article', description: 'Recherche d\'articles par code ou nom', interface: '/magasin/articles' },
-  { code_transaction: 'KO01', nom: 'Annulation opération', description: 'Annulation d\'une opération par numéro d\'OT', interface: '/magasin/operations/cancel' },
-]
-
 export function TransactionSearch() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
   const [showResults, setShowResults] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await magasinAPI.getTransactions()
+        // Assuming the API returns { data: Transaction[] } or directly Transaction[]
+        const data = res.data || []
+        setTransactions(data)
+      } catch (err) {
+        console.error('Failed to load transactions', err)
+        setError('Failed to load transactions')
+        setTransactions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTransactions()
+  }, [])
 
   const handleSearch = (value: string) => {
     setSearchTerm(value)
@@ -79,7 +91,20 @@ export function TransactionSearch() {
           </Button>
         </div>
 
-        {showResults && filteredTransactions.length > 0 && (
+        {loading && (
+          <div className="text-center py-4">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
+            <span className="ml-2">Chargement des transactions...</span>
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="text-center py-4 text-red-500">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && showResults && filteredTransactions.length > 0 && (
           <div className="border rounded-lg overflow-hidden">
             {filteredTransactions.map((transaction) => (
               <button
@@ -102,9 +127,15 @@ export function TransactionSearch() {
           </div>
         )}
 
-        {showResults && filteredTransactions.length === 0 && (
+        {!loading && !error && showResults && filteredTransactions.length === 0 && (
           <div className="text-center py-4 text-gray-500">
             Aucune transaction trouvée pour "{searchTerm}"
+          </div>
+        )}
+
+        {!loading && !error && !showResults && transactions.length === 0 && (
+          <div className="text-center py-4 text-gray-500">
+            Aucune transaction disponible
           </div>
         )}
       </form>

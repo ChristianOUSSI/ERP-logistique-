@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -13,8 +14,6 @@ import { magasinAPI } from '@/lib/api-client'
 import { toast } from 'sonner'
 
 export default function StocksPage() {
-  const [stocks, setStocks] = useState<Stock[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   
   const [filters, setFilters] = useState<StockFilter>({
@@ -24,23 +23,16 @@ export default function StocksPage() {
     date_debut: '',
     date_fin: ''
   })
+  
+  const [activeFilters, setActiveFilters] = useState<any>(undefined)
 
-  const loadStocks = async (activeFilters?: any) => {
-    setIsLoading(true)
-    try {
+  const { data: stocks = [], isLoading, refetch: loadStocks } = useQuery({
+    queryKey: ['stocks', activeFilters],
+    queryFn: async () => {
       const response = await magasinAPI.getStocks(activeFilters)
-      setStocks(response.data || [])
-    } catch (error) {
-      console.error('Error fetching stocks:', error)
-      toast.error('Erreur lors du chargement des stocks')
-    } finally {
-      setIsLoading(false)
+      return response.data || []
     }
-  }
-
-  useEffect(() => {
-    loadStocks()
-  }, [])
+  })
 
   const columns = [
     {
@@ -90,12 +82,12 @@ export default function StocksPage() {
     }
   ]
 
-  const handleFilter = async () => {
-    const activeFilters: any = {}
-    if (filters.code_article) activeFilters.code_article = filters.code_article
-    if (filters.magasin_ids && filters.magasin_ids.length > 0) activeFilters.magasin_id = filters.magasin_ids[0]
+  const handleFilter = () => {
+    const newActiveFilters: any = {}
+    if (filters.code_article) newActiveFilters.code_article = filters.code_article
+    if (filters.magasin_ids && filters.magasin_ids.length > 0) newActiveFilters.magasin_id = filters.magasin_ids[0]
     
-    await loadStocks(activeFilters)
+    setActiveFilters(newActiveFilters)
   }
 
   const handleReset = () => {
@@ -106,7 +98,7 @@ export default function StocksPage() {
       date_debut: '',
       date_fin: ''
     })
-    loadStocks()
+    setActiveFilters(undefined)
   }
 
   return (
@@ -147,18 +139,15 @@ export default function StocksPage() {
                   <Warehouse className="h-4 w-4" />
                   Magasin
                 </label>
-                <Select
-                  value={filters.magasin_ids?.[0]?.toString() || ''}
-                  onValueChange={(value) => setFilters({ ...filters, magasin_ids: value ? [parseInt(value)] : [] })}
-                >
+                {/* Magasin dropdown will be implemented similarly to StockFilter component */}
+                <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les magasins" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les magasins</SelectItem>
-                    <SelectItem value="1">Magasin Principal</SelectItem>
-                    <SelectItem value="2">Magasin Secondaire</SelectItem>
-                    <SelectItem value="3">Magasin Tertiaire</SelectItem>
+                    <SelectItem value="all">Tous les magasins</SelectItem>
+                    {/* These will be populated dynamically - placeholder for now */}
+                    <SelectItem value="1">Loading...</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -167,17 +156,15 @@ export default function StocksPage() {
                   <User className="h-4 w-4" />
                   Client
                 </label>
-                <Select
-                  value={filters.client_id?.toString() || ''}
-                  onValueChange={(value) => setFilters({ ...filters, client_id: value ? parseInt(value) : undefined })}
-                >
+                {/* Client dropdown will be implemented similarly to StockFilter component */}
+                <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les clients" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les clients</SelectItem>
-                    <SelectItem value="1">Client 1</SelectItem>
-                    <SelectItem value="2">Client 2</SelectItem>
+                    <SelectItem value="all">Tous les clients</SelectItem>
+                    {/* These will be populated dynamically - placeholder for now */}
+                    <SelectItem value="1">Loading...</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -13,11 +13,12 @@ class AuditLog(BaseModel):
     action: Mapped[str] = mapped_column(String(50), nullable=False)  # INSERT/UPDATE/DELETE
     old_values: Mapped[dict | None] = mapped_column(JSON)
     new_values: Mapped[dict | None] = mapped_column(JSON)
-    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id'))
-    agency_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('agencies.id'))
+    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
+    agency_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('agencies.id', ondelete="CASCADE"))
     ip_address: Mapped[str | None] = mapped_column(String(50))
     user_agent: Mapped[str | None] = mapped_column(String(255))
     context: Mapped[dict | None] = mapped_column(JSON)
+    hash_signature: Mapped[str | None] = mapped_column(String(64))  # SHA-256 for immutability
 
     agency = relationship("Agency", back_populates="audit_logs")
 
@@ -27,7 +28,7 @@ class HTTPAuditLog(BaseModel):
     __tablename__ = "http_audit_log"
 
     user_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    agency_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('agencies.id'), nullable=True)
+    agency_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('agencies.id', ondelete="CASCADE"), nullable=True)
     request_method: Mapped[str] = mapped_column(String(10), nullable=False)
     request_path: Mapped[str] = mapped_column(String(500), nullable=False)
     request_query_params: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -37,5 +38,18 @@ class HTTPAuditLog(BaseModel):
     ip_address: Mapped[str | None] = mapped_column(String(50), nullable=True)
     tcode: Mapped[str | None] = mapped_column(String(20), nullable=True)
     module: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    request_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     agency = relationship("Agency", back_populates="http_audit_logs")
+
+
+# Listeners pour l'immuabilité
+from sqlalchemy import event
+
+@event.listens_for(AuditLog, 'before_update')
+def receive_before_update(mapper, connection, target):
+    raise Exception("L'Audit Log est immuable. Les mises à jour sont interdites.")
+
+@event.listens_for(AuditLog, 'before_delete')
+def receive_before_delete(mapper, connection, target):
+    raise Exception("L'Audit Log est immuable. Les suppressions sont interdites.")

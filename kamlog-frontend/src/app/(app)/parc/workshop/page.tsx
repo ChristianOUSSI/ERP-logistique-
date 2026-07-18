@@ -12,7 +12,7 @@ export default function WorkshopPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
-    reference: `REP-${Math.floor(Math.random() * 10000)}`,
+    reference: `REP-${Date.now()}`,
     camion_id: 0,
     type_intervention: 'MECANIQUE',
     description: '',

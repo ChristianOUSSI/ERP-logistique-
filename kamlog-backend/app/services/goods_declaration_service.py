@@ -48,7 +48,7 @@ class GoodsDeclarationService:
         )
         
         db.add(db_declaration)
-        db.commit()
+        db.flush()
         db.refresh(db_declaration)
         
         # Ajouter les lignes si fournies
@@ -64,7 +64,7 @@ class GoodsDeclarationService:
                     valeur_totale_xaf=ligne_data.valeur_totale_xaf
                 )
                 db.add(ligne)
-            db.commit()
+            db.flush()
             db.refresh(db_declaration)
         
         return db_declaration
@@ -80,7 +80,7 @@ class GoodsDeclarationService:
         for field, value in update_data.items():
             setattr(db_declaration, field, value)
         
-        db.commit()
+        db.flush()
         db.refresh(db_declaration)
         return db_declaration
     
@@ -92,7 +92,7 @@ class GoodsDeclarationService:
             return False
         
         db.delete(db_declaration)
-        db.commit()
+        db.flush()
         return True
     
     @staticmethod
@@ -109,6 +109,6 @@ class GoodsDeclarationService:
         )
         
         db.add(db_ligne)
-        db.commit()
+        db.flush()
         db.refresh(db_ligne)
         return db_ligne

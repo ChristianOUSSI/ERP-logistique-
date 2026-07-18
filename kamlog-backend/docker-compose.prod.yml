@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: kamlog-backend:latest
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - CELERY_BROKER_URL=${REDIS_URL}/1
+      - CELERY_RESULT_BACKEND=${REDIS_URL}/2
+      - DEBUG=false
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+    depends_on:
+      - redis
+      - db
+
+  celery_worker:
+    image: kamlog-backend:latest
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - CELERY_BROKER_URL=${REDIS_URL}/1
+      - CELERY_RESULT_BACKEND=${REDIS_URL}/2
+    command: ["celery", "-A", "app.worker", "worker", "--loglevel=info", "--concurrency=4"]
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    image: kamlog-backend:latest
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - CELERY_BROKER_URL=${REDIS_URL}/1
+      - CELERY_RESULT_BACKEND=${REDIS_URL}/2
+    command: ["celery", "-A", "app.worker", "beat", "--loglevel=info"]
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=kamlog_admin
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+  redis_data:

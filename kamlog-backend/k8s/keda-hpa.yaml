@@ -1,0 +1,25 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kamlog-backend-scaler
+  namespace: erp-production
+spec:
+  scaleTargetRef:
+    name: kamlog-backend-deployment
+  minReplicaCount: 2
+  maxReplicaCount: 15
+  triggers:
+    # 1. Scale basé sur l'utilisation CPU (K8s Metrics Server)
+    - type: cpu
+      metadata:
+        type: Utilization
+        value: "70"
+    
+    # 2. Scale basé sur le taux de requêtes HTTP entrantes (Prometheus)
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-server.monitoring.svc.cluster.local:9090
+        metricName: http_requests_total
+        # Scale up si plus de 100 requêtes par seconde
+        threshold: "100"
+        query: sum(rate(http_requests_total{job="kamlog-backend"}[2m]))

@@ -48,12 +48,7 @@ echo "✅ Tables created (or already exist)"
 
 # ─── Alembic upgrade (appliquer les migrations) ───
 echo "📌 Running Alembic migrations..."
-if [ "$SEED_DATA" = "true" ]; then
-    echo "SEED_DATA=true: stamping Alembic migrations to head..."
-    alembic stamp head || echo "⚠️  Alembic stamp failed"
-else
-    alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
-fi
+alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
 
 # ─── Vérifier que les tables critiques existent ─────────────
 python - <<'PY'
@@ -87,6 +82,14 @@ fi
 if [ "$SEED_DATA" = "true" ]; then
     echo "🌱 Running seed data..."
     python scripts/seed_data.py || echo "⚠️  Seed data failed or already seeded"
+fi
+
+# ─── Démarrer le Worker Celery (Si Redis est configuré) ───
+if [ -n "$REDIS_URL" ]; then
+    echo "⚙️ Starting Celery Worker in background..."
+    celery -A app.celery_app worker --loglevel=info &
+else
+    echo "⚠️ REDIS_URL not set; Celery worker will not start. (Async tasks will be queued but not processed)"
 fi
 
 # ─── Démarrer Uvicorn ────────────────────────────────────────

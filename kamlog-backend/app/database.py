@@ -1,3 +1,4 @@
+from datetime import timezone
 # app/database.py  Database Engine & Session KAMLOG
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker, with_loader_criteria
@@ -59,13 +60,15 @@ import datetime
 def register_sqlite_now(dbapi_connection, connection_record):
     if hasattr(dbapi_connection, "create_function"):
         try:
-            dbapi_connection.create_function("now", 0, lambda: datetime.datetime.utcnow().isoformat())
+            dbapi_connection.create_function("now", 0, lambda: datetime.datetime.now(timezone.utc).isoformat())
         except Exception:
             pass
 
 @event.listens_for(Session, "do_orm_execute")
 def _add_filtering_criteria(execute_state):
     from app.models.base import BaseModel
+    from app.models.user import User
+    
     if (
         execute_state.is_select
         and not execute_state.is_column_load
@@ -76,6 +79,15 @@ def _add_filtering_criteria(execute_state):
                 with_loader_criteria(
                     BaseModel,
                     lambda cls: cls.is_deleted.is_(False),
+                    include_aliases=True,
+                )
+            )
+        
+        if not execute_state.execution_options.get("include_inactive", False):
+            execute_state.statement = execute_state.statement.options(
+                with_loader_criteria(
+                    User,
+                    lambda cls: cls.is_active.is_(True),
                     include_aliases=True,
                 )
             )

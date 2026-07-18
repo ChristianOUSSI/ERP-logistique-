@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { Package, Search, TrendingUp, Calendar, ArrowRight, FileText, CheckCircle, Clock, ShieldCheck } from 'lucide-react';
 import { transportAPI } from '@/lib/api-client';
 import { financeAPI } from '@/lib/api-client';
+import { magasinAPI } from '@/lib/api-client';
 
 export default function ClientPortalHome() {
   const [loading, setLoading] = useState(true);
   const [missions, setMissions] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
+  const [declarations, setDeclarations] = useState<any[]>([]);
   type TabType = 'transport'|'finance'|'douane';
   const [activeTab, setActiveTab] = useState<TabType>('transport');
 
@@ -22,9 +24,12 @@ export default function ClientPortalHome() {
       // In a real scenario, this would only return the client's data based on their token.
       const res = await transportAPI.getMissions({ limit: 10 });
       setMissions(res.data?.items || res.data || []);
-      
-      const invRes = await financeAPI.getInvoices();
+
+      const invRes = await financeAPI.getFactures();
       setInvoices(invRes || []);
+
+      const decRes = await magasinAPI.getDeclarations();
+      setDeclarations(decRes.data || decRes || []);
     } catch (error) {
       console.error('Failed to load portal data', error);
     } finally {
@@ -32,11 +37,7 @@ export default function ClientPortalHome() {
     }
   };
 
-  const declarations = [
-    { id: 'D-2026-0811', date: '2026-07-06', statut: 'LIQUIDEE', marchandise: 'Pièces auto' },
-    { id: 'D-2026-0842', date: '2026-07-08', statut: 'EN_ATTENTE', marchandise: 'Consommables IT' }
-  ];
-
+  
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       

@@ -1,9 +1,9 @@
 # app/models/transport.py  Modèles K-Transport Complets
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date, JSON, Float
+from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date, JSON, Numeric(18, 4)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from app.models.base import BaseModel
 
 # ─── Énumérations ──────────────────────────────────────────
@@ -68,10 +68,15 @@ class CamionFlotte(BaseModel):
     conso_theorique_l_100: Mapped[Decimal | None] = mapped_column(Numeric(6, 2), nullable=True)
     
     gps_tracker_id: Mapped[str | None] = mapped_column(String(100), unique=True)
-    remorque_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id'))
+    remorque_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
     
     statut: Mapped[StatutCamion] = mapped_column(default=StatutCamion.DISPONIBLE)
     actif: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    # Telematics caches
+    latitude: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
+    vitesse_kmh: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
     proprietes_dynamiques: Mapped[dict | None] = mapped_column(JSON, default={}, comment="Variables libres dynamiques (Assurance, Numéro Pneu...)")
 
     remorque_attachee: Mapped['CamionFlotte'] = relationship(remote_side="CamionFlotte.id", backref="tracteur_parent")
@@ -82,11 +87,43 @@ class CamionFlotte(BaseModel):
         foreign_keys="[MissionTransport.camion_id]"
     )
 
+    @property
+    def immatriculation_couplee(self) -> str:
+        if self.type_materiel == TypeMateriel.TRACTEUR and self.remorque_attachee:
+            return f"{self.immatriculation} / {self.remorque_attachee.immatriculation}"
+        return self.immatriculation
+
+
+class HistoriqueCouplage(BaseModel):
+    __tablename__ = "historique_couplage"
+
+    tracteur_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
+    remorque_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
+    date_association: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    date_dissociation: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    
+    tracteur: Mapped['CamionFlotte'] = relationship(foreign_keys=[tracteur_id])
+    remorque: Mapped['CamionFlotte'] = relationship(foreign_keys=[remorque_id])
+
+
+class PositionGPS(BaseModel):
+    __tablename__ = "telematics_positions"
+
+    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"), index=True)
+    latitude: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    longitude: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    vitesse_kmh: Mapped[float] = mapped_column(Numeric(18, 4), default=0.0)
+    heading: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True, comment="Cap en degrés")
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+    camion: Mapped['CamionFlotte'] = relationship(backref="positions_gps")
+
+
 
 class VehiculeDocument(BaseModel):
     __tablename__ = "vehicule_documents"
 
-    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
+    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
     type_document: Mapped[str] = mapped_column(String(50)) # CARTE_GRISE, VISITE_TECHNIQUE, ASSURANCE, PATENTE
     numero: Mapped[str] = mapped_column(String(100))
     date_emission: Mapped[date] = mapped_column(Date)
@@ -99,9 +136,9 @@ class VehiculeDocument(BaseModel):
 class PanneVehicule(BaseModel):
     __tablename__ = "pannes_vehicule"
 
-    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
+    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
     description: Mapped[str] = mapped_column(Text)
-    date_declaration: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    date_declaration: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     date_reparation_prevue: Mapped[date | None] = mapped_column(Date)
     statut: Mapped[StatutPanne] = mapped_column(default=StatutPanne.A_REPARER)
     declare_par: Mapped[str | None] = mapped_column(String(100))
@@ -113,9 +150,9 @@ class PanneVehicule(BaseModel):
 class ControleHSE(BaseModel):
     __tablename__ = "controles_hse"
 
-    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
+    vehicule_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
     controleur: Mapped[str] = mapped_column(String(100))
-    date_controle: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    date_controle: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     vehicule_bloque: Mapped[bool] = mapped_column(Boolean, default=False)
     motif_blocage: Mapped[str | None] = mapped_column(Text)
     
@@ -138,11 +175,16 @@ class ChauffeurProfil(BaseModel):
     categorie_permis: Mapped[str] = mapped_column(String(10))
     
     statut: Mapped[StatutChauffeur] = mapped_column(default=StatutChauffeur.EN_SERVICE)
-    affectation_vehicule_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id'))
+    affectation_vehicule_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
     specialisation: Mapped[str | None] = mapped_column(String(100))
     date_entree: Mapped[date | None] = mapped_column(Date)
     salaire_base: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), default=0)
     actif: Mapped[bool] = mapped_column(Boolean, default=True)
+    
+    # Telematics caches
+    latitude: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
+    vitesse_kmh: Mapped[float | None] = mapped_column(Numeric(18, 4), nullable=True)
 
     vehicule_attitre: Mapped['CamionFlotte'] = relationship()
     documents: Mapped[list['ChauffeurDocument']] = relationship(back_populates='chauffeur', cascade="all, delete-orphan")
@@ -152,7 +194,7 @@ class ChauffeurProfil(BaseModel):
 class ChauffeurDocument(BaseModel):
     __tablename__ = "chauffeur_documents"
 
-    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id'))
+    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id', ondelete="CASCADE"))
     type_document: Mapped[str] = mapped_column(String(50)) # PERMIS, FIMO, CERTIFICAT_MEDICAL
     numero: Mapped[str] = mapped_column(String(100))
     date_emission: Mapped[date] = mapped_column(Date)
@@ -169,16 +211,16 @@ class MissionTransport(BaseModel):
 
     # Bloc "Entités Contractuelles"
     reference: Mapped[str] = mapped_column(String(30), unique=True)
-    tiers_id: Mapped[int] = mapped_column(ForeignKey('tiers.id'))
-    dossier_id: Mapped[int | None] = mapped_column(ForeignKey('dossiers_operationnels.id'))
+    tiers_id: Mapped[int] = mapped_column(ForeignKey('tiers.id', ondelete="CASCADE"))
+    dossier_id: Mapped[int | None] = mapped_column(ForeignKey('dossiers_operationnels.id', ondelete="CASCADE"))
     expediteur_adresse: Mapped[str | None] = mapped_column(Text)
     destinataire_adresse: Mapped[str | None] = mapped_column(Text)
     contact_site: Mapped[str | None] = mapped_column(String(100))
 
     # Bloc "Ressources Affectées"
-    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
-    remorque_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id'))
-    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id'))
+    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
+    remorque_id: Mapped[int | None] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
+    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id', ondelete="CASCADE"))
 
     # Bloc "Détails du Fret & Logistique"
     origine: Mapped[str] = mapped_column(String(200))
@@ -186,7 +228,7 @@ class MissionTransport(BaseModel):
     distance_km: Mapped[Decimal] = mapped_column(Numeric(8, 2))
     nature_fret: Mapped[str] = mapped_column(String(50))
     poids_kg: Mapped[Decimal | None] = mapped_column(Numeric(12, 3))
-    volume_m3: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
+    volume_m3: Mapped[Decimal | None] = mapped_column(Numeric(18, 4))
     date_chargement_prevue: Mapped[datetime | None] = mapped_column(DateTime)
     date_livraison_souhaitee: Mapped[datetime | None] = mapped_column(DateTime)
     
@@ -214,8 +256,8 @@ class MissionTransport(BaseModel):
 class TicketCarburant(BaseModel):
     __tablename__ = "tickets_carburant"
 
-    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'))
-    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id'))
+    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"))
+    chauffeur_id: Mapped[int] = mapped_column(ForeignKey('chauffeurs.id', ondelete="CASCADE"))
     quantite_litres: Mapped[Decimal] = mapped_column(Numeric(8, 2))
     prix_unitaire: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     montant_total: Mapped[Decimal] = mapped_column(Numeric(12, 2))
@@ -230,10 +272,10 @@ class TicketCarburant(BaseModel):
 class PositionGPS(BaseModel):
     __tablename__ = "positions_gps"
 
-    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id'), index=True)
-    latitude: Mapped[float] = mapped_column(Float, nullable=False)
-    longitude: Mapped[float] = mapped_column(Float, nullable=False)
-    vitesse_kmh: Mapped[float] = mapped_column(Float, default=0.0)
-    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    camion_id: Mapped[int] = mapped_column(ForeignKey('camions_flotte.id', ondelete="CASCADE"), index=True)
+    latitude: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    longitude: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    vitesse_kmh: Mapped[float] = mapped_column(Numeric(18, 4), default=0.0)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     
     camion: Mapped['CamionFlotte'] = relationship(foreign_keys=[camion_id])

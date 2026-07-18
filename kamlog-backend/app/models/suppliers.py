@@ -50,7 +50,7 @@ class Supplier(Base):
     # Conditions financières
     conditions_paiement = Column(String(50))
     devise = Column(String(10), default='XAF')
-    limite_credit_xaf = Column(Numeric(15, 2), default=0)
+    limite_credit_xaf = Column(Numeric(18, 4), default=0)
     
     # Banque
     compte_bancaire = Column(String(50))
@@ -75,7 +75,7 @@ class SupplierProfile(Base):
     __tablename__ = "supplier_profiles"
 
     id = Column(Integer, primary_key=True, index=True)
-    supplier_id = Column(Integer, ForeignKey("suppliers.id"), nullable=False)
+    supplier_id = Column(Integer, ForeignKey("suppliers.id", ondelete="CASCADE"), nullable=False)
     
     # Évaluation
     categorie_fournisseur = Column(String(50))

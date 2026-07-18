@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, Any, Dict
 
+
 class AuditLogCreate(BaseModel):
     user_id: Optional[str] = None
     agency_id: Optional[int] = None
@@ -13,3 +14,4 @@ class AuditLogCreate(BaseModel):
     ip_address: Optional[str] = None
     tcode: Optional[str] = None
     module: Optional[str] = None
+    request_id: Optional[str] = None

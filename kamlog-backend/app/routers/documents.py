@@ -1,5 +1,5 @@
 # app/routers/documents.py  Router Documents
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -12,6 +12,7 @@ from app.models.transport import MissionTransport
 from app.models.tiers import Tiers
 from app.models.finance import Facture
 from app.utils.pdf_generator import generer_bl_pdf, generer_facture_pdf
+from app.utils.rate_limiting import limiter
 
 router = APIRouter()
 
@@ -21,20 +22,22 @@ class GenerateBLRequest(BaseModel):
 
 
 @router.post("/bl")
+@limiter.limit("10/minute")
 @require_role(["admin", "dispatcher", "finance"])
-async def generate_bl(
-    request: GenerateBLRequest,
+def generate_bl(
+    request: Request,
+    payload: GenerateBLRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Génère un Bon de Livraison PDF pour une mission."""
     # Récupérer la mission
-    mission = await db.get(MissionTransport, request.mission_id)
+    mission = db.get(MissionTransport, payload.mission_id)
     if not mission:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Mission non trouvée")
     
     # Récupérer le client
-    tiers = await db.get(Tiers, mission.tiers_id)
+    tiers = db.get(Tiers, mission.tiers_id)
     if not tiers:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Client non trouvé")
     
@@ -52,8 +55,10 @@ async def generate_bl(
 
 
 @router.post("/interchange")
+@limiter.limit("20/minute")
 @require_role(["admin", "gate_agent"])
-async def generate_interchange(
+def generate_interchange(
+    request: Request,
     conteneur_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -67,20 +72,22 @@ async def generate_interchange(
 
 
 @router.post("/facture/{facture_id}")
+@limiter.limit("10/minute")
 @require_role(["admin", "finance"])
-async def generate_facture_pdf(
+def generate_facture_pdf(
+    request: Request,
     facture_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Génère une facture PDF."""
     # Récupérer la facture
-    facture = await db.get(Facture, facture_id)
+    facture = db.get(Facture, facture_id)
     if not facture:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Facture non trouvée")
     
     # Récupérer le client
-    tiers = await db.get(Tiers, facture.tiers_id)
+    tiers = db.get(Tiers, facture.tiers_id)
     if not tiers:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Client non trouvé")
     

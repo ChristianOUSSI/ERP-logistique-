@@ -22,14 +22,14 @@ class ReceptionMag3(Base):
     numero_reception = Column(String(50), unique=True, nullable=False, index=True)
     
     # Lien avec le bon d'enlèvement
-    removal_slip_id = Column(Integer, ForeignKey("removal_slips.id"), nullable=False)
+    removal_slip_id = Column(Integer, ForeignKey("removal_slips.id", ondelete="CASCADE"), nullable=False)
     
     # Magasins
     magasin_source = Column(String(20), default='MAG3', nullable=False)
     magasin_destination = Column(String(20), nullable=False)
     
     # Article et quantités
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
+    article_id = Column(Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False)
     quantite_attendue = Column(Numeric(15, 3), nullable=False)
     quantite_recue = Column(Numeric(15, 3), nullable=False)
     unite = Column(String(20), nullable=False)

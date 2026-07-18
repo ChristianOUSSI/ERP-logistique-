@@ -1,11 +1,43 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 import { tiersAPI, financeAPI } from '@/lib/api-client'
 import type { Tier } from '@/types/master-data'
 import GenericDataPage from '@/components/ui/GenericDataPage'
 import { Building2, Users, Briefcase, Handshake, CreditCard, X, AlertCircle, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { CardSkeletonLoader } from '@/components/ui/Loaders'
+
+// ── Validation Schema (Zod) ───────────────────────────────────────────────────
+const tierSchema = z.object({
+  raison_sociale: z.string().min(2, "La raison sociale est requise"),
+  sigle_ou_enseigne: z.string().optional(),
+  type: z.enum(['client', 'supplier', 'partner']),
+  niu: z.string().min(1, "Le NIU est requis"),
+  rccm: z.string().optional(),
+  registre_commerce: z.string().optional(),
+  regime_fiscal: z.string().optional(),
+  email: z.string().email("Email invalide").optional().or(z.literal('')),
+  telephone: z.string().optional(),
+  adresse_physique: z.string().optional(),
+  ville: z.string().optional(),
+  pays: z.string().optional(),
+  autorise_acconage: z.boolean().default(false),
+  autorise_transit: z.boolean().default(false),
+  autorise_parc_stockage: z.boolean().default(false),
+  autorise_manutention: z.boolean().default(false),
+  autorise_transport: z.boolean().default(false),
+  compte_collectif_syscohada: z.string().optional(),
+  limite_credit_maximum: z.coerce.number().min(0).default(0),
+  delai_paiement_jours: z.coerce.number().min(0).default(30),
+  statut: z.string().optional().default('ACTIF')
+})
+
+type TierFormValues = z.infer<typeof tierSchema>
 
 // ── KPI Card component ─────────────────────────────────────────────────────────
 function KpiCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
@@ -24,103 +56,61 @@ function KpiCard({ label, value, icon, color }: { label: string; value: string |
 }
 
 // ── Modal de création ───────────────────────────────────────────────────────────
-function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onClose: () => void; onCreated: () => void }) {
-  const [form, setForm] = useState({
-    raison_sociale: '',
-    sigle_ou_enseigne: '',
-    type: 'client' as 'client' | 'supplier' | 'partner',
-    niu: '',
-    rccm: '',
-    registre_commerce: '',
-    regime_fiscal: 'Réel - Grandes Entreprises',
-    email: '',
-    telephone: '',
-    adresse_physique: '',
-    ville: 'Douala',
-    pays: 'Cameroun',
-    autorise_acconage: false,
-    autorise_transit: false,
-    autorise_parc_stockage: false,
-    autorise_manutention: false,
-    autorise_transport: false,
-    compte_collectif_syscohada: '411100',
-    limite_credit_maximum: 0,
-    delai_paiement_jours: 30,
+function CreateTierModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const queryClient = useQueryClient()
+  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<TierFormValues>({
+    resolver: zodResolver(tierSchema),
+    defaultValues: {
+      type: 'client',
+      regime_fiscal: 'Réel - Grandes Entreprises',
+      ville: 'Douala',
+      pays: 'Cameroun',
+      compte_collectif_syscohada: '411100',
+      limite_credit_maximum: 0,
+      delai_paiement_jours: 30,
+      autorise_acconage: false,
+      autorise_transit: false,
+      autorise_parc_stockage: false,
+      autorise_manutention: false,
+      autorise_transport: false,
+      statut: 'ACTIF'
+    }
   })
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setSubmitting(true)
-    try {
-      await tiersAPI.createTiers({
-        raison_sociale: form.raison_sociale,
-        sigle_ou_enseigne: form.sigle_ou_enseigne || null,
-        niu: form.niu || `NIU-${Date.now().toString().slice(-6)}`,
-        rccm: form.rccm || null,
-        registre_commerce: form.registre_commerce || null,
-        regime_fiscal: form.regime_fiscal,
-        email: form.email || null,
-        telephone: form.telephone || null,
-        adresse_physique: form.adresse_physique,
-        adresse: form.adresse_physique, // compatibilité
-        ville: form.ville,
-        pays: form.pays,
-        autorise_acconage: form.autorise_acconage,
-        autorise_transit: form.autorise_transit,
-        autorise_parc_stockage: form.autorise_parc_stockage,
-        autorise_manutention: form.autorise_manutention,
-        autorise_transport: form.autorise_transport,
-        autorise_magasinage: form.autorise_parc_stockage, // compatibilité
-        compte_collectif_syscohada: form.compte_collectif_syscohada,
-        compte_syscohada: form.compte_collectif_syscohada, // compatibilité
-        limite_credit_maximum: form.limite_credit_maximum,
-        limite_credit_xaf: form.limite_credit_maximum, // compatibilité
-        delai_paiement_jours: form.delai_paiement_jours,
-      })
-      setSuccess(true)
-      setTimeout(() => {
-        setSuccess(false)
-        onCreated()
-        onClose()
-        // Reset form
-        setForm({
-          raison_sociale: '',
-          sigle_ou_enseigne: '',
-          type: 'client',
-          niu: '',
-          rccm: '',
-          registre_commerce: '',
-          regime_fiscal: 'Réel - Grandes Entreprises',
-          email: '',
-          telephone: '',
-          adresse_physique: '',
-          ville: 'Douala',
-          pays: 'Cameroun',
-          autorise_acconage: false,
-          autorise_transit: false,
-          autorise_parc_stockage: false,
-          autorise_manutention: false,
-          autorise_transport: false,
-          compte_collectif_syscohada: '411100',
-          limite_credit_maximum: 0,
-          delai_paiement_jours: 30,
-        })
-      }, 1200)
-    } catch (err: any) {
+  const mutation = useMutation({
+    mutationFn: (data: any) => tiersAPI.createTiers(data),
+    onSuccess: () => {
+      toast.success('Tier créé avec succès !')
+      queryClient.invalidateQueries({ queryKey: ['tiers'] })
+      reset()
+      onClose()
+    },
+    onError: (err: any) => {
       const detail = err?.response?.data?.detail;
       if (Array.isArray(detail)) {
         const messages = detail.map((e: any) => `${e.loc[e.loc.length - 1]}: ${e.msg}`).join(', ');
-        setError(`Erreur de validation : ${messages}`);
+        toast.error(`Erreur de validation : ${messages}`);
       } else {
-        setError(detail || 'Erreur lors de la création du tier.');
+        toast.error(detail || 'Erreur lors de la création du tier.');
       }
-    } finally {
-      setSubmitting(false)
     }
+  })
+
+  const onSubmit = (data: TierFormValues) => {
+    const payload = {
+      ...data,
+      sigle_ou_enseigne: data.sigle_ou_enseigne || null,
+      rccm: data.rccm || null,
+      registre_commerce: data.registre_commerce || null,
+      email: data.email || null,
+      telephone: data.telephone || null,
+      adresse: data.adresse_physique, // compatibilité
+      autorise_magasinage: data.autorise_parc_stockage, // compatibilité
+      compte_syscohada: data.compte_collectif_syscohada, // compatibilité
+      limite_credit_xaf: data.limite_credit_maximum, // compatibilité
+    }
+    mutation.mutate(payload)
   }
 
   if (!isOpen) return null
@@ -129,16 +119,16 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
     <>
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] animate-in fade-in duration-200" onClick={onClose} />
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden flex flex-col max-h-[90vh]">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-100 rounded-xl">
                 <Building2 className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Nouveau Tier</h3>
-                <p className="text-sm text-gray-500">Ajouter un partenaire d&apos;affaires</p>
+                <p className="text-sm text-gray-500">Ajouter un partenaire d'affaires</p>
               </div>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-gray-600 transition-colors">
@@ -147,38 +137,23 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-            {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                Tier créé avec succès !
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit(onSubmit as any)} className="p-6 space-y-4 overflow-y-auto flex-1">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700">Raison Sociale *</label>
                 <input
                   type="text"
-                  required
-                  value={form.raison_sociale}
-                  onChange={(e) => setForm({ ...form, raison_sociale: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
+                  {...register('raison_sociale')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.raison_sociale ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm`}
                   placeholder="Ex: SABC Cameroun"
                 />
+                {errors.raison_sociale && <p className="text-xs text-red-500">{errors.raison_sociale.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700">Sigle / Enseigne</label>
                 <input
                   type="text"
-                  value={form.sigle_ou_enseigne}
-                  onChange={(e) => setForm({ ...form, sigle_ou_enseigne: e.target.value })}
+                  {...register('sigle_ou_enseigne')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                   placeholder="Ex: SABC"
                 />
@@ -187,24 +162,22 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm font-semibold text-gray-700">Numéro Identifiant Unique (NIU) *</label>
+                <label className="text-sm font-semibold text-gray-700">NIU *</label>
                 <input
                   type="text"
-                  required
-                  value={form.niu}
-                  onChange={(e) => setForm({ ...form, niu: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
-                  placeholder="Obligatoire (Cameroun)"
+                  {...register('niu')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.niu ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm`}
+                  placeholder="Obligatoire"
                 />
+                {errors.niu && <p className="text-xs text-red-500">{errors.niu.message}</p>}
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-semibold text-gray-700">Registre Commerce (RCCM)</label>
+                <label className="text-sm font-semibold text-gray-700">RCCM</label>
                 <input
                   type="text"
-                  value={form.rccm}
-                  onChange={(e) => setForm({ ...form, rccm: e.target.value })}
+                  {...register('rccm')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
-                  placeholder="Ex: RC/DLA/2026/B/..."
+                  placeholder="Ex: RC/DLA/..."
                 />
               </div>
             </div>
@@ -214,16 +187,14 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Régime Fiscal</label>
                 <input
                   type="text"
-                  value={form.regime_fiscal}
-                  onChange={(e) => setForm({ ...form, regime_fiscal: e.target.value })}
+                  {...register('regime_fiscal')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Type *</label>
                 <select
-                  value={form.type}
-                  onChange={(e) => setForm({ ...form, type: e.target.value as 'client' | 'supplier' | 'partner' })}
+                  {...register('type')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm bg-white"
                 >
                   <option value="client">Client</option>
@@ -238,20 +209,18 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
+                  {...register('email')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm`}
                   placeholder="contact@entreprise.cm"
                 />
+                {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Téléphone</label>
                 <input
                   type="tel"
-                  value={form.telephone}
-                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  {...register('telephone')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
-                  placeholder="+237 6XX XXX XXX"
                 />
               </div>
             </div>
@@ -259,10 +228,8 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
             <div className="space-y-1">
               <label className="text-sm font-semibold text-gray-700">Adresse Physique</label>
               <textarea
-                value={form.adresse_physique}
-                onChange={(e) => setForm({ ...form, adresse_physique: e.target.value })}
+                {...register('adresse_physique')}
                 className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm h-16"
-                placeholder="Adresse du siège social..."
               />
             </div>
 
@@ -271,8 +238,7 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Ville</label>
                 <input
                   type="text"
-                  value={form.ville}
-                  onChange={(e) => setForm({ ...form, ville: e.target.value })}
+                  {...register('ville')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                 />
               </div>
@@ -280,75 +246,43 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Pays</label>
                 <input
                   type="text"
-                  value={form.pays}
-                  onChange={(e) => setForm({ ...form, pays: e.target.value })}
+                  {...register('pays')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                 />
               </div>
             </div>
 
-            {/* Services Activés (Booleans) */}
+            {/* Services Activés */}
             <div className="space-y-2 border-t border-gray-100 pt-4">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Services à la Carte (Habilitations)</label>
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Services à la Carte</label>
               <div className="grid grid-cols-2 gap-2">
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_acconage}
-                    onChange={(e) => setForm({ ...form, autorise_acconage: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Acconage
+                  <input type="checkbox" {...register('autorise_acconage')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Acconage
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_transit}
-                    onChange={(e) => setForm({ ...form, autorise_transit: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Transit (Douane)
+                  <input type="checkbox" {...register('autorise_transit')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Transit (Douane)
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_parc_stockage}
-                    onChange={(e) => setForm({ ...form, autorise_parc_stockage: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Parc & Stockage
+                  <input type="checkbox" {...register('autorise_parc_stockage')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Parc & Stockage
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_manutention}
-                    onChange={(e) => setForm({ ...form, autorise_manutention: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Manutention
+                  <input type="checkbox" {...register('autorise_manutention')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Manutention
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_transport}
-                    onChange={(e) => setForm({ ...form, autorise_transport: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Transport Routier
+                  <input type="checkbox" {...register('autorise_transport')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Transport Routier
                 </label>
               </div>
             </div>
 
             {/* Paramètres Financiers */}
-            <div className="space-y-4 border-t border-gray-100 pt-4">
+            <div className="space-y-4 border-t border-gray-100 pt-4 pb-4">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Paramètres SAP FI & Crédit</label>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-500">Compte Collectif SYSCOHADA</label>
+                  <label className="text-xs font-semibold text-slate-500">Compte SYSCOHADA</label>
                   <input
                     type="text"
-                    value={form.compte_collectif_syscohada}
-                    onChange={(e) => setForm({ ...form, compte_collectif_syscohada: e.target.value })}
+                    {...register('compte_collectif_syscohada')}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono"
                   />
                 </div>
@@ -356,26 +290,23 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
                   <label className="text-xs font-semibold text-slate-500">Délai Paiement (Jours)</label>
                   <input
                     type="number"
-                    value={form.delai_paiement_jours}
-                    onChange={(e) => setForm({ ...form, delai_paiement_jours: Number(e.target.value) })}
+                    {...register('delai_paiement_jours')}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500">Limite de Crédit Maximum (FCFA)</label>
+                <label className="text-xs font-semibold text-slate-500">Limite de Crédit Max (FCFA)</label>
                 <input
                   type="number"
-                  value={form.limite_credit_maximum}
-                  onChange={(e) => setForm({ ...form, limite_credit_maximum: Number(e.target.value) })}
+                  {...register('limite_credit_maximum')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono"
-                  placeholder="0"
                 />
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+            {/* Footer shrink */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 sticky bottom-0 bg-white">
               <button
                 type="button"
                 onClick={onClose}
@@ -385,10 +316,10 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
               </button>
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={mutation.isPending}
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-sm shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Création...' : 'Créer le Tier'}
+                {mutation.isPending ? 'Création...' : 'Créer le Tier'}
               </button>
             </div>
           </form>
@@ -399,38 +330,20 @@ function CreateTierModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onCl
 }
 
 // ── Modal de modification ───────────────────────────────────────────────────────
-function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; onClose: () => void; onUpdated: () => void; tier: any }) {
-  const [form, setForm] = useState({
-    raison_sociale: '',
-    sigle_ou_enseigne: '',
-    niu: '',
-    rccm: '',
-    registre_commerce: '',
-    regime_fiscal: 'Réel - Grandes Entreprises',
-    email: '',
-    telephone: '',
-    adresse_physique: '',
-    ville: 'Douala',
-    pays: 'Cameroun',
-    autorise_acconage: false,
-    autorise_transit: false,
-    autorise_parc_stockage: false,
-    autorise_manutention: false,
-    autorise_transport: false,
-    compte_collectif_syscohada: '411100',
-    limite_credit_maximum: 0,
-    delai_paiement_jours: 30,
-    statut: 'ACTIF',
+function EditTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: () => void; tier: any }) {
+  const queryClient = useQueryClient()
+  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<TierFormValues>({
+    resolver: zodResolver(tierSchema),
   })
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
 
+  // Synchroniser les valeurs lors de l'ouverture du modal
   useEffect(() => {
     if (tier && isOpen) {
-      setForm({
+      reset({
         raison_sociale: tier.raison_sociale || '',
         sigle_ou_enseigne: tier.sigle_ou_enseigne || '',
+        type: tier.type || 'client',
         niu: tier.niu || '',
         rccm: tier.rccm || '',
         registre_commerce: tier.registre_commerce || '',
@@ -451,50 +364,34 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
         statut: tier.statut || 'ACTIF',
       })
     }
-  }, [tier, isOpen])
+  }, [tier, isOpen, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setSubmitting(true)
-    try {
-      await tiersAPI.updateTiers(tier.id, {
-        raison_sociale: form.raison_sociale,
-        sigle_ou_enseigne: form.sigle_ou_enseigne || null,
-        niu: form.niu,
-        rccm: form.rccm || null,
-        registre_commerce: form.registre_commerce || null,
-        regime_fiscal: form.regime_fiscal,
-        email: form.email || null,
-        telephone: form.telephone || null,
-        adresse_physique: form.adresse_physique,
-        adresse: form.adresse_physique, // compatibilité
-        ville: form.ville,
-        pays: form.pays,
-        autorise_acconage: form.autorise_acconage,
-        autorise_transit: form.autorise_transit,
-        autorise_parc_stockage: form.autorise_parc_stockage,
-        autorise_manutention: form.autorise_manutention,
-        autorise_transport: form.autorise_transport,
-        autorise_magasinage: form.autorise_parc_stockage, // compatibilité
-        compte_collectif_syscohada: form.compte_collectif_syscohada,
-        compte_syscohada: form.compte_collectif_syscohada, // compatibilité
-        limite_credit_maximum: form.limite_credit_maximum,
-        limite_credit_xaf: form.limite_credit_maximum, // compatibilité
-        delai_paiement_jours: form.delai_paiement_jours,
-        statut: form.statut,
-      })
-      setSuccess(true)
-      setTimeout(() => {
-        setSuccess(false)
-        onUpdated()
-        onClose()
-      }, 1200)
-    } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Erreur lors de la modification du tier.')
-    } finally {
-      setSubmitting(false)
+  const mutation = useMutation({
+    mutationFn: (data: any) => tiersAPI.updateTiers(tier.id, data),
+    onSuccess: () => {
+      toast.success('Modifications enregistrées !')
+      queryClient.invalidateQueries({ queryKey: ['tiers'] })
+      onClose()
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.detail || 'Erreur lors de la modification du tier.')
     }
+  })
+
+  const onSubmit = (data: TierFormValues) => {
+    const payload = {
+      ...data,
+      sigle_ou_enseigne: data.sigle_ou_enseigne || null,
+      rccm: data.rccm || null,
+      registre_commerce: data.registre_commerce || null,
+      email: data.email || null,
+      telephone: data.telephone || null,
+      adresse: data.adresse_physique, // compatibilité
+      autorise_magasinage: data.autorise_parc_stockage, // compatibilité
+      compte_syscohada: data.compte_collectif_syscohada, // compatibilité
+      limite_credit_xaf: data.limite_credit_maximum, // compatibilité
+    }
+    mutation.mutate(payload)
   }
 
   if (!isOpen || !tier) return null
@@ -503,9 +400,9 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
     <>
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] animate-in fade-in duration-200" onClick={onClose} />
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden flex flex-col max-h-[90vh]">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-100 rounded-xl">
                 <Building2 className="w-5 h-5 text-emerald-600" />
@@ -521,37 +418,22 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-            {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                Modifications enregistrées !
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit(onSubmit as any)} className="p-6 space-y-4 overflow-y-auto flex-1">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700">Raison Sociale *</label>
                 <input
                   type="text"
-                  required
-                  value={form.raison_sociale}
-                  onChange={(e) => setForm({ ...form, raison_sociale: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
+                  {...register('raison_sociale')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.raison_sociale ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm`}
                 />
+                {errors.raison_sociale && <p className="text-xs text-red-500">{errors.raison_sociale.message}</p>}
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700">Sigle / Enseigne</label>
                 <input
                   type="text"
-                  value={form.sigle_ou_enseigne}
-                  onChange={(e) => setForm({ ...form, sigle_ou_enseigne: e.target.value })}
+                  {...register('sigle_ou_enseigne')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                 />
               </div>
@@ -559,21 +441,19 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-sm font-semibold text-gray-700">Numéro Identifiant Unique (NIU) *</label>
+                <label className="text-sm font-semibold text-gray-700">NIU *</label>
                 <input
                   type="text"
-                  required
-                  value={form.niu}
-                  onChange={(e) => setForm({ ...form, niu: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
+                  {...register('niu')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.niu ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm`}
                 />
+                {errors.niu && <p className="text-xs text-red-500">{errors.niu.message}</p>}
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-semibold text-gray-700">Registre Commerce (RCCM)</label>
+                <label className="text-sm font-semibold text-gray-700">RCCM</label>
                 <input
                   type="text"
-                  value={form.rccm}
-                  onChange={(e) => setForm({ ...form, rccm: e.target.value })}
+                  {...register('rccm')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                 />
               </div>
@@ -584,16 +464,14 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Régime Fiscal</label>
                 <input
                   type="text"
-                  value={form.regime_fiscal}
-                  onChange={(e) => setForm({ ...form, regime_fiscal: e.target.value })}
+                  {...register('regime_fiscal')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                 />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Statut Compte *</label>
                 <select
-                  value={form.statut}
-                  onChange={(e) => setForm({ ...form, statut: e.target.value })}
+                  {...register('statut')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm bg-white"
                 >
                   <option value="EN_ATTENTE_VALIDATION">En attente validation</option>
@@ -608,17 +486,16 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
+                  {...register('email')}
+                  className={`w-full px-4 py-2.5 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm`}
                 />
+                {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Téléphone</label>
                 <input
                   type="tel"
-                  value={form.telephone}
-                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  {...register('telephone')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                 />
               </div>
@@ -627,8 +504,7 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
             <div className="space-y-1">
               <label className="text-sm font-semibold text-gray-700">Adresse Physique</label>
               <textarea
-                value={form.adresse_physique}
-                onChange={(e) => setForm({ ...form, adresse_physique: e.target.value })}
+                {...register('adresse_physique')}
                 className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm h-16"
               />
             </div>
@@ -638,8 +514,7 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Ville</label>
                 <input
                   type="text"
-                  value={form.ville}
-                  onChange={(e) => setForm({ ...form, ville: e.target.value })}
+                  {...register('ville')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                 />
               </div>
@@ -647,101 +522,67 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Pays</label>
                 <input
                   type="text"
-                  value={form.pays}
-                  onChange={(e) => setForm({ ...form, pays: e.target.value })}
+                  {...register('pays')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                 />
               </div>
             </div>
 
-            {/* Services Activés (Booleans) */}
+            {/* Services Activés */}
             <div className="space-y-2 border-t border-gray-100 pt-4">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Services à la Carte (Habilitations)</label>
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Services à la Carte</label>
               <div className="grid grid-cols-2 gap-2">
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_acconage}
-                    onChange={(e) => setForm({ ...form, autorise_acconage: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Acconage
+                  <input type="checkbox" {...register('autorise_acconage')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Acconage
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_transit}
-                    onChange={(e) => setForm({ ...form, autorise_transit: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Transit (Douane)
+                  <input type="checkbox" {...register('autorise_transit')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Transit (Douane)
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_parc_stockage}
-                    onChange={(e) => setForm({ ...form, autorise_parc_stockage: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Parc & Stockage
+                  <input type="checkbox" {...register('autorise_parc_stockage')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Parc & Stockage
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_manutention}
-                    onChange={(e) => setForm({ ...form, autorise_manutention: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Manutention
+                  <input type="checkbox" {...register('autorise_manutention')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Manutention
                 </label>
                 <label className="flex items-center gap-2.5 p-2.5 bg-slate-50 hover:bg-slate-100/70 rounded-xl transition-colors cursor-pointer text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.autorise_transport}
-                    onChange={(e) => setForm({ ...form, autorise_transport: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
-                  />
-                  Transport Routier
+                  <input type="checkbox" {...register('autorise_transport')} className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" /> Transport Routier
                 </label>
               </div>
             </div>
 
             {/* Paramètres Financiers */}
-            <div className="space-y-4 border-t border-gray-100 pt-4">
+            <div className="space-y-4 border-t border-gray-100 pt-4 pb-4">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Paramètres SAP FI & Crédit</label>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-500">Compte Collectif SYSCOHADA</label>
+                  <label className="text-xs font-semibold text-slate-500">Compte SYSCOHADA</label>
                   <input
                     type="text"
-                    value={form.compte_collectif_syscohada}
-                    onChange={(e) => setForm({ ...form, compte_collectif_syscohada: e.target.value })}
+                    {...register('compte_collectif_syscohada')}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-500">Délai de Paiement (Jours)</label>
+                  <label className="text-xs font-semibold text-slate-500">Délai Paiement (Jours)</label>
                   <input
                     type="number"
-                    value={form.delai_paiement_jours}
-                    onChange={(e) => setForm({ ...form, delai_paiement_jours: Number(e.target.value) })}
+                    {...register('delai_paiement_jours')}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500">Limite de Crédit Maximum (FCFA)</label>
+                <label className="text-xs font-semibold text-slate-500">Limite de Crédit Max (FCFA)</label>
                 <input
                   type="number"
-                  value={form.limite_credit_maximum}
-                  onChange={(e) => setForm({ ...form, limite_credit_maximum: Number(e.target.value) })}
+                  {...register('limite_credit_maximum')}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono"
                 />
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+            {/* Footer shrink */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 sticky bottom-0 bg-white">
               <button
                 type="button"
                 onClick={onClose}
@@ -751,10 +592,10 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
               </button>
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={mutation.isPending}
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-sm shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Enregistrement...' : 'Enregistrer'}
+                {mutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
               </button>
             </div>
           </form>
@@ -766,26 +607,15 @@ function EditTierModal({ isOpen, onClose, onUpdated, tier }: { isOpen: boolean; 
 
 // ── Modal de visualisation & encours financier ─────────────────────────────────────
 function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: () => void; tier: any }) {
-  const [encoursData, setEncoursData] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (isOpen && tier) {
-      setLoading(true)
-      financeAPI.getEncours(tier.id)
-        .then((res) => {
-          setEncoursData(res.data)
-        })
-        .catch((err) => {
-          console.error("Error loading credit balance:", err)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-    } else {
-      setEncoursData(null)
-    }
-  }, [tier, isOpen])
+  // Utilisation de useQuery pour l'encours
+  const { data: encoursData, isLoading: loading } = useQuery({
+    queryKey: ['encours', tier?.id],
+    queryFn: async () => {
+      const res = await financeAPI.getEncours(tier.id)
+      return res.data
+    },
+    enabled: isOpen && !!tier?.id,
+  })
 
   if (!isOpen || !tier) return null
 
@@ -793,9 +623,9 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
     <>
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[60] animate-in fade-in duration-200" onClick={onClose} />
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 fade-in duration-300 overflow-hidden flex flex-col max-h-[90vh]">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-white">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-slate-50 to-white shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-slate-100 rounded-xl">
                 <Building2 className="w-5 h-5 text-slate-600" />
@@ -811,12 +641,12 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
           </div>
 
           {/* Body */}
-          <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+          <div className="p-6 space-y-6 overflow-y-auto flex-1">
             {/* Infos de base */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Code Tier</span>
-                <span className="text-sm text-slate-800 font-semibold">{tier.code_tiers}</span>
+                <span className="text-sm text-slate-800 font-semibold">{tier.code_tiers || 'N/A'}</span>
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Type</span>
@@ -944,7 +774,7 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-100 bg-slate-50 flex gap-3">
+          <div className="px-6 py-4 border-t border-gray-100 bg-slate-50 flex gap-3 shrink-0">
             <button
               onClick={onClose}
               className="w-full px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
@@ -960,27 +790,33 @@ function ViewTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: ()
 
 // ── Page principale ─────────────────────────────────────────────────────────────
 export default function MasterDataTiers() {
-  const [tiers, setTiers] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedTier, setSelectedTier] = useState<any>(null)
 
-  const fetchTiers = useCallback(async () => {
-    try {
+  // Remplacement de useEffect par useQuery pour le server-state
+  const { data: tiers = [], isLoading: loading } = useQuery({
+    queryKey: ['tiers'],
+    queryFn: async () => {
       const res = await tiersAPI.getTiers()
-      setTiers(res.data || [])
-    } catch (err) {
-      console.error('Error fetching tiers:', err)
-    } finally {
-      setLoading(false)
+      return res.data || []
     }
-  }, [])
+  })
 
-  useEffect(() => {
-    fetchTiers()
-  }, [fetchTiers])
+  // Mutation pour la suppression
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => tiersAPI.deleteTiers(id),
+    onSuccess: () => {
+      toast.success('Tier supprimé avec succès.')
+      queryClient.invalidateQueries({ queryKey: ['tiers'] })
+    },
+    onError: (err: any) => {
+      console.error('Error deleting tier:', err)
+      toast.error('Erreur lors de la suppression du tier.')
+    }
+  })
 
   const handleEditTier = (row: any) => {
     setSelectedTier(row)
@@ -992,28 +828,26 @@ export default function MasterDataTiers() {
     setViewModalOpen(true)
   }
 
-  const handleDeleteTier = async (row: any) => {
+  const handleDeleteTier = (row: any) => {
     if (confirm(`Êtes-vous sûr de vouloir supprimer le tier "${row.raison_sociale}" ?`)) {
-      try {
-        await tiersAPI.deleteTiers(row.id)
-        fetchTiers()
-      } catch (err) {
-        console.error('Error deleting tier:', err)
-        toast.error('Erreur lors de la suppression du tier.')
-      }
+      deleteMutation.mutate(row.id)
     }
   }
 
   // ── KPI computations ──────────────────────────────────────────────────────
   const kpis = useMemo(() => {
-    const clients = tiers.filter((t) => String(t.type || 'client').toLowerCase() === 'client').length
-    const fournisseurs = tiers.filter((t) => String(t.type || 'supplier').toLowerCase() === 'supplier' || String(t.type || '').toLowerCase() === 'fournisseur').length
-    const partenaires = tiers.filter((t) => String(t.type || 'partner').toLowerCase() === 'partner' || String(t.type || '').toLowerCase() === 'partenaire').length
-    const totalCredit = tiers.reduce((sum, t) => sum + Number(t.limite_credit_maximum || t.limite_credit_xaf || 0), 0)
+    const clients = tiers.filter((t: any) => String(t.type || 'client').toLowerCase() === 'client').length
+    const fournisseurs = tiers.filter((t: any) => String(t.type || 'supplier').toLowerCase() === 'supplier' || String(t.type || '').toLowerCase() === 'fournisseur').length
+    const partenaires = tiers.filter((t: any) => String(t.type || 'partner').toLowerCase() === 'partner' || String(t.type || '').toLowerCase() === 'partenaire').length
+    const totalCredit = tiers.reduce((sum: number, t: any) => sum + Number(t.limite_credit_maximum || t.limite_credit_xaf || 0), 0)
     return { total: tiers.length, clients, fournisseurs, partenaires, totalCredit }
   }, [tiers])
 
-  const kpiCards = (
+  const kpiCards = loading ? (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }).map((_, i) => <CardSkeletonLoader key={i} />)}
+    </div>
+  ) : (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <KpiCard label="Total Tiers" value={kpis.total} icon={<Users className="w-4 h-4 text-blue-600" />} color="bg-blue-50" />
       <KpiCard label="Clients" value={kpis.clients} icon={<Briefcase className="w-4 h-4 text-emerald-600" />} color="bg-emerald-50" />
@@ -1128,7 +962,6 @@ export default function MasterDataTiers() {
       <CreateTierModal
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        onCreated={fetchTiers}
       />
       <EditTierModal
         isOpen={editModalOpen}
@@ -1136,7 +969,6 @@ export default function MasterDataTiers() {
           setEditModalOpen(false)
           setSelectedTier(null)
         }}
-        onUpdated={fetchTiers}
         tier={selectedTier}
       />
       <ViewTierModal

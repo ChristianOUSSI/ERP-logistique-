@@ -64,6 +64,35 @@ services:
       - ./kamlog-backend:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
+  # ─── Celery Worker ────────────────────────────────────────
+  celery_worker:
+    build:
+      context: ./kamlog-backend
+      dockerfile: Dockerfile
+    container_name: kamlog_celery_worker
+    depends_on:
+      db:    { condition: service_healthy }
+      redis: { condition: service_started }
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-kamlog}:${DB_PASSWORD:-kamlog_secret}@db/${DB_NAME:-kamlog_erp}
+      REDIS_URL:    redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+    volumes:
+      - ./kamlog-backend:/app
+    command: celery -A app.celery_app.celery_app worker --loglevel=info
+
+  # ─── Flower (Celery Monitor) ──────────────────────────────
+  flower:
+    image: mher/flower:3.0.1
+    container_name: kamlog_flower
+    environment:
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+    ports:
+      - '5555:5555'
+    depends_on:
+      redis: { condition: service_started }
+
   # ─── Next.js Frontend ─────────────────────────────────────
   frontend:
     build:

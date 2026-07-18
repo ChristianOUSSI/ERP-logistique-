@@ -1,5 +1,6 @@
 # app/routers/master_data.py - Routes API pour les données de référence
-from fastapi import APIRouter, Depends, HTTPException, Query
+from app.utils.rbac import require_role
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from slowapi import Limiter
@@ -7,6 +8,8 @@ from slowapi.util import get_remote_address
 
 from app.database import get_db
 from app.utils.permissions import check_permission, get_current_user
+from app.utils.rate_limiting import limiter, RATE_LIMITS
+from app.utils.cache import cache_result, cache_service
 from app.schemas.magasin import (
     Article, ArticleCreate, ArticleUpdate,
     Incoterm, IncotermCreate, IncotermUpdate,
@@ -26,6 +29,7 @@ router.include_router(suppliers_router, prefix="/suppliers")
 
 # ============ ARTICLES ============
 @router.get("/articles", response_model=List[Article])
+@cache_result("articles_list", expire=300)  # Cache for 5 minutes
 def get_articles(
     skip: int = 0,
     limit: int = 100,
@@ -58,23 +62,29 @@ def get_article_by_code(code_article: str, db: Session = Depends(get_db), curren
 
 
 @router.post("/articles", response_model=Article)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_article(
-    article: ArticleCreate, 
+    article: ArticleCreate,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     """Crée un nouvel article avec génération automatique du code si non fourni"""
-    return ArticleService.create_article(db, article)
+    result = ArticleService.create_article(db, article)
+    # Invalidate articles list cache
+    cache_service.delete_pattern("articles_list*")
+    cache_service.delete_pattern("articles:*")
+    return result
 
 
 @router.put("/articles/{article_id}", response_model=Article)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_article(
-    article_id: int, 
-    article: ArticleUpdate, 
+    article_id: int,
+    article: ArticleUpdate,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -82,10 +92,14 @@ def update_article(
     updated_article = ArticleService.update_article(db, article_id, article)
     if not updated_article:
         raise HTTPException(status_code=404, detail="Article non trouvé")
+    # Invalidate articles list cache
+    cache_service.delete_pattern("articles_list*")
+    cache_service.delete_pattern(f"articles:{article_id}*")
     return updated_article
 
 
 @router.delete("/articles/{article_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_article(
@@ -102,6 +116,7 @@ def delete_article(
 
 # ============ INCOTERMS ============
 @router.get("/incoterms", response_model=List[Incoterm])
+@cache_result("incoterms_list", expire=300)  # Cache for 5 minutes
 def get_incoterms(
     skip: int = 0,
     limit: int = 100,
@@ -122,6 +137,7 @@ def get_incoterm(incoterm_id: int, db: Session = Depends(get_db), current_user =
 
 
 @router.post("/incoterms", response_model=Incoterm)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_incoterm(
@@ -130,10 +146,14 @@ def create_incoterm(
     current_user = Depends(get_current_user)
 ):
     """Crée un nouvel Incoterm"""
-    return IncotermService.create(db, incoterm)
+    result = IncotermService.create(db, incoterm)
+    # Invalidate incoterms list cache
+    cache_service.delete_pattern("incoterms_list*")
+    return result
 
 
 @router.put("/incoterms/{incoterm_id}", response_model=Incoterm)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_incoterm(
@@ -146,10 +166,15 @@ def update_incoterm(
     updated = IncotermService.update(db, incoterm_id, incoterm)
     if not updated:
         raise HTTPException(status_code=404, detail="Incoterm non trouvé")
+    # Invalidate incoterms list cache
+    cache_service.delete_pattern("incoterms_list*")
+    # Invalidate specific incoterm cache
+    cache_service.delete_pattern(f"incoterms:{incoterm_id}*")
     return updated
 
 
 @router.delete("/incoterms/{incoterm_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_incoterm(
@@ -161,11 +186,16 @@ def delete_incoterm(
     success = IncotermService.delete(db, incoterm_id)
     if not success:
         raise HTTPException(status_code=404, detail="Incoterm non trouvé")
+    # Invalidate incoterms list cache
+    cache_service.delete_pattern("incoterms_list*")
+    # Invalidate specific incoterm cache
+    cache_service.delete_pattern(f"incoterms:{incoterm_id}*")
     return {"message": "Incoterm supprimé avec succès"}
 
 
 # ============ CONTAINER TYPES ============
 @router.get("/container-types", response_model=List[TypeConteneur])
+@cache_result("container_types_list", expire=300)  # Cache for 5 minutes
 def get_container_types(
     skip: int = 0,
     limit: int = 100,
@@ -186,6 +216,7 @@ def get_container_type(type_id: int, db: Session = Depends(get_db), current_user
 
 
 @router.post("/container-types", response_model=TypeConteneur)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_container_type(
@@ -194,10 +225,14 @@ def create_container_type(
     current_user = Depends(get_current_user)
 ):
     """Crée un nouveau type de conteneur"""
-    return TypeConteneurService.create(db, type_cont)
+    result = TypeConteneurService.create(db, type_cont)
+    # Invalidate container types list cache
+    cache_service.delete_pattern("container_types_list*")
+    return result
 
 
 @router.put("/container-types/{type_id}", response_model=TypeConteneur)
+    @require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_container_type(
@@ -210,10 +245,15 @@ def update_container_type(
     updated = TypeConteneurService.update(db, type_id, type_cont)
     if not updated:
         raise HTTPException(status_code=404, detail="Type de conteneur non trouvé")
+    # Invalidate container types list cache
+    cache_service.delete_pattern("container_types_list*")
+    # Invalidate specific container type cache
+    cache_service.delete_pattern(f"container_types:{type_id}*")
     return updated
 
 
 @router.delete("/container-types/{type_id}")
+    @require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_container_type(
@@ -225,17 +265,95 @@ def delete_container_type(
     success = TypeConteneurService.delete(db, type_id)
     if not success:
         raise HTTPException(status_code=404, detail="Type de conteneur non trouvé")
+    # Invalidate container types list cache
+    cache_service.delete_pattern("container_types_list*")
+    # Invalidate specific container type cache
+    cache_service.delete_pattern(f"container_types:{type_id}*")
     return {"message": "Type de conteneur supprimé avec succès"}
+
+
+# ============ BULK OPERATIONS ============
+@router.post("/articles/bulk", response_model=List[Article])
+    @require_role(["admin", "manager"])
+@check_permission("article:create")
+@limiter.limit(RATE_LIMITS["bulk"])
+def create_articles_bulk(
+    request: Request,
+    articles: List[ArticleCreate],
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Crée plusieurs articles en une seule opération"""
+    created_articles = []
+    for article_data in articles:
+        article = ArticleService.create_article(db, article_data)
+        created_articles.append(article)
+    # Invalidate articles list cache after bulk creation
+    cache_service.delete_pattern("articles_list*")
+
+
+@router.post("/incoterms/bulk", response_model=List[Incoterm])
+    @require_role(["admin", "manager"])
+@check_permission("article:create")
+@limiter.limit(RATE_LIMITS["bulk"])
+def create_incoterms_bulk(request: Request,
+    incoterms: List[IncotermCreate],
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Crée plusieurs Incoterms en une seule opération"""
+    created_incoterms = []
+    for incoterm_data in incoterms:
+        incoterm = IncotermService.create(db, incoterm_data)
+        created_incoterms.append(incoterm)
+    # Invalidate incoterms list cache after bulk creation
+    cache_service.delete_pattern("incoterms_list*")
+    return created_incoterms
+
+
+@router.post("/container-types/bulk", response_model=List[TypeConteneur])
+    @require_role(["admin", "manager"])
+@check_permission("article:create")
+@limiter.limit(RATE_LIMITS["bulk"])
+def create_container_types_bulk(request: Request,
+    container_types: List[TypeConteneurCreate],
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Crée plusieurs types de conteneurs en une seule opération"""
+    created_types = []
+    for type_data in container_types:
+        type_cont = TypeConteneurService.create(db, type_data)
+        created_types.append(type_cont)
+    # Invalidate container types list cache after bulk creation
+    cache_service.delete_pattern("container_types_list*")
+    return created_types
 
 
 # ============ STATIC REFERENCE ENUMS ============
 @router.get("/units", response_model=List[str])
+@cache_result("measurement_units", expire=86400)  # Cache for 24 hours (static data)
 def get_measurement_units(current_user = Depends(get_current_user)):
     """Récupère la liste des unités de mesure définies dans l'Enum"""
     return [unit.value for unit in UniteMesure]
 
 
-@router.get("/article-categories", response_model=List[str])
+@router.get("/article-categories", response_model=List[dict])
+@cache_result("article_categories", expire=86400)  # Cache for 24 hours (static data)
 def get_article_categories(current_user = Depends(get_current_user)):
     """Récupère la liste des catégories d'articles définies dans l'Enum"""
-    return [cat.value for cat in CategorieArticle]
+    category_labels = {
+        "ALIMENTAIRE": "Alimentaire",
+        "PHARMACEUTIQUE": "Produits Pharmaceutiques",
+        "MATIERES_PREMIERES": "Matières Premières",
+        "PRODUITS_FINIS": "Produits Finis",
+        "EMBALLAGES_PALETES": "Emballages et Palettes",
+        "EQUIPEMENT": "Équipement",
+        "PIECES_DETACHEES": "Pièces Détachées",
+        "MOBILIER_BUREAU_INFORMATIQUE": "Mobilier de Bureau / Informatique",
+        "PRODUITS_DANGEREUX": "Produits Dangereux (HAZMAT)",
+        "PRODUITS_LUXE_VALEUR": "Produits de Luxe / Valeur",
+        "VRAC": "Vrac (Bulk)",
+        "HORS_GABARIT": "Hors-Gabarit (OOG)",
+    }
+    return [{"value": cat.value, "label": category_labels[cat.value]} for cat in CategorieArticle]

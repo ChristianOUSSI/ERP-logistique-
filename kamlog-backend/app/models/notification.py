@@ -46,15 +46,15 @@ class Notification(BaseModel):
     statut: Mapped[StatutNotification] = mapped_column(String(20), default=StatutNotification.NON_LUE)
     
     # Destinataire
-    destinataire_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    destinataire_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     destinataire = relationship("User", foreign_keys=[destinataire_id])
     
     # Expéditeur (optionnel - pour notifications système)
-    expediteur_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    expediteur_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     expediteur = relationship("User", foreign_keys=[expediteur_id])
     
     # Multi-tenancy
-    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id"), nullable=False)
+    agency_id: Mapped[int] = mapped_column(Integer, ForeignKey("agencies.id", ondelete="CASCADE"), nullable=False)
     agency = relationship("Agency")
     
     # Référence vers l'objet source
@@ -82,8 +82,8 @@ class NotificationDestination(BaseModel):
     """Table de liaison pour les notifications multi-destinataires"""
     __tablename__ = "notifications_destinations"
 
-    notification_id: Mapped[int] = mapped_column(Integer, ForeignKey("notifications.id"), nullable=False)
-    destinataire_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    notification_id: Mapped[int] = mapped_column(Integer, ForeignKey("notifications.id", ondelete="CASCADE"), nullable=False)
+    destinataire_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     statut: Mapped[StatutNotification] = mapped_column(String(20), default=StatutNotification.NON_LUE)
     date_lecture: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=True)
     

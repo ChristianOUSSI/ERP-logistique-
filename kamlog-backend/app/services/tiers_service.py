@@ -130,7 +130,7 @@ class TiersService:
         
         db_tiers = Tiers(**tiers.model_dump())
         db.add(db_tiers)
-        db.commit()
+        db.flush()
         db.refresh(db_tiers)
         
         # Invalider le cache
@@ -145,7 +145,7 @@ class TiersService:
         if db_tiers:
             for field, value in tiers.dict(exclude_unset=True).items():
                 setattr(db_tiers, field, value)
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -157,7 +157,7 @@ class TiersService:
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
             db.delete(db_tiers)
-            db.commit()
+            db.flush()
             
             # Invalider le cache
             invalidate_cache_pattern("tiers:*")
@@ -170,7 +170,7 @@ class TiersService:
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
             db_tiers.statut = StatutTiers.ACTIF
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -183,7 +183,7 @@ class TiersService:
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
             db_tiers.statut = StatutTiers.BLOQUE
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -196,7 +196,7 @@ class TiersService:
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
             db_tiers.statut = StatutTiers.BLOQUE
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -210,7 +210,7 @@ class TiersService:
         if db_tiers:
             service_field = f"autorise_{service}"
             setattr(db_tiers, service_field, True)
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -224,7 +224,7 @@ class TiersService:
         if db_tiers:
             service_field = f"autorise_{service}"
             setattr(db_tiers, service_field, False)
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache
@@ -237,7 +237,7 @@ class TiersService:
         db_tiers = TiersService.get_tiers(db, tiers_id)
         if db_tiers:
             db_tiers.limite_credit_xaf = nouvelle_limite
-            db.commit()
+            db.flush()
             db.refresh(db_tiers)
             
             # Invalider le cache

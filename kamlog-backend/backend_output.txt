@@ -1,0 +1,71 @@
+INFO:     Will watch for changes in these directories: ['D:\\Projet\\ERP\\KAMLOG-EM-ERP\\kamlog-backend']
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\uvicorn\__main__.py", line 4, in <module>
+    uvicorn.main()
+    ~~~~~~~~~~~~^^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\click\core.py", line 1569, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\click\core.py", line 1490, in main
+    rv = self.invoke(ctx)
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\click\core.py", line 1353, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\click\core.py", line 907, in invoke
+    return callback(*args, **kwargs)
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\uvicorn\main.py", line 441, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<48 lines>...
+        reset_contextvars=reset_contextvars,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\uvicorn\main.py", line 609, in run
+    config.load_app()
+    ~~~~~~~~~~~~~~~^^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\uvicorn\config.py", line 415, in load_app
+    return import_from_string(self.app)
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "C:\Users\Franz\AppData\Local\Programs\Python\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\main.py", line 56, in <module>
+    from app.routers.v1 import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\routers\__init__.py", line 2, in <module>
+    from app.routers import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\routers\tiers.py", line 12, in <module>
+    from app.services.tiers_service import TiersService
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\services\__init__.py", line 2, in <module>
+    from app.services import transport_service, finance_service, parc_service
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\services\transport_service.py", line 20, in <module>
+    from app.utils.audit import AuditService
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\utils\audit.py", line 7, in <module>
+    from app.utils.logger import get_logger
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\utils\logger.py", line 123, in <module>
+    setup_logger()
+    ~~~~~~~~~~~~^^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app\utils\logger.py", line 54, in setup_logger
+    logger.add(
+    ~~~~~~~~~~^
+        sys.stdout,
+        ^^^^^^^^^^^
+    ...<4 lines>...
+        encoding="utf-8"
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\venv\Lib\site-packages\loguru\_logger.py", line 875, in add
+    raise TypeError("add() got an unexpected keyword argument '%s'" % next(iter(kwargs)))
+TypeError: add() got an unexpected keyword argument 'encoding'

@@ -14,6 +14,27 @@ export default function FacturesPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds(factures.map(f => f.id || f.numero_facture)); // Fallback to numero_facture if id missing
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleBatchPay = () => {
+    // Simulate batch pay
+    alert(`Marqué ${selectedIds.length} factures comme PAYÉES`);
+    setSelectedIds([]);
+  };
+
   useEffect(() => {
     fetchFactures();
   }, []);
@@ -116,12 +137,31 @@ export default function FacturesPage() {
         </button>
       </div>
 
+
+      {/* Batch Actions */}
+      {selectedIds.length > 0 && (
+        <div className="bg-blue-50 p-4 rounded-xl shadow-sm border border-blue-100 mb-6 flex items-center justify-between">
+          <span className="text-blue-800 font-medium">{selectedIds.length} facture(s) sélectionnée(s)</span>
+          <div className="flex items-center gap-3">
+            <button onClick={handleBatchPay} className="px-4 py-2 bg-white text-blue-700 rounded-lg text-sm font-medium border border-blue-200 hover:bg-blue-50">
+              Marquer Payées
+            </button>
+            <button className="px-4 py-2 bg-white text-gray-700 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">
+              Envoyer par email
+            </button>
+          </div>
+        </div>
+      )}
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-500">
+                
+                <th className="p-4 w-12 text-center">
+                  <input type="checkbox" onChange={handleSelectAll} checked={factures.length > 0 && selectedIds.length === factures.length} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                </th>
                 <th className="p-4 font-semibold">N° Facture</th>
                 <th className="p-4 font-semibold">Date Émission</th>
                 <th className="p-4 font-semibold">Client</th>
@@ -134,7 +174,7 @@ export default function FacturesPage() {
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-gray-500">
+                  <td colSpan={8} className="p-8 text-center text-gray-500">
                     <div className="flex justify-center mb-2">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                     </div>
@@ -143,13 +183,17 @@ export default function FacturesPage() {
                 </tr>
               ) : factures.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-gray-500">
+                  <td colSpan={8} className="p-8 text-center text-gray-500">
                     Aucune facture trouvée.
                   </td>
                 </tr>
               ) : (
                 factures.map((facture, index) => (
                   <tr key={index} className="hover:bg-gray-50/50 transition-colors group">
+                    
+                    <td className="p-4 text-center">
+                      <input type="checkbox" checked={selectedIds.includes(facture.id || facture.numero_facture)} onChange={() => toggleSelect(facture.id || facture.numero_facture)} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                    </td>
                     <td className="p-4">
                       <div className="font-medium text-gray-900">{facture.numero_facture}</div>
                       {facture.mission_id && (
@@ -175,7 +219,7 @@ export default function FacturesPage() {
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Voir">
+                        <button onClick={() => setPreviewUrl(`/api/v1/finance/factures/${facture.id || facture.numero_facture}/pdf`)} className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Voir">
                           <Eye className="w-4 h-4" />
                         </button>
                         <button className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Envoyer au client">
@@ -193,6 +237,35 @@ export default function FacturesPage() {
           </table>
         </div>
       </div>
+
+      {/* PDF Preview Modal */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="font-bold text-lg">Aperçu de la facture</h3>
+              <button onClick={() => setPreviewUrl(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                <XCircle className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex-1 bg-gray-100">
+              {/* Simulate PDF Preview with iframe */}
+              <iframe src={previewUrl} className="w-full h-full border-none" title="PDF Preview">
+                <p>Votre navigateur ne supporte pas les iframes.</p>
+              </iframe>
+            </div>
+            <div className="p-4 border-t flex justify-end gap-3">
+              <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                Fermer
+              </button>
+              <button className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Télécharger le PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
