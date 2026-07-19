@@ -858,7 +858,7 @@ def seed_missions():
                     "nature_fret": "Hydrocarbures (Super)",
                     "montant_fret": 350000,
                     "frais_peage": 5000,
-                    "statut": StatutMission.TERMINEE,
+                    "statut": StatutMission.LIVRE,
                     "date_chargement_prevue": datetime.now() - timedelta(days=2),
                     "date_livraison_reelle": datetime.now() - timedelta(days=1),
                     "notes": "Transport de produits sensibles"

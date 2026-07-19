@@ -646,7 +646,7 @@ class BandeLivraison(BandeLivraisonBase):
     date_creation: datetime
     prepare_par: Optional[str] = None
     commande: Optional[Commande] = None
-    ordre_transfert: Optional[OrdreTransfert] = None
+    ordre_transfert: Optional["OrdreTransfert"] = None
     magasin: Optional[Magasin] = None
     lignes_bande: List[LigneBandeLivraison] = []
     model_config = ConfigDict(from_attributes=True)
@@ -889,3 +889,5 @@ class OrdreTransfert(OrdreTransfertBase):
     lignes: List[LigneOrdreTransfert] = []
     model_config = ConfigDict(from_attributes=True)
 
+# Rebuild models with forward references
+BandeLivraison.model_rebuild()
