@@ -57,9 +57,16 @@ export default function LoginPage() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-slate-900">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950" />
-      <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
+      {/* Background Layer */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/images/login-bg.jpg"
+          alt="Port de Douala Background"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Overlay pour assombrir et appliquer un effet de flou */}
+        <div className="absolute inset-0 bg-slate-900/80 dark:bg-slate-950/90 backdrop-blur-sm"></div>
+      </div>
 
       {/* Theme + Lang toggles */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
