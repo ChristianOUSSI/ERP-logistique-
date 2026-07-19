@@ -8,7 +8,7 @@ import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { toast } from 'sonner'
 import { magasinAPI } from '@/lib/api-client'
 import jsPDF from 'jspdf'
-import 'jspdf/dist/autotable'
+import 'jspdf-autotable'
 
 export default function RapportsPage() {
   const [rapports, setRapports] = useState<any[]>([])

@@ -9,7 +9,6 @@ import { magasinAPI } from '@/lib/api-client'
 import { FullScreenLoader } from '@/components/ui/Loaders'
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 export default function BandeLivraisonDetailPage({ params }: { params: { id: string } }) {
   const bandeId = parseInt(params.id)
