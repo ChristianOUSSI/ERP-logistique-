@@ -62,7 +62,7 @@ def get_article_by_code(code_article: str, db: Session = Depends(get_db), curren
 
 
 @router.post("/articles", response_model=Article)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_article(
@@ -79,7 +79,7 @@ def create_article(
 
 
 @router.put("/articles/{article_id}", response_model=Article)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_article(
@@ -99,7 +99,7 @@ def update_article(
 
 
 @router.delete("/articles/{article_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_article(
@@ -137,7 +137,7 @@ def get_incoterm(incoterm_id: int, db: Session = Depends(get_db), current_user =
 
 
 @router.post("/incoterms", response_model=Incoterm)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_incoterm(
@@ -153,7 +153,7 @@ def create_incoterm(
 
 
 @router.put("/incoterms/{incoterm_id}", response_model=Incoterm)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_incoterm(
@@ -174,7 +174,7 @@ def update_incoterm(
 
 
 @router.delete("/incoterms/{incoterm_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_incoterm(
@@ -216,7 +216,7 @@ def get_container_type(type_id: int, db: Session = Depends(get_db), current_user
 
 
 @router.post("/container-types", response_model=TypeConteneur)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_container_type(
@@ -232,7 +232,7 @@ def create_container_type(
 
 
 @router.put("/container-types/{type_id}", response_model=TypeConteneur)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_container_type(
@@ -253,7 +253,7 @@ def update_container_type(
 
 
 @router.delete("/container-types/{type_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_container_type(
@@ -274,7 +274,7 @@ def delete_container_type(
 
 # ============ BULK OPERATIONS ============
 @router.post("/articles/bulk", response_model=List[Article])
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:create")
 @limiter.limit(RATE_LIMITS["bulk"])
 def create_articles_bulk(
@@ -293,7 +293,7 @@ def create_articles_bulk(
 
 
 @router.post("/incoterms/bulk", response_model=List[Incoterm])
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:create")
 @limiter.limit(RATE_LIMITS["bulk"])
 def create_incoterms_bulk(request: Request,
@@ -312,7 +312,7 @@ def create_incoterms_bulk(request: Request,
 
 
 @router.post("/container-types/bulk", response_model=List[TypeConteneur])
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:create")
 @limiter.limit(RATE_LIMITS["bulk"])
 def create_container_types_bulk(request: Request,

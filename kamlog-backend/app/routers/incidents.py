@@ -22,7 +22,7 @@ def get_client_incidents(tiers_id: int, db: Session = Depends(get_db), current_u
     return db.query(Incident).filter(Incident.tiers_id == tiers_id).all()
 
 @router.post("/", response_model=IncidentResponse, status_code=status.HTTP_201_CREATED)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def create_incident(incident_data: IncidentCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     reference = f"TKT-{str(uuid.uuid4())[:8].upper()}"
     new_incident = Incident(
@@ -35,7 +35,7 @@ def create_incident(incident_data: IncidentCreate, db: Session = Depends(get_db)
     return new_incident
 
 @router.patch("/{incident_id}", response_model=IncidentResponse)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def update_incident(incident_id: int, update_data: IncidentUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     incident = db.query(Incident).filter(Incident.id == incident_id).first()
     if not incident:
