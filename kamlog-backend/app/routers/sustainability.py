@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1/sustainability", tags=["Sustainability"])
 
 
 @router.post("/emissions/record")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def record_carbon_emission(
     source: str = Body(...),
     amount_kg_co2e: float = Body(...),
@@ -64,7 +64,7 @@ def record_carbon_emission(
 
 
 @router.post("/emissions/transport")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def calculate_and_record_transport_emissions(
     distance_km: float = Body(..., gt=0),
     weight_tonnes: float = Body(..., gt=0),
@@ -111,7 +111,7 @@ def calculate_and_record_transport_emissions(
 
 
 @router.post("/emissions/warehouse")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def calculate_and_record_warehouse_emissions(
     volume_m3: float = Body(..., gt=0),
     days: float = Body(..., gt=0),
@@ -140,7 +140,7 @@ def calculate_and_record_warehouse_emissions(
 
 
 @router.post("/shipments")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def record_shipment(
     origin: str = Body(...),
     destination: str = Body(...),

@@ -43,7 +43,7 @@ def get_transaction(code_transaction: str, db: Session = Depends(get_db)):
 
 
 @router.post("/transactions", response_model=TransactionSchema, status_code=status.HTTP_201_CREATED)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
     """Crée une nouvelle transaction"""
     existing = db.query(Transaction).filter(Transaction.code_transaction == transaction.code_transaction).first()
@@ -60,7 +60,7 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
 
 
 @router.put("/transactions/{code_transaction}", response_model=TransactionSchema)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def update_transaction(
     code_transaction: str,
     transaction: TransactionUpdate,
@@ -83,7 +83,7 @@ def update_transaction(
 
 
 @router.delete("/transactions/{code_transaction}", status_code=status.HTTP_204_NO_CONTENT)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def delete_transaction(code_transaction: str, db: Session = Depends(get_db)):
     """Supprime une transaction"""
     db_transaction = db.query(Transaction).filter(Transaction.code_transaction == code_transaction).first()
@@ -119,7 +119,7 @@ def get_operation(numero_ot: str, db: Session = Depends(get_db)):
 
 
 @router.post("/operations", response_model=OperationTraceSchema, status_code=status.HTTP_201_CREATED)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def create_operation(operation: OperationTraceCreate, db: Session = Depends(get_db)):
     """Crée une nouvelle opération trace"""
     existing = db.query(OperationTrace).filter(OperationTrace.numero_ot == operation.numero_ot).first()
@@ -136,7 +136,7 @@ def create_operation(operation: OperationTraceCreate, db: Session = Depends(get_
 
 
 @router.post("/operations/cancel", status_code=status.HTTP_200_OK)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def cancel_operation(request: OperationCancelRequest, db: Session = Depends(get_db)):
     """Annule une opération par son numéro d'OT"""
     success = cancel_operation_by_ot(db, request.numero_ot, request.annule_par)
@@ -174,7 +174,7 @@ def get_incoterm(code: str, db: Session = Depends(get_db)):
 
 
 @router.post("/incoterms", response_model=IncotermSchema, status_code=status.HTTP_201_CREATED)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def create_incoterm(incoterm: IncotermCreate, db: Session = Depends(get_db)):
     """Crée un nouvel incoterm"""
     existing = db.query(Incoterm).filter(Incoterm.code == incoterm.code).first()
@@ -191,7 +191,7 @@ def create_incoterm(incoterm: IncotermCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/incoterms/{code}", response_model=IncotermSchema)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def update_incoterm(
     code: str,
     incoterm: IncotermUpdate,
@@ -214,7 +214,7 @@ def update_incoterm(
 
 
 @router.delete("/incoterms/{code}", status_code=status.HTTP_204_NO_CONTENT)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def delete_incoterm(code: str, db: Session = Depends(get_db)):
     """Supprime un incoterm"""
     db_incoterm = db.query(Incoterm).filter(Incoterm.code == code).first()
@@ -250,7 +250,7 @@ def get_type_conteneur(code: str, db: Session = Depends(get_db)):
 
 
 @router.post("/types-conteneur", response_model=TypeConteneurSchema, status_code=status.HTTP_201_CREATED)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def create_type_conteneur(type_conteneur: TypeConteneurCreate, db: Session = Depends(get_db)):
     """Crée un nouveau type de conteneur"""
     existing = db.query(TypeConteneur).filter(TypeConteneur.code == type_conteneur.code).first()
@@ -267,7 +267,7 @@ def create_type_conteneur(type_conteneur: TypeConteneurCreate, db: Session = Dep
 
 
 @router.put("/types-conteneur/{code}", response_model=TypeConteneurSchema)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def update_type_conteneur(
     code: str,
     type_conteneur: TypeConteneurUpdate,
@@ -290,7 +290,7 @@ def update_type_conteneur(
 
 
 @router.delete("/types-conteneur/{code}", status_code=status.HTTP_204_NO_CONTENT)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def delete_type_conteneur(code: str, db: Session = Depends(get_db)):
     """Supprime un type de conteneur"""
     db_type = db.query(TypeConteneur).filter(TypeConteneur.code == code).first()

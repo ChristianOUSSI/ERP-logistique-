@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1/iot", tags=["IoT"])
 
 
 @router.post("/devices/register")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def register_iot_device(
     device_id: str = Body(...),
     metadata: Dict[str, Any] = Body(...),
@@ -40,7 +40,7 @@ def register_iot_device(
 
 
 @router.post("/devices/{device_id}/data")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def ingest_sensor_data(
     device_id: str,
     sensor_type: str = Body(...),
@@ -228,7 +228,7 @@ def get_device_metadata(
 
 
 @router.post("/devices/{device_id}/alert-rules")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def add_alert_rule(
     device_id: str,
     sensor_type: str = Body(...),
@@ -371,7 +371,7 @@ def get_all_active_alerts(
 
 
 @router.post("/alerts/{alert_id}/resolve")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def resolve_alert(
     alert_id: str,
     db: Session = Depends(get_db),

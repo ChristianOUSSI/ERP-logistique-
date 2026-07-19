@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1/blockchain", tags=["Blockchain"])
 
 
 @router.post("/documents/hash")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def hash_document(
     document_content: Any = Body(...),
     document_type: str = Body(...),
@@ -58,7 +58,7 @@ def hash_document(
 
 
 @router.post("/documents/verify")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def verify_document_integrity(
     document_content: Any = Body(...),
     document_hash: str = Body(...),
@@ -82,7 +82,7 @@ def verify_document_integrity(
 
 
 @router.post("/documents/register")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def register_document_on_blockchain(
     document_content: Any = Body(...),
     document_type: str = Body(...),
@@ -126,7 +126,7 @@ def register_document_on_blockchain(
 
 
 @router.post("/mine")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def mine_pending_transactions(
     miner_address: str = Body("network"),
     db: Session = Depends(get_db),

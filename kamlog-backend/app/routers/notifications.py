@@ -86,7 +86,7 @@ def get_notification_stats(
 
 
 @router.put("/{notification_id}/mark-read", response_model=NotificationResponse)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def mark_notification_as_read(
     notification_id: int,
     db: Session = Depends(get_db),
@@ -120,7 +120,7 @@ def mark_notification_as_read(
 
 
 @router.put("/mark-all-read")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def mark_all_notifications_as_read(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -145,7 +145,7 @@ def mark_all_notifications_as_read(
 
 
 @router.delete("/read")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def delete_read_notifications(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)

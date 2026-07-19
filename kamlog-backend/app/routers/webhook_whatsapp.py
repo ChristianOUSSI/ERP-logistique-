@@ -88,7 +88,7 @@ async def process_whatsapp_message(body: str, sender: str, db: Session):
         add_log("K-Bot", "Erreur système lors du traitement du message.", is_bot=True)
 
 @router.post("/whatsapp")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """
     Endpoint appelé par Twilio ou l'API Meta lors de la réception d'un message WhatsApp.
