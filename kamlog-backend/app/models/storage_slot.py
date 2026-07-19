@@ -1,5 +1,5 @@
 # app/models/storage_slot.py
-from sqlalchemy import Column, Integer, String, Numeric(18, 4), Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional
 from app.models.base import BaseModel
