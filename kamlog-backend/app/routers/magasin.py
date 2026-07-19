@@ -88,7 +88,7 @@ def get_magasin(magasin_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/magasins", response_model=Magasin)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:create")
 def create_magasin(magasin: MagasinCreate, db: Session = Depends(get_db)):
     """Crée un nouveau magasin"""
@@ -96,7 +96,7 @@ def create_magasin(magasin: MagasinCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/magasins/{magasin_id}", response_model=Magasin)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("magasin:update")
 def update_magasin(magasin_id: int, magasin: MagasinUpdate, db: Session = Depends(get_db)):
@@ -108,7 +108,7 @@ def update_magasin(magasin_id: int, magasin: MagasinUpdate, db: Session = Depend
 
 
 @router.delete("/magasins/{magasin_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("magasin:delete")
 def delete_magasin(magasin_id: int, db: Session = Depends(get_db)):
@@ -140,7 +140,7 @@ def get_client(client_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/clients", response_model=ClientMagasin)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("magasin:create")
 def create_client(client: ClientMagasinCreate, db: Session = Depends(get_db)):
@@ -149,7 +149,7 @@ def create_client(client: ClientMagasinCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/clients/{client_id}", response_model=ClientMagasin)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("magasin:update")
 def update_client(client_id: int, client: ClientMagasinUpdate, db: Session = Depends(get_db)):
@@ -161,7 +161,7 @@ def update_client(client_id: int, client: ClientMagasinUpdate, db: Session = Dep
 
 
 @router.delete("/clients/{client_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("magasin:delete")
 def delete_client(client_id: int, db: Session = Depends(get_db)):
@@ -205,7 +205,7 @@ def get_article(article_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/articles", response_model=Article)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:create")
 def create_article(article: ArticleCreate, db: Session = Depends(get_db)):
@@ -214,7 +214,7 @@ def create_article(article: ArticleCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/articles/{article_id}", response_model=Article)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:update")
 def update_article(article_id: int, article: ArticleUpdate, db: Session = Depends(get_db)):
@@ -226,7 +226,7 @@ def update_article(article_id: int, article: ArticleUpdate, db: Session = Depend
 
 
 @router.delete("/articles/{article_id}")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("article:delete")
 def delete_article(article_id: int, db: Session = Depends(get_db)):
@@ -278,7 +278,7 @@ def get_declaration_receptions_summary(declaration_id: int, db: Session = Depend
     return DeclarationService.get_receptions_summary(db, declaration_id)
 
 @router.post("/declarations", response_model=Declaration)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("declaration:create")
 def create_declaration(
@@ -291,7 +291,7 @@ def create_declaration(
 
 
 @router.put("/declarations/{declaration_id}", response_model=Declaration)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("declaration:update")
 def update_declaration(declaration_id: int, declaration: DeclarationUpdate, db: Session = Depends(get_db)):
@@ -303,7 +303,7 @@ def update_declaration(declaration_id: int, declaration: DeclarationUpdate, db: 
 
 
 @router.post("/declarations/{declaration_id}/valider", response_model=Declaration)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("declaration:update")
 def valider_declaration(declaration_id: int, db: Session = Depends(get_db)):
@@ -315,7 +315,7 @@ def valider_declaration(declaration_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/declarations/{declaration_id}/annuler", response_model=Declaration)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("declaration:update")
 def annuler_declaration(declaration_id: int, db: Session = Depends(get_db)):
@@ -461,7 +461,7 @@ def get_reception(reception_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/receptions", response_model=Reception)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("reception:create")
 def create_reception(
@@ -475,7 +475,7 @@ def create_reception(
 
 
 @router.put("/receptions/{reception_id}", response_model=Reception)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("reception:update")
 def update_reception(reception_id: int, reception: ReceptionUpdate, db: Session = Depends(get_db)):
@@ -487,7 +487,7 @@ def update_reception(reception_id: int, reception: ReceptionUpdate, db: Session 
 
 
 @router.post("/receptions/{reception_id}/completer", response_model=Reception)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("reception:update")
 def completer_reception(reception_id: int, db: Session = Depends(get_db)):
@@ -499,7 +499,7 @@ def completer_reception(reception_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/receptions/{reception_id}/annuler", response_model=Reception)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("reception:update")
 def annuler_reception(reception_id: int, db: Session = Depends(get_db)):
@@ -588,7 +588,7 @@ def get_total_stock(article_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/stocks/filtres", response_model=List[Stock])
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("stock:read")
 def filter_stocks(filters: StockFilter, db: Session = Depends(get_db)):
@@ -623,7 +623,7 @@ def get_commande(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:create")
 def create_commande(
@@ -636,7 +636,7 @@ def create_commande(
 
 
 @router.put("/commandes/{commande_id}", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def update_commande(commande_id: int, commande: CommandeUpdate, db: Session = Depends(get_db)):
@@ -648,7 +648,7 @@ def update_commande(commande_id: int, commande: CommandeUpdate, db: Session = De
 
 
 @router.post("/commandes/{commande_id}/valider-paiement", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def valider_paiement(
@@ -664,7 +664,7 @@ def valider_paiement(
 
 
 @router.post("/commandes/{commande_id}/preparer", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def mettre_en_preparation(commande_id: int, db: Session = Depends(get_db)):
@@ -676,7 +676,7 @@ def mettre_en_preparation(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/prete", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def marquer_prete(commande_id: int, db: Session = Depends(get_db)):
@@ -688,7 +688,7 @@ def marquer_prete(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/livree", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def marquer_livree(commande_id: int, db: Session = Depends(get_db)):
@@ -700,7 +700,7 @@ def marquer_livree(commande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/commandes/{commande_id}/annuler", response_model=Commande)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("commande:update")
 def annuler_commande(commande_id: int, db: Session = Depends(get_db)):
@@ -735,7 +735,7 @@ def get_bande(bande_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/bandes-livraison", response_model=BandeLivraison)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("bande:create")
 def create_bande(
@@ -749,7 +749,7 @@ def create_bande(
 
 
 @router.put("/bandes-livraison/{bande_id}", response_model=BandeLivraison)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 
 @check_permission("bande:update")
 def update_bande(bande_id: int, bande: BandeLivraisonUpdate, db: Session = Depends(get_db)):
@@ -762,7 +762,7 @@ def update_bande(bande_id: int, bande: BandeLivraisonUpdate, db: Session = Depen
 
 # ============ NOUVEAUX ENDPOINTS POUR LA GÉNÉRATION DE BANDE DE LIVRAISON À PARTIR D'OT ============
 @router.post("/bandes-livraison/from-ordre-transfert/{ot_id}", response_model=BandeLivraison)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("bande:create")
 def create_bande_from_ordre_transfert(
     ot_id: int,
@@ -814,7 +814,7 @@ def get_ordres_transfert_by_declaration(declaration_id: int, db: Session = Depen
 
 
 @router.post("/ordres-transfert", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:create")
 def create_ordre_transfert(
     ot: OrdreTransfertCreate,
@@ -826,7 +826,7 @@ def create_ordre_transfert(
 
 
 @router.put("/ordres-transfert/{ot_id}", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:update")
 def update_ordre_transfert(
     ot_id: int,
@@ -841,7 +841,7 @@ def update_ordre_transfert(
 
 
 @router.post("/ordres-transfert/{ot_id}/valider", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:update")
 def valider_ordre_transfert(
     ot_id: int,
@@ -856,7 +856,7 @@ def valider_ordre_transfert(
 
 
 @router.post("/ordres-transfert/{ot_id}/expedier", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:update")
 def expedier_ordre_transfert(
     ot_id: int,
@@ -870,7 +870,7 @@ def expedier_ordre_transfert(
 
 
 @router.post("/ordres-transfert/{ot_id}/receptionner", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:update")
 def receptionner_ordre_transfert(
     ot_id: int,
@@ -885,7 +885,7 @@ def receptionner_ordre_transfert(
 
 
 @router.post("/ordres-transfert/{ot_id}/annuler", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:update")
 def annuler_ordre_transfert(
     ot_id: int,
@@ -1004,7 +1004,7 @@ def get_magasin_history(
 
 # ============ FEATURES INTELLIGENTES (IA) ============
 @router.post("/ai/query")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def query_ai_natural_language(
     query: str,
     db: Session = Depends(get_db),
@@ -1021,7 +1021,7 @@ def query_ai_natural_language(
 
 
 @router.post("/ai/document/process")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def process_document_with_ai(
     file_content: str,  # Base64 encoded
     file_type: str,
@@ -1062,7 +1062,7 @@ def get_ai_query_suggestions(
 
 # ============ ANALYTIQUE AVANCÉE ============
 @router.post("/analytics/demand-forecast")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def generate_demand_forecast(
     article_id: int,
     magasin_id: Optional[int] = None,
@@ -1098,7 +1098,7 @@ def generate_demand_forecast(
 
 
 @router.post("/analytics/stock-turnover")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def analyze_stock_turnover(
     article_id: int,
     months: int = 12,
@@ -1126,7 +1126,7 @@ def analyze_stock_turnover(
 
 
 @router.post("/analytics/safety-stock")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def calculate_safety_stock(
     article_id: int,
     magasin_id: int,
@@ -1170,7 +1170,7 @@ def calculate_safety_stock(
 
 
 @router.post("/analytics/anomaly-detection")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def detect_stock_movement_anomalies(
     article_id: int,
     magasin_id: int,
@@ -1215,7 +1215,7 @@ def detect_stock_movement_anomalies(
 
 # ============ RAPPORTS AVANCÉS ============
 @router.post("/reports/stock-valuation")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def generate_stock_valuation_report(
     filters: Dict[str, Any] = None,
     db: Session = Depends(get_db),
@@ -1235,7 +1235,7 @@ def generate_stock_valuation_report(
 
 
 @router.post("/reports/mouvement-analysis")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def generate_mouvement_analysis_report(
     start_date: str,  # Format ISO: YYYY-MM-DD
     end_date: str,    # Format ISO: YYYY-MM-DD
@@ -1260,7 +1260,7 @@ def generate_mouvement_analysis_report(
 
 
 @router.post("/reports/client-performance")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def generate_client_performance_report(
     start_date: str,  # Format ISO: YYYY-MM-DD
     end_date: str,    # Format ISO: YYYY-MM-DD
@@ -1284,7 +1284,7 @@ def generate_client_performance_report(
 
 
 @router.post("/reports/export/csv")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def export_report_to_csv(
     data: List[Dict[str, Any]],
     filename: str = "report.csv",
@@ -1305,7 +1305,7 @@ def export_report_to_csv(
 
 
 @router.post("/reports/export/json")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 def export_report_to_json(
     data: Any,
     filename: str = "report.json",
@@ -1327,7 +1327,7 @@ def export_report_to_json(
 # ============ ORDRES DE TRANSFERT (BON D'ENLEVEMENT) ============
 
 @router.post("/ordres-transfert", response_model=OrdreTransfert)
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:create")
 def create_ordre_transfert(
     ot_data: OrdreTransfertCreate,
@@ -1370,7 +1370,7 @@ def create_ordre_transfert(
 
 
 @router.post("/ordres-transfert/{ot_id}/valider-paiement")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("finance:update") # Seul le service client ou finance peut le faire
 def valider_paiement_ot(
     ot_id: int,
@@ -1404,7 +1404,7 @@ def valider_paiement_ot(
 
 
 @router.post("/ordres-transfert/{ot_id}/annuler")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:delete")
 def annuler_ot(
     ot_id: int,
@@ -1427,7 +1427,7 @@ def annuler_ot(
 
 # ============ IMPORT/EXPORT ============
 @router.post("/import/export/articles/csv")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:create")
 def import_articles_from_csv(
     file: UploadFile = File(...),
@@ -1444,7 +1444,7 @@ def import_articles_from_csv(
 
 
 @router.post("/import/export/articles/csv/export")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:read")
 def export_articles_to_csv(
     db: Session = Depends(get_db),
@@ -1460,7 +1460,7 @@ def export_articles_to_csv(
 
 
 @router.post("/import/export/clients/csv")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:create")
 def import_clients_from_csv(
     file: UploadFile = File(...),
@@ -1477,7 +1477,7 @@ def import_clients_from_csv(
 
 
 @router.post("/import/export/clients/csv/export")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:read")
 def export_clients_to_csv(
     db: Session = Depends(get_db),
@@ -1493,7 +1493,7 @@ def export_clients_to_csv(
 
 
 @router.post("/import/export/magasins/csv")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:create")
 def import_magasins_from_csv(
     file: UploadFile = File(...),
@@ -1510,7 +1510,7 @@ def import_magasins_from_csv(
 
 
 @router.post("/import/export/magasins/csv/export")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("magasin:read")
 def export_magasins_to_csv(
     db: Session = Depends(get_db),
@@ -1526,7 +1526,7 @@ def export_magasins_to_csv(
 
 
 @router.post("/articles/bulk")
-    @require_role(["admin", "manager"])
+@require_role(["admin", "manager"])
 @check_permission("article:create")
 def create_articles_bulk(
     articles: List[ArticleCreate],
