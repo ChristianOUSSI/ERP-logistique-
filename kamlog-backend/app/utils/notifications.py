@@ -4,7 +4,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import List, Dict, Any
 from app.config import settings
-from app.tasks.email_tasks import send_email_async
 
 from app.utils.logger import get_logger
 
@@ -37,6 +36,7 @@ def _send_email_sync(subject: str, recipients: list, html_content: str):
 def send_email(subject: str, recipients: list, html_content: str):
     """Envoie un email de maniere asynchrone via Celery."""
     # Delegue a la tache Celery
+    from app.tasks.email_tasks import send_email_async
     send_email_async.delay(subject, recipients, html_content)
 
 class NotificationTemplates:

@@ -24,6 +24,7 @@ from app.models.transport import (
     StatutMission,
     StatutCamion,
     PositionGPS,
+    HistoriqueCouplage,
 )
 from app.models.finance import (
     Facture,
