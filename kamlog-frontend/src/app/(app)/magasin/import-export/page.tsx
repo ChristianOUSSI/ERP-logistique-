@@ -125,7 +125,7 @@ export default function ImportExportPage() {
                         className="hidden"
                       />
                       <button
-                        onClick={() => document.querySelector('input[type="file"]')?.click()}
+                        onClick={() => (document.querySelector('input[type="file"]') as HTMLInputElement)?.click()}
                         disabled={uploading}
                         className={`px-4 py-2 rounded-xl text-sm font-bold ${uploading ? 'bg-slate-400 text-slate-300' : 'bg-blue-600 hover:bg-blue-700 text-white'} transition-colors`}
                       >
@@ -164,7 +164,7 @@ export default function ImportExportPage() {
                         className="hidden"
                       />
                       <button
-                        onClick={() => document.querySelector('input[type="file"]')?.click()}
+                        onClick={() => (document.querySelector('input[type="file"]') as HTMLInputElement)?.click()}
                         disabled={uploading}
                         className={`px-4 py-2 rounded-xl text-sm font-bold ${uploading ? 'bg-slate-400 text-slate-300' : 'bg-blue-600 hover:bg-blue-700 text-white'} transition-colors`}
                       >
@@ -203,7 +203,7 @@ export default function ImportExportPage() {
                         className="hidden"
                       />
                       <button
-                        onClick={() => document.querySelector('input[type="file"]')?.click()}
+                        onClick={() => (document.querySelector('input[type="file"]') as HTMLInputElement)?.click()}
                         disabled={uploading}
                         className={`px-4 py-2 rounded-xl text-sm font-bold ${uploading ? 'bg-slate-400 text-slate-300' : 'bg-blue-600 hover:bg-blue-700 text-white'} transition-colors`}
                       >

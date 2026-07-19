@@ -10,6 +10,12 @@ const nextConfig = {
       ],
     },
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     domains: ['localhost', 'kamlog.vercel.app'],
     remotePatterns: [

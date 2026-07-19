@@ -8,7 +8,7 @@ import { CardSkeletonLoader } from '@/components/ui/Loaders'
 import { toast } from 'sonner'
 import { magasinAPI } from '@/lib/api-client'
 import jsPDF from 'jspdf'
-import 'jspdf/dist/autotable'
+import 'jspdf-autotable'
 
 export default function RapportsPage() {
   const [rapports, setRapports] = useState<any[]>([])
@@ -225,6 +225,7 @@ export default function RapportsPage() {
             rapport={editingRapport}
             onClose={() => setShowModal(false)}
             onSuccess={() => { setShowModal(false); fetchRapports(); }}
+            handleGenerateReport={handleGenerateReport}
           />
         )}
       </div>
@@ -232,7 +233,7 @@ export default function RapportsPage() {
   )
 }
 
-function RapportModal({ rapport, onClose, onSuccess }: { rapport: any, onClose: () => void, onSuccess: () => void }) {
+function RapportModal({ rapport, onClose, onSuccess, handleGenerateReport }: { rapport: any, onClose: () => void, onSuccess: () => void, handleGenerateReport: (type: string, params: any) => Promise<void> }) {
   const [formData, setFormData] = useState(rapport || {
     type: 'stock_valuation',
     name: '',

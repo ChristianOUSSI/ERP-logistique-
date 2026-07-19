@@ -74,9 +74,9 @@ export default function AuditHealthDashboard() {
     setIsRefreshing(true)
     try {
       // Fetch system health
-      const hRes = await adminAPI.getSystemHealth()
-      if (hRes?.data) {
-        setHealth(hRes.data)
+      const res = await adminAPI.getSystemHealth()
+      if (res?.data) {
+        setHealth((res as any).data)
         setApiOnline(true)
       } else {
         setHealth({ cpuUsage: 0, memoryUsage: 0, dbConnectionPool: 0, activeConnections: 0 })
@@ -102,7 +102,7 @@ export default function AuditHealthDashboard() {
       setUptimeData(
         Array.from({ length: 24 }).map((_, i) => ({
           time: `${String((now.getHours() - 23 + i + 24) % 24).padStart(2, '0')}:00`,
-          uptime: (hRes && hRes.data) ? 100 : 0,
+          uptime: (res && (res as any).data) ? 100 : 0,
         }))
       )
 
