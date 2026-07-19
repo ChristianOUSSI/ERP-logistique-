@@ -1,6 +1,6 @@
-"""add_module_based_permissions_to_roles
+"""add_module_perms_to_roles
 
-Revision ID: add_module_based_permissions_to_roles
+Revision ID: add_module_perms_to_roles
 Revises: add_module_based_permissions
 Create Date: 2026-07-18 03:45:00.000000
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'add_module_based_permissions_to_roles'
+revision = 'add_module_perms_to_roles'
 down_revision = 'add_module_based_permissions'
 branch_labels = None
 depends_on = None
