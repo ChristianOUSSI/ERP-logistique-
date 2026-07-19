@@ -1,7 +1,7 @@
 # app/models/transport.py  Modèles K-Transport Complets
 import enum
 from decimal import Decimal
-from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date, JSON, Numeric(18, 4)
+from sqlalchemy import String, Numeric, Boolean, Text, ForeignKey, Index, Integer, DateTime, Date, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime, date, timezone
 from app.models.base import BaseModel
@@ -279,3 +279,4 @@ class PositionGPS(BaseModel):
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     
     camion: Mapped['CamionFlotte'] = relationship(foreign_keys=[camion_id])
+
