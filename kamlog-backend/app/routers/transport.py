@@ -16,7 +16,8 @@ from app.schemas.transport import (
     MissionCreate, MissionUpdate, MissionResponse,
     VehiculeDocumentCreate, VehiculeDocumentResponse,
     PanneVehiculeCreate, PanneVehiculeResponse, PanneVehiculeUpdate,
-    ChauffeurDocumentCreate, ChauffeurDocumentResponse
+    ChauffeurDocumentCreate, ChauffeurDocumentResponse,
+    HistoriqueCouplageResponse
 )
 from pydantic import BaseModel
 from decimal import Decimal
