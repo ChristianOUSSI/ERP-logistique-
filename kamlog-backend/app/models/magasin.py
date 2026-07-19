@@ -265,6 +265,7 @@ class Reception(Base):
     __tablename__ = "receptions"
 
     id = Column(Integer, primary_key=True, index=True)
+    bol_id = Column(Integer, ForeignKey("bill_of_loading.id", ondelete="SET NULL"), nullable=True)
     numero_reception = Column(String(50), unique=True, nullable=False, index=True)
     declaration_id = Column(Integer, ForeignKey("declarations.id", ondelete="CASCADE"), nullable=False)
     magasin_id = Column(Integer, ForeignKey("magasins.id", ondelete="CASCADE"), nullable=False)
@@ -276,6 +277,7 @@ class Reception(Base):
     date_modification = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relations
+    bol = relationship("BillOfLoading", back_populates="receptions")
     declaration = relationship("Declaration", back_populates="receptions")
     magasin = relationship("Magasin", back_populates="receptions")
     lignes = relationship("LigneReception", back_populates="reception", cascade="all, delete-orphan")

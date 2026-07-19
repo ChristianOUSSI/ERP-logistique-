@@ -63,26 +63,31 @@ def setup_logger():
         )
 
     # Logs vers un fichier (rotation automatique)
-    logger.add(
-        "logs/app_{time:YYYY-MM-DD}.log",
-        rotation="00:00",  # Nouveau fichier chaque jour à minuit
-        retention="30 days",  # Garder 30 jours de logs
-        compression="zip",  # Comprimer les anciens logs
-        level="INFO",
-        format=prod_format if not settings.DEBUG else dev_format,
-        filter=request_id_formatter
-    )
+    import os
+    if os.environ.get("LOG_TO_FILE", "false").lower() == "true":
+        try:
+            logger.add(
+                "logs/app_{time:YYYY-MM-DD}.log",
+                rotation="00:00",  # Nouveau fichier chaque jour à minuit
+                retention="30 days",  # Garder 30 jours de logs
+                compression="zip",  # Comprimer les anciens logs
+                level="INFO",
+                format=prod_format if not settings.DEBUG else dev_format,
+                filter=request_id_formatter
+            )
 
-    # Logs d'erreurs séparés
-    logger.add(
-        "logs/error_{time:YYYY-MM-DD}.log",
-        rotation="00:00",
-        retention="90 days",
-        compression="zip",
-        level="ERROR",
-        format=prod_format if not settings.DEBUG else dev_format,
-        filter=request_id_formatter
-    )
+            # Logs d'erreurs séparés
+            logger.add(
+                "logs/error_{time:YYYY-MM-DD}.log",
+                rotation="00:00",
+                retention="90 days",
+                compression="zip",
+                level="ERROR",
+                format=prod_format if not settings.DEBUG else dev_format,
+                filter=request_id_formatter
+            )
+        except Exception as e:
+            logger.warning(f"Could not setup file logging: {e}")
 
     return logger
 
