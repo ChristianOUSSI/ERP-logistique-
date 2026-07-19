@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
-from app.utils.rbac import get_current_user, require_permission
+from app.utils.rbac import get_current_user, require_permission, require_role
 from app.models.user import User
 from app.models.notification import Notification, TypeNotification, StatutNotification
 from app.services.notification_service import NotificationService
