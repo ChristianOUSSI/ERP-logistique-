@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.api import deps
+from app.database import get_db
 from app.services.bill_of_loading_service import (
     create_bol,
     get_bol,
@@ -26,7 +26,7 @@ router = APIRouter()
 @router.post("/", response_model=BillOfLoadingSchema, status_code=status.HTTP_201_CREATED)
 def create_bol_endpoint(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_in: BillOfLoadingCreate,
 ):
     """Create a new Bill of Loading."""
@@ -37,7 +37,7 @@ def create_bol_endpoint(
 @router.get("/{bol_id}", response_model=BillOfLoadingSchema)
 def read_bol(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_id: int,
 ):
     """Get a BOL by its internal ID."""
@@ -49,7 +49,7 @@ def read_bol(
 
 @router.get("/", response_model=List[BillOfLoadingSchema])
 def read_bols(
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
 ):
@@ -60,7 +60,7 @@ def read_bols(
 @router.put("/{bol_id}", response_model=BillOfLoadingSchema)
 def update_bol_endpoint(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_id: int,
     bol_in: BillOfLoadingUpdate,
 ):
@@ -74,7 +74,7 @@ def update_bol_endpoint(
 @router.delete("/{bol_id}", response_model=bool)
 def delete_bol_endpoint(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_id: int,
 ):
     """Delete a BOL."""
@@ -87,7 +87,7 @@ def delete_bol_endpoint(
 @router.post("/{bol_id}/container", response_model=dict)
 def add_container_endpoint(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_id: int,
     container_number: str,
     seal_number: str = None,
@@ -111,7 +111,7 @@ def add_container_endpoint(
 @router.post("/{bol_id}/goods", response_model=dict)
 def add_goods_endpoint(
     *,
-    db: Session = Depends(deps.get_db),
+    db: Session = Depends(get_db),
     bol_id: int,
     product_name: str,
     total_quantity: float,
