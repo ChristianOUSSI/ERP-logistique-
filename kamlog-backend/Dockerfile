@@ -22,7 +22,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Création d'un utilisateur non-root pour des raisons de sécurité
-RUN groupadd -r kamlog && useradd -r -g kamlog kamlog
+RUN groupadd -r kamlog && useradd -m -r -g kamlog kamlog
 
 # Installer les dépendances système requises au runtime (WeasyPrint)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,6 +44,7 @@ RUN chmod +x start.sh
 
 # Passer à l'utilisateur non-root
 USER kamlog
+ENV XDG_CACHE_HOME=/home/kamlog/.cache
 
 EXPOSE 8000
 
