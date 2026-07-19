@@ -25,8 +25,8 @@ export default function GateOperationsPage() {
   });
 
   useEffect(() => {
-    parcAPI.getEmplacements().then(data => {
-      setEmplacements(data.filter(e => e.statut === 'LIBRE'));
+    parcAPI.getEmplacements().then(res => {
+      setEmplacements(res.data.filter((e: any) => e.statut === 'LIBRE'));
     }).catch(console.error);
   }, []);
 

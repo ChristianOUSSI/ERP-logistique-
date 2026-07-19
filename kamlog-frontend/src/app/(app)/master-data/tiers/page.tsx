@@ -59,7 +59,7 @@ function KpiCard({ label, value, icon, color }: { label: string; value: string |
 function CreateTierModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const queryClient = useQueryClient()
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TierFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(tierSchema),
     defaultValues: {
       type: 'client',
@@ -333,7 +333,7 @@ function CreateTierModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 function EditTierModal({ isOpen, onClose, tier }: { isOpen: boolean; onClose: () => void; tier: any }) {
   const queryClient = useQueryClient()
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TierFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(tierSchema),
   })
 

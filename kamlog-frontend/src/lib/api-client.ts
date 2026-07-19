@@ -194,6 +194,8 @@ export const parcAPI = {
   createEmplacement: (data: unknown) => apiClient.post('/api/parc/emplacements', data),
   updateEmplacement: (id: number, data: unknown) => apiClient.put(`/api/parc/emplacements/${id}`, data),
   deleteEmplacement: (id: number) => apiClient.delete(`/api/parc/emplacements/${id}`),
+  createWorkshopRepair: (data: unknown) => apiClient.post('/api/parc/workshop', data),
+  getStocksActifs: () => apiClient.get('/api/parc/stock-actifs'),
 };
 
 // ─── Service Tiers ────────────────────────────────────────
@@ -248,6 +250,11 @@ export const masterDataAPI = {
 
 // ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
 export const magasinAPI = {
+  generateStockValuationReport: (params: any) => apiClient.post('/api/magasin/reports/stock-valuation', params),
+  generateMouvementAnalysisReport: (params: any) => apiClient.post('/api/magasin/reports/mouvement-analysis', params),
+  generateClientPerformanceReport: (params: any) => apiClient.post('/api/magasin/reports/client-performance', params),
+  exportReportToCSV: (data: any) => apiClient.post('/api/magasin/reports/export/csv', data),
+  exportReportToJSON: (data: any) => apiClient.post('/api/magasin/reports/export/json', data),
   getMagasins: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/magasins', { params }),
   getStocks: (params?: Record<string, unknown>) =>
@@ -400,3 +407,5 @@ export const gatewayAPI = {
   getPasserellesEnAttente: () => apiClient.get('/api/passerelles/en-attente').then(r => r.data),
   getPasserelles: () => apiClient.get('/api/passerelles').then(r => r.data),
 };
+
+export default apiClient;

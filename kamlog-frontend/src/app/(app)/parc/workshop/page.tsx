@@ -26,8 +26,8 @@ export default function WorkshopPage() {
   const fetchRepairs = async () => {
     try {
       setLoading(true);
-      const data = await parcAPI.getWorkshopRepairs();
-      setRepairs(data);
+      const res = await parcAPI.getWorkshopRepairs();
+      setRepairs(res.data);
     } catch (err) {
       toast.error('Erreur lors du chargement de l\'atelier');
     } finally {
