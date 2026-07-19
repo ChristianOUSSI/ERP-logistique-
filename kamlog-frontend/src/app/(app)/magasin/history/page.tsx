@@ -20,7 +20,7 @@ export default function KMagasinStockMovementHistory() {
     setIsLoading(true)
     try {
       const data = await magasinAPI.getHistory()
-      setHistory(data)
+      setHistory((data as any).data || [])
     } catch (error) {
       console.error('Failed to load history', error)
       setHistory([])

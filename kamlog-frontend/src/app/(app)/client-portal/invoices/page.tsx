@@ -17,11 +17,11 @@ import {
 } from 'lucide-react';
 import { financeAPI } from '@/lib/api-client';
 
-export default function ClientInvoicesPage() {
-  const [invoices, setInvoices] = useState<any[]>([]);
+export default function ClientanysPage() {
+  const [invoices, setanys] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [selectedany, setSelectedany] = useState<any>(null);
   const [filters, setFilters] = useState({
     statut: '',
     dateDebut: '',
@@ -34,13 +34,13 @@ export default function ClientInvoicesPage() {
     field: 'dateCreation',
     direction: 'desc'
   });
-  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null);
+  const [expandedanyId, setExpandedanyId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadInvoices();
+    loadanys();
   }, []);
 
-  const loadInvoices = async () => {
+  const loadanys = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -48,7 +48,7 @@ export default function ClientInvoicesPage() {
         limit: 100,
         ...filters
       });
-      setInvoices(res.data || res || []);
+      setanys(res.data || res || []);
     } catch (err) {
       console.error('Failed to load invoices:', err);
       setError('Impossible de charger les factures. Veuillez réessayer.');
@@ -57,7 +57,7 @@ export default function ClientInvoicesPage() {
     }
   };
 
-  const filteredInvoices = invoices.filter(invoice => {
+  const filteredanys = invoices.filter(invoice => {
     if (filters.statut && invoice.status !== filters.statut) return false;
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
@@ -70,19 +70,19 @@ export default function ClientInvoicesPage() {
     if (filters.minAmount && invoice.amount < parseFloat(filters.minAmount)) return false;
     if (filters.maxAmount && invoice.amount > parseFloat(filters.maxAmount)) return false;
     if (filters.dateDebut) {
-      const invoiceDate = new Invoice(invoice.dateCreation || invoice.date);
+      const invoiceDate = new any(invoice.dateCreation || invoice.date);
       const filterDate = new Date(filters.dateDebut);
       if (invoiceDate < filterDate) return false;
     }
     if (filters.dateFin) {
-      const invoiceDate = new Invoice(invoice.dateCreation || invoice.date);
+      const invoiceDate = new any(invoice.dateCreation || invoice.date);
       const filterDate = new Date(filters.dateFin);
       if (invoiceDate > filterDate) return false;
     }
     return true;
   });
 
-  const sortedInvoices = [...filteredInvoices].sort((a, b) => {
+  const sortedanys = [...filteredanys].sort((a, b) => {
     const fieldA = a[sortBy.field];
     const fieldB = b[sortBy.field];
 
@@ -111,13 +111,13 @@ export default function ClientInvoicesPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setSelectedInvoice(null)}
+              onClick={() => setSelectedany(null)}
               className="btn btn-primary btn-sm flex items-center gap-2"
             >
               <FileText className="w-4 h-4" /> Nouvelle Facture
             </button>
             <button
-              onClick={loadInvoices}
+              onClick={loadanys}
               className="btn btn-outline btn-sm flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" /> Actualiser
@@ -236,11 +236,11 @@ export default function ClientInvoicesPage() {
         </div>
       </div>
 
-      {/* Invoices List */}
+      {/* anys List */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
           <h3 className="text-lg font-bold text-slate-800">
-            Liste des Factures ({filteredInvoices.length} résultat{(filteredInvoices.length !== 1) ? 's' : ''})
+            Liste des Factures ({filteredanys.length} résultat{(filteredanys.length !== 1) ? 's' : ''})
           </h3>
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Trier par :</span>
@@ -277,7 +277,7 @@ export default function ClientInvoicesPage() {
 
         {!loading && invoices.length > 0 && (
           <div className="divide-y divide-slate-100">
-            {sortedInvoices.map((invoice) => (
+            {sortedanys.map((invoice) => (
               <div key={invoice.id} className="cursor-pointer hover:bg-slate-50 transition-colors">
                 {/* any Header */}
                 <div className="flex justify-between items-start px-6 py-4">
@@ -321,11 +321,11 @@ export default function ClientInvoicesPage() {
                       FCFA {(invoice.amount || 0).toLocaleString()}
                     </p>
                     <button
-                      onClick={() => setExpandedInvoiceId(invoice.id.toString())}
+                      onClick={() => setExpandedanyId(invoice.id.toString())}
                       className="btn btn-ghost btn-sm p-1"
                       aria-label="Développer/Réduire les détails"
                     >
-                      {expandedInvoiceId === invoice.id.toString() ? (
+                      {expandedanyId === invoice.id.toString() ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
                         <ChevronDown className="w-4 h-4" />
@@ -335,7 +335,7 @@ export default function ClientInvoicesPage() {
                 </div>
 
                 {/* any Details (expandable) */}
-                {expandedInvoiceId === invoice.id.toString() && (
+                {expandedanyId === invoice.id.toString() && (
                   <div className="px-6 py-4 bg-slate-50 border-t border-slate-100">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div className="space-y-2">
@@ -426,20 +426,20 @@ export default function ClientInvoicesPage() {
       </div>
 
       {/* Selected any Detail View */}
-      {selectedInvoice && (
+      {selectedany && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-4 p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">
-                  Facture #{selectedInvoice.id}
+                  Facture #{selectedany.id}
                 </h2>
                 <p className="text-slate-600">
                   Détails complets de la facture
                 </p>
               </div>
               <button
-                onClick={() => setSelectedInvoice(null)}
+                onClick={() => setSelectedany(null)}
                 className="btn btn-ghost btn-sm"
                 aria-label="Fermer"
               >
@@ -456,36 +456,36 @@ export default function ClientInvoicesPage() {
                   <h3 className="text-lg font-semibold text-slate-800">Informations Générales</h3>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Numéro de Facture</p>
-                    <p className="font-mono text-slate-900">#{selectedInvoice.id}</p>
+                    <p className="font-mono text-slate-900">#{selectedany.id}</p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Référence</p>
-                    <p className="text-slate-500">{selectedInvoice.reference || 'N/A'}</p>
+                    <p className="text-slate-500">{selectedany.reference || 'N/A'}</p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Date de Facturation</p>
                     <p className="text-slate-500">
-                      {selectedInvoice.dateCreation ? new Date(selectedInvoice.dateCreation).toLocaleDateString('fr-FR') : 'Non définie'}
+                      {selectedany.dateCreation ? new Date(selectedany.dateCreation).toLocaleDateString('fr-FR') : 'Non définie'}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Date d'Échéance</p>
                     <p className="text-slate-500">
-                      {selectedInvoice.dueDate ? new Date(selectedInvoice.dueDate).toLocaleDateString('fr-FR') : 'Non définie'}
+                      {selectedany.dueDate ? new Date(selectedany.dueDate).toLocaleDateString('fr-FR') : 'Non définie'}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Statut</p>
                     <span className={
-                      selectedInvoice.status === 'paid' ? 'badge badge-success' :
-                      selectedInvoice.status === 'overdue' ? 'badge badge-destructive' :
-                      selectedInvoice.status === 'sent' ? 'badge badge-warning' :
+                      selectedany.status === 'paid' ? 'badge badge-success' :
+                      selectedany.status === 'overdue' ? 'badge badge-destructive' :
+                      selectedany.status === 'sent' ? 'badge badge-warning' :
                       'badge badge-secondary'
                     }>
-                      {selectedInvoice.status === 'paid' && 'Payée'}
-                      {selectedInvoice.status === 'overdue' && 'En Retard'}
-                      {selectedInvoice.status === 'sent' && 'Envoyée'}
-                      {selectedInvoice.status === 'draft' && 'Brouillon'}
+                      {selectedany.status === 'paid' && 'Payée'}
+                      {selectedany.status === 'overdue' && 'En Retard'}
+                      {selectedany.status === 'sent' && 'Envoyée'}
+                      {selectedany.status === 'draft' && 'Brouillon'}
                     </span>
                   </div>
                 </div>
@@ -495,19 +495,19 @@ export default function ClientInvoicesPage() {
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Montant HT</p>
                     <p className="text-slate-500 font-mono">
-                      FCFA {(selectedInvoice.amount_ht || selectedInvoice.amount || 0).toLocaleString()}
+                      FCFA {(selectedany.amount_ht || selectedany.amount || 0).toLocaleString()}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">TVA (19.25%)</p>
                     <p className="text-slate-500 font-mono">
-                      FCFA {((selectedInvoice.amount_ht || selectedInvoice.amount || 0) * 0.1925).toLocaleString()}
+                      FCFA {((selectedany.amount_ht || selectedany.amount || 0) * 0.1925).toLocaleString()}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Montant TTC</p>
                     <p className="text-2xl font-bold text-slate-900">
-                      FCFA {((selectedInvoice.amount_ttc || (selectedInvoice.amount || 0) * 1.1925) || 0).toLocaleString()}
+                      FCFA {((selectedany.amount_ttc || (selectedany.amount || 0) * 1.1925) || 0).toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -516,18 +516,18 @@ export default function ClientInvoicesPage() {
                   <h3 className="text-lg font-semibold text-slate-800">Informations Client</h3>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Nom du Client</p>
-                    <p className="text-slate-500">{selectedInvoice.client_nom || 'Non spécifié'}</p>
+                    <p className="text-slate-500">{selectedany.client_nom || 'Non spécifié'}</p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Adresse de Facturation</p>
                     <p className="text-slate-500 break-all">
-                      {selectedInvoice.client_adresse || 'Non spécifiée'}
+                      {selectedany.client_adresse || 'Non spécifiée'}
                     </p>
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-slate-700">Contact</p>
                     <p className="text-slate-500">
-                      {selectedInvoice.client_contact || 'Non spécifié'}
+                      {selectedany.client_contact || 'Non spécifié'}
                     </p>
                   </div>
                 </div>
@@ -536,7 +536,7 @@ export default function ClientInvoicesPage() {
               {/* Line Items */}
               <div className="lg:col-span-3">
                 <h3 className="text-lg font-semibold text-slate-800">Détails des Lignes</h3>
-                {selectedInvoice.lignes && selectedInvoice.lignes.length > 0 ? (
+                {selectedany.lignes && selectedany.lignes.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead className="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase">
@@ -548,7 +548,7 @@ export default function ClientInvoicesPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {selectedInvoice.lignes.map((ligne, index) => (
+                        {selectedany.lignes.map((ligne, index) => (
                           <tr key={index} className="hover:bg-slate-50 transition-colors">
                             <td className="px-6 py-3">
                               <p className="font-medium text-slate-800">{ligne.description}</p>

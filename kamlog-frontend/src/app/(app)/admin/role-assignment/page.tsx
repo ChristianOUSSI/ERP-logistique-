@@ -84,13 +84,13 @@ export default function RoleAssignmentPage() {
     user.email.toLowerCase().includes(userFilterText.toLowerCase())
   );
 
-  const filteredRoles = roles.filter(role => 
+  const filteredRoles = (roles as any[]).filter(role => 
     role.name.toLowerCase().includes(roleFilterText.toLowerCase()) ||
     role.code.toLowerCase().includes(roleFilterText.toLowerCase())
   );
 
   // Selected role permissions list
-  const activeRoleData = roles.find(r => r.code === assignedRoleCode);
+  const activeRoleData = (roles as any[]).find(r => r.code === assignedRoleCode);
   const permissionsList = activeRoleData ? activeRoleData.permissions : [];
 
   if (loading) {

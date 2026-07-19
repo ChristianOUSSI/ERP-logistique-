@@ -11,7 +11,7 @@ import Link from 'next/link'
 export default function OrdreTransfertDetailPage({ params }: { params: { id: string } }) {
   const otId = parseInt(params.id)
   const [ot, setOt] = useState<any>(null)
-  [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState<string>('')
   const [bandeAssociee, setBandeAssociee] = useState<any>(null)
   const [checkingBande, setCheckingBande] = useState(false)

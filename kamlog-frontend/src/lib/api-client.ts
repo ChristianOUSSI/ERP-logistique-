@@ -255,6 +255,14 @@ export const magasinAPI = {
   generateClientPerformanceReport: (params: any) => apiClient.post('/api/magasin/reports/client-performance', params),
   exportReportToCSV: (data: any) => apiClient.post('/api/magasin/reports/export/csv', data),
   exportReportToJSON: (data: any) => apiClient.post('/api/magasin/reports/export/json', data),
+  exportClientsToCSV: () => apiClient.get('/api/magasin/export/clients/csv'),
+  exportArticlesToCSV: () => apiClient.get('/api/magasin/export/articles/csv'),
+  importArticlesFromCSV: (data: any) => apiClient.post('/api/magasin/import/articles', data),
+  importClientsFromCSV: (data: any) => apiClient.post('/api/magasin/import/clients', data),
+  importMagasinsFromCSV: (data: any) => apiClient.post('/api/magasin/import/magasins', data),
+  getArticles: (params?: any) => apiClient.get('/api/magasin/articles', { params }),
+  exportMagasinsToCSV: () => apiClient.get('/api/magasin/export/magasins/csv'),
+  deleteMagasin: (id: number) => apiClient.delete(`/api/magasin/magasins/${id}`),
   getMagasins: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/magasins', { params }),
   getStocks: (params?: Record<string, unknown>) =>
@@ -298,6 +306,8 @@ export const magasinAPI = {
   // Ordres de Transfert
   getOrdresTransfert: (params?: Record<string, unknown>) =>
     apiClient.get('/api/magasin/ordres-transfert', { params }),
+  getOrdreTransfert: (id: number) =>
+    apiClient.get(`/api/magasin/ordres-transfert/${id}`),
   createOrdreTransfert: (data: unknown) =>
     apiClient.post('/api/magasin/ordres-transfert', data),
   validerOrdreTransfert: (id: number) =>
@@ -406,6 +416,14 @@ export const rhAPI = {
 export const gatewayAPI = {
   getPasserellesEnAttente: () => apiClient.get('/api/passerelles/en-attente').then(r => r.data),
   getPasserelles: () => apiClient.get('/api/passerelles').then(r => r.data),
+};
+
+export const aiAPI = {
+  sendMessage: (message: string) => apiClient.post('/api/ai/chat', { message })
+};
+
+export const supportAPI = {
+  getTickets: () => apiClient.get('/api/support/tickets')
 };
 
 export default apiClient;

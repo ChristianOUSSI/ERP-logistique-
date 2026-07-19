@@ -26,9 +26,11 @@ export default function YardMapPage() {
         parcAPI.getEmplacements(),
         parcAPI.getStocksActifs()
       ]);
+      const emplacementsData = emplacements.data || [];
+      const stocksData = stocks.data || [];
       
-      const mapPoints = stocks.map(stock => {
-        const emp = emplacements.find(e => e.id === stock.emplacement_id);
+      const mapPoints = stocksData.map((stock: any) => {
+        const emp = emplacementsData.find((e: any) => e.id === stock.emplacement_id);
         if (!emp) return null;
         return {
           id: stock.numero_conteneur,

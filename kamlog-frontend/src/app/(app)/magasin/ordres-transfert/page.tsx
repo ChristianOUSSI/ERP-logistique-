@@ -189,7 +189,7 @@ export default function OrdresTransfertPage() {
         {showModal && (
           <OTModal
             onClose={() => setShowModal(false)}
-            onSuccess={() => { setShowModal(false); fetchOrdres(); }}
+            onSuccess={() => { setShowModal(false); queryClient.invalidateQueries({ queryKey: ['ordres_transfert'] }); }}
           />
         )}
       </div>

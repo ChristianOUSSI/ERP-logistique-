@@ -25,7 +25,7 @@ export default function ChauffeurPage() {
       const data = await transportAPI.getMissions();
       // Filter for missions that can be delivered (EN_ROUTE, EN_COURS, etc)
       // Assuming for demo we show EN_ROUTE and EN_CHARGEMENT
-      const activeMissions = data.filter((m: any) => m.statut === 'EN_ROUTE' || m.statut === 'VALIDE' || m.status === 'in_progress');
+      const activeMissions = (data as any).data.filter((m: any) => m.statut === 'EN_ROUTE' || m.statut === 'VALIDE' || m.status === 'in_progress');
       setMissions(activeMissions);
     } catch (err: any) {
       setError(err.message || 'Erreur lors du chargement des missions');
