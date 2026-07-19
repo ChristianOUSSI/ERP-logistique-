@@ -1,5 +1,5 @@
 # app/models/magasin.py - Modèles pour le module K-magasin
-from sqlalchemy import Column, Integer, String, Numeric(18, 4), DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint, JSON, Text, CheckConstraint, Date
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Boolean, Numeric, UniqueConstraint, JSON, Text, CheckConstraint, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
