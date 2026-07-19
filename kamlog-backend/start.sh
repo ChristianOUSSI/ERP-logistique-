@@ -87,11 +87,11 @@ fi
 # ─── Démarrer le Worker Celery (Si Redis est configuré) ───
 if [ -n "$REDIS_URL" ]; then
     echo "⚙️ Starting Celery Worker in background..."
-    celery -A app.celery_app worker --loglevel=info &
+    celery -A app.celery_app worker --concurrency=2 --loglevel=info &
 else
     echo "⚠️ REDIS_URL not set; Celery worker will not start. (Async tasks will be queued but not processed)"
 fi
 
 # ─── Démarrer Uvicorn ────────────────────────────────────────
 echo "🌐 Starting FastAPI on port ${PORT:-8000}..."
-exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --workers 1 --loop uvloop
+exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --workers 1 --log-level debug
