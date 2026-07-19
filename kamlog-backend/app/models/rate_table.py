@@ -1,5 +1,5 @@
 # app/models/rate_table.py
-from sqlalchemy import String, Numeric(18, 4), ForeignKey, Integer, Boolean, Enum
+from sqlalchemy import String, Numeric, ForeignKey, Integer, Boolean, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, Optional
 import enum
