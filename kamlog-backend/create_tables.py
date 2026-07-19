@@ -26,6 +26,9 @@ def main():
                 else:
                     Base.metadata.drop_all(conn)
             Base.metadata.create_all(conn)
+            if os.environ.get("SEED_DATA") == "true":
+                print("Stamping Alembic head since tables were recreated...", flush=True)
+                os.system("alembic stamp head")
         print("Database tables created successfully.")
     except Exception as e:
         print(f"Error creating database tables: {e}", file=sys.stderr)
