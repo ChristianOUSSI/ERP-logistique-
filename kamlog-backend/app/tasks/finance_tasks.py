@@ -1,7 +1,7 @@
 from celery import shared_task
 from app.database import SessionLocal
 from app.models.transport import MissionTransport
-from app.models.finance import Facture, LigneFacture, StatutFacture
+from app.models.finance import Facture, FactureLigne, StatutFacture
 from app.tasks.email_tasks import send_email_async
 import logging
 import uuid
@@ -22,8 +22,8 @@ def generate_invoice_for_mission_async(mission_id: int):
             logger.error(f"Mission {mission_id} introuvable pour la facturation.")
             return False
             
-        if not mission.client_id:
-            logger.warning(f"Mission {mission_id} sans client associé. Facturation ignorée.")
+        if not mission.tiers_id:
+            logger.warning(f"Mission {mission_id} sans client (tiers_id) associé. Facturation ignorée.")
             return False
             
         # Vérifier si une facture existe déjà pour cette mission
@@ -38,12 +38,12 @@ def generate_invoice_for_mission_async(mission_id: int):
         # On va créer une facture
         nouvelle_facture = Facture(
             numero_facture=numero,
-            tiers_id=mission.client_id,
+            tiers_id=mission.tiers_id,
             mission_id=mission.id,
             statut=StatutFacture.BROUILLON,
-            montant_ht=Decimal("0.00"),
+            montant_ht_xaf=Decimal("0.00"),
             montant_tva=Decimal("0.00"),
-            montant_ttc=Decimal("0.00")
+            montant_ttc_xaf=Decimal("0.00")
         )
         db.add(nouvelle_facture)
         db.flush() # Pour avoir l'ID
@@ -51,19 +51,18 @@ def generate_invoice_for_mission_async(mission_id: int):
         # Ajouter une ligne de facturation standard
         # En réalité, on irait chercher le contrat/grille tarifaire.
         tarif_standard = Decimal("150000.00")
-        ligne = LigneFacture(
+        ligne = FactureLigne(
             facture_id=nouvelle_facture.id,
-            description=f"Prestation de transport - Mission {mission.reference or mission.id}",
+            code_prestation="TRANSP_DEFAUT",
             quantite=Decimal("1.00"),
-            prix_unitaire_ht=tarif_standard,
-            taux_tva=Decimal("19.25"),
-            montant_ht=tarif_standard
+            prix_unitaire_applique=tarif_standard,
+            montant_ligne_ht=tarif_standard
         )
         db.add(ligne)
         
-        nouvelle_facture.montant_ht = tarif_standard
+        nouvelle_facture.montant_ht_xaf = tarif_standard
         nouvelle_facture.montant_tva = tarif_standard * Decimal("0.1925")
-        nouvelle_facture.montant_ttc = nouvelle_facture.montant_ht + nouvelle_facture.montant_tva
+        nouvelle_facture.montant_ttc_xaf = nouvelle_facture.montant_ht_xaf + nouvelle_facture.montant_tva
         
         db.commit()
         logger.info(f"Facture {numero} générée automatiquement pour la mission {mission_id}.")
