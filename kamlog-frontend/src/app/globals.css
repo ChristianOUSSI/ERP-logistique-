@@ -110,22 +110,60 @@
     --surface-container-highest: 220 14% 30%;
 
     /* ── Module badge colors (dark) ── */
-    --module-admin-bg: 221 60% 22%;
-    --module-admin-text: 217 91% 80%;
-    --module-transport-bg: 25 60% 20%;
-    --module-transport-text: 30 90% 72%;
-    --module-finance-bg: 270 40% 22%;
+    --module-admin-bg: 221 83% 20%;
+    --module-admin-text: 217 91% 75%;
+    --module-transport-bg: 25 85% 20%;
+    --module-transport-text: 30 100% 75%;
+    --module-finance-bg: 270 60% 22%;
     --module-finance-text: 270 70% 80%;
-    --module-magasin-bg: 0 50% 20%;
-    --module-magasin-text: 0 80% 78%;
-    --module-parc-bg: 188 45% 18%;
-    --module-parc-text: 188 75% 72%;
-    --module-audit-bg: 168 40% 18%;
-    --module-audit-text: 168 65% 72%;
-    --module-master-bg: 152 40% 18%;
-    --module-master-text: 152 65% 72%;
-    --module-dashboard-bg: 221 60% 22%;
-    --module-dashboard-text: 217 91% 80%;
+    --module-magasin-bg: 0 72% 22%;
+    --module-magasin-text: 0 80% 80%;
+    --module-parc-bg: 188 72% 18%;
+    --module-parc-text: 188 80% 75%;
+    --module-audit-bg: 168 65% 17%;
+    --module-audit-text: 168 70% 75%;
+    --module-master-bg: 152 65% 17%;
+    --module-master-text: 152 70% 75%;
+    --module-dashboard-bg: 221 83% 20%;
+    --module-dashboard-text: 217 91% 75%;
+  }
+
+  /* Ultra High-Contrast Dark Mode Enhancements */
+  .dark {
+    color-scheme: dark;
+  }
+
+  .dark body {
+    color: #F8FAFC !important;
+    background-color: #020617 !important;
+  }
+
+  .dark input, .dark select, .dark textarea {
+    background-color: #0F172A !important;
+    color: #F8FAFC !important;
+    border-color: #334155 !important;
+  }
+
+  .dark input::placeholder, .dark textarea::placeholder {
+    color: #94A3B8 !important;
+  }
+
+  .dark table th {
+    color: #CBD5E1 !important;
+    background-color: #0F172A !important;
+  }
+
+  .dark table td {
+    color: #F1F5F9 !important;
+  }
+
+  .dark .bg-white {
+    background-color: #0F172A !important;
+    color: #F8FAFC !important;
+  }
+
+  .dark .text-slate-900, .dark .text-slate-800, .dark .text-slate-700 {
+    color: #F8FAFC !important;
   }
 }
 

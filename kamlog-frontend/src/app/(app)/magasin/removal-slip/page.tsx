@@ -1,365 +1,205 @@
-// src/app/(app)/magasin/removal-slip/page.tsx - Bon d'Enlèvement Mag3 vers autres magasins - De-hardcoded
-'use client'
+'use client';
 
-import { TCodeSearch } from '@/components/ui/TCodeSearch'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { magasinAPI, masterDataAPI } from '@/lib/api-client'
-import { Combobox, ComboboxOption } from '@/components/ui/combobox'
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api-client';
+import { FileText, Plus, Search, Calendar, CheckCircle, Clock, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function RemovalSlipPage() {
-  const router = useRouter()
-  const [slipNumber, setSlipNumber] = useState('')
-  const [sourceWarehouse, setSourceWarehouse] = useState('MAG3')
-  const [destinationWarehouse, setDestinationWarehouse] = useState('')
-  const [articleCode, setArticleCode] = useState('')
-  const [articleId, setArticleId] = useState('')
-  const [articleDescription, setArticleDescription] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const [unit, setUnit] = useState('')
-  const [customsDeclaration, setCustomsDeclaration] = useState('')
-  const [reason, setReason] = useState('')
-  const [authorizedBy, setAuthorizedBy] = useState('')
-  const [date, setDate] = useState('')
-  const [observations, setObservations] = useState('')
-  
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [articles, setArticles] = useState<ComboboxOption[]>([])
-  const [rawArticles, setRawArticles] = useState<any[]>([])
-  const [isLoadingArticles, setIsLoadingArticles] = useState(true)
+  // Form states
+  const [reference, setReference] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [cargoDesc, setCargoDesc] = useState('');
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await masterDataAPI.getArticles({ limit: 100 })
-        const data = response.data.items || response.data || []
-        if (Array.isArray(data)) {
-          setRawArticles(data)
-          setArticles(data.map((a: any) => ({
-            value: String(a.id),
-            label: `${a.code} - ${a.designation || a.nom}`
-          })))
-        }
-      } catch (err) {
-        console.error("Failed to load articles", err)
-      } finally {
-        setIsLoadingArticles(false)
-      }
-    }
-    fetchArticles()
-  }, [])
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['removal-slips'],
+    queryFn: async () => {
+      const res = await apiClient.get('/api/v1/magasin/removal-slips');
+      return res.data?.items || res.data || (Array.isArray(res) ? res : []);
+    },
+  });
 
-  const handleClear = () => {
-    setSlipNumber('')
-    setSourceWarehouse('MAG3')
-    setDestinationWarehouse('')
-    setArticleCode('')
-    setArticleId('')
-    setArticleDescription('')
-    setQuantity('')
-    setUnit('')
-    setCustomsDeclaration('')
-    setReason('')
-    setAuthorizedBy('')
-    setDate('')
-    setObservations('')
-    setErrorMsg('')
-    setSuccessMsg('')
-  }
+  const createMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const res = await apiClient.post('/api/v1/magasin/removal-slips', payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Bon d'enlèvement généré avec succès !");
+      queryClient.invalidateQueries({ queryKey: ['removal-slips'] });
+      setIsModalOpen(false);
+      setReference('');
+      setClientName('');
+      setCargoDesc('');
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.detail || "Erreur lors de la création du bon d'enlèvement.");
+    },
+  });
 
-  const handleSave = async () => {
-    setErrorMsg('')
-    setSuccessMsg('')
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMutation.mutate({
+      reference: reference || `BE-${Date.now().toString().slice(-6)}`,
+      client: clientName || 'Client Général',
+      description: cargoDesc,
+      statut: 'EMIS'
+    });
+  };
 
-    if (!destinationWarehouse || !articleId || !quantity || !unit || !customsDeclaration || !date) {
-      setErrorMsg("Veuillez remplir tous les champs obligatoires (Destination, Article ID, Quantité, Unité, Déclaration, Date).")
-      return
-    }
-
-    setIsSubmitting(true)
-    try {
-      const payload = {
-        magasin_source: sourceWarehouse,
-        magasin_destination: destinationWarehouse,
-        article_id: Number(articleId),
-        quantite: Number(quantity),
-        unite: unit,
-        declaration_douaniere: customsDeclaration,
-        motif: reason,
-        observations: observations,
-        date_bon: new Date(date).toISOString(),
-      }
-      
-      const response = await magasinAPI.createRemovalSlip(payload)
-      setSlipNumber(response.numero_bon)
-      setSuccessMsg(`Bon d'enlèvement créé avec succès: ${response.numero_bon}`)
-      setTimeout(() => {
-        router.push('/magasin/reception-mag3')
-      }, 2000)
-    } catch (err: any) {
-      setErrorMsg(err.response?.data?.detail || "Erreur lors de la création du bon d'enlèvement.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  const slips = Array.isArray(data) ? data : [];
 
   return (
-    <>
-      <style jsx global>{`
-        body { font-family: 'Inter', sans-serif; }
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
-        }
-        .material-symbols-outlined.fill {
-          font-variation-settings: 'FILL 1';
-        }
-      `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-md antialiased overflow-hidden flex">
-        
-        
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl text-white shadow-xl">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold mb-2 border border-emerald-500/20">
+            <FileText className="w-3.5 h-3.5" />
+            Gestion Entrepôt Mag3 • Bons d'Enlèvement
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Bons d'Enlèvement (BE)</h1>
+          <p className="text-slate-400 text-sm mt-1">Émission et suivi des bons de sortie de marchandise en Magasin.</p>
+        </div>
 
-        
-        <div className="flex-1 flex flex-col h-screen">
-          
-          
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-3 rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02]"
+        >
+          <Plus className="w-4 h-4" />
+          Émettre un Bon d'Enlèvement
+        </button>
+      </div>
 
-          {/* Main Stage */}
-          <main className="flex-1 overflow-y-auto p-[1rem] bg-surface-container-low flex flex-col gap-[1rem] max-w-[1600px] mx-auto w-full">
-            {/* Breadcrumbs & Header */}
-            <div className="mb-2">
-              <div className="flex items-center text-label-sm font-label-sm text-outline mb-2">
-                <span>Magasin</span>
-                <span className="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
-                <span>Mouvements</span>
-                <span className="material-symbols-outlined text-[14px] mx-1">chevron_right</span>
-                <span className="text-error font-semibold">Bon d'Enlèvement (Mag3)</span>
-              </div>
-              <div className="flex justify-between items-end">
-                <div>
-                  <h2 className="font-headline-lg text-headline-lg text-on-surface">Bon d'Enlèvement - Mag3 vers autres Magasins</h2>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">Transaction pour mouvements du magasin sous douane (Mag3) vers DNW1 ou DNW2</p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={handleClear} className="px-3 py-1.5 border border-outline-variant rounded bg-surface text-body-sm font-body-sm hover:bg-surface-container-high transition-colors flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">refresh</span> Effacer
-                  </button>
-                  <button disabled={isSubmitting} onClick={handleSave} className="px-3 py-1.5 bg-error text-on-error rounded text-body-sm font-body-sm shadow-sm hover:bg-on-error-fixed-variant transition-colors flex items-center gap-2 disabled:opacity-50">
-                    <span className="material-symbols-outlined text-[18px]">save</span> 
-                    {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* Table Section */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-slate-800 flex items-center justify-between">
+          <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+            Liste des Bons de Sortie
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono">
+              {slips.length} enregistrements
+            </span>
+          </h3>
+        </div>
 
-            {errorMsg && (
-              <div className="p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 flex items-center gap-2">
-                <span className="material-symbols-outlined">error</span>
-                {errorMsg}
-              </div>
-            )}
-            
-            {successMsg && (
-              <div className="p-4 bg-primary-container text-on-primary-container rounded-lg border border-primary/20 flex items-center gap-2">
-                <span className="material-symbols-outlined">check_circle</span>
-                {successMsg}
-              </div>
-            )}
-
-            {/* Warning Banner */}
-            <div className="bg-error-container border border-error/20 rounded-lg p-4 flex items-start gap-3">
-              <span className="material-symbols-outlined text-error">warning</span>
-              <div>
-                <h3 className="font-title-md text-title-md text-on-error-container font-semibold">Magasin sous Douane</h3>
-                <p className="font-body-sm text-body-sm text-on-error-container mt-1">Le Mag3 est un magasin sous douane. Les marchandises ne peuvent pas y être stockées pour une grande période. Ce bon d'enlèvement est obligatoire pour tout mouvement vers DNW1 ou DNW2.</p>
-              </div>
-            </div>
-
-            {/* Form Container */}
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Slip Number */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Numéro du Bon d'Enlèvement</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Auto-généré"
-                    type="text"
-                    value={slipNumber}
-                    onChange={(e) => setSlipNumber(e.target.value)}
-                    disabled
-                  />
-                </div>
-
-                {/* Date */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Date *</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    type="datetime-local"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                </div>
-
-                {/* Source Warehouse (Fixed to MAG3) */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Source</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded text-body-sm font-data-tabular text-on-surface-variant cursor-not-allowed"
-                    type="text"
-                    value="MAG3 (Sous Douane)"
-                    disabled
-                  />
-                </div>
-
-                {/* Destination Warehouse */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Magasin Destination *</label>
-                  <select 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    value={destinationWarehouse}
-                    onChange={(e) => setDestinationWarehouse(e.target.value)}
-                  >
-                    <option value="">Sélectionner</option>
-                    <option value="DNW1">DNW1</option>
-                    <option value="DNW2">DNW2</option>
-                  </select>
-                </div>
-
-                {/* Article */}
-                <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Article *</label>
-                  <Combobox
-                    options={articles}
-                    value={articleId}
-                    onChange={(val) => {
-                      setArticleId(val)
-                      const selected = rawArticles.find(a => String(a.id) === val)
-                      if (selected) {
-                        setArticleCode(selected.code)
-                        setArticleDescription(selected.designation || selected.nom)
-                      } else {
-                        setArticleCode('')
-                        setArticleDescription('')
-                      }
-                    }}
-                    placeholder="Sélectionner un article..."
-                    searchPlaceholder="Rechercher par code ou nom..."
-                    isLoading={isLoadingArticles}
-                  />
-                </div>
-
-                {/* Quantity */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Quantité *</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="0.00"
-                    type="number"
-                    step="0.01"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                  />
-                </div>
-
-                {/* Unit */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Unité *</label>
-                  <select 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    value={unit}
-                    onChange={(e) => setUnit(e.target.value)}
-                  >
-                    <option value="">Sélectionner</option>
-                    <option value="KG">Kilogramme (KG)</option>
-                    <option value="TON">Tonne (TON)</option>
-                    <option value="M3">Mètre cube (M3)</option>
-                    <option value="UN">Unité (UN)</option>
-                    <option value="PALETTE">Palette</option>
-                  </select>
-                </div>
-
-                {/* Customs Declaration */}
-                <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Déclaration Douanière *</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm font-data-tabular focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Numéro de déclaration douanière"
-                    type="text"
-                    value={customsDeclaration}
-                    onChange={(e) => setCustomsDeclaration(e.target.value)}
-                  />
-                </div>
-
-                {/* Reason */}
-                <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Motif du Mouvement</label>
-                  <textarea 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent resize-none"
-                    rows={3}
-                    placeholder="Expliquer la raison du mouvement"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                  ></textarea>
-                </div>
-
-                {/* Authorized By */}
-                <div className="space-y-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Autorisé Par</label>
-                  <input 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent"
-                    placeholder="Nom de l'autorisateur"
-                    type="text"
-                    value={authorizedBy}
-                    onChange={(e) => setAuthorizedBy(e.target.value)}
-                  />
-                </div>
-
-                {/* Observations */}
-                <div className="space-y-2 md:col-span-2">
-                  <label className="font-label-md font-label-md text-on-surface-variant block">Observations</label>
-                  <textarea 
-                    className="w-full px-3 py-2 bg-surface-container border border-outline-variant rounded text-body-sm focus:outline-none focus:ring-2 focus:ring-error focus:border-transparent resize-none"
-                    rows={3}
-                    placeholder="Remarques supplémentaires"
-                    value={observations}
-                    onChange={(e) => setObservations(e.target.value)}
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            {/* Summary Card */}
-            <div className="bg-error-container border border-error/20 rounded-lg p-4">
-              <h3 className="font-title-md text-title-md text-on-error-container mb-3 flex items-center gap-2">
-                <span className="material-symbols-outlined">receipt_long</span>
-                Résumé du Bon d'Enlèvement
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div>
-                  <span className="block text-on-error-container/70 text-[11px] uppercase tracking-wider">Source</span>
-                  <span className="font-data-tabular font-medium">MAG3 (Sous Douane)</span>
-                </div>
-                <div>
-                  <span className="block text-on-error-container/70 text-[11px] uppercase tracking-wider">Destination</span>
-                  <span className="font-data-tabular font-medium">{destinationWarehouse || '-'}</span>
-                </div>
-                <div>
-                  <span className="block text-on-error-container/70 text-[11px] uppercase tracking-wider">Quantité</span>
-                  <span className="font-data-tabular font-medium">{quantity || '-'} {unit || ''}</span>
-                </div>
-                <div>
-                  <span className="block text-on-error-container/70 text-[11px] uppercase tracking-wider">Déclaration Douane</span>
-                  <span className="font-data-tabular font-medium">{customsDeclaration || '-'}</span>
-                </div>
-              </div>
-            </div>
-          </main>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-300">
+            <thead className="bg-slate-950 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th className="px-6 py-4">N° Référence BE</th>
+                <th className="px-6 py-4">Client Beneficiaire</th>
+                <th className="px-6 py-4">Détails Marchandise</th>
+                <th className="px-6 py-4 text-right">Statut</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="p-12 text-center text-slate-400">
+                    <div className="inline-block animate-spin w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full mr-2" />
+                    Chargement des bons d'enlèvement...
+                  </td>
+                </tr>
+              ) : slips.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="p-8 text-center text-slate-500">
+                    Aucun bon d'enlèvement enregistré.
+                  </td>
+                </tr>
+              ) : (
+                slips.map((slip: any, idx: number) => (
+                  <tr key={slip.id || idx} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="px-6 py-4 font-bold text-slate-100">
+                      {slip.reference || slip.numero_be || `BE-${slip.id}`}
+                      <div className="text-xs font-normal text-slate-400 flex items-center gap-1 mt-0.5">
+                        <Calendar className="w-3 h-3 text-slate-500" />
+                        {slip.created_at ? new Date(slip.created_at).toLocaleDateString() : 'Aujourd\'hui'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-slate-200">{slip.client || slip.tiers_nom || 'CFAO LOGISTICS'}</td>
+                    <td className="px-6 py-4 text-slate-300">{slip.description || slip.nature_fret || 'Marchandises sous douane'}</td>
+                    <td className="px-6 py-4 text-right">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <CheckCircle className="w-3 h-3" /> VALIDE
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </>
-  )
+
+      {/* Modal Creation BE */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 text-white shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <h3 className="text-lg font-bold">Émission d'un Bon d'Enlèvement</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-200">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-4 pt-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Référence BE (optionnelle)</label>
+                <input
+                  type="text"
+                  value={reference}
+                  onChange={(e) => setReference(e.target.value)}
+                  placeholder="ex: BE-2026-0094"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Nom / Raison Sociale Client</label>
+                <input
+                  type="text"
+                  required
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="ex: CFAO LOGISTICS"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Description des Colis / Palette</label>
+                <textarea
+                  value={cargoDesc}
+                  onChange={(e) => setCargoDesc(e.target.value)}
+                  placeholder="ex: 12 Palettes Pièces de rechange"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 h-24"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-slate-200"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30"
+                >
+                  {createMutation.isPending ? 'Émission...' : 'Générer le Bon'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

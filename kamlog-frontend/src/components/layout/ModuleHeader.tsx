@@ -66,14 +66,27 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
   ]
 
   const MODULES_LIST: { id: ModuleType; label: string; icon: string; path: string }[] = [
-    { id: 'transport', label: 'Logistique / Transport', icon: 'local_shipping', path: '/transport/control' },
-    { id: 'finance', label: 'Comptabilité / Finance', icon: 'account_balance', path: '/finance/overview' },
-    { id: 'magasin', label: 'Entrepôt / Magasin', icon: 'warehouse', path: '/magasin/dashboard' },
-    { id: 'parc', label: 'Yard / Parc', icon: 'directions_car', path: '/parc/zones' },
+    { id: 'transport', label: 'K-Transport / Flotte', icon: 'local_shipping', path: '/transport/control' },
+    { id: 'finance', label: 'K-Finance / Comptabilité', icon: 'account_balance', path: '/finance/overview' },
+    { id: 'magasin', label: 'K-Magasin / Entrepôt', icon: 'warehouse', path: '/magasin/dashboard' },
+    { id: 'parc', label: 'K-Parc / Yard', icon: 'directions_car', path: '/parc/zones' },
+    { id: 'acconage', label: 'K-Acconage / Quai', icon: 'anchor', path: '/acconage' },
+    { id: 'qhse', label: 'K-QHSE / Sécurité', icon: 'shield', path: '/qhse' },
+    { id: 'transit', label: 'K-Transit / Douane', icon: 'public', path: '/transit' },
+    { id: 'maintenance', label: 'K-Maintenance / Atelier', icon: 'build', path: '/maintenance' },
+    { id: 'cotations', label: 'K-Cotation / Devis', icon: 'local_offer', path: '/cotations' },
+    { id: 'tracking', label: 'K-Tracking / e-POD', icon: 'sensors', path: '/tracking' },
+    { id: 'fuel-guard', label: 'K-FuelGuard / Télémétrie', icon: 'local_gas_station', path: '/fuel-guard' },
+    { id: 'procurement', label: 'K-Procurement / Achats', icon: 'shopping_cart', path: '/procurement' },
+    { id: 'compliance', label: 'K-Compliance / Douane', icon: 'gavel', path: '/compliance' },
+    { id: 'bi', label: 'K-Analytics BI Executive', icon: 'analytics', path: '/bi' },
     { id: 'master-data', label: 'Données Maîtres', icon: 'hub', path: '/master-data/tiers' },
-    { id: 'rh', label: 'Ressources Humaines', icon: 'groups', path: '/rh/mon-espace' },
+    { id: 'rh', label: 'Ressources Humaines', icon: 'groups', path: '/rh/dashboard' },
+    { id: 'client-portal', label: 'Portail Client B2B', icon: 'language', path: '/client-portal' },
     { id: 'admin', label: 'Administration', icon: 'admin_panel_settings', path: '/admin/user-management/listing' },
   ]
+
+
 
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
 

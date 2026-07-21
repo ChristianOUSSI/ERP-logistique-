@@ -12,8 +12,11 @@ import { useModuleTheme } from '@/hooks/useModuleTheme';
 import { FullScreenLoader } from '@/components/ui/Loaders';
 import { Toaster } from 'sonner';
 import { ComingSoonProvider } from '@/contexts/ComingSoonContext';
+import { CommandPalette } from '@/components/layout/CommandPalette';
+import { KeyboardShortcutHandler } from '@/components/shared/KeyboardShortcutHandler';
 
 export default function AppLayout({
+
   children,
 }: {
   children: React.ReactNode;
@@ -87,8 +90,10 @@ function AppLayoutContent({
     if (userRoles.includes('ADMIN') || userRoles.includes('MANAGER')) return true;
 
     const baseModule = pathname.split('/')[1];
-    const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings', 'chauffeur'];
+    const commonPages = ['dashboard', 'profile', 'support', 'logout', 'settings', 'chauffeur', 'acconage', 'qhse', 'transit', 'maintenance', 'rh', 'cotations', 'tracking', 'fuel-guard', 'procurement', 'compliance', 'bi'];
     if (commonPages.includes(baseModule)) return true;
+
+
 
     return userRoles.some(role => {
       switch (role) {
@@ -108,11 +113,15 @@ function AppLayoutContent({
           return ['documents', 'magasin', 'tiers'].includes(baseModule);
         case 'AUDITOR':
           return ['audit', 'security', 'reports', 'admin', 'magasin', 'finance', 'transport', 'parc', 'documents', 'tiers'].includes(baseModule);
+        case 'CLIENT':
+        case 'CLIENT_B2B':
+          return ['client-portal', 'documents', 'reports'].includes(baseModule);
         default:
           return false;
       }
     });
   };
+
 
   /* ────────────────────────────────────────────
    * Loading / Auth states
@@ -169,8 +178,11 @@ function AppLayoutContent({
   return (
     <div className="flex min-h-screen flex-col bg-surface-container-low overflow-x-hidden">
       <Toaster position="top-right" richColors theme={uiTheme === 'system' ? 'system' : uiTheme} />
+      <CommandPalette />
+      <KeyboardShortcutHandler />
 
       {/* ── Sticky Header (full width) ── */}
+
       <ModuleHeader
         currentModule={currentModule}
         onMenuClick={() => {

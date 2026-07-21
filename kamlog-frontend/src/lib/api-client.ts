@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
 );
 
 
-// ─── Service Admin ────────────────────────────────────────
+// â”€â”€â”€ Service Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const adminAPI = {
   getUsers: () => apiClient.get('/api/admin/users'),
   createUser: (data: any) => apiClient.post('/api/admin/users', data),
@@ -61,7 +61,7 @@ export const adminAPI = {
   getSystemHealth: () => apiClient.get('/api/admin/system-health'),
 };
 
-// ─── Service Auth ─────────────────────────────────────────
+// â”€â”€â”€ Service Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const authAPI = {
   login: (data: { username: string; password: string }) =>
     apiClient.post('/api/auth/login', data),
@@ -72,7 +72,7 @@ export const authAPI = {
     apiClient.get('/api/auth/me'),
 };
 
-// ─── Service Transport ────────────────────────────────────
+// â”€â”€â”€ Service Transport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const transportAPI = {
   getMissions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/transport/missions', { params }),
@@ -120,7 +120,7 @@ export const transportAPI = {
     apiClient.get(`/api/transport/camions/${camionId}/historique-couplage`),
 };
 
-// ─── Service Finance ──────────────────────────────────────
+// â”€â”€â”€ Service Finance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const financeAPI = {
   getFactures: (params?: Record<string, unknown>) =>
     apiClient.get('/api/finance/factures', { params }),
@@ -146,7 +146,7 @@ export const financeAPI = {
     apiClient.get('/api/finance/payroll/drivers'),
 };
 
-// ─── Service Purchases (K-Achats) ─────────────────────────
+// â”€â”€â”€ Service Purchases (K-Achats) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const purchaseAPI = {
   getRequisitions: (params?: Record<string, unknown>) =>
     apiClient.get('/api/purchase/requisitions/', { params }),
@@ -167,7 +167,7 @@ export const purchaseAPI = {
 };
 
 
-// ─── Service Parc ─────────────────────────────────────────
+// â”€â”€â”€ Service Parc â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const parcAPI = {
   getZones: (params?: Record<string, unknown>) =>
     apiClient.get('/api/parc/zones', { params }),
@@ -198,7 +198,7 @@ export const parcAPI = {
   getStocksActifs: () => apiClient.get('/api/parc/stock-actifs'),
 };
 
-// ─── Service Tiers ────────────────────────────────────────
+// â”€â”€â”€ Service Tiers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const tiersAPI = {
   getTiers: (params?: Record<string, unknown>) =>
     apiClient.get('/api/tiers', { params }),
@@ -212,7 +212,7 @@ export const tiersAPI = {
     apiClient.delete(`/api/tiers/${id}`),
 };
 
-// ─── Service Suppliers (Fournisseurs) ─────────────────────
+// â”€â”€â”€ Service Suppliers (Fournisseurs) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const suppliersAPI = {
   getSuppliers: (params?: Record<string, unknown>) =>
     apiClient.get('/api/suppliers', { params }),
@@ -224,7 +224,7 @@ export const suppliersAPI = {
     apiClient.put(`/api/suppliers/${id}`, data),
 };
 
-// ─── Service Master Data ──────────────────────────────────
+// â”€â”€â”€ Service Master Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const masterDataAPI = {
   getArticles: (params?: Record<string, unknown>) =>
     apiClient.get('/api/master-data/articles', { params }),
@@ -248,7 +248,7 @@ export const masterDataAPI = {
     apiClient.get('/api/master-data/container-types'),
 };
 
-// ─── Service Magasin ────────────────────────────────────── // 📦 Service Magasin 🏭
+// â”€â”€â”€ Service Magasin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ // ðŸ“¦ Service Magasin ðŸ­
 export const magasinAPI = {
   generateStockValuationReport: (params: any) => apiClient.post('/api/magasin/reports/stock-valuation', params),
   generateMouvementAnalysisReport: (params: any) => apiClient.post('/api/magasin/reports/mouvement-analysis', params),
@@ -349,7 +349,7 @@ export const magasinAPI = {
     apiClient.get(`/api/magasin/predictions/reception-timing/${declarationId}`)
 };
 
-// ─── Advanced Analytics Endpoints ────────────────────────
+// â”€â”€â”€ Advanced Analytics Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const analyticsAPI = {
   postDemandForecast: (data: {
     article_id: number;
@@ -378,7 +378,7 @@ export const analyticsAPI = {
     apiClient.post('/api/magasin/analytics/anomaly-detection', data)
 };
 
-// ─── Service Notifications ───────────────────────────────
+// â”€â”€â”€ Service Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const notificationsAPI = {
   getMyNotifications: (params?: Record<string, unknown>) =>
     apiClient.get('/api/notifications/', { params }),
@@ -392,7 +392,7 @@ export const notificationsAPI = {
     apiClient.delete('/api/notifications/read'),
 };
 
-// ─── Service Incidents (Ticketing) ────────────────────────
+// â”€â”€â”€ Service Incidents (Ticketing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const incidentsAPI = {
   getIncidents: () => apiClient.get('/api/incidents'),
   getClientIncidents: (tiersId: number) => apiClient.get(`/api/incidents/client/${tiersId}`),
@@ -400,7 +400,7 @@ export const incidentsAPI = {
   updateIncident: (id: number, data: unknown) => apiClient.patch(`/api/incidents/${id}`, data),
 };
 
-// ─── Service Ressources Humaines (RH) ──────────────────────
+// â”€â”€â”€ Service Ressources Humaines (RH) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const rhAPI = {
   getEmployes: (params?: Record<string, unknown>) => apiClient.get('/api/rh/employes', { params }),
   createEmploye: (data: unknown) => apiClient.post('/api/rh/employes', data),
@@ -412,7 +412,7 @@ export const rhAPI = {
   createFichePaie: (data: unknown) => apiClient.post('/api/rh/paie', data),
 };
 
-// ─── Service Gateway ──────────────────────────────────────
+// â”€â”€â”€ Service Gateway â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const gatewayAPI = {
   getPasserellesEnAttente: () => apiClient.get('/api/passerelles/en-attente').then(r => r.data),
   getPasserelles: () => apiClient.get('/api/passerelles').then(r => r.data),
@@ -424,6 +424,77 @@ export const aiAPI = {
 
 export const supportAPI = {
   getTickets: () => apiClient.get('/api/support/tickets')
+};
+
+// â”€â”€â”€ Service Accostage (Acconage) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const acconageAPI = {
+  getAcconages: (params?: Record<string, unknown>) => apiClient.get('/api/v1/acconage', { params }),
+  getAcconage: (id: number) => apiClient.get(`/api/v1/acconage/${id}`),
+  createAcconage: (data: unknown) => apiClient.post('/api/v1/acconage', data),
+  updateAcconage: (id: number, data: unknown) => apiClient.put(`/api/v1/acconage/${id}`, data),
+  deleteAcconage: (id: number) => apiClient.delete(`/api/v1/acconage/${id}`)
+};
+
+// â”€â”€â”€ Service Transit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const transitAPI = {
+  getTransits: (params?: Record<string, unknown>) => apiClient.get('/api/v1/transit', { params }),
+  getTransit: (id: number) => apiClient.get(`/api/v1/transit/${id}`),
+  createTransit: (data: unknown) => apiClient.post('/api/v1/transit', data),
+  updateTransit: (id: number, data: unknown) => apiClient.put(`/api/v1/transit/${id}`, data),
+  deleteTransit: (id: number) => apiClient.delete(`/api/v1/transit/${id}`)
+};
+
+// â”€â”€â”€ Service Maintenance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const maintenanceAPI = {
+  getMaintenances: (params?: Record<string, unknown>) => apiClient.get('/api/v1/maintenance', { params }),
+  getMaintenance: (id: number) => apiClient.get(`/api/v1/maintenance/${id}`),
+  createMaintenance: (data: unknown) => apiClient.post('/api/v1/maintenance', data),
+  updateMaintenance: (id: number, data: unknown) => apiClient.put(`/api/v1/maintenance/${id}`, data),
+  deleteMaintenance: (id: number) => apiClient.delete(`/api/v1/maintenance/${id}`)
+};
+
+// â”€â”€â”€ Service QHSE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const qhseAPI = {
+  getQhseRecords: (params?: Record<string, unknown>) => apiClient.get('/api/v1/qhse', { params }),
+  getQhseRecord: (id: number) => apiClient.get(`/api/v1/qhse/${id}`),
+  createQhseRecord: (data: unknown) => apiClient.post('/api/v1/qhse', data),
+  updateQhseRecord: (id: number, data: unknown) => apiClient.put(`/api/v1/qhse/${id}`, data),
+  deleteQhseRecord: (id: number) => apiClient.delete(`/api/v1/qhse/${id}`)
+};
+
+// ─── Service Cotations & Tarification ──────────────────────────────────────────
+export const cotationsAPI = {
+  getCotations: () => apiClient.get('/api/v1/cotations'),
+  createCotation: (data: unknown) => apiClient.post('/api/v1/cotations', data),
+};
+
+// ─── Service Tracking & e-POD ──────────────────────────────────────────
+export const trackingAPI = {
+  getEpods: () => apiClient.get('/api/v1/tracking/epod'),
+  createEpod: (data: unknown) => apiClient.post('/api/v1/tracking/epod', data),
+};
+
+// ─── Service FuelGuard Anti-Fraude ──────────────────────────────────────────
+export const fuelGuardAPI = {
+  getSensors: () => apiClient.get('/api/v1/fuel-guard/sensors'),
+  createSensor: (data: unknown) => apiClient.post('/api/v1/fuel-guard/sensors', data),
+};
+
+// ─── Service Procurement & Achats ──────────────────────────────────────────
+export const procurementAPI = {
+  getOrders: () => apiClient.get('/api/v1/procurement/orders'),
+  createOrder: (data: unknown) => apiClient.post('/api/v1/procurement/orders', data),
+};
+
+// ─── Service Compliance & Réglementation ──────────────────────────────────────────
+export const complianceAPI = {
+  getAudits: () => apiClient.get('/api/v1/compliance/audits'),
+  createAudit: (data: unknown) => apiClient.post('/api/v1/compliance/audits', data),
+};
+
+// ─── Service BI & Analytics Executive ──────────────────────────────────────────
+export const biAnalyticsAPI = {
+  getSummary: () => apiClient.get('/api/v1/bi-analytics/executive-summary'),
 };
 
 export default apiClient;

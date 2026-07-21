@@ -1,5 +1,17 @@
-import { redirect } from 'next/navigation';
+'use client';
 
-export default function ParcPage() {
-  redirect('/parc/zones');
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function ClientRedirectPage() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/parc/zones');
+  }, [router]);
+
+  return (
+    <div className="p-8 text-center text-slate-500 font-mono">
+      Redirection vers /parc/zones...
+    </div>
+  );
 }
