@@ -20,8 +20,9 @@ def check_imports(app_dir):
     missing_imports = []
     
     for file in get_python_files(app_dir):
-        with open(file, 'r', encoding='utf-8') as f:
+        with open(file, 'r', encoding='utf-8', errors='ignore') as f:
             try:
+
                 tree = ast.parse(f.read(), filename=file)
             except SyntaxError as e:
                 print(f"SyntaxError in {file}: {e}")

@@ -17,6 +17,7 @@ from app.models.magasin import (
 from app.models.finance import Facture, StatutFacture
 from app.models.rh import Employe, Contrat, Conge, FichePaie
 from app.utils.security import get_password_hash, verify_password
+from app.utils.logger import logger
 
 # ── Default seed password (overridable per-user via env vars) ─────
 DEFAULT_SEED_PASSWORD = os.getenv("DEFAULT_SEED_PASSWORD", "admin123")
@@ -30,7 +31,7 @@ def seed_agency() -> int:
             result = session.execute(select(Agency).where(Agency.code == "KAM-DLA"))
             existing = result.scalar_one_or_none()
             if existing:
-                print(f"✅ Agency already exists (id={existing.id}), skipping")
+                logger.info(f"[SUCCESS] Agency already exists (id={existing.id}), skipping")
                 return existing.id
 
             agency = Agency(
@@ -46,10 +47,10 @@ def seed_agency() -> int:
             session.add(agency)
             session.commit()
             session.refresh(agency)
-            print(f"✅ Agency seeded successfully (id={agency.id})")
+            logger.info(f"[SUCCESS] Agency seeded successfully (id={agency.id})")
             return agency.id
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping agency seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping agency seed because database is not ready: {exc}")
         return 0
 
 
@@ -115,20 +116,20 @@ def seed_users(agency_id: int):
                 result = session.execute(select(User).options(selectinload(User.roles)).where(User.email == u["email"]))
                 user = result.scalar_one_or_none()
                 if user:
-                    print(f"  → User {u['email']} already exists.")
+                    logger.info(f"  → User {u['email']} already exists.")
                     # Sync password if it doesn't match the expected value
                     if not verify_password(u["password"], user.password_hash):
                         user.password_hash = get_password_hash(u["password"])
-                        print(f"    → Password reset for {u['email']}.")
+                        logger.info(f"    → Password reset for {u['email']}.")
                     # Assigner le rôle s'il n'en a pas
                     role_result = session.execute(select(RoleModel).where(RoleModel.code == u["role"]))
                     role_db = role_result.scalar_one_or_none()
                     if role_db and role_db not in user.roles:
                         user.roles.append(role_db)
-                        print(f"    → Role {u['role']} assigned to {u['email']}.")
+                        logger.info(f"    → Role {u['role']} assigned to {u['email']}.")
                     continue
 
-                print(f"  → Creating User {u['email']} with password: {u['password']} (SAVE THIS!)")
+                logger.info(f"  → Creating User {u['email']} with password: {u['password']} (SAVE THIS!)")
                 user = User(
                     email=u["email"],
                     username=u["username"],
@@ -148,9 +149,9 @@ def seed_users(agency_id: int):
                 created += 1
 
             session.commit()
-            print(f"✅ Users seeded: {created} created, {len(users_data) - created} already existed")
+            logger.info(f"[SUCCESS] Users seeded: {created} created, {len(users_data) - created} already existed")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping users seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping users seed because database is not ready: {exc}")
 
 
 def seed_tiers():
@@ -220,15 +221,15 @@ def seed_tiers():
             for c in clients_data:
                 result = session.execute(select(Tiers).where(Tiers.code_tiers == c["code_tiers"]))
                 if result.scalar_one_or_none():
-                    print(f"  → Tiers {c['code_tiers']} already exists, skipping")
+                    logger.info(f"  → Tiers {c['code_tiers']} already exists, skipping")
                     continue
                 session.add(Tiers(**c))
                 created += 1
 
             session.commit()
-            print(f"✅ Tiers seeded: {created} created")
+            logger.info(f"[SUCCESS] Tiers seeded: {created} created")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping tiers seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping tiers seed because database is not ready: {exc}")
 
 
 def seed_camions():
@@ -309,13 +310,13 @@ def seed_camions():
                 select(CamionFlotte).where(CamionFlotte.immatriculation == c["immatriculation"])
             )
             if result.scalar_one_or_none():
-                print(f"  → Camion {c['immatriculation']} already exists, skipping")
+                logger.info(f"  → Camion {c['immatriculation']} already exists, skipping")
                 continue
             session.add(CamionFlotte(**c))
             created += 1
 
         session.commit()
-        print(f"✅ Camions seeded: {created} created")
+        logger.info(f"[SUCCESS] Camions seeded: {created} created")
 
 
 def seed_chauffeurs():
@@ -362,13 +363,13 @@ def seed_chauffeurs():
                 select(ChauffeurProfil).where(ChauffeurProfil.numero_permis == c["numero_permis"])
             )
             if result.scalar_one_or_none():
-                print(f"  → Chauffeur {c['numero_permis']} already exists, skipping")
+                logger.info(f"  → Chauffeur {c['numero_permis']} already exists, skipping")
                 continue
             session.add(ChauffeurProfil(**c))
             created += 1
 
         session.commit()
-        print(f"✅ Chauffeurs seeded: {created} created")
+        logger.info(f"[SUCCESS] Chauffeurs seeded: {created} created")
 
 
 def seed_magasin():
@@ -604,7 +605,7 @@ def seed_magasin():
                 session.add(ligne_cmd)
 
         session.commit()
-        print("✅ Magasins, Articles, Stocks, Clients, Declarations, Commandes seeded")
+        logger.info("✅ Magasins, Articles, Stocks, Clients, Declarations, Commandes seeded")
 
 
 def seed_finance():
@@ -615,12 +616,12 @@ def seed_finance():
             # Récupérer l'agence et les tiers
             agency = session.execute(select(Agency).where(Agency.code == "KAM-DLA")).scalar_one_or_none()
             if not agency:
-                print("⚠️ Agency missing, skipping finance seed.")
+                logger.info("⚠️ Agency missing, skipping finance seed.")
                 return
 
             tiers = session.execute(select(Tiers)).scalars().all()
             if not tiers:
-                print("⚠️ Tiers missing, skipping finance seed.")
+                logger.info("⚠️ Tiers missing, skipping finance seed.")
                 return
             
             clients = [t for t in tiers if "CLI" in t.code_tiers]
@@ -655,16 +656,16 @@ def seed_finance():
             for f in factures_data:
                 result = session.execute(select(Facture).where(Facture.numero_facture == f["numero_facture"]))
                 if result.scalar_one_or_none():
-                    print(f"  → Facture {f['numero_facture']} already exists, skipping")
+                    logger.info(f"  → Facture {f['numero_facture']} already exists, skipping")
                     continue
                 facture = Facture(**f)
                 session.add(facture)
                 created += 1
 
             session.commit()
-            print(f"✅ Factures seeded: {created} created")
+            logger.info(f"[SUCCESS] Factures seeded: {created} created")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping finance seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping finance seed because database is not ready: {exc}")
 
 def seed_rh():
     """Crée les profils d'employés et les données RH associées. Idempotent."""
@@ -717,7 +718,7 @@ def seed_rh():
             for emp in employes_data:
                 result = session.execute(select(Employe).where(Employe.matricule == emp["matricule"]))
                 if result.scalar_one_or_none():
-                    print(f"  → Employe {emp['matricule']} already exists, skipping")
+                    logger.info(f"  → Employe {emp['matricule']} already exists, skipping")
                     continue
                 db_emp = Employe(**emp)
                 session.add(db_emp)
@@ -760,9 +761,9 @@ def seed_rh():
                 created += 1
 
             session.commit()
-            print(f"✅ RH (Employes, Contrats, Conges, Fiches) seeded: {created} profiles created")
+            logger.info(f"[SUCCESS] RH (Employes, Contrats, Conges, Fiches) seeded: {created} profiles created")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping RH seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping RH seed because database is not ready: {exc}")
 
 def seed_fuel():
     """Crée les tickets de carburant de test pour la flotte de camions. Idempotent."""
@@ -772,7 +773,7 @@ def seed_fuel():
             chauffeurs = session.execute(select(ChauffeurProfil)).scalars().all()
             
             if not camions or not chauffeurs:
-                print("⚠️ Camions or Chauffeurs missing, skipping fuel seed.")
+                logger.info("⚠️ Camions or Chauffeurs missing, skipping fuel seed.")
                 return
 
             created = 0
@@ -805,9 +806,9 @@ def seed_fuel():
                 created += 1
                 
             session.commit()
-            print(f"✅ Fuel tickets seeded: {created} created")
+            logger.info(f"[SUCCESS] Fuel tickets seeded: {created} created")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping fuel seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping fuel seed because database is not ready: {exc}")
 
 def seed_missions():
     """Crée les missions de transport de test liées aux clients réels. Idempotent."""
@@ -819,12 +820,12 @@ def seed_missions():
             chauffeurs = session.execute(select(ChauffeurProfil)).scalars().all()
             
             if not tiers or not camions or not chauffeurs:
-                print("⚠️ Tiers, Camions or Chauffeurs missing, skipping missions seed.")
+                logger.info("⚠️ Tiers, Camions or Chauffeurs missing, skipping missions seed.")
                 return
 
             clients = [t for t in tiers if "CLI" in t.code_tiers]
             if not clients:
-                print("⚠️ No clients found for missions, skipping missions seed.")
+                logger.info("⚠️ No clients found for missions, skipping missions seed.")
                 return
 
             # Trouver des clients précis
@@ -869,16 +870,16 @@ def seed_missions():
             for m in missions_data:
                 result = session.execute(select(MissionTransport).where(MissionTransport.reference == m["reference"]))
                 if result.scalar_one_or_none():
-                    print(f"  → Mission {m['reference']} already exists, skipping")
+                    logger.info(f"  → Mission {m['reference']} already exists, skipping")
                     continue
                 mission = MissionTransport(**m)
                 session.add(mission)
                 created += 1
 
             session.commit()
-            print(f"✅ Transport missions seeded: {created} created")
+            logger.info(f"[SUCCESS] Transport missions seeded: {created} created")
     except (OperationalError, ProgrammingError) as exc:
-        print(f"⚠️ Skipping missions seed because database is not ready: {exc}")
+        logger.info(f"[WARNING] Skipping missions seed because database is not ready: {exc}")
 
 
 def seed_rbac():
@@ -1029,12 +1030,12 @@ def seed_rbac():
                 role.permissions = role_perms
 
         session.commit()
-        print("✅ Permissions and Roles seeded successfully")
+        logger.info("✅ Permissions and Roles seeded successfully")
 
 
 def main():
     """Exécute tous les seeds dans le bon ordre."""
-    print("🌱 Starting seed data...")
+    logger.info("Starting seed data...")
 
     try:
         # 1. Agency DOIT être créée en premier (les users en dépendent)
@@ -1052,9 +1053,9 @@ def main():
         seed_rh()
         seed_fuel()
         seed_missions()
-        print("✅ All seed data completed successfully!")
+        logger.info("✅ All seed data completed successfully!")
     except Exception as e:
-        print(f"❌ Error during seed: {e}")
+        logger.info(f"❌ Error during seed: {e}")
         import traceback
         traceback.print_exc()
         raise

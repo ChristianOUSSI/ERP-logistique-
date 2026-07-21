@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'add_module_perms_to_roles'
+revision = 'add_module_based_permissions_to_roles'
 down_revision = 'add_module_based_permissions'
 branch_labels = None
 depends_on = None

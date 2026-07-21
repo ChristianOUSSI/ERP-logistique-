@@ -1,0 +1,436 @@
+# app/main.py  Configuration Principale FastAPI KAMLOG
+
+
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi import Request
+import inspect
+import asyncio
+from functools import wraps
+from typing import Optional
+
+# Patch Limiter.limit to dynamically wrap and inject 'request' to avoid SlowAPI exceptions
+original_limit = Limiter.limit
+
+def patched_limit(self, *args, **kwargs):
+    decorator = original_limit(self, *args, **kwargs)
+    def custom_decorator(func):
+        sig = inspect.signature(func)
+        has_request = any(
+            param.name in ('request', 'websocket') or param.annotation == Request
+            for param in sig.parameters.values()
+        )
+        if has_request:
+            return decorator(func)
+        
+        if inspect.iscoroutinefunction(func):
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                kwargs.pop('request', None)
+                kwargs.pop('websocket', None)
+                return await func(*args, **kwargs)
+        else:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                kwargs.pop('request', None)
+                kwargs.pop('websocket', None)
+                return func(*args, **kwargs)
+        
+        # Inject 'request' parameter as KEYWORD_ONLY with default None to satisfy SlowAPI
+        parameters = list(sig.parameters.values())
+        request_param = inspect.Parameter(
+            'request',
+            inspect.Parameter.KEYWORD_ONLY,
+            default=None,
+            annotation=Request
+        )
+        parameters.append(request_param)
+        wrapper.__signature__ = sig.replace(parameters=parameters)
+        return decorator(wrapper)
+    return custom_decorator
+
+Limiter.limit = patched_limit
+
+from app.database import engine, Base
+from app.routers.v1 import auth, tiers, transport, finance, parc, documents, alerts, magasin, gateway, transactions, admin, acconage, transit, maintenance, qhse
+from app.routers.v1 import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, incidents, public_api, rh, acconage, transit, maintenance, qhse
+from app.routers.v1 import bill_of_loading
+from app.config import settings
+import sentry_sdk
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
+from app.utils.logger import setup_logger
+from app.utils.monitoring import setup_monitoring
+from app.utils.error_handler import setup_error_handlers
+from app.utils.rate_limiting import limiter
+from app.utils.audit_middleware import AuditMiddleware
+from app.utils.idempotency import IdempotencyMiddleware
+from app.utils.rbac import get_current_user  # Import unifié
+from app.utils.tracing import TracingMiddleware  # Nouveau middleware de traçage
+from app.services.events import event_service  # Service d'événements en temps réel
+
+from sqlalchemy import text
+
+
+# État de santé global de l'application
+startup_errors: list = []
+heartbeat_task: Optional[asyncio.Task] = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup : initialiser logger et vérifier connexion DB
+    setup_logger()
+
+    # Vérifier la connexion à la base de données (sync engine dans executor)
+    # Ne pas raise ici : laisser uvicorn démarrer même si DB indisponible
+    # Le health check signalera l'état dégradé
+    try:
+        def check_db():
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+        await asyncio.to_thread(check_db)
+        print("? Database connection OK")
+        startup_errors.clear()
+    except Exception as e:
+        err_msg = f"Database connection failed: {e}"
+        print(f"? {err_msg}")
+        startup_errors.append(err_msg)
+        # Ne pas raise - l'app démarre quand même pour que /api/health réponde
+
+    # Start heartbeat task for WebSocket connections
+    global heartbeat_task
+    heartbeat_task = asyncio.create_task(_heartbeat_loop())
+
+    yield
+
+    # Shutdown : fermer connexions
+    engine.dispose()
+
+    # Stop heartbeat task
+    if heartbeat_task:
+        heartbeat_task.cancel()
+        try:
+            await heartbeat_task
+        except asyncio.CancelledError:
+            pass
+
+
+async def _heartbeat_loop():
+    """Background task to send periodic heartbeats to WebSocket connections"""
+    while True:
+        try:
+            await asyncio.sleep(30)  # Send heartbeat every 30 seconds
+            await event_service.broadcast_heartbeat()
+            logger.debug("Sent WebSocket heartbeat")
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Error in heartbeat loop: {e}")
+            await asyncio.sleep(5)  # Wait before retrying
+
+
+app = FastAPI(
+    title="KAMLOG EM-ERP API",
+    description="""ERP Logistique Portuaire - Système de gestion complet pour le port de Douala.
+
+    ## Modules disponibles
+
+    * **Auth** - Authentification et gestion des utilisateurs
+    * **Tiers** - Gestion des clients, fournisseurs et partenaires
+    * **Transport** - Suivi des véhicules, conducteurs et missions
+    * **Finance** - Comptabilité, facturation et gestion financière
+    * **Parc** - Gestion du parc automobile et des équipements
+    * **Documents** - Génération et gestion des documents logistiques
+    * **Alerts** - Système d'alertes et de notifications en temps réel
+    * **Magasin** - Gestion des stocks et entrepôts
+    * **Gateway** - Intégration avec les systèmes externes
+    * **Transactions** - Suivi des opérations commerciales
+    * **Master Data** - Données de référence (articles, incoterms, types de conteneurs)
+# Setup Prometheus Metrics
+instrumentator = Instrumentator().instrument(app)
+
+    * **Administratif** - Gestion des agences et paramètres système
+    * **Notifications** - Centre de notifications
+    * **Achats** - Gestion des achats et approvisionnements
+    * **Incidents** - Signalement et suivi des incidents
+    * **Public API** - Endpoints publics accessibles sans authentification
+    * **RH** - Gestion des ressources humaines
+
+    ## Authentification
+
+    La plupart des endpoints nécessitent une authentification JWT. Utilisez l'endpoint `/api/v1/auth/login` pour obtenir un token d'accès.
+
+    ## Versioning
+
+    Cet API utilise le versioning par URL. La version actuelle est v1 disponible sous `/api/v1/*`.
+    Les endpoints sous `/api/*` sont maintenus pour la compatibilité ascendante mais sont dépréciés.
+
+    ## Rate Limiting
+
+    Des limites de taux sont appliquées pour protéger contre les abus:
+    * Authentification: 5 requêtes/minute
+    * Connexion: 10 requêtes/minute
+    * Utilisateurs réguliers: 1000 requêtes/heure
+    * Administrateurs: 2000 requêtes/heure
+    * Opérations en lot: 10 requêtes/heure
+    """,
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+    lifespan=lifespan,
+    contact={
+        "name": "Équipe KAMLOG",
+        "url": "https://kamlog.cm",
+        "email": "tech@kamlog.cm",
+    },
+    license_info={
+        "name": "Propriétaire",
+        "url": "https://kamlog.cm/license",
+    },
+    terms_of_service="https://kamlog.cm/terms",
+)
+
+# Rate limiting protection brute force
+# Sentry initialization (if DSN provided)
+if getattr(settings, "SENTRY_DSN", None):
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        traces_sample_rate=0.2,
+        integrations=[
+            SqlalchemyIntegration(),
+            RedisIntegration(),
+            CeleryIntegration(),
+        ],
+    )
+    # Add ASGI middleware for capturing HTTP requests
+    app.add_middleware(SentryAsgiMiddleware)
+# Rate limiting protection brute force
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Setup error handlers
+setup_error_handlers(app)
+
+# Setup monitoring (must be called outside lifespan because it adds a middleware)
+setup_monitoring(app)
+
+# Middleware de traçage des requêtes avec ID de corrélation
+app.add_middleware(TracingMiddleware)
+
+# Middlewares de Sécurité et Audit (Niveau World Pro)
+app.add_middleware(AuditMiddleware)
+app.add_middleware(IdempotencyMiddleware, redis_url=settings.REDIS_URL)
+
+# CORS  autoriser le frontend Next.js et Vercel previews
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://kamlog-erp.cm"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-Idempotency-Key", "X-Request-ID", "trace-id"],
+)
+
+# Routers - Version 1 API
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
+app.include_router(tiers.router, prefix="/api/v1/tiers", tags=["Tiers"])
+app.include_router(transport.router, prefix="/api/v1/transport", tags=["Transport"])
+app.include_router(finance.router, prefix="/api/v1/finance", tags=["Finance"])
+app.include_router(parc.router, prefix="/api/v1/parc", tags=["Parc"])
+app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
+from app.routers import ws
+app.include_router(ws.router, prefix="/api/v1/ws", tags=["WebSockets"])
+from app.routers import collaboration
+app.include_router(collaboration.router, prefix="/api/v1/collaboration", tags=["Collaboration"])
+from app.routers import iot
+app.include_router(iot.router, prefix="/api/v1/iot", tags=["IoT"])
+from app.routers import blockchain
+app.include_router(blockchain.router, prefix="/api/v1/blockchain", tags=["Blockchain"])
+from app.routers import sustainability
+app.include_router(sustainability.router, prefix="/api/v1/sustainability", tags=["Sustainability"])
+# Backward compatibility - WebSocket endpoints (deprecated, will be removed in v2)
+# These endpoints proxy to v1 implementations to ensure smooth transition
+from app.routers import ws as ws_v1
+from app.routers import collaboration as collaboration_v1
+app.include_router(ws_v1.router, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
+app.include_router(collaboration_v1.router, prefix="/api/collaboration", tags=["Collaboration - DEPRECATED"])
+
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
+app.include_router(magasin.router, prefix="/api/v1/magasin", tags=["K-Magasin"])
+app.include_router(gateway.router, prefix="/api/v1/gateway", tags=["Gateway"])
+app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Transactions"])
+app.include_router(goods_declaration.router, prefix="/api/v1/transport/goods-declarations", tags=["Goods Declaration"])
+app.include_router(removal_slip.router, prefix="/api/v1/magasin/removal-slips", tags=["Removal Slip"])
+app.include_router(reception_mag3.router, prefix="/api/v1/magasin/receptions-mag3", tags=["Reception Mag3"])
+app.include_router(master_data.router, prefix="/api/v1/master-data", tags=["Master Data"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
+app.include_router(admin_agency.router, prefix="/api/v1/admin/agencies", tags=["Admin Agencies"])
+app.include_router(suppliers.router, prefix="/api/v1/suppliers", tags=["Suppliers"])
+from app.routers.webhook_whatsapp import router as webhook_router
+from app.routers.telematics import router as telematics_router
+
+app.include_router(webhook_router)
+app.include_router(telematics_router)
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
+app.include_router(bill_of_loading.router, prefix="/api/v1/bill-of-loading", tags=["Bill of Loading"])
+app.include_router(purchase.router, prefix="/api/v1/purchase", tags=["Achats"])
+app.include_router(incidents.router, prefix="/api/v1/incidents", tags=["Incidents"])
+app.include_router(public_api.router, prefix="/api/v1/public", tags=["Public API"])
+app.include_router(rh.router, prefix="/api/v1/rh", tags=["Ressources Humaines"])
+app.include_router(acconage.router, prefix="/api/v1/acconage", tags=["Accostage"])
+app.include_router(transit.router, prefix="/api/v1/transit", tags=["Transit"])
+app.include_router(maintenance.router, prefix="/api/v1/maintenance", tags=["Maintenance"])
+app.include_router(qhse.router, prefix="/api/v1/qhse", tags=["QHSE"])
+app.include_router(acconage.router, prefix="/api/v1/acconage", tags=["Accostage"])
+app.include_router(transit.router, prefix="/api/v1/transit", tags=["Transit"])
+app.include_router(maintenance.router, prefix="/api/v1/maintenance", tags=["Maintenance"])
+app.include_router(qhse.router, prefix="/api/v1/qhse", tags=["QHSE"])
+app.include_router(acconage.router, prefix="/api/v1/acconage", tags=["Accostage"])
+app.include_router(transit.router, prefix="/api/v1/transit", tags=["Transit"])
+app.include_router(maintenance.router, prefix="/api/v1/maintenance", tags=["Maintenance"])
+app.include_router(qhse.router, prefix="/api/v1/qhse", tags=["QHSE"])
+app.include_router(acconage.router, prefix="/api/v1/acconage", tags=["Accostage"])
+app.include_router(transit.router, prefix="/api/v1/transit", tags=["Transit"])
+app.include_router(maintenance.router, prefix="/api/v1/maintenance", tags=["Maintenance"])
+app.include_router(qhse.router, prefix="/api/v1/qhse", tags=["QHSE"])
+
+# Backward compatibility - Original API endpoints (deprecated, will be removed in v2)
+# These endpoints proxy to v1 implementations to ensure smooth transition
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth - DEPRECATED"])
+app.include_router(tiers.router, prefix="/api/tiers", tags=["Tiers - DEPRECATED"])
+app.include_router(transport.router, prefix="/api/transport", tags=["Transport - DEPRECATED"])
+app.include_router(finance.router, prefix="/api/finance", tags=["Finance - DEPRECATED"])
+app.include_router(parc.router, prefix="/api/parc", tags=["Parc - DEPRECATED"])
+app.include_router(documents.router, prefix="/api/documents", tags=["Documents - DEPRECATED"])
+app.include_router(ws.router, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
+app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts - DEPRECATED"])
+app.include_router(magasin.router, prefix="/api/magasin", tags=["K-Magasin - DEPRECATED"])
+app.include_router(gateway.router, prefix="/api/gateway", tags=["Gateway - DEPRECATED"])
+app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions - DEPRECATED"])
+app.include_router(goods_declaration.router, prefix="/api/transport/goods-declarations", tags=["Goods Declaration - DEPRECATED"])
+app.include_router(removal_slip.router, prefix="/api/magasin/removal-slips", tags=["Removal Slip - DEPRECATED"])
+app.include_router(reception_mag3.router, prefix="/api/magasin/receptions-mag3", tags=["Reception Mag3 - DEPRECATED"])
+app.include_router(master_data.router, prefix="/api/master-data", tags=["Master Data - DEPRECATED"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin - DEPRECATED"])
+app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies - DEPRECATED"])
+app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers - DEPRECATED"])
+app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications - DEPRECATED"])
+app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats - DEPRECATED"])
+app.include_router(incidents.router, prefix="/api/incidents", tags=["Incidents - DEPRECATED"])
+app.include_router(public_api.router, prefix="/api/public", tags=["Public API - DEPRECATED"])
+app.include_router(rh.router, prefix="/api/rh", tags=["Ressources Humaines - DEPRECATED"])
+app.include_router(acconage.router, prefix="/api/acconage", tags=["Accostage - DEPRECATED"])
+app.include_router(transit.router, prefix="/api/transit", tags=["Transit - DEPRECATED"])
+app.include_router(maintenance.router, prefix="/api/maintenance", tags=["Maintenance - DEPRECATED"])
+app.include_router(qhse.router, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
+app.include_router(acconage.router, prefix="/api/acconage", tags=["Accostage - DEPRECATED"])
+app.include_router(transit.router, prefix="/api/transit", tags=["Transit - DEPRECATED"])
+app.include_router(maintenance.router, prefix="/api/maintenance", tags=["Maintenance - DEPRECATED"])
+app.include_router(qhse.router, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
+app.include_router(acconage.router, prefix="/api/acconage", tags=["Accostage - DEPRECATED"])
+app.include_router(transit.router, prefix="/api/transit", tags=["Transit - DEPRECATED"])
+app.include_router(maintenance.router, prefix="/api/maintenance", tags=["Maintenance - DEPRECATED"])
+app.include_router(qhse.router, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
+app.include_router(acconage.router, prefix="/api/acconage", tags=["Accostage - DEPRECATED"])
+app.include_router(transit.router, prefix="/api/transit", tags=["Transit - DEPRECATED"])
+app.include_router(maintenance.router, prefix="/api/maintenance", tags=["Maintenance - DEPRECATED"])
+app.include_router(qhse.router, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
+
+
+@app.get('/api/health')
+async def health_check():
+    """Health check basique - utilisé par Railway."""
+    if startup_errors:
+        # Retourner 200 avec status dégradé plutôt que de crasher
+        # Railway vérifie le HTTP status code, pas le contenu
+        return {
+            "status": "degraded",
+            "service": "KAMLOG EM-ERP",
+            "version": "1.0.0",
+            "errors": startup_errors
+        }
+    return {"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}
+
+
+@app.get('/api/health/detailed')
+async def detailed_health_check():
+    """Health check détaillé avec vérification des dépendances."""
+    import asyncio
+    checks = {
+        "status": "ok",
+        "service": "KAMLOG EM-ERP",
+        "version": "1.0.0",
+        "checks": {}
+    }
+
+    # Vérifier la base de données (sync engine dans executor)
+    try:
+        def check_db():
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+        await asyncio.to_thread(check_db)
+        checks["checks"]["database"] = {"status": "ok", "message": "PostgreSQL connecté"}
+    except Exception as e:
+        checks["checks"]["database"] = {"status": "error", "message": str(e)}
+        checks["status"] = "degraded"
+
+    # Vérifier Redis (si configuré)
+    try:
+        import redis.asyncio as aioredis
+        redis_client = aioredis.from_url(settings.REDIS_URL)
+        await redis_client.ping()
+        await redis_client.aclose()
+        checks["checks"]["redis"] = {"status": "ok", "message": "Redis connecté"}
+    except Exception as e:
+        checks["checks"]["redis"] = {"status": "warning", "message": f"Redis indisponible: {str(e)}"}
+        # Ne pas marquer comme degraded - Redis est optionnel
+
+    # Vérifier MinIO (si activé)
+    if settings.MINIO_ENABLED:
+        try:
+            from minio import Minio
+            minio_client = Minio(
+                settings.MINIO_ENDPOINT,
+                access_key=settings.MINIO_ACCESS_KEY,
+                secret_key=settings.MINIO_SECRET_KEY,
+                secure=settings.MINIO_SECURE
+            )
+            minio_client.bucket_exists(settings.MINIO_BUCKET_DOCUMENTS)
+            checks["checks"]["minio"] = {"status": "ok", "message": "MinIO connecté"}
+        except Exception as e:
+            checks["checks"]["minio"] = {"status": "warning", "message": f"MinIO indisponible: {str(e)}"}
+    else:
+        checks["checks"]["minio"] = {"status": "disabled", "message": "MinIO désactivé (MINIO_ENABLED=false)"}
+
+
+    # Vérifier Celery Workers
+    try:
+        from app.worker import celery_app
+        i = celery_app.control.inspect()
+        active = i.active()
+        if active is None:
+            checks["checks"]["celery"] = {"status": "warning", "message": "Aucun worker Celery actif"}
+        else:
+            checks["checks"]["celery"] = {"status": "ok", "message": "Workers Celery actifs"}
+    except Exception as e:
+        checks["checks"]["celery"] = {"status": "error", "message": str(e)}
+        checks["status"] = "degraded"
+    return checks
+
+
+
+
+
+
+@app.on_event('startup')
+async def expose_metrics():
+    instrumentator.expose(app)
