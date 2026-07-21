@@ -98,8 +98,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // Monitor session expiration locally and listen for 401 api errors
+  // Grace period: don't react to auth-error events in the first 5 seconds after session establishment
   useEffect(() => {
+    let graceTimeout: NodeJS.Timeout | null = null;
+    let isListening = false;
+
     const handleAuthError = (e: Event) => {
+      if (!isListening) return; // Skip during grace period
       console.warn("401 Unauthorized intercepted, logging out...");
       logout();
       if (window.location.pathname !== '/login') {
@@ -107,6 +112,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
     
+    // Activate listener after grace period only if user is logged in
+    if (user) {
+      graceTimeout = setTimeout(() => {
+        isListening = true;
+      }, 5000);
+    }
+
     window.addEventListener('auth-error', handleAuthError);
 
     let timer: NodeJS.Timeout | null = null;
@@ -114,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       timer = setInterval(() => {
         if (Date.now() >= sessionExpiresAt.getTime()) {
           setSessionExpired(true);
+          isListening = true; // Force listen for expiry-driven logout
           handleAuthError(new Event('auth-error'));
           if (timer) clearInterval(timer);
         }
@@ -123,8 +136,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       window.removeEventListener('auth-error', handleAuthError);
       if (timer) clearInterval(timer);
+      if (graceTimeout) clearTimeout(graceTimeout);
     };
-  }, [sessionExpiresAt, sessionExpired, logout]);
+  }, [sessionExpiresAt, sessionExpired, logout, user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, sessionExpiresAt, renewSession, sessionExpired }}>

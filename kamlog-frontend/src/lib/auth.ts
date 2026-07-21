@@ -4,8 +4,12 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
 
 export const authOptions: NextAuthOptions = {
-  debug: true,
+  debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET || 'kamlog-secret-key-super-secure-2026',
+  session: {
+    strategy: 'jwt',
+    maxAge: 7 * 24 * 60 * 60, // 7 jours
+  },
   providers: [
     CredentialsProvider({
       name: 'Credentials',

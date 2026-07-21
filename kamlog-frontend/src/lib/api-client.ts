@@ -32,12 +32,16 @@ apiClient.interceptors.request.use(
 );
 
 // Intercepteur RESPONSE
+// IMPORTANT: Ne déclencher le logout automatique QUE pour les endpoints d'auth,
+// PAS pour les appels de données (dashboard, magasin, etc.) qui peuvent retourner 401
+// quand le backend distant est temporairement indisponible.
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        // Dispatch custom event for AuthProvider to handle clean logout
+      const url = error.config?.url || '';
+      const isAuthEndpoint = url.includes('/auth/me') || url.includes('/auth/refresh');
+      if (typeof window !== 'undefined' && isAuthEndpoint) {
         window.dispatchEvent(new CustomEvent('auth-error', { detail: { reason: 'unauthorized' } }));
       }
     }

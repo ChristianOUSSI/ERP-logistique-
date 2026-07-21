@@ -22,10 +22,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    // Protéger toutes les routes sous /dashboard et /admin
-    '/dashboard/:path*',
-    '/admin/:path*',
-    // Protéger les routes API internes si nécessaire
-    // '/api/:path*',
+    // Protéger toutes les routes de l'application sauf les pages publiques et assets
+    '/((?!login|register|logout|session-expired|reset-password|mfa|_next/static|_next/image|favicon.ico|images|icons|sw.js|manifest.json|api/auth).*)',
   ],
 };
