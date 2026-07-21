@@ -4,7 +4,7 @@ from app.database import engine
 
 logger = logging.getLogger(__name__)
 
-def get_missing_required_tables():
+def get_missing_required_tables(*args, **kwargs):
     """Vérifie si les tables requises manquent dans la base de données."""
     try:
         inspector = inspect(engine)
@@ -16,7 +16,7 @@ def get_missing_required_tables():
         logger.warning(f"Impossible d'inspecter les tables: {e}")
         return []
 
-def bootstrap_system():
+def bootstrap_system(*args, **kwargs):
     """Initialisation du système."""
     print("🚀 KAMLOG System Bootstrap initialized.")
     return True
