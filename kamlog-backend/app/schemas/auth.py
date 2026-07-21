@@ -1,9 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: Optional[str] = None
+    username: Optional[str] = None
     password: str
 
 class LoginResponse(BaseModel):
@@ -17,7 +17,7 @@ class LoginResponse(BaseModel):
     user: dict
 
 class AdminCreateUserRequest(BaseModel):
-    email: EmailStr
+    email: str
     nom_complet: str
     role: str = Field(..., description="Role principal (ex: CHAUFFEUR, ADMIN, RESPONSABLE_LOGISTIQUE)")
     roles: Optional[List[str]] = Field(default=["CHAUFFEUR"], description="Liste des roles rattachés")
@@ -25,5 +25,5 @@ class AdminCreateUserRequest(BaseModel):
     departement: Optional[str] = "LOGISTIQUE"
 
 class ChangePasswordRequest(BaseModel):
-    current_password: str
-    new_password: str = Field(..., min_length=8, description="Mot de passe fort (minimum 8 caracteres)")
+    current_password: Optional[str] = None
+    new_password: str = Field(..., min_length=8, description="Mot de passe fort (minimum 8 caractères)")
