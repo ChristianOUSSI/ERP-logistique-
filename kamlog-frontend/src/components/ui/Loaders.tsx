@@ -52,6 +52,28 @@ export const FullScreenLoader = () => {
   );
 };
 
+/**
+ * CardSkeletonLoader: Chargeur de cartes pour tableaux de bord et formulaires
+ */
+export const CardSkeletonLoader = ({ className = '' }: { className?: string }) => {
+  return (
+    <div className={`w-full animate-pulse bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl ${className}`}>
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-12 h-12 bg-slate-800 rounded-xl shrink-0" />
+        <div className="space-y-2 flex-1">
+          <div className="h-4 bg-slate-800 rounded w-1/3" />
+          <div className="h-3 bg-slate-800/60 rounded w-1/4" />
+        </div>
+      </div>
+      <div className="space-y-3">
+        <div className="h-3 bg-slate-800/70 rounded w-full" />
+        <div className="h-3 bg-slate-800/70 rounded w-5/6" />
+        <div className="h-3 bg-slate-800/70 rounded w-4/6" />
+      </div>
+    </div>
+  );
+};
+
 export const TableSkeletonLoader = ({ columns = 5, rows = 6 }: { columns?: number, rows?: number }) => {
   return (
     <div className="w-full animate-pulse bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
