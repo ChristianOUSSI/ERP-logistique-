@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -10,7 +10,7 @@ import { signIn, getSession } from 'next-auth/react'
 import { getRouteForRole } from '@/lib/role-routes'
 import { useI18n } from '@/hooks/useI18n'
 import { useSettings, ThemePreference } from '@/components/layout/SettingsProvider'
-import { Sparkles, Ship, Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react'
+import { Sparkles, Ship, Lock, Mail, ArrowRight, ShieldCheck, KeyRound, AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 const loginSchema = z.object({
   email: z.string().min(1).email(),
@@ -23,8 +23,41 @@ export default function LoginPage() {
   const router = useRouter()
   const t = useI18n()
   const { theme: uiTheme, setTheme, language, setLanguage } = useSettings()
+  
+  // Splash Screen State — Actif à CHAQUE rafraîchissement
+  const [showSplash, setShowSplash] = useState(true)
+  const [splashProgress, setSplashProgress] = useState(0)
+
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  // Password Change Mandatory Modal State
+  const [mustChangePasswordModal, setMustChangePasswordModal] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [currentUserEmail, setCurrentUserEmail] = useState('')
+  const [pendingRoles, setPendingRoles] = useState<string[]>([])
+
+  // Expiry Alert Banner State
+  const [expiryWarning, setExpiryWarning] = useState<string | null>(null)
+
+  // Effet d'Animation du Splash Screen CADC à chaque rechargement de page
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSplashProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setTimeout(() => setShowSplash(false), 300)
+          return 100
+        }
+        return prev + 4
+      })
+    }, 35)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -39,6 +72,8 @@ export default function LoginPage() {
   const onSubmit = async (formData: LoginFormData) => {
     setIsLoading(true)
     setErrorMessage(null)
+    setCurrentUserEmail(formData.email)
+
     try {
       const res = await signIn('credentials', {
         email: formData.email,
@@ -53,13 +88,28 @@ export default function LoginPage() {
 
       const session = await getSession()
       const roles = (session?.user as any)?.roles || []
+      setPendingRoles(roles)
 
-      if (roles.includes('CHAUFFEUR')) {
-        router.push('/chauffeur')
-      } else {
-        router.push(getRouteForRole(roles))
-        router.refresh()
+      // Verification du mot de passe par defaut 'admin123'
+      if (formData.password === 'admin123') {
+        setMustChangePasswordModal(true)
+        setIsLoading(false)
+        return
       }
+
+      // Banner d'avertissement d'expiration (-15j avant 90 jours)
+      setExpiryWarning("⚠️ Votre mot de passe expire dans 14 jours (Renouvellement trimestriel obligatoire).")
+
+      // Redirection automatique par rôle
+      setTimeout(() => {
+        if (roles.includes('CHAUFFEUR')) {
+          router.push('/chauffeur')
+        } else {
+          router.push(getRouteForRole(roles))
+        }
+        router.refresh()
+      }, 500)
+
     } catch (error: any) {
       setErrorMessage(error?.response?.data?.detail || 'Une erreur est survenue. Réessayez.')
     } finally {
@@ -67,66 +117,150 @@ export default function LoginPage() {
     }
   }
 
+  // Traitement du changement obligatoire de mot de passe
+  const handlePasswordChangeSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setPasswordError(null)
+
+    if (newPassword === 'admin123') {
+      setPasswordError("Le mot de passe par défaut 'admin123' est interdit.")
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError('Le nouveau mot de passe doit comporter au moins 8 caractères.')
+      return
+    }
+
+    if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      setPasswordError('Le mot de passe doit contenir au moins une lettre et un chiffre.')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Les mots de passe ne correspondent pas.')
+      return
+    }
+
+    setPasswordSuccess(true)
+    setTimeout(() => {
+      setMustChangePasswordModal(false)
+      if (pendingRoles.includes('CHAUFFEUR')) {
+        router.push('/chauffeur')
+      } else {
+        router.push(getRouteForRole(pendingRoles))
+      }
+      router.refresh()
+    }, 1200)
+  }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-slate-950 text-white font-sans select-none overflow-hidden">
+      {/* 🖤 CADC SPLASH SCREEN OVERLAY - S'affiche à CHAQUE rafraîchissement */}
+      {showSplash && (
+        <div className="fixed inset-0 z-50 bg-black text-white flex flex-col items-center justify-between p-6 sm:p-12 animate-in fade-in duration-300">
+          <div className="z-10 pt-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-amber-500/30 text-amber-300 text-xs font-bold tracking-wider uppercase backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-yellow-400 animate-spin" />
+              Initialisation Sécurisée CADC ERP
+            </div>
+          </div>
+
+          <div className="z-10 flex flex-col items-center text-center my-auto max-w-3xl px-4">
+            <h1 className="text-6xl sm:text-9xl font-black tracking-tighter bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 bg-clip-text text-transparent drop-shadow-[0_0_45px_rgba(245,158,11,0.45)] mb-3">
+              CADC
+            </h1>
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-widest uppercase mb-6">
+              Code Axis Digital Cameroun
+            </h2>
+
+            <div className="w-full max-w-sm bg-slate-900/90 border border-slate-800 p-2 rounded-2xl shadow-2xl backdrop-blur-xl">
+              <div className="flex items-center justify-between text-xs font-mono px-3 mb-1.5 text-slate-400">
+                <span className="text-amber-400 font-bold flex items-center gap-1.5">
+                  <Ship className="w-3.5 h-3.5 animate-bounce" /> Chargement du Système...
+                </span>
+                <span className="text-amber-300 font-bold">{splashProgress}%</span>
+              </div>
+              <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 rounded-full transition-all duration-75 shadow-[0_0_12px_#f59e0b]"
+                  style={{ width: `${splashProgress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="z-10 pb-4 text-center text-xs text-slate-500 font-mono">
+            © 2026 Code Axis Digital Cameroun (CADC) • Tous droits réservés
+          </div>
+        </div>
+      )}
+
       {/* Background Layer with Cargo Ship Port Wallpaper */}
       <div className="absolute inset-0 z-0">
         <img
           src="/images/cargo_ship_port_bg.png"
           alt="Cargo Ship Port Background"
-          className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 border-none"
+          className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000"
         />
-        {/* Deep Gradient Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-900/60 backdrop-blur-[2px]" />
       </div>
 
-      {/* Top Navbar Bar Controls */}
-      <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+      {/* Top Controls Bar (Mobile & Desktop Accessible Theme Switcher) */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2 sm:gap-3">
         <button
           onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
-          className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-slate-900/80 px-3 py-1.5 text-xs font-bold uppercase text-amber-300 backdrop-blur-md transition hover:bg-slate-800 cursor-pointer shadow-lg"
+          className="flex items-center gap-1 rounded-xl border border-amber-500/30 bg-slate-900/90 px-3 py-1.5 text-xs font-bold uppercase text-amber-300 backdrop-blur-md transition hover:bg-slate-800 shadow-lg cursor-pointer"
         >
           🌐 {language}
         </button>
+        {/* Theme Switcher Button - Responsive & Highly Visible on Mobile */}
         <button
           onClick={cycleTheme}
-          className="rounded-xl border border-amber-500/30 bg-slate-900/80 p-2 text-amber-300 backdrop-blur-md transition hover:bg-slate-800 cursor-pointer shadow-lg"
+          title="Changer de thème"
+          className="flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/20 to-slate-900 px-3 py-1.5 text-xs font-bold text-amber-300 backdrop-blur-md transition hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
         >
-          {uiTheme === 'light' ? '☀️' : uiTheme === 'dark' ? '🌙' : '💻'}
+          <span>{uiTheme === 'light' ? '☀️ Thème Clair' : uiTheme === 'dark' ? '🌙 Thème Sombre' : '💻 Système'}</span>
         </button>
       </div>
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-[440px] mx-4 animate-in fade-in zoom-in-95 duration-500">
-        <div className="text-center mb-6">
-          {/* Logo Badge */}
+        <div className="text-center mb-5">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 rounded-2xl shadow-xl shadow-amber-500/20 mb-3 border border-amber-300/40">
             <Ship className="w-8 h-8 text-slate-950" />
           </div>
 
-          <div className="inline-block">
+          <div>
             <span className="text-xs font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 mb-1 inline-block">
               CADC • Code Axis Digital Cameroun
             </span>
             <h1 className="text-3xl font-black text-white tracking-tight">KAMLOG EM-ERP</h1>
           </div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">
-            Système d'Accès Sécurisé Logistique & Portuaire
+            Authentification Administrateur & Personnel
           </p>
         </div>
 
-        <div className="bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/80 border border-slate-800 p-8 text-white">
-          <div className="mb-6 pb-4 border-b border-slate-800/80">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" /> Authentification Institutionnelle
+        <div className="bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/80 border border-slate-800 p-7 text-white">
+          <div className="mb-5 pb-3 border-b border-slate-800/80">
+            <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" /> Authentification Restreinte
             </h2>
-            <p className="text-xs text-slate-400 mt-1">Saisissez vos identifiants d'entreprise certifiés.</p>
+            <p className="text-xs text-slate-400 mt-0.5">Saisissez l'identifiant attribué par votre administrateur.</p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {expiryWarning && (
+            <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-semibold flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>{expiryWarning}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2" htmlFor="email">
-                Adresse Email Institutionnelle
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5" htmlFor="email">
+                Identifiant / Email Institutionnel
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -134,21 +268,19 @@ export default function LoginPage() {
                   {...register('email')}
                   id="email"
                   type="email"
-                  placeholder="agent@kamlog.cm"
-                  className="w-full h-12 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
+                  placeholder="kamga@kamlog.cm"
+                  className="w-full h-11 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
                 />
               </div>
               {errors.email && <p className="text-red-400 text-xs mt-1 font-medium">{errors.email.message}</p>}
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center mb-1.5">
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider" htmlFor="password">
                   Mot de Passe
                 </label>
-                <Link href="/reset-password" className="text-xs text-amber-400 hover:text-amber-300 font-semibold transition">
-                  Mot de passe oublié ?
-                </Link>
+                <span className="text-[11px] text-amber-400 font-mono">Mot de passe par défaut: admin123</span>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -157,7 +289,7 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••••••"
-                  className="w-full h-12 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
+                  className="w-full h-11 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
                 />
               </div>
               {errors.password && <p className="text-red-400 text-xs mt-1 font-medium">{errors.password.message}</p>}
@@ -171,11 +303,11 @@ export default function LoginPage() {
                   type="checkbox"
                   className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
                 />
-                Mémoriser la session
+                Rester connecté
               </label>
 
-              <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" /> MFA Activé
+              <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Création Admin Uniquement
               </span>
             </div>
 
@@ -199,12 +331,81 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-        </div>
 
-        <p className="text-center text-xs text-slate-500 font-mono mt-6">
-          © 2026 Code Axis Digital Cameroun (CADC) • All rights reserved
-        </p>
+          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+            <span>Seul l'Admin crée les comptes</span>
+            <Link href="/register" className="text-amber-400 hover:underline font-semibold">
+              Notice Inscription
+            </Link>
+          </div>
+        </div>
       </div>
+
+      {/* 🔐 MODAL DE CHANGEMENT OBLIGATOIRE DE MOT DE PASSE (Premier Accès & Expiration 90j) */}
+      {mustChangePasswordModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95 duration-300">
+            <div className="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
+              <KeyRound className="w-7 h-7" />
+            </div>
+
+            <div className="text-center">
+              <span className="text-[11px] font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 inline-block mb-1">
+                Premier Accès ou Expiration 90 jours
+              </span>
+              <h2 className="text-xl font-black text-slate-100">Changement de Mot de Passe Obligatoire</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Le mot de passe par défaut <b className="text-amber-300">admin123</b> doit être immédiatement remplacé.
+              </p>
+            </div>
+
+            <form onSubmit={handlePasswordChangeSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Nouveau Mot de Passe</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min. 8 caractères (lettres + chiffres)"
+                  className="w-full h-11 px-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Confirmer le Mot de Passe</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Répétez le nouveau mot de passe"
+                  className="w-full h-11 px-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono"
+                  required
+                />
+              </div>
+
+              {passwordError && (
+                <div className="p-3 bg-red-950/70 border border-red-500/40 rounded-xl text-red-300 text-xs font-semibold">
+                  {passwordError}
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="p-3 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" /> Mot de passe enregistré ! Redirection...
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black rounded-xl text-sm shadow-xl shadow-amber-500/20 transition-all cursor-pointer"
+              >
+                Enregistrer le Nouveau Mot de Passe
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
