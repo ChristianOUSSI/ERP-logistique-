@@ -21,6 +21,7 @@ class AdminCreateUserRequest(BaseModel):
     nom_complet: str
     role: str = Field(..., description="Role principal (ex: CHAUFFEUR, ADMIN, RESPONSABLE_LOGISTIQUE)")
     roles: Optional[List[str]] = Field(default=["CHAUFFEUR"], description="Liste des roles rattachés")
+    modules_allowed: Optional[List[str]] = Field(default=[], description="Liste des modules autorisés")
     telephone: Optional[str] = None
     departement: Optional[str] = "LOGISTIQUE"
 

@@ -3,17 +3,27 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
 
-const PREDEFINED_USERS: Record<string, { id: string; nom_complet: string; role: string; roles: string[] }> = {
-  'admin@kamlog.cm': { id: 'usr-001', nom_complet: 'Administrateur CADC', role: 'ADMIN', roles: ['ADMIN'] },
-  'kamga@kamlog.cm': { id: 'usr-002', nom_complet: 'Monsieur Kamga (Chauffeur)', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'] },
-  'chauffeur@kamlog.cm': { id: 'usr-002', nom_complet: 'Chauffeur Routier Port', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'] },
-  'magasinier@kamlog.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'] },
-  'financier@kamlog.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'] },
-  'qhse@kamlog.cm': { id: 'usr-005', nom_complet: 'Inspecteur QHSE Port', role: 'QHSE', roles: ['QHSE'] },
-  'douane@kamlog.cm': { id: 'usr-006', nom_complet: 'Déclarant en Douane & Transit', role: 'DOUANE', roles: ['DOUANE', 'TRANSIT'] },
-  'parc@kamlog.cm': { id: 'usr-007', nom_complet: 'Gestionnaire Parc & Flotte', role: 'PARC', roles: ['PARC'] },
-  'maintenance@kamlog.cm': { id: 'usr-008', nom_complet: 'Ingénieur Maintenance Garages', role: 'MAINTENANCE', roles: ['MAINTENANCE'] },
-  'b2b@kamlog.cm': { id: 'usr-009', nom_complet: 'Client Partenaire B2B', role: 'CLIENT', roles: ['CLIENT', 'CLIENT_B2B'] },
+const ALL_MODULES = [
+  "admin", "master-data", "transport", "finance", "magasin", "parc", "audit",
+  "dashboard", "rh", "acconage", "qhse", "transit", "maintenance", "client-portal",
+  "cotations", "tracking", "fuel-guard", "procurement", "compliance", "bi"
+];
+
+const PREDEFINED_USERS: Record<string, { id: string; nom_complet: string; role: string; roles: string[]; modules_allowed: string[] }> = {
+  'admin@kamlog.cm': { id: 'usr-001', nom_complet: 'Administrateur CADC', role: 'ADMIN', roles: ['ADMIN'], modules_allowed: ALL_MODULES },
+  'kamga@kamlog.cm': { id: 'usr-002', nom_complet: 'Monsieur Kamga (Chauffeur)', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
+  'chauffeur@kamlog.cm': { id: 'usr-002', nom_complet: 'Chauffeur Routier Port', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
+  'magasinier@kamlog.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
+  'magasin@kamlog.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
+  'financier@kamlog.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
+  'finance@kamlog.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
+  'qhse@kamlog.cm': { id: 'usr-005', nom_complet: 'Inspecteur QHSE Port', role: 'QHSE', roles: ['QHSE'], modules_allowed: ['qhse', 'compliance'] },
+  'douane@kamlog.cm': { id: 'usr-006', nom_complet: 'Déclarant en Douane & Transit', role: 'DOUANE', roles: ['DOUANE', 'TRANSIT'], modules_allowed: ['transit', 'master-data', 'acconage'] },
+  'parc@kamlog.cm': { id: 'usr-007', nom_complet: 'Gestionnaire Parc & Flotte', role: 'PARC', roles: ['PARC'], modules_allowed: ['parc', 'transport', 'maintenance', 'fuel-guard'] },
+  'maintenance@kamlog.cm': { id: 'usr-008', nom_complet: 'Ingénieur Maintenance Garages', role: 'MAINTENANCE', roles: ['MAINTENANCE'], modules_allowed: ['maintenance', 'parc'] },
+  'b2b@kamlog.cm': { id: 'usr-009', nom_complet: 'Client Partenaire B2B', role: 'CLIENT', roles: ['CLIENT', 'CLIENT_B2B'], modules_allowed: ['client-portal', 'tracking', 'cotations'] },
+  'dispatcher@kamlog.cm': { id: 'usr-010', nom_complet: 'Chef Dispatch Transport', role: 'DISPATCHER', roles: ['DISPATCHER'], modules_allowed: ['transport', 'parc', 'magasin', 'tracking'] },
+  'auditor@kamlog.cm': { id: 'usr-011', nom_complet: 'Auditeur Interne ERP', role: 'AUDITOR', roles: ['AUDITOR'], modules_allowed: ['audit', 'compliance', 'bi'] },
 };
 
 export const authOptions: NextAuthOptions = {
@@ -45,12 +55,19 @@ export const authOptions: NextAuthOptions = {
             responseData = response.data;
           } catch (apiErr) {
             console.warn("Connexion serveur distant indisponible, bascule sur la session certifiée localement.", apiErr);
-            const predefined = PREDEFINED_USERS[email] || {
-              id: `usr-${Date.now()}`,
-              nom_complet: email.split('@')[0].toUpperCase(),
-              role: (email.includes('kamga') || email.includes('chauffeur')) ? 'CHAUFFEUR' : 'ADMIN',
-              roles: [(email.includes('kamga') || email.includes('chauffeur')) ? 'CHAUFFEUR' : 'ADMIN'],
+            const getFallbackForEmail = (em: string) => {
+              if (PREDEFINED_USERS[em]) return PREDEFINED_USERS[em];
+              if (em.includes('kamga') || em.includes('chauffeur')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] };
+              if (em.includes('magasin')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] };
+              if (em.includes('finan')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] };
+              if (em.includes('qhse')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'QHSE', roles: ['QHSE'], modules_allowed: ['qhse', 'compliance'] };
+              if (em.includes('douane')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'DOUANE', roles: ['DOUANE', 'TRANSIT'], modules_allowed: ['transit', 'master-data', 'acconage'] };
+              if (em.includes('parc')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'PARC', roles: ['PARC'], modules_allowed: ['parc', 'transport', 'maintenance', 'fuel-guard'] };
+              if (em.includes('audit')) return { id: `usr-${Date.now()}`, nom_complet: em, role: 'AUDITOR', roles: ['AUDITOR'], modules_allowed: ['audit', 'compliance', 'bi'] };
+              return { id: `usr-${Date.now()}`, nom_complet: em.split('@')[0].toUpperCase(), role: 'ADMIN', roles: ['ADMIN'], modules_allowed: ALL_MODULES };
             };
+
+            const predefined = getFallbackForEmail(email);
 
             responseData = {
               access_token: `jwt-kamlog-${Date.now()}`,
@@ -60,24 +77,32 @@ export const authOptions: NextAuthOptions = {
                 nom_complet: predefined.nom_complet,
                 role: predefined.role,
                 roles: predefined.roles,
+                modules_allowed: predefined.modules_allowed,
               }
             };
           }
 
           const token = responseData?.access_token || `jwt-token-${Date.now()}`;
+          const fallbackObj = PREDEFINED_USERS[email] || getFallbackForEmail(email);
           const userData = responseData?.user || {
-            id: 'usr-001',
+            id: fallbackObj.id,
             email: email,
-            nom_complet: email,
-            roles: [(email.includes('kamga') || email.includes('chauffeur')) ? 'CHAUFFEUR' : 'ADMIN'],
+            nom_complet: fallbackObj.nom_complet || email,
+            role: fallbackObj.role,
+            roles: fallbackObj.roles,
+            modules_allowed: fallbackObj.modules_allowed,
           };
+
+          const userRoles = userData.roles || [userData.role || fallbackObj.role];
+          const userModules = userData.modules_allowed || fallbackObj.modules_allowed;
 
           return {
             id: String(userData.id || 'usr-001'),
             email: userData.email || email,
             accessToken: token,
             refreshToken: token,
-            roles: userData.roles || [userData.role || 'ADMIN'],
+            roles: userRoles,
+            modules_allowed: userModules,
             nom: userData.nom_complet || userData.full_name || 'Utilisateur ERP',
             prenom: '',
             is_active: true,
@@ -95,6 +120,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.roles = (user as any).roles;
+        token.modules_allowed = (user as any).modules_allowed;
         token.nom = user.nom;
         token.prenom = user.prenom;
         token.is_active = user.is_active;
@@ -109,6 +135,8 @@ export const authOptions: NextAuthOptions = {
       session.user.refreshToken = token.refreshToken as string;
       // @ts-ignore
       session.user.roles = (token.roles as string[]) || [];
+      // @ts-ignore
+      session.user.modules_allowed = (token.modules_allowed as string[]) || [];
       // @ts-ignore
       session.user.nom = token.nom as string;
       // @ts-ignore

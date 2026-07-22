@@ -5,7 +5,13 @@ from app.schemas.auth import LoginRequest, LoginResponse, AdminCreateUserRequest
 
 router = APIRouter(tags=["Auth"])
 
-# Base de données certifiée d'utilisateurs rattachés par rôle indépendant (Seeders ERP)
+ALL_MODULES = [
+    "admin", "master-data", "transport", "finance", "magasin", "parc", "audit",
+    "dashboard", "rh", "acconage", "qhse", "transit", "maintenance", "client-portal",
+    "cotations", "tracking", "fuel-guard", "procurement", "compliance", "bi"
+]
+
+# Base de données certifiée d'utilisateurs rattachés par rôle et modules autorisés (Seeders ERP)
 USERS_DB = {
     "admin@kamlog.cm": {
         "id": "usr-001",
@@ -13,6 +19,7 @@ USERS_DB = {
         "nom_complet": "Administrateur Système CADC",
         "role": "ADMIN",
         "roles": ["ADMIN", "DIRECTEUR_LOGISTIQUE"],
+        "modules_allowed": ALL_MODULES,
         "password_hash": "admin123",
         "must_change_password": False,
         "password_changed_at": datetime.utcnow() - timedelta(days=10),
@@ -20,9 +27,10 @@ USERS_DB = {
     "kamga@kamlog.cm": {
         "id": "usr-002",
         "email": "kamga@kamlog.cm",
-        "nom_complet": "Monsieur Kamga",
+        "nom_complet": "Monsieur Kamga (Chauffeur)",
         "role": "CHAUFFEUR",
         "roles": ["CHAUFFEUR"],
+        "modules_allowed": ["transport", "tracking", "fuel-guard"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=80),
@@ -33,6 +41,7 @@ USERS_DB = {
         "nom_complet": "Monsieur Kamga (Chauffeur)",
         "role": "CHAUFFEUR",
         "roles": ["CHAUFFEUR"],
+        "modules_allowed": ["transport", "tracking", "fuel-guard"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=80),
@@ -43,6 +52,18 @@ USERS_DB = {
         "nom_complet": "Chef Magasinier MAG3",
         "role": "MAGASINIER",
         "roles": ["MAGASINIER", "MAGASIN"],
+        "modules_allowed": ["magasin", "master-data"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=5),
+    },
+    "magasin@kamlog.cm": {
+        "id": "usr-003",
+        "email": "magasin@kamlog.cm",
+        "nom_complet": "Chef Magasinier MAG3",
+        "role": "MAGASINIER",
+        "roles": ["MAGASINIER", "MAGASIN"],
+        "modules_allowed": ["magasin", "master-data"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=5),
@@ -53,6 +74,18 @@ USERS_DB = {
         "nom_complet": "Responsable Financier ERP",
         "role": "FINANCE",
         "roles": ["FINANCE", "FINANCIER"],
+        "modules_allowed": ["finance", "cotations", "procurement"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=12),
+    },
+    "finance@kamlog.cm": {
+        "id": "usr-004",
+        "email": "finance@kamlog.cm",
+        "nom_complet": "Responsable Financier ERP",
+        "role": "FINANCE",
+        "roles": ["FINANCE", "FINANCIER"],
+        "modules_allowed": ["finance", "cotations", "procurement"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=12),
@@ -63,6 +96,7 @@ USERS_DB = {
         "nom_complet": "Inspecteur QHSE Port",
         "role": "QHSE",
         "roles": ["QHSE"],
+        "modules_allowed": ["qhse", "compliance"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=15),
@@ -73,6 +107,7 @@ USERS_DB = {
         "nom_complet": "Déclarant en Douane & Transit",
         "role": "DOUANE",
         "roles": ["DOUANE", "TRANSIT"],
+        "modules_allowed": ["transit", "master-data", "acconage"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=20),
@@ -83,29 +118,21 @@ USERS_DB = {
         "nom_complet": "Gestionnaire Parc & Flotte",
         "role": "PARC",
         "roles": ["PARC"],
+        "modules_allowed": ["parc", "transport", "maintenance", "fuel-guard"],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=2),
     },
-    "maintenance@kamlog.cm": {
+    "auditor@kamlog.cm": {
         "id": "usr-008",
-        "email": "maintenance@kamlog.cm",
-        "nom_complet": "Ingénieur Maintenance Garages",
-        "role": "MAINTENANCE",
-        "roles": ["MAINTENANCE"],
+        "email": "auditor@kamlog.cm",
+        "nom_complet": "Auditeur Interne ERP",
+        "role": "AUDITOR",
+        "roles": ["AUDITOR"],
+        "modules_allowed": ["audit", "compliance", "bi"],
         "password_hash": "admin123",
         "must_change_password": True,
-        "password_changed_at": datetime.utcnow() - timedelta(days=1),
-    },
-    "b2b@kamlog.cm": {
-        "id": "usr-009",
-        "email": "b2b@kamlog.cm",
-        "nom_complet": "Client Partenaire B2B",
-        "role": "CLIENT",
-        "roles": ["CLIENT", "CLIENT_B2B"],
-        "password_hash": "admin123",
-        "must_change_password": False,
-        "password_changed_at": datetime.utcnow() - timedelta(days=30),
+        "password_changed_at": datetime.utcnow() - timedelta(days=4),
     }
 }
 
@@ -116,12 +143,14 @@ def login(payload: LoginRequest):
 
     if not user:
         role = "CHAUFFEUR" if "kamga" in user_email or "chauffeur" in user_email else "ADMIN"
+        modules = ["transport", "tracking", "fuel-guard"] if role == "CHAUFFEUR" else ALL_MODULES
         user = {
             "id": f"usr-{len(USERS_DB) + 1:03d}",
             "email": user_email,
             "nom_complet": user_email.split('@')[0].capitalize(),
             "role": role,
             "roles": [role],
+            "modules_allowed": modules,
             "password_hash": payload.password,
             "must_change_password": payload.password == "admin123",
             "password_changed_at": datetime.utcnow(),
@@ -149,6 +178,7 @@ def login(payload: LoginRequest):
             "nom_complet": user["nom_complet"],
             "role": user["role"],
             "roles": user["roles"],
+            "modules_allowed": user.get("modules_allowed", []),
         }
     }
 
@@ -162,6 +192,7 @@ def get_me(email: str = "admin@kamlog.cm"):
         "nom_complet": user["nom_complet"],
         "role": user["role"],
         "roles": user["roles"],
+        "modules_allowed": user.get("modules_allowed", []),
         "is_active": True,
     }
 
@@ -181,6 +212,7 @@ def create_user_admin(payload: AdminCreateUserRequest):
         "nom_complet": payload.nom_complet,
         "role": payload.role,
         "roles": payload.roles or [payload.role],
+        "modules_allowed": payload.modules_allowed or [],
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow(),

@@ -9,6 +9,7 @@ interface User {
   id: string;
   email: string;
   roles: string[];
+  modulesAllowed: string[];
   fullName: string;
   agencyId: number;
 }
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: (session.user as any).id || '',
         email: session.user.email || '',
         roles: ((session.user as any).roles as string[]) || [],
+        modulesAllowed: ((session.user as any).modules_allowed as string[]) || [],
         fullName: (session.user as any).nom || '',
         agencyId: 1, // Default fallback
       });

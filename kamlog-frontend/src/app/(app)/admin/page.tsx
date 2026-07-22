@@ -117,6 +117,30 @@ export default function AdminHubPage() {
       must_change_password: true,
       created_at: '2026-03-10',
     },
+    {
+      id: 'usr-007',
+      email: 'parc@kamlog.cm',
+      nom_complet: 'Gestionnaire Parc & Flotte',
+      role: 'PARC',
+      roles: ['PARC'],
+      departement: 'PARC & GARAGE',
+      telephone: '+237 694 44 55 66',
+      is_active: true,
+      must_change_password: true,
+      created_at: '2026-03-12',
+    },
+    {
+      id: 'usr-008',
+      email: 'auditor@kamlog.cm',
+      nom_complet: 'Auditeur Interne ERP',
+      role: 'AUDITOR',
+      roles: ['AUDITOR'],
+      departement: 'AUDIT & COMPLIANCE',
+      telephone: '+237 695 11 22 33',
+      is_active: true,
+      must_change_password: true,
+      created_at: '2026-03-15',
+    },
   ])
 
   // New User Creation Modal State
@@ -126,7 +150,27 @@ export default function AdminHubPage() {
   const [newRole, setNewRole] = useState('CHAUFFEUR')
   const [newDepartement, setNewDepartement] = useState('LOGISTIQUE')
   const [newTelephone, setNewTelephone] = useState('')
+  const [newModulesAllowed, setNewModulesAllowed] = useState<string[]>(['transport', 'tracking', 'fuel-guard'])
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const ALL_AVAILABLE_MODULES = [
+    { id: 'transport', label: 'K-Transport' },
+    { id: 'magasin', label: 'K-Magasin' },
+    { id: 'finance', label: 'K-Finance' },
+    { id: 'acconage', label: 'K-Acconage' },
+    { id: 'qhse', label: 'K-QHSE' },
+    { id: 'transit', label: 'K-Transit' },
+    { id: 'maintenance', label: 'K-Maintenance' },
+    { id: 'cotations', label: 'K-Cotation' },
+    { id: 'tracking', label: 'K-Tracking & e-POD' },
+    { id: 'fuel-guard', label: 'K-FuelGuard' },
+    { id: 'procurement', label: 'K-Procurement' },
+    { id: 'compliance', label: 'K-Compliance' },
+    { id: 'bi', label: 'K-Analytics BI' },
+    { id: 'master-data', label: 'Gestion des Tiers' },
+    { id: 'rh', label: 'Ressources Humaines' },
+    { id: 'client-portal', label: 'Portail Client B2B' },
+  ]
 
   // Roles Matrix State
   const [rolesList, setRolesList] = useState([
@@ -170,6 +214,7 @@ export default function AdminHubPage() {
           nom_complet: newNomComplet,
           role: newRole,
           roles: [newRole],
+          modules_allowed: newModulesAllowed,
           departement: newDepartement,
           telephone: newTelephone
         })
@@ -179,7 +224,7 @@ export default function AdminHubPage() {
 
       const newUserObj: SystemUser = {
         id: `usr-${String(users.length + 1).padStart(3, '0')}`,
-        email: newEmail.toLowerCase().strip ? newEmail.toLowerCase().trim() : newEmail,
+        email: newEmail.toLowerCase().trim ? newEmail.toLowerCase().trim() : newEmail,
         nom_complet: newNomComplet,
         role: newRole,
         roles: [newRole],
@@ -191,13 +236,14 @@ export default function AdminHubPage() {
       }
 
       setUsers([newUserObj, ...users])
-      toast.success(`Compte créé avec succès pour ${newNomComplet} (Mot de passe par défaut: admin123)`)
+      toast.success(`Compte créé avec succès pour ${newNomComplet} (${newModulesAllowed.length} modules autorisés - Mot de passe: admin123)`)
       
       // Reset form
       setNewNomComplet('')
       setNewEmail('')
       setNewRole('CHAUFFEUR')
       setNewTelephone('')
+      setNewModulesAllowed(['transport', 'tracking', 'fuel-guard'])
       setShowCreateModal(false)
     } catch (error: any) {
       toast.error(error?.message || "Erreur lors de la création du compte.")
@@ -613,17 +659,70 @@ export default function AdminHubPage() {
                 <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Rôle Principal</label>
                 <select
                   value={newRole}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  className="w-full h-10 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
+                  onChange={(e) => {
+                    const role = e.target.value;
+                    setNewRole(role);
+                    if (role === 'CHAUFFEUR') setNewModulesAllowed(['transport', 'tracking', 'fuel-guard']);
+                    else if (role === 'MAGASINIER') setNewModulesAllowed(['magasin', 'master-data']);
+                    else if (role === 'FINANCE') setNewModulesAllowed(['finance', 'cotations', 'procurement']);
+                    else if (role === 'QHSE') setNewModulesAllowed(['qhse', 'compliance']);
+                    else if (role === 'DOUANE') setNewModulesAllowed(['transit', 'master-data', 'acconage']);
+                    else if (role === 'PARC') setNewModulesAllowed(['parc', 'transport', 'maintenance', 'fuel-guard']);
+                    else if (role === 'AUDITOR') setNewModulesAllowed(['audit', 'compliance', 'bi']);
+                    else if (role === 'ADMIN') setNewModulesAllowed(ALL_AVAILABLE_MODULES.map(m => m.id));
+                  }}
+                  className="w-full h-10 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-semibold"
                 >
-                  <option value="CHAUFFEUR">CHAUFFEUR (Accès restreint au Transport)</option>
+                  <option value="CHAUFFEUR">CHAUFFEUR (Accès restreint au Transport & Suivi)</option>
                   <option value="MAGASINIER">MAGASINIER (Accès restreint à l'Entrepôt)</option>
-                  <option value="FINANCE">FINANCE (Accès restreint à la Comptabilité)</option>
-                  <option value="QHSE">QHSE (Accès restreint à la Sécurité)</option>
-                  <option value="DOUANE">DOUANE / TRANSIT (Accès restreint aux Déclarations)</option>
-                  <option value="PARC">PARC (Accès restreint à la Flotte)</option>
-                  <option value="ADMIN">ADMIN (Accès Total)</option>
+                  <option value="FINANCE">FINANCE (Accès restreint à la Comptabilité & Cotation)</option>
+                  <option value="QHSE">QHSE (Accès restreint à la Sécurité & Conformité)</option>
+                  <option value="DOUANE">DOUANE / TRANSIT (Accès restreint aux Déclarations & Acconage)</option>
+                  <option value="PARC">PARC (Accès restreint à la Flotte & Maintenance)</option>
+                  <option value="AUDITOR">AUDITOR (Accès restreint à l'Audit, Conformité & BI)</option>
+                  <option value="ADMIN">ADMIN (Accès Total à Tous les Modules)</option>
                 </select>
+              </div>
+
+              {/* Sélection interactive des modules autorisés */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-amber-400 uppercase">
+                    Modules Autorisés pour ce Profil ({newModulesAllowed.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newModulesAllowed.length === ALL_AVAILABLE_MODULES.length) {
+                        setNewModulesAllowed([]);
+                      } else {
+                        setNewModulesAllowed(ALL_AVAILABLE_MODULES.map(m => m.id));
+                      }
+                    }}
+                    className="text-[10px] text-amber-300 hover:underline font-mono"
+                  >
+                    {newModulesAllowed.length === ALL_AVAILABLE_MODULES.length ? "Tout désélectionner" : "Tout sélectionner"}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 p-3 bg-slate-950 border border-slate-800 rounded-2xl max-h-36 overflow-y-auto">
+                  {ALL_AVAILABLE_MODULES.map((mod) => (
+                    <label key={mod.id} className="flex items-center gap-2 text-[11px] text-slate-300 hover:text-white cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={newModulesAllowed.includes(mod.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setNewModulesAllowed([...newModulesAllowed, mod.id]);
+                          } else {
+                            setNewModulesAllowed(newModulesAllowed.filter(m => m !== mod.id));
+                          }
+                        }}
+                        className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                      />
+                      <span className="truncate">{mod.label}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
               <div>
