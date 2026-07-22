@@ -64,6 +64,7 @@ export default function ModuleSidebar({
 
   const navItems = [
     { label: "Vue Globale", path: "/dashboard/global", icon: LayoutDashboard },
+    { label: "Administration ERP", path: "/admin", icon: ShieldAlert },
     { label: "K-Transport", path: "/transport/control", icon: Truck },
     { label: "K-Magasin", path: "/magasin/dashboard", icon: Package },
     { label: "K-Finance", path: "/finance/overview", icon: DollarSign },
@@ -80,6 +81,7 @@ export default function ModuleSidebar({
     { label: "Gestion des Tiers", path: "/master-data/tiers", icon: Users },
     { label: "Ressources Humaines", path: "/rh/dashboard", icon: UserCheck },
     { label: "Portail Client B2B", path: "/client-portal", icon: Globe },
+    { label: "Paramètres & Profil", path: "/settings", icon: Settings },
   ];
 
   const sidebarContent = (

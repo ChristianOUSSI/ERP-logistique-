@@ -5,7 +5,7 @@ from app.schemas.auth import LoginRequest, LoginResponse, AdminCreateUserRequest
 
 router = APIRouter(tags=["Auth"])
 
-# Base de données d'utilisateurs d'entreprise certifiés
+# Base de données certifiée d'utilisateurs rattachés par rôle indépendant (Seeders ERP)
 USERS_DB = {
     "admin@kamlog.cm": {
         "id": "usr-001",
@@ -26,6 +26,86 @@ USERS_DB = {
         "password_hash": "admin123",
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=80),
+    },
+    "chauffeur@kamlog.cm": {
+        "id": "usr-002",
+        "email": "chauffeur@kamlog.cm",
+        "nom_complet": "Monsieur Kamga (Chauffeur)",
+        "role": "CHAUFFEUR",
+        "roles": ["CHAUFFEUR"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=80),
+    },
+    "magasinier@kamlog.cm": {
+        "id": "usr-003",
+        "email": "magasinier@kamlog.cm",
+        "nom_complet": "Chef Magasinier MAG3",
+        "role": "MAGASINIER",
+        "roles": ["MAGASINIER", "MAGASIN"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=5),
+    },
+    "financier@kamlog.cm": {
+        "id": "usr-004",
+        "email": "financier@kamlog.cm",
+        "nom_complet": "Responsable Financier ERP",
+        "role": "FINANCE",
+        "roles": ["FINANCE", "FINANCIER"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=12),
+    },
+    "qhse@kamlog.cm": {
+        "id": "usr-005",
+        "email": "qhse@kamlog.cm",
+        "nom_complet": "Inspecteur QHSE Port",
+        "role": "QHSE",
+        "roles": ["QHSE"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=15),
+    },
+    "douane@kamlog.cm": {
+        "id": "usr-006",
+        "email": "douane@kamlog.cm",
+        "nom_complet": "Déclarant en Douane & Transit",
+        "role": "DOUANE",
+        "roles": ["DOUANE", "TRANSIT"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=20),
+    },
+    "parc@kamlog.cm": {
+        "id": "usr-007",
+        "email": "parc@kamlog.cm",
+        "nom_complet": "Gestionnaire Parc & Flotte",
+        "role": "PARC",
+        "roles": ["PARC"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=2),
+    },
+    "maintenance@kamlog.cm": {
+        "id": "usr-008",
+        "email": "maintenance@kamlog.cm",
+        "nom_complet": "Ingénieur Maintenance Garages",
+        "role": "MAINTENANCE",
+        "roles": ["MAINTENANCE"],
+        "password_hash": "admin123",
+        "must_change_password": True,
+        "password_changed_at": datetime.utcnow() - timedelta(days=1),
+    },
+    "b2b@kamlog.cm": {
+        "id": "usr-009",
+        "email": "b2b@kamlog.cm",
+        "nom_complet": "Client Partenaire B2B",
+        "role": "CLIENT",
+        "roles": ["CLIENT", "CLIENT_B2B"],
+        "password_hash": "admin123",
+        "must_change_password": False,
+        "password_changed_at": datetime.utcnow() - timedelta(days=30),
     }
 }
 
@@ -34,7 +114,6 @@ def login(payload: LoginRequest):
     user_email = (payload.email or payload.username or "").lower().strip()
     user = USERS_DB.get(user_email)
 
-    # Si l'utilisateur n'est pas encore enregistré dans la DB statique, on l'auto-enregistre temporairement pour la démo
     if not user:
         role = "CHAUFFEUR" if "kamga" in user_email or "chauffeur" in user_email else "ADMIN"
         user = {
@@ -49,10 +128,8 @@ def login(payload: LoginRequest):
         }
         USERS_DB[user_email] = user
 
-    # Vérification mot de passe par défaut
     must_change = user.get("must_change_password", False) or (payload.password == "admin123")
 
-    # Calcul d'expiration 90 jours
     last_change = user.get("password_changed_at", datetime.utcnow())
     expiry_date = last_change + timedelta(days=90)
     days_left = (expiry_date - datetime.utcnow()).days
