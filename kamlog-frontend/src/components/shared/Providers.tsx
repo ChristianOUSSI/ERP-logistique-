@@ -50,6 +50,8 @@ function AuthSync({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+import PwaInstallPrompt from '@/components/shared/PwaInstallPrompt'
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -68,6 +70,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             <SettingsProvider>
               <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                 {children}
+                <PwaInstallPrompt />
               </ThemeProvider>
             </SettingsProvider>
           </CustomAuthProvider>

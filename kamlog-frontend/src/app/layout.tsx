@@ -8,14 +8,22 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
-  title: 'KAMLOG EM-ERP',
-  description: 'Système de Gestion Logistique Intégré  Port de Douala',
-  icons: { icon: '/logo-kamlog.svg', apple: '/logo-kamlog.svg' },
+  title: 'KAMLOG EM-ERP • Code Axis Digital Cameroun',
+  description: 'Système ERP Logistique, Transport & Portuaire de Classe Mondiale',
+  icons: {
+    icon: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+  },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
-    title: 'KAMLOG EM-ERP',
+    statusBarStyle: 'black-translucent',
+    title: 'KAMLOG ERP',
   },
 }
 
