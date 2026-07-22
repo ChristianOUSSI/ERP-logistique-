@@ -1,5 +1,7 @@
 # scripts/seed_data.py — Seed Data KAMLOG ERP
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.exc import OperationalError, ProgrammingError
