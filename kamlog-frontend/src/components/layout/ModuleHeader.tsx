@@ -112,8 +112,20 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
   }
 
   const connect = useCallback(() => {
-    if (!user) return
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/api/ws/events'
+    let wsUrl = process.env.NEXT_PUBLIC_WS_URL
+    if (!wsUrl) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      if (apiUrl) {
+        const wsProto = apiUrl.startsWith('https') ? 'wss://' : 'ws://'
+        const cleanHost = apiUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+        wsUrl = `${wsProto}${cleanHost}/api/v1/ws/events`
+      } else if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+        const wsProto = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+        wsUrl = `${wsProto}${window.location.hostname}/api/v1/ws/events`
+      } else {
+        wsUrl = 'ws://localhost:8000/api/v1/ws/events'
+      }
+    }
     const socket = new WebSocket(`${wsUrl}?token=${user.id}`)
     socketRef.current = socket
     setWsStatus('connecting')

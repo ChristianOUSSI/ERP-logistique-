@@ -70,3 +70,15 @@ def get_audit_logs():
         {"id": "LOG-107", "action": "Connexion Réussie (NextAuth)", "user": "admin@kamlog.cm", "target": "Système ERP", "timestamp": "22/07/2026 00:45", "status": "SUCCESS"},
         {"id": "LOG-106", "action": "Modification Matrice RBAC", "user": "admin@kamlog.cm", "target": "Rôle MAGASINIER", "timestamp": "21/07/2026 23:30", "status": "SUCCESS"},
     ]
+
+@router.get("/dashboard/global-kpis")
+def get_global_kpis():
+    """KPIS globaux pour le tableau de bord exécutif ERP."""
+    return {
+        "chiffre_affaires_xaf": 142500000.0,
+        "missions_transport_actives": 14,
+        "inspections_qhse_conformes_pct": 98.5,
+        "taux_occupation_magasin_pct": 76.2,
+        "utilisateurs_actifs_total": len(USERS_DB)
+    }
+

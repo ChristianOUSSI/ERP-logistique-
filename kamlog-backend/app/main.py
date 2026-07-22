@@ -120,7 +120,7 @@ from app.routers.v1 import auth, tiers, transport, finance, parc, documents, ale
 
 from app.routers.v1 import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, incidents, public_api, rh
 
-from app.routers.v1 import bill_of_loading
+from app.routers.v1 import bill_of_loading, qhse, new_k_modules
 
 from app.config import settings
 
@@ -550,6 +550,8 @@ safe_include_router(purchase, prefix="/api/v1/purchase", tags=["Achats"])
 safe_include_router(incidents, prefix="/api/v1/incidents", tags=["Incidents"])
 safe_include_router(public_api, prefix="/api/v1/public", tags=["Public API"])
 safe_include_router(rh, prefix="/api/v1/rh", tags=["Ressources Humaines"])
+safe_include_router(qhse, prefix="/api/v1/qhse", tags=["QHSE"])
+safe_include_router(new_k_modules)
 
 safe_include_router(auth, prefix="/api/auth", tags=["Auth - DEPRECATED"])
 safe_include_router(tiers, prefix="/api/tiers", tags=["Tiers - DEPRECATED"])
@@ -574,6 +576,8 @@ safe_include_router(purchase, prefix="/api/purchase", tags=["Achats - DEPRECATED
 safe_include_router(incidents, prefix="/api/incidents", tags=["Incidents - DEPRECATED"])
 safe_include_router(public_api, prefix="/api/public", tags=["Public API - DEPRECATED"])
 safe_include_router(rh, prefix="/api/rh", tags=["Ressources Humaines - DEPRECATED"])
+safe_include_router(qhse, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
+
 
 
 
