@@ -124,18 +124,19 @@ from app.routers.v1 import bill_of_loading
 
 from app.config import settings
 
-import sentry_sdk
-
-from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
-
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-
-from sentry_sdk.integrations.redis import RedisIntegration
-
-from sentry_sdk.integrations.celery import CeleryIntegration
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+    try:
+        from sentry_sdk.integrations.celery import CeleryIntegration
+    except Exception:
+        CeleryIntegration = None
+except Exception:
+    sentry_sdk = None
 
 from app.utils.logger import setup_logger
-
 from app.utils.monitoring import setup_monitoring
 
 from app.utils.error_handler import setup_error_handlers
@@ -458,7 +459,8 @@ app.add_middleware(TracingMiddleware)
 
 app.add_middleware(AuditMiddleware)
 
-app.add_middleware(IdempotencyMiddleware, redis_url=settings.REDIS_URL)
+redis_url_val = getattr(settings, "REDIS_URL", None)
+app.add_middleware(IdempotencyMiddleware, redis_url=redis_url_val)
 
 
 
@@ -482,149 +484,96 @@ app.add_middleware(
 
 
 
+def safe_include_router(mod_or_router, prefix: str = "", tags: list = None):
+    tags = tags or []
+    try:
+        r = getattr(mod_or_router, "router", None) if not hasattr(mod_or_router, "routes") else mod_or_router
+        if r is not None:
+            app.include_router(r, prefix=prefix, tags=tags)
+    except Exception as err:
+        logger.warning(f"Could not register router for prefix '{prefix}': {err}")
+
 # Routers - Version 1 API
-
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
-
-app.include_router(tiers.router, prefix="/api/v1/tiers", tags=["Tiers"])
-
-app.include_router(transport.router, prefix="/api/v1/transport", tags=["Transport"])
-
-app.include_router(finance.router, prefix="/api/v1/finance", tags=["Finance"])
-
-app.include_router(parc.router, prefix="/api/v1/parc", tags=["Parc"])
-
-app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
+safe_include_router(auth, prefix="/api/v1/auth", tags=["Auth"])
+safe_include_router(tiers, prefix="/api/v1/tiers", tags=["Tiers"])
+safe_include_router(transport, prefix="/api/v1/transport", tags=["Transport"])
+safe_include_router(finance, prefix="/api/v1/finance", tags=["Finance"])
+safe_include_router(parc, prefix="/api/v1/parc", tags=["Parc"])
+safe_include_router(documents, prefix="/api/v1/documents", tags=["Documents"])
 
 from app.routers import ws
-
-app.include_router(ws.router, prefix="/api/v1/ws", tags=["WebSockets"])
+safe_include_router(ws, prefix="/api/v1/ws", tags=["WebSockets"])
 
 from app.routers import collaboration
-
-app.include_router(collaboration.router, prefix="/api/v1/collaboration", tags=["Collaboration"])
+safe_include_router(collaboration, prefix="/api/v1/collaboration", tags=["Collaboration"])
 
 from app.routers import iot
-
-app.include_router(iot.router, prefix="/api/v1/iot", tags=["IoT"])
+safe_include_router(iot, prefix="/api/v1/iot", tags=["IoT"])
 
 from app.routers import blockchain
-
-app.include_router(blockchain.router, prefix="/api/v1/blockchain", tags=["Blockchain"])
+safe_include_router(blockchain, prefix="/api/v1/blockchain", tags=["Blockchain"])
 
 from app.routers import sustainability
-
-app.include_router(sustainability.router, prefix="/api/v1/sustainability", tags=["Sustainability"])
-
-# Backward compatibility - WebSocket endpoints (deprecated, will be removed in v2)
-
-# These endpoints proxy to v1 implementations to ensure smooth transition
+safe_include_router(sustainability, prefix="/api/v1/sustainability", tags=["Sustainability"])
 
 from app.routers import ws as ws_v1
-
 from app.routers import collaboration as collaboration_v1
+safe_include_router(ws_v1, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
+safe_include_router(collaboration_v1, prefix="/api/collaboration", tags=["Collaboration - DEPRECATED"])
 
-app.include_router(ws_v1.router, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
+safe_include_router(alerts, prefix="/api/v1/alerts", tags=["Alerts"])
+safe_include_router(magasin, prefix="/api/v1/magasin", tags=["K-Magasin"])
+safe_include_router(gateway, prefix="/api/v1/gateway", tags=["Gateway"])
+safe_include_router(transactions, prefix="/api/v1/transactions", tags=["Transactions"])
+safe_include_router(goods_declaration, prefix="/api/v1/transport/goods-declarations", tags=["Goods Declaration"])
+safe_include_router(removal_slip, prefix="/api/v1/magasin/removal-slips", tags=["Removal Slip"])
+safe_include_router(reception_mag3, prefix="/api/v1/magasin/receptions-mag3", tags=["Reception Mag3"])
+safe_include_router(master_data, prefix="/api/v1/master-data", tags=["Master Data"])
+safe_include_router(admin, prefix="/api/v1/admin", tags=["Admin"])
+safe_include_router(admin_agency, prefix="/api/v1/admin/agencies", tags=["Admin Agencies"])
+safe_include_router(suppliers, prefix="/api/v1/suppliers", tags=["Suppliers"])
 
-app.include_router(collaboration_v1.router, prefix="/api/collaboration", tags=["Collaboration - DEPRECATED"])
+try:
+    from app.routers.webhook_whatsapp import router as webhook_router
+    safe_include_router(webhook_router)
+except Exception:
+    pass
 
+try:
+    from app.routers.telematics import router as telematics_router
+    safe_include_router(telematics_router)
+except Exception:
+    pass
+safe_include_router(notifications, prefix="/api/v1/notifications", tags=["Notifications"])
+safe_include_router(bill_of_loading, prefix="/api/v1/bill-of-loading", tags=["Bill of Loading"])
+safe_include_router(purchase, prefix="/api/v1/purchase", tags=["Achats"])
+safe_include_router(incidents, prefix="/api/v1/incidents", tags=["Incidents"])
+safe_include_router(public_api, prefix="/api/v1/public", tags=["Public API"])
+safe_include_router(rh, prefix="/api/v1/rh", tags=["Ressources Humaines"])
 
-
-app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
-
-app.include_router(magasin.router, prefix="/api/v1/magasin", tags=["K-Magasin"])
-
-app.include_router(gateway.router, prefix="/api/v1/gateway", tags=["Gateway"])
-
-app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Transactions"])
-
-app.include_router(goods_declaration.router, prefix="/api/v1/transport/goods-declarations", tags=["Goods Declaration"])
-
-app.include_router(removal_slip.router, prefix="/api/v1/magasin/removal-slips", tags=["Removal Slip"])
-
-app.include_router(reception_mag3.router, prefix="/api/v1/magasin/receptions-mag3", tags=["Reception Mag3"])
-
-app.include_router(master_data.router, prefix="/api/v1/master-data", tags=["Master Data"])
-
-app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
-
-app.include_router(admin_agency.router, prefix="/api/v1/admin/agencies", tags=["Admin Agencies"])
-
-app.include_router(suppliers.router, prefix="/api/v1/suppliers", tags=["Suppliers"])
-
-from app.routers.webhook_whatsapp import router as webhook_router
-
-from app.routers.telematics import router as telematics_router
-
-
-
-app.include_router(webhook_router)
-
-app.include_router(telematics_router)
-
-app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
-
-app.include_router(bill_of_loading.router, prefix="/api/v1/bill-of-loading", tags=["Bill of Loading"])
-
-app.include_router(purchase.router, prefix="/api/v1/purchase", tags=["Achats"])
-
-app.include_router(incidents.router, prefix="/api/v1/incidents", tags=["Incidents"])
-
-app.include_router(public_api.router, prefix="/api/v1/public", tags=["Public API"])
-
-app.include_router(rh.router, prefix="/api/v1/rh", tags=["Ressources Humaines"])
-
-
-
-# Backward compatibility - Original API endpoints (deprecated, will be removed in v2)
-
-# These endpoints proxy to v1 implementations to ensure smooth transition
-
-app.include_router(auth.router, prefix="/api/auth", tags=["Auth - DEPRECATED"])
-
-app.include_router(tiers.router, prefix="/api/tiers", tags=["Tiers - DEPRECATED"])
-
-app.include_router(transport.router, prefix="/api/transport", tags=["Transport - DEPRECATED"])
-
-app.include_router(finance.router, prefix="/api/finance", tags=["Finance - DEPRECATED"])
-
-app.include_router(parc.router, prefix="/api/parc", tags=["Parc - DEPRECATED"])
-
-app.include_router(documents.router, prefix="/api/documents", tags=["Documents - DEPRECATED"])
-
-app.include_router(ws.router, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
-
-app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts - DEPRECATED"])
-
-app.include_router(magasin.router, prefix="/api/magasin", tags=["K-Magasin - DEPRECATED"])
-
-app.include_router(gateway.router, prefix="/api/gateway", tags=["Gateway - DEPRECATED"])
-
-app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions - DEPRECATED"])
-
-app.include_router(goods_declaration.router, prefix="/api/transport/goods-declarations", tags=["Goods Declaration - DEPRECATED"])
-
-app.include_router(removal_slip.router, prefix="/api/magasin/removal-slips", tags=["Removal Slip - DEPRECATED"])
-
-app.include_router(reception_mag3.router, prefix="/api/magasin/receptions-mag3", tags=["Reception Mag3 - DEPRECATED"])
-
-app.include_router(master_data.router, prefix="/api/master-data", tags=["Master Data - DEPRECATED"])
-
-app.include_router(admin.router, prefix="/api/admin", tags=["Admin - DEPRECATED"])
-
-app.include_router(admin_agency.router, prefix="/api/admin/agencies", tags=["Admin Agencies - DEPRECATED"])
-
-app.include_router(suppliers.router, prefix="/api/suppliers", tags=["Suppliers - DEPRECATED"])
-
-app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications - DEPRECATED"])
-
-app.include_router(purchase.router, prefix="/api/purchase", tags=["Achats - DEPRECATED"])
-
-app.include_router(incidents.router, prefix="/api/incidents", tags=["Incidents - DEPRECATED"])
-
-app.include_router(public_api.router, prefix="/api/public", tags=["Public API - DEPRECATED"])
-
-app.include_router(rh.router, prefix="/api/rh", tags=["Ressources Humaines - DEPRECATED"])
+safe_include_router(auth, prefix="/api/auth", tags=["Auth - DEPRECATED"])
+safe_include_router(tiers, prefix="/api/tiers", tags=["Tiers - DEPRECATED"])
+safe_include_router(transport, prefix="/api/transport", tags=["Transport - DEPRECATED"])
+safe_include_router(finance, prefix="/api/finance", tags=["Finance - DEPRECATED"])
+safe_include_router(parc, prefix="/api/parc", tags=["Parc - DEPRECATED"])
+safe_include_router(documents, prefix="/api/documents", tags=["Documents - DEPRECATED"])
+safe_include_router(ws, prefix="/api/ws", tags=["WebSockets - DEPRECATED"])
+safe_include_router(alerts, prefix="/api/alerts", tags=["Alerts - DEPRECATED"])
+safe_include_router(magasin, prefix="/api/magasin", tags=["K-Magasin - DEPRECATED"])
+safe_include_router(gateway, prefix="/api/gateway", tags=["Gateway - DEPRECATED"])
+safe_include_router(transactions, prefix="/api/transactions", tags=["Transactions - DEPRECATED"])
+safe_include_router(goods_declaration, prefix="/api/transport/goods-declarations", tags=["Goods Declaration - DEPRECATED"])
+safe_include_router(removal_slip, prefix="/api/magasin/removal-slips", tags=["Removal Slip - DEPRECATED"])
+safe_include_router(reception_mag3, prefix="/api/magasin/receptions-mag3", tags=["Reception Mag3 - DEPRECATED"])
+safe_include_router(master_data, prefix="/api/master-data", tags=["Master Data - DEPRECATED"])
+safe_include_router(admin, prefix="/api/admin", tags=["Admin - DEPRECATED"])
+safe_include_router(admin_agency, prefix="/api/admin/agencies", tags=["Admin Agencies - DEPRECATED"])
+safe_include_router(suppliers, prefix="/api/suppliers", tags=["Suppliers - DEPRECATED"])
+safe_include_router(notifications, prefix="/api/notifications", tags=["Notifications - DEPRECATED"])
+safe_include_router(purchase, prefix="/api/purchase", tags=["Achats - DEPRECATED"])
+safe_include_router(incidents, prefix="/api/incidents", tags=["Incidents - DEPRECATED"])
+safe_include_router(public_api, prefix="/api/public", tags=["Public API - DEPRECATED"])
+safe_include_router(rh, prefix="/api/rh", tags=["Ressources Humaines - DEPRECATED"])
 
 
 

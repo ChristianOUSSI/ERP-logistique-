@@ -8,6 +8,7 @@ class Settings:
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./kamlog_erp.db")
+    REDIS_URL: Optional[str] = os.getenv("REDIS_URL", None)
     SEED_DATA: bool = os.getenv("SEED_DATA", "false").lower() == "true"
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "production")
 
