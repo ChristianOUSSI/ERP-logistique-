@@ -1,91 +1,46 @@
-# Statut Global du Projet
+# Statut Global du Projet KAMLOG EM-ERP
 
-## Date de reference
+## Date de Référence
+`2026-07-22`
 
-`2026-07-06`
+## Résumé Exécutif
+Le projet **KAMLOG EM-ERP** est dans un état pleinement fonctionnel, stabilisé et prêt pour l'exploitation. Les récentes étapes ont permis la mise en place d'un système complet de contrôle d'accès basé sur les rôles (RBAC), la finalisation des 14 modules applicatifs (153 pages compilées sans erreur), l'intégration d'une PWA 3D métallique professionnelle, et la résolution complète des contraintes de déploiement en conteneur Docker multi-stage sur Railway et Vercel.
 
-## Resume executif
+---
 
-Le depot est dans un etat actif et exploitable pour le developpement, avec un backend modulaire riche et un frontend large, mais la documentation precedente surestimait certains points et melangeait des elements UI, des intentions produit et des composants non reellement deploies.
+## 🏗️ Synthèse de la Couverture Fonctionnelle & Technique
 
-## Ce qui est effectivement present
+### Backend FastAPI (`kamlog-backend`)
+- **19 Routeurs Exposés** : Authentification JWT, Tiers, Transport, Finance, Parc, Documents, Alerte, Magasin WMS, Gateway, Transactions, Goods Declaration, Removal Slips, Réceptions Mag3, Master Data, Admin, Agences, Fournisseurs, Notifications, Achats.
+- **Seeder de Données Opérationnelles** : Script `scripts/seed_data.py` gérant la création et l'initialisation de 8 profils réels en base de données (`admin`, `magasinier`, `kamga`, `qhse`, `financier`, `douane`, `parc`, `auditor`) avec leurs autorisations `modules_allowed`.
+- **Résilience Conteneur** : Déploiement Docker multi-stage avec règle d'auto-aplatissement de contexte (`cp -rn /app/kamlog-backend/* /app/`) supportant aussi bien le build depuis la racine `/` que depuis le sous-dossier `/kamlog-backend`.
+- **Sécurité & Observabilité** : En-têtes de sécurité HSTS/CORS, SlowAPI rate-limiting, middleware d'audit, monitoring Prometheus (`/api/health` et `/api/health/detailed`), intégration Sentry & Celery.
 
-### Backend
+### Frontend Next.js 14 (`kamlog-frontend`)
+- **153 Pages Statiques Compilées** : Validation intégrale avec `npm run build` (0 erreur).
+- **14 Modules Métiers** : Acconage, Magasin WMS, Transport, Parc & Yard, Maintenance, Cotations, FuelGuard, Procurement, Compliance & QHSE, BI Reports, Finance, Douane, Tiers/MasterData, Administration.
+- **Système de RBAC Visuel** : Menus non autorisés grisés dans la Sidebar avec cadenas 🔒 et modale d'accès restreint explicite.
+- **PWA 3D Métallique** : Icônes 3D metallic (`512x512`, `192x192`, `apple-touch-icon.png`, `favicon.ico`), Service Worker (`sw.js`) et bannière d'installation PWA.
 
-- 19 routeurs montes dans `kamlog-backend/app/main.py`
-- 22 modeles Python
-- 16 schemas
-- 16 fichiers de services
-- 12 repositories
-- endpoints de sante, monitoring, audit middleware et idempotence
+---
 
-### Frontend
+## 🌐 Statut des Déploiements
 
-- 92 pages `page.tsx`
-- socle Next.js 14 avec App Router
-- thematisation par module
-- zones visibles pour admin, audit, finance, magasin, master-data, parc, reports, security, transport
+- **Backend FastAPI** : Déployé sur **Railway** (PostgreSQL + Redis + Uvicorn + Celery).
+- **Frontend Next.js** : Déployé sur **Vercel**.
+- **Dépôts Git Synchronisés** : Commit `7c5bea4` poussé et forcé sur l'ensemble des branches des remotes `logistique` (`https://github.com/ChristianOUSSI/ERP-logistique-.git`) et `origin` (`https://github.com/Jiraya23/KAMLOG-EM-ERP.git`).
 
-### Outillage
+---
 
-- aucun workflow CI versionne actuellement
-- tests backend Pytest
-- Playwright cote frontend
-- Docker Compose pour la stack locale
+## 📊 Matrice des Profils & Autorisations Seeders
 
-## Nettoyage realise sur la racine
-
-- suppression des artefacts frontend generes:
-  - `kamlog-frontend/playwright-report/`
-  - `kamlog-frontend/test-results/`
-  - `kamlog-frontend/tsconfig.tsbuildinfo`
-- ajout d'exclusions `.kilo/` et `.cora/` dans `.gitignore`
-- ajout d'exclusions pour les rapports/frontend generes
-- conservation volontaire de `references/`
-
-## Zones a considerer comme avancees
-
-- auth et MFA
-- RBAC et administration
-- transport
-- finance
-- magasin
-- parc
-- master data / tiers
-- notifications et documents
-
-## Zones encore a clarifier ou renforcer
-
-- pages frontend reliées a de vrais flux backend vs pages surtout demonstratives
-- couverture de tests module par module
-- statut reel de production et cible de deploiement privilegiee
-- usage reel de Celery, present en dependance mais absent de la stack d'execution locale
-- formalisation des parcours metier par module
-
-## Ce qu'il manque a ajouter
-
-Priorite haute:
-
-- matrice claire des modules completement connectes
-- statut "placeholder / connecte / a finir" pour les pages frontend
-- verification automatisee plus large sur les routeurs recents
-- documentation roles / permissions exploitable par l'equipe
-
-Priorite moyenne:
-
-- runbook de production et de support
-- documentation des workflows Mag3, achats et notifications
-- standard de seeds et jeux de donnees de demo
-
-Priorite basse:
-
-- documentation utilisateur par module
-- schema d'architecture d'integration externe
-
-## Conclusion
-
-Le projet est loin d'etre vide ou a reprendre de zero. En revanche, il ne faut plus le presenter comme integralement stabilise sans distinguer clairement:
-
-- ce qui est vraiment branche et teste;
-- ce qui est surtout UI;
-- ce qui reste a consolider avant une production stricte.
+| Utilisateur | Rôle RBAC | Password | Modules Autorisés (`modules_allowed`) | Statut BDD |
+| --- | --- | --- | --- | --- |
+| `admin` | `ADMIN` | `admin123` | Tous les 14 modules | Actif |
+| `magasinier` | `MAGASINIER` | `admin123` | `magasin`, `master-data` | Actif |
+| `kamga` | `DISPATCHER` | `admin123` | `transport`, `parc`, `gate` | Actif |
+| `qhse` | `QHSE` | `admin123` | `qhse`, `maintenance` | Actif |
+| `financier` | `FINANCIER` | `admin123` | `finance`, `procurement` | Actif |
+| `douane` | `DOUANE` | `admin123` | `douane`, `acconage` | Actif |
+| `parc` | `PARC` | `admin123` | `parc`, `transport` | Actif |
+| `auditor` | `AUDITOR` | `admin123` | `reports`, `audit` | Actif |

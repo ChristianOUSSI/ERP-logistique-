@@ -1,102 +1,81 @@
-# Guide de Deploiement
+# Guide de Déploiement Production & Local — KAMLOG EM-ERP
 
-## Perimetre actuel
+Ce document contient la procédure officielle de déploiement pour les environnements de **Développement Local**, de **Production Railway (Backend FastAPI)** et de **Production Vercel (Frontend Next.js PWA)**.
 
-Le depot fournit aujourd'hui une stack locale et un socle de deploiement simple autour de:
+---
 
-- PostgreSQL
-- Redis
-- MinIO
-- FastAPI
-- Next.js
+## 🐋 1. Déploiement Local (Docker Compose)
 
-Le fichier `docker-compose.yml` est la reference d'execution actuelle.
-
-## Demarrage local avec Docker
-
-Depuis la racine du depot:
+Le fichier [`docker-compose.yml`](file:///d:/Projet/ERP/KAMLOG-EM-ERP/docker-compose.yml) orchestre la stack locale complète :
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
-Services disponibles:
+### Services Exposés :
+- **Frontend Next.js** : `http://localhost:3000`
+- **Backend FastAPI** : `http://localhost:8000`
+- **Swagger Documentation** : `http://localhost:8000/api/docs`
+- **PostgreSQL 15** : `localhost:5432` (`kamlog` / `kamlog_pass`)
+- **Redis 7** : `localhost:6379`
+- **MinIO Storage** : `localhost:9000` (API) / `localhost:9001` (Console Web)
 
-- Frontend: `http://localhost:3000`
-- API: `http://localhost:8000`
-- Swagger: `http://localhost:8000/api/docs`
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
-- MinIO API: `localhost:9000`
-- MinIO Console: `localhost:9001`
+---
 
-## Demarrage local sans Docker
+## 🚂 2. Déploiement Backend sur Railway (FastAPI + PostgreSQL + Redis)
 
-### Backend
+Le backend FastAPI est déployé sur **Railway** sous forme de conteneur Docker multi-stage ultra-résilient.
 
-```bash
-cd kamlog-backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
-alembic upgrade head
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+### Caractéristiques de la Configuration Railway :
+1. **Dockerfile Multi-Stage Auto-Résilient** :
+   - Présent à la racine ([`Dockerfile`](file:///d:/Projet/ERP/KAMLOG-EM-ERP/Dockerfile)) et dans [`kamlog-backend/Dockerfile`](file:///d:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/Dockerfile).
+   - Intègre l'étape d'auto-aplatissement de contexte :
+     `RUN if [ -d "/app/kamlog-backend" ]; then cp -rn /app/kamlog-backend/* /app/ && rm -rf /app/kamlog-backend; fi`
+   - Garantit le démarrage correct de Uvicorn et du Seeder quel que soit le dossier racine configuré dans Railway.
+2. **Script de Démarrage (`start.sh`)** :
+   - Attend la disponibilité de PostgreSQL (`pg_isready`).
+   - Re-crée les tables via SQLAlchemy et applique Alembic stamp/migrations.
+   - Exécute le seeder `python scripts/seed_data.py` si `SEED_DATA=true`.
+   - Lance le worker Celery en arrière-plan et démarre Uvicorn sur le port 8000.
 
-### Frontend
+### Variables d'Environnement Recommandées sur Railway :
 
-```bash
-cd kamlog-frontend
-npm install
-copy .env.local.example .env.local
-npm run dev
-```
+| Variable | Valeur Explication / Exemple |
+| --- | --- |
+| `DATABASE_URL` | Fourni automatiquement par le plugin PostgreSQL Railway |
+| `REDIS_URL` | Fourni automatiquement par le plugin Redis Railway |
+| `JWT_SECRET_KEY` | Clé secrète 32+ caractères pour la signature JWT |
+| `SEED_DATA` | `true` (pour l'initialisation initiale avec les 8 comptes seeders) |
+| `ALLOWED_ORIGINS` | `https://kamlog-frontend.vercel.app,http://localhost:3000` |
 
-## Variables importantes
+---
 
-### Backend
+## 📐 3. Déploiement Frontend sur Vercel (Next.js 14 PWA)
 
-- `DATABASE_URL`
-- `REDIS_URL`
-- `JWT_SECRET_KEY`
-- `MINIO_ENDPOINT`
-- `MINIO_ACCESS_KEY`
-- `MINIO_SECRET_KEY`
-- `MINIO_BUCKET_DOCUMENTS`
+Le frontend Next.js 14 est déployé sur **Vercel**.
 
-### Frontend
+### Procédure de déploiement :
+1. Connecter le dépôt `ERP-logistique-` sur Vercel.
+2. Définir le **Root Directory** sur `kamlog-frontend`.
+3. Configurer les variables d'environnement suivantes :
 
-- `NEXT_PUBLIC_API_URL`
-- `NEXTAUTH_URL`
-- `NEXTAUTH_SECRET`
+| Variable | Valeur Exemple |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | `https://kamlog-backend.up.railway.app` |
+| `NEXTAUTH_URL` | `https://kamlog-frontend.vercel.app` |
+| `NEXTAUTH_SECRET` | Mêmes 32+ caractères que `JWT_SECRET_KEY` backend |
 
-## Migrations et donnees
+4. Exécuter le build Vercel (`npm run build`).
 
-Appliquer les migrations:
+---
 
-```bash
-cd kamlog-backend
-alembic upgrade head
-```
+## ✅ 4. Procédure de Vérification Post-Déploiement
 
-Charger des donnees de base si necessaire:
-
-```bash
-python scripts/seed_data.py
-```
-
-## Verification minimale avant mise en ligne
-
-- `GET /api/health` repond
-- Swagger est accessible
-- login frontend fonctionne
-- build frontend fonctionne
-- tests backend critiques passent
-
-## Ce que ce guide ne couvre pas encore
-
-- orchestration de worker d'arriere-plan
-- monitoring d'exploitation complet
-- procedure officielle de backup/restauration
-- runbook de mise en production detaille par environnement
+1. **Vérifier le Healthcheck Backend** :
+   ```bash
+   curl -i https://kamlog-backend.up.railway.app/api/health
+   # Réponse attendue : {"status":"ok","service":"KAMLOG EM-ERP","version":"1.0.0"}
+   ```
+2. **Tester la Connexion d'un Compte Seeder** :
+   - Tenter de se connecter sur l'interface Vercel avec `admin` / `admin123` ou `magasinier` / `admin123`.
+   - Vérifier que la Sidebar affiche les menus autorisés et grise les modules non attribués avec le cadenas 🔒.
