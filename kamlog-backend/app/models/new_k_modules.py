@@ -6,7 +6,7 @@ from app.models.base import Base
 class CotationDevis(Base):
     __tablename__ = "cotations_devis"
 
-    id = Column(Integer, primary_order=True, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     reference = Column(String(50), unique=True, index=True, nullable=False)
     client_nom = Column(String(150), nullable=False)
     origine = Column(String(100), nullable=False)

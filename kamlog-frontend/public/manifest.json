@@ -1,24 +1,39 @@
 {
   "name": "KAMLOG Enterprise ERP",
   "short_name": "KAMLOG",
-  "description": "Système ERP Écosystème Logistique, Transport, Finance & Portuaire",
-  "start_url": "/dashboard/global",
+  "description": "Système ERP Écosystème Logistique, Transport, Finance & Portuaire — CADC",
+  "start_url": "/login",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0f172a",
-  "theme_color": "#4f46e5",
+  "theme_color": "#f59e0b",
+  "categories": ["business", "productivity"],
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -26,36 +41,31 @@
       "name": "K-Transport",
       "short_name": "Transport",
       "description": "Suivi des missions de transport et flotte",
-      "url": "/transport/control",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "url": "/transport/control"
     },
     {
       "name": "K-Magasin",
       "short_name": "Entrepôt",
       "description": "Gestion des réceptions et bons d'enlèvement",
-      "url": "/magasin/dashboard",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "url": "/magasin/dashboard"
     },
     {
       "name": "K-Acconage",
       "short_name": "Acconage",
       "description": "Manutention quai et escales navires",
-      "url": "/acconage",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "url": "/acconage"
     },
     {
       "name": "K-QHSE",
       "short_name": "QHSE",
       "description": "Inspections de sécurité et conformité",
-      "url": "/qhse",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "url": "/qhse"
     },
     {
       "name": "Portail B2B",
       "short_name": "Portail B2B",
       "description": "Espace client demandes et cotations",
-      "url": "/client-portal",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "url": "/client-portal"
     }
   ]
 }

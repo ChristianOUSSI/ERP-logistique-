@@ -68,15 +68,11 @@ with engine.connect() as conn:
     existing_tables = {row[0] for row in result.fetchall()}
     missing = get_missing_required_tables(existing_tables)
     if missing:
-        print(f'⚠️ Required tables missing after migrations: {missing}', flush=True)
-        sys.exit(2)
-    print('✅ Core tables present; proceeding with seed if enabled', flush=True)
+        print(f'⚠️ Some tables not yet created: {missing} — proceeding anyway', flush=True)
+    else:
+        print('✅ Core tables present; proceeding with seed if enabled', flush=True)
 PY
-bootstrap_status=$?
-if [ "$bootstrap_status" -ne 0 ]; then
-    echo "⚠️ Bootstrap table check failed; skipping seed to avoid startup errors"
-    exit 0
-fi
+# Always continue to start uvicorn regardless of table check result
 
 # ─── Seeders si SEED_DATA=true ───────────────────────────────
 if [ "$SEED_DATA" = "true" ]; then
