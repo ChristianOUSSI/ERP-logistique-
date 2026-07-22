@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt* kamlog-backend/requirements.txt* ./
+# Copier le contexte pour trouver requirements.txt quel que soit le dossier racine configuré
+COPY . .
 RUN if [ -f requirements.txt ]; then pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt; elif [ -f kamlog-backend/requirements.txt ]; then pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r kamlog-backend/requirements.txt; fi
 
 # Stage 2: Production Runtime
