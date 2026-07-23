@@ -46,15 +46,18 @@ def get_transport_kpis():
     }
 
 @router.get("/trucks")
+@router.get("/camions")
 def list_trucks():
     return {
         "items": [
-            {"id": 1, "immatriculation": "LT-802-AA", "marque": "Mercedes-Benz Actros", "statut": "DISPONIBLE"},
-            {"id": 2, "immatriculation": "OU-112-BB", "marque": "Volvo FH16", "statut": "EN_MISSION"}
+            {"id": 1, "immatriculation": "LT-802-AA", "marque": "Mercedes-Benz Actros", "actif": True, "statut": "DISPONIBLE"},
+            {"id": 2, "immatriculation": "OU-112-BB", "marque": "Volvo FH16", "actif": True, "statut": "EN_MISSION"},
+            {"id": 3, "immatriculation": "LT-902-CC", "marque": "MAN TGS 33.440", "actif": False, "statut": "MAINTENANCE"}
         ]
     }
 
 @router.get("/drivers")
+@router.get("/chauffeurs")
 def list_drivers():
     return {
         "items": [

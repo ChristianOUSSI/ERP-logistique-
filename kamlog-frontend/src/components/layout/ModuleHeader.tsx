@@ -145,10 +145,17 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
     socket.onclose = (e) => {
       if (e.wasClean) return
       setWsStatus('disconnected')
-      const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000)
-      reconnectTimeoutRef.current = setTimeout(() => { reconnectAttemptsRef.current++; connect() }, delay)
+      if (reconnectAttemptsRef.current < 3) {
+        reconnectAttemptsRef.current++
+        const delay = Math.min(2000 * Math.pow(2, reconnectAttemptsRef.current), 30000)
+        reconnectTimeoutRef.current = setTimeout(() => { connect() }, delay)
+      } else {
+        console.info('[WebSocket] Statut silencieux: reconnexion mise en pause.')
+      }
     }
-    socket.onerror = () => socket.close()
+    socket.onerror = () => {
+      try { socket.close() } catch {}
+    }
   }, [user, triggerSoundBadge])
 
   useEffect(() => {

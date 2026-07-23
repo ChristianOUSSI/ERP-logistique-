@@ -19,8 +19,10 @@ export default function KTransportControl() {
           transportAPI.getCamions().catch(() => ({ data: [] })),
           transportAPI.getMissions().catch(() => ({ data: [] }))
         ]);
-        setCamions(camionsRes.data || []);
-        setMissions(missionsRes.data || []);
+        const camList = Array.isArray(camionsRes.data) ? camionsRes.data : (camionsRes.data?.items || (Array.isArray(camionsRes) ? camionsRes : []));
+        const misList = Array.isArray(missionsRes.data) ? missionsRes.data : (missionsRes.data?.items || (Array.isArray(missionsRes) ? missionsRes : []));
+        setCamions(camList);
+        setMissions(misList);
       } catch (error) {
         console.error("Failed to fetch transport data:", error);
       } finally {
@@ -30,11 +32,14 @@ export default function KTransportControl() {
     fetchData();
   }, []);
 
-  // Compute Fleet KPIs
-  const totalCamions = camions.length;
-  const onRoad = missions.filter(m => m.statut === 'EN_TRANSIT' || m.statut === 'EN_COURS').length;
-  const available = Math.max(0, camions.filter(c => c.actif).length - onRoad);
-  const maintenance = camions.filter(c => !c.actif).length;
+  // Compute Fleet KPIs safely
+  const safeCamions = Array.isArray(camions) ? camions : [];
+  const safeMissions = Array.isArray(missions) ? missions : [];
+
+  const totalCamions = safeCamions.length;
+  const onRoad = safeMissions.filter(m => m?.statut === 'EN_TRANSIT' || m?.statut === 'EN_COURS').length;
+  const available = Math.max(0, safeCamions.filter(c => c?.actif).length - onRoad);
+  const maintenance = safeCamions.filter(c => !c?.actif).length;
 
   const fleetData = [
     { name: 'En transit', value: onRoad, fill: '#0ea5e9' },
