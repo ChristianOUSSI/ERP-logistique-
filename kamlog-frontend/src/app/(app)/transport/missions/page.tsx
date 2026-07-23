@@ -23,9 +23,12 @@ export default function MissionsPage() {
   const loadMissions = async () => {
     try {
       const response = await transportAPI.getMissions();
-      setMissions(response.data);
+      const d = response.data;
+      const list = Array.isArray(d) ? d : (d?.items || (Array.isArray(response) ? response : []));
+      setMissions(list);
     } catch (error) {
       console.error('Error loading missions:', error);
+      setMissions([]);
     } finally {
       setLoading(false);
     }
@@ -45,9 +48,10 @@ export default function MissionsPage() {
     }
   };
 
-  // Advanced Filtering Logic
+  // Advanced Filtering Logic safely
   const filteredMissions = useMemo(() => {
-    return missions.filter(m => {
+    const safeList = Array.isArray(missions) ? missions : [];
+    return safeList.filter(m => {
       // Search
       const searchStr = `${m.reference} ${m.origine} ${m.destination} ${m.nature_fret}`.toLowerCase();
       if (searchTerm && !searchStr.includes(searchTerm.toLowerCase())) return false;

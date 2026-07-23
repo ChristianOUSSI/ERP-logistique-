@@ -12,18 +12,21 @@ export default function DriversListPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: chauffeurs = [], isLoading: loading } = useQuery({
+  const { data: rawChauffeurs = [], isLoading: loading } = useQuery({
     queryKey: ['chauffeurs'],
     queryFn: async () => {
       const res = await transportAPI.getChauffeurs();
-      return res.data || [];
+      const d = res.data;
+      return Array.isArray(d) ? d : (d?.items || (Array.isArray(res) ? res : []));
     }
   });
 
+  const chauffeurs = Array.isArray(rawChauffeurs) ? rawChauffeurs : (rawChauffeurs?.items || []);
+
   const filteredChauffeurs = chauffeurs.filter(c => 
-    c.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.numero_permis.toLowerCase().includes(searchTerm.toLowerCase())
+    c?.nom?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    c?.prenom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c?.numero_permis?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

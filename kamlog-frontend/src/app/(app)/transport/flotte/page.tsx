@@ -25,13 +25,15 @@ export default function FlottePage() {
   const [associatingTractor, setAssociatingTractor] = useState<any>(null)
   const [selectedRemorqueId, setSelectedRemorqueId] = useState<string>('')
 
-  const { data: camions = [], isLoading: loading, refetch: fetchCamions } = useQuery({
+  const { data: rawCamions = [], isLoading: loading, refetch: fetchCamions } = useQuery({
     queryKey: ['camions'],
     queryFn: async () => {
       const res = await transportAPI.getCamions()
-      return res.data || []
+      const d = res.data
+      return Array.isArray(d) ? d : (d?.items || (Array.isArray(res) ? res : []))
     }
   })
+  const camions = Array.isArray(rawCamions) ? rawCamions : (rawCamions?.items || []);
 
   const associateMutation = useMutation({
     mutationFn: (data: { tracteurId: number, remorqueId: number | null }) => 

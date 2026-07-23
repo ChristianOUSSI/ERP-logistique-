@@ -22,10 +22,14 @@ export default function RHDashboardPage() {
         rhAPI.getEmployes(),
         rhAPI.getConges()
       ]);
-      setEmployes(empRes.data);
-      setConges(congesRes.data);
+      const empList = Array.isArray(empRes.data) ? empRes.data : (empRes.data?.items || (Array.isArray(empRes) ? empRes : []));
+      const congesList = Array.isArray(congesRes.data) ? congesRes.data : (congesRes.data?.items || (Array.isArray(congesRes) ? congesRes : []));
+      setEmployes(empList);
+      setConges(congesList);
     } catch (e) {
       toast.error("Erreur de chargement des données RH");
+      setEmployes([]);
+      setConges([]);
     } finally {
       setLoading(false);
     }
@@ -90,9 +94,9 @@ export default function RHDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {employes.length === 0 ? (
+                    {(!Array.isArray(employes) || employes.length === 0) ? (
                       <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-500">Aucun employé enregistré</td></tr>
-                    ) : employes.map(emp => (
+                    ) : (Array.isArray(employes) ? employes : []).map(emp => (
                       <tr key={emp.id} className="hover:bg-slate-50 transition-colors">
                         <td className="px-6 py-4 font-mono font-bold text-slate-600">{emp.matricule}</td>
                         <td className="px-6 py-4">
@@ -126,9 +130,9 @@ export default function RHDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {conges.length === 0 ? (
+                    {(!Array.isArray(conges) || conges.length === 0) ? (
                       <tr><td colSpan={6} className="px-6 py-8 text-center text-slate-500">Aucune demande de congé</td></tr>
-                    ) : conges.map(conge => (
+                    ) : (Array.isArray(conges) ? conges : []).map(conge => (
                       <tr key={conge.id} className="hover:bg-slate-50 transition-colors">
                         <td className="px-6 py-4 font-mono font-bold text-slate-600">EMP-{conge.employe_id}</td>
                         <td className="px-6 py-4 font-bold text-slate-700">{conge.type_conge}</td>

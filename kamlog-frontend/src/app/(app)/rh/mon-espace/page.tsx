@@ -31,15 +31,19 @@ export default function MonEspaceRHPage() {
           rhAPI.getPaie().catch(() => ({ data: [] }))
         ]);
         
-        // Filter by logged-in employee ID
-        const myConges = (congesRes.data || []).filter((c: any) => c.employe_id === userProfile.id);
-        const myPaies = (paiesRes.data || []).filter((p: any) => p.employe_id === userProfile.id);
+        // Filter by logged-in employee ID safely
+        const rawConges = Array.isArray(congesRes.data) ? congesRes.data : (congesRes.data?.items || (Array.isArray(congesRes) ? congesRes : []));
+        const rawPaies = Array.isArray(paiesRes.data) ? paiesRes.data : (paiesRes.data?.items || (Array.isArray(paiesRes) ? paiesRes : []));
+        const myConges = rawConges.filter((c: any) => c.employe_id === userProfile.id);
+        const myPaies = rawPaies.filter((p: any) => p.employe_id === userProfile.id);
         
         setConges(myConges);
         setPaies(myPaies);
       }
     } catch (e: any) {
       toast.error(e?.response?.data?.detail || "Erreur lors du chargement de l'espace personnel");
+      setConges([]);
+      setPaies([]);
     } finally {
       setLoading(false);
     }
