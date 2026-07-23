@@ -474,19 +474,17 @@ app.add_middleware(IdempotencyMiddleware, redis_url=redis_url_val)
 # CORS  autoriser le frontend Next.js et Vercel previews
 
 app.add_middleware(
-
     CORSMiddleware,
-
-    allow_origins=["http://localhost:3000", "https://kamlog-erp.cm"],
-
+    allow_origins=[
+        "http://localhost:3000",
+        "https://kamlog.vercel.app",
+        "https://kamlog-frontend.vercel.app",
+        "https://kamlog-erp.cm"
+    ],
     allow_origin_regex=r"https://.*\.vercel\.app",
-
     allow_credentials=True,
-
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-Idempotency-Key", "X-Request-ID", "trace-id"],
-
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

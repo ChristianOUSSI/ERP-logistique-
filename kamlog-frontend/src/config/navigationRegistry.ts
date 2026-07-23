@@ -351,9 +351,9 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     requiredRoles: ["ADMIN", "RH", "MANAGER"],
     subModules: [
       { label: "Dashboard Ressources Humaines", path: "/rh/dashboard", icon: LayoutDashboard, badge: "RH" },
+      { label: "Annuaire & Gestion Employés", path: "/rh/employes", icon: Users, badge: "Personnel" },
       { label: "Mon Espace RH & Demandes", path: "/rh/mon-espace", icon: UserCheck },
-      { label: "Gestion de la Paie", path: "/finance/payroll", icon: DollarSign, badge: "Paie" },
-      { label: "Annuaire du Personnel", path: "/master-data/tiers", icon: Users },
+      { label: "Gestion de la Paie", path: "/rh/dashboard", icon: DollarSign, badge: "Paie" },
       { label: "Affectation & Permis Chauffeurs", path: "/transport/drivers", icon: Truck, badge: "Flotte" },
     ]
   },
