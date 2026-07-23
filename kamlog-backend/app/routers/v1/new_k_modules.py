@@ -121,10 +121,36 @@ def create_cotation(payload: CotationCreate):
     _cotations.append(new_item)
     return new_item
 
+_invoices = [
+    {
+        "id": 1,
+        "numero_facture": "FAC-2026-00401",
+        "client": "CFAO LOGISTICS CAMEROUN",
+        "montant_ht_xaf": 4850000.0,
+        "tva_xaf": 933625.0,
+        "montant_ttc_xaf": 5783625.0,
+        "statut": "EMISE_AUTOMATIQUE_APRES_EPOD",
+        "date_emission": datetime.utcnow().isoformat()
+    }
+]
+
+_incidents_qhse = [
+    {
+        "id": 1,
+        "code_incident": "INC-2026-009",
+        "source": "CAPTEUR_FUEL_GUARD",
+        "severite": "CRITIQUE",
+        "camion": "LT-802-AA",
+        "description": "Baisse suspecte du niveau de carburant de 45L détectée au stationnement",
+        "statut": "OUVERT",
+        "created_at": datetime.utcnow().isoformat()
+    }
+]
+
 # --- Endpoints K-Tracking & e-POD ---
 @router.get("/tracking/epod")
 def get_epods():
-    return {"items": _epods}
+    return {"items": _epods, "factures_generees": _invoices}
 
 @router.post("/tracking/epod")
 def create_epod(payload: EPodCreate):
@@ -135,24 +161,89 @@ def create_epod(payload: EPodCreate):
         "timestamp": datetime.utcnow().isoformat()
     }
     _epods.append(new_item)
-    return new_item
+    
+    # Automatisme Inter-Module : Génération automatique de la facture dans K-Finance
+    new_invoice = {
+        "id": len(_invoices) + 1,
+        "numero_facture": f"FAC-2026-00{len(_invoices) + 401}",
+        "client": "DESTINATAIRE_" + payload.nom_destinataire.upper(),
+        "montant_ht_xaf": 1250000.0,
+        "tva_xaf": 240625.0,
+        "montant_ttc_xaf": 1490625.0,
+        "statut": "EMISE_AUTOMATIQUE_APRES_EPOD",
+        "reference_epod": f"EPOD-00{new_item['id']}",
+        "date_emission": datetime.utcnow().isoformat()
+    }
+    _invoices.append(new_invoice)
+    
+    return {"epod": new_item, "facture_generee": new_invoice}
 
 # --- Endpoints K-FuelGuard ---
 @router.get("/fuel-guard/sensors")
 def get_fuel_sensors():
-    return {"items": _fuel_sensors}
+    return {"items": _fuel_sensors, "incidents_securite": _incidents_qhse}
 
 @router.post("/fuel-guard/sensors")
 def create_fuel_sensor(payload: FuelSensorCreate):
+    alerte = payload.niveau_actuel_litres < 50.0
     new_item = {
         "id": len(_fuel_sensors) + 1,
         **payload.dict(),
         "capacite_totale_litres": 400.0,
-        "alerte_vol_detectee": False,
+        "alerte_vol_detectee": alerte,
         "updated_at": datetime.utcnow().isoformat()
     }
     _fuel_sensors.append(new_item)
+    
+    # Automatisme Inter-Module : Déclenchement automatique d'un ticket incident QHSE si alerte de vol
+    if alerte:
+        new_incident = {
+            "id": len(_incidents_qhse) + 1,
+            "code_incident": f"INC-2026-0{len(_incidents_qhse) + 10}",
+            "source": "CAPTEUR_FUEL_GUARD",
+            "severite": "CRITIQUE",
+            "camion": payload.immatriculation_camion,
+            "description": f"Alerte Télématique: niveau de carburant critique ({payload.niveau_actuel_litres}L)",
+            "statut": "OUVERT",
+            "created_at": datetime.utcnow().isoformat()
+        }
+        _incidents_qhse.append(new_incident)
+
     return new_item
+
+# --- Calculateur Tarifaire Douane Natif CEMAC / ZLECAF ---
+class RequeteCalculDouane(BaseModel):
+    valeur_caf_xaf: float
+    origine_produit: Optional[str] = "CEMAC" # CEMAC, ZLECAF, HORS_ZONE
+    categorie_tarifaire_tec: Optional[int] = 2 # 0: Essentiel (5%), 1: Matériel (10%), 2: Intermédiaire (20%), 3: Consommation (30%)
+
+@router.post("/transit/calculateur-taxe-cemac")
+def calculer_taxes_douanieres(payload: RequeteCalculDouane):
+    valeur_caf = payload.valeur_caf_xaf
+    
+    # Exemption ZLECAF / CEMAC
+    taux_dd = 0.0 if payload.origine_produit in ["CEMAC", "ZLECAF"] else [0.05, 0.10, 0.20, 0.30][min(payload.categorie_tarifaire_tec, 3)]
+    
+    droit_douane = valeur_caf * taux_dd
+    taxe_communautaire_cci = valeur_caf * 0.004 # 0.4% CCI CEMAC
+    prélèvement_ohada = valeur_caf * 0.0005 # 0.05% OHADA
+    redevance_informatique = 15000.0 # Redevance fixe SYDONIA / CAMCIS
+    
+    assiette_tva = valeur_caf + droit_douane
+    tva = assiette_tva * 0.1925 # 19.25% TVA Cameroun
+    
+    total_liquidation_xaf = droit_douane + taxe_communautaire_cci + prélèvement_ohada + redevance_informatique + tva
+    
+    return {
+        "valeur_caf_xaf": valeur_caf,
+        "droit_douane_xaf": droit_douane,
+        "cci_cemac_xaf": taxe_communautaire_cci,
+        "ohada_xaf": prélèvement_ohada,
+        "redevance_sydonia_xaf": redevance_informatique,
+        "tva_19_25_xaf": tva,
+        "total_liquidation_douane_xaf": total_liquidation_xaf,
+        "exemption_zlecaf_appliquee": payload.origine_produit in ["CEMAC", "ZLECAF"]
+    }
 
 # --- Endpoints K-Procurement ---
 @router.get("/procurement/orders")
