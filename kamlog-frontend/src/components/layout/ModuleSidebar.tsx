@@ -64,6 +64,7 @@ export default function ModuleSidebar({
   isMobile = false,
   isOpen = false,
   onClose,
+  onToggle,
 }: ModuleSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -77,72 +78,10 @@ export default function ModuleSidebar({
 
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
 
-  // Définition des sous-modules pour accès direct depuis la sidebar
-  const subModulesMap: Record<string, { label: string; path: string; icon?: any }[]> = {
-    magasin: [
-      { label: "Dashboard WMS", path: "/magasin/dashboard" },
-      { label: "Bons d'Enlèvement (BL)", path: "/magasin/removal-slip" },
-      { label: "Réception MAG3", path: "/magasin/reception-mag3" },
-      { label: "Assistant IA Chat", path: "/magasin/ia-chat" },
-      { label: "Saisie Inventaire", path: "/magasin/saisie-inventaire-physique" },
-      { label: "Ordres de Transfert", path: "/magasin/ordres-transfert" },
-      { label: "Mouvement Stock Manuel", path: "/magasin/mouvement-de-stock-manuel" },
-      { label: "Emplacements WMS", path: "/magasin/wms-slots" },
-      { label: "Bandes de Livraison", path: "/magasin/bandes-livraison" },
-    ],
-    transport: [
-      { label: "Poste de Contrôle", path: "/transport/control" },
-      { label: "Missions & Dispatch", path: "/transport/dispatch" },
-      { label: "Flotte Camions", path: "/transport/flotte" },
-      { label: "Chauffeurs", path: "/transport/drivers" },
-      { label: "Tracking & e-POD", path: "/transport/epod" },
-      { label: "Carte Live GPS", path: "/transport/carte-live" },
-      { label: "ChatOps Mission", path: "/transport/chatops" },
-    ],
-    finance: [
-      { label: "Vue d'ensemble", path: "/finance/overview" },
-      { label: "Factures & Recettes", path: "/finance/factures" },
-      { label: "Encaissements", path: "/finance/encaissements" },
-      { label: "Requisitions", path: "/finance/requisitions" },
-      { label: "Cotations & Devis", path: "/cotations" },
-    ],
-    parc: [
-      { label: "Accès Gate", path: "/parc/gate" },
-      { label: "Carte 3D du Parc", path: "/parc/yard-map" },
-      { label: "Zones de Stockage", path: "/parc/zones" },
-      { label: "Work Orders Atelier", path: "/parc/work-orders" },
-    ],
-    admin: [
-      { label: "Utilisateurs & RBAC", path: "/admin" },
-      { label: "Configuration Rôles", path: "/admin/configuration-des-roles-rbac" },
-      { label: "Agences Portuaires", path: "/admin/agencies" },
-      { label: "Journal d'Audit", path: "/admin/journal" },
-    ],
-  };
+  // Obtention de la navigation dynamique filtrée selon le rôle RBAC de l'utilisateur
+  const filteredNav: ModuleNavConfig[] = getFilteredNavigationForUser(session?.user as any);
 
-  const navItems: { label: string; path: string; icon: any; key: ModuleType }[] = [
-    { label: "Vue Globale", path: "/dashboard/global", icon: LayoutDashboard, key: "dashboard" },
-    { label: "Administration ERP", path: "/admin", icon: ShieldAlert, key: "admin" },
-    { label: "K-Transport", path: "/transport/control", icon: Truck, key: "transport" },
-    { label: "K-Magasin", path: "/magasin/dashboard", icon: Package, key: "magasin" },
-    { label: "K-Finance", path: "/finance/overview", icon: DollarSign, key: "finance" },
-    { label: "K-Acconage", path: "/acconage", icon: Building, key: "acconage" },
-    { label: "K-QHSE", path: "/qhse", icon: ShieldAlert, key: "qhse" },
-    { label: "K-Transit", path: "/transit", icon: Globe, key: "transit" },
-    { label: "K-Maintenance", path: "/maintenance", icon: Settings, key: "maintenance" },
-    { label: "K-Cotation", path: "/cotations", icon: Tag, key: "cotations" },
-    { label: "K-Tracking & e-POD", path: "/tracking", icon: Radio, key: "tracking" },
-    { label: "K-FuelGuard", path: "/fuel-guard", icon: Fuel, key: "fuel-guard" },
-    { label: "K-Procurement", path: "/procurement", icon: ShoppingCart, key: "procurement" },
-    { label: "K-Compliance", path: "/compliance", icon: Landmark, key: "compliance" },
-    { label: "K-Analytics BI", path: "/bi", icon: BarChart3, key: "bi" },
-    { label: "Gestion des Tiers", path: "/master-data/tiers", icon: Users, key: "master-data" },
-    { label: "Ressources Humaines", path: "/rh/dashboard", icon: UserCheck, key: "rh" },
-    { label: "Portail Client B2B", path: "/client-portal", icon: Globe, key: "client-portal" },
-    { label: "Paramètres & Profil", path: "/settings", icon: Settings, key: "settings" },
-  ];
-
-  const checkModuleAccess = (itemKey: ModuleType): boolean => {
+  const checkModuleAccess = (itemKey: string): boolean => {
     if (isAdmin) return true;
     if (itemKey === "dashboard" || itemKey === "settings") return true;
     if (userModules.includes(itemKey)) return true;
@@ -190,26 +129,27 @@ export default function ModuleSidebar({
 
       {/* Navigation List */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.path.split('/')[1] ? `/${item.path.split('/')[1]}` : item.path);
+        {filteredNav.map((item) => {
+          const rootPathPrefix = item.path.split('/')[1] ? `/${item.path.split('/')[1]}` : item.path;
+          const isActive = pathname.startsWith(rootPathPrefix);
           const isAllowed = checkModuleAccess(item.key);
           const Icon = item.icon;
-          const subItems = subModulesMap[item.key] || [];
+          const subItems = item.subModules || [];
           const isAccordionOpen = expandedModule === item.key || (isActive && expandedModule === null);
 
           if (!isAllowed) {
             return (
               <div
                 key={item.path}
-                onClick={() => setDeniedModalItem({ label: item.label, key: item.key })}
-                title={`Module ${item.label} non inclus dans votre profil. Cliquez pour voir les détails.`}
+                onClick={() => setDeniedModalItem({ label: item.title, key: item.key })}
+                title={`Module ${item.title} non inclus dans votre profil. Cliquez pour voir les détails.`}
                 className={`flex items-center gap-3 py-2.5 rounded-xl text-sm font-semibold opacity-40 bg-slate-950/40 border border-slate-850 text-slate-500 cursor-not-allowed transition-all hover:opacity-65 hover:bg-slate-950/70 ${
                   isCollapsed ? "px-2 justify-center" : "px-3"
                 }`}
               >
                 <Icon className="w-5 h-5 shrink-0 text-slate-600" />
                 {!isCollapsed && (
-                  <span className="truncate flex-1 text-slate-500 line-through decoration-slate-600">{item.label}</span>
+                  <span className="truncate flex-1 text-slate-500 line-through decoration-slate-600">{item.title}</span>
                 )}
                 {!isCollapsed && (
                   <Lock className="w-3.5 h-3.5 text-amber-500/80 shrink-0" />
@@ -223,7 +163,7 @@ export default function ModuleSidebar({
               <div className="flex items-center">
                 <Link
                   href={item.path}
-                  title={isCollapsed ? item.label : undefined}
+                  title={isCollapsed ? item.title : undefined}
                   onClick={() => isMobile && onClose && onClose()}
                   className={`flex-1 flex items-center gap-3 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
                     isCollapsed ? "px-2 justify-center" : "px-3"
@@ -235,7 +175,7 @@ export default function ModuleSidebar({
                 >
                   <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? "text-indigo-400" : "text-slate-400 group-hover:text-slate-200"}`} />
                   {!isCollapsed && (
-                    <span className="truncate flex-1">{item.label}</span>
+                    <span className="truncate flex-1">{item.title}</span>
                   )}
                 </Link>
 
@@ -243,7 +183,7 @@ export default function ModuleSidebar({
                   <button
                     onClick={() => toggleAccordion(item.key)}
                     className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/80 transition-transform"
-                    title="Voir les sous-modules"
+                    title={`Voir les ${subItems.length} sous-modules de ${item.title}`}
                   >
                     <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${isAccordionOpen ? "rotate-90 text-indigo-400" : ""}`} />
                   </button>
@@ -255,18 +195,27 @@ export default function ModuleSidebar({
                 <div className="pl-8 pr-2 py-1 space-y-1 border-l-2 border-slate-800 ml-4 animate-in slide-in-from-top-1 duration-150">
                   {subItems.map((sub) => {
                     const isSubActive = pathname === sub.path;
+                    const SubIcon = sub.icon;
                     return (
                       <Link
                         key={sub.path}
                         href={sub.path}
                         onClick={() => isMobile && onClose && onClose()}
-                        className={`block py-1.5 px-2.5 text-xs rounded-lg transition-colors truncate ${
+                        className={`flex items-center justify-between py-1.5 px-2.5 text-xs rounded-lg transition-colors truncate group ${
                           isSubActive
                             ? "bg-indigo-600/30 text-indigo-300 font-bold border border-indigo-500/40"
                             : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 font-medium"
                         }`}
                       >
-                        • {sub.label}
+                        <div className="flex items-center gap-2 truncate">
+                          {SubIcon && <SubIcon className="w-3.5 h-3.5 shrink-0 opacity-70 group-hover:opacity-100" />}
+                          <span className="truncate">{sub.label}</span>
+                        </div>
+                        {sub.badge && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-amber-400 border border-slate-700 shrink-0">
+                            {sub.badge}
+                          </span>
+                        )}
                       </Link>
                     );
                   })}
