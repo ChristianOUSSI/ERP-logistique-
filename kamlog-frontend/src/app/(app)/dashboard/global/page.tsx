@@ -50,7 +50,7 @@ export default function GlobalDashboard() {
   const router = useRouter()
   const [tcodeFocused, setTcodeFocused] = useState(false)
   const [tcode, setTcode] = useState('')
-  const [period, setPeriod] = useState<'week' | 'month'>('week')
+  const [period, setPeriod] = useState<'week' | 'month' | 'year'>('week')
   const [isSyncing, setIsSyncing] = useState(false)
   const [lastSync, setLastSync] = useState(new Date().toLocaleTimeString())
 
@@ -63,7 +63,7 @@ export default function GlobalDashboard() {
   const [transitDeclarations, setTransitDeclarations] = useState('142')
   const [qhseScore, setQhseScore] = useState('98.5%')
 
-  // Sample Chart Data for Enterprise Performance
+  // Sample Chart Data for Enterprise Performance (Week, Month, Year)
   const [revenueDataWeek] = useState([
     { day: 'Lun', revenue: 38.5, fretTons: 1200 },
     { day: 'Mar', revenue: 42.0, fretTons: 1450 },
@@ -73,6 +73,25 @@ export default function GlobalDashboard() {
     { day: 'Sam', revenue: 34.6, fretTons: 1100 },
     { day: 'Dim', revenue: 30.0, fretTons: 950 },
   ])
+
+  const [revenueDataMonth] = useState([
+    { day: 'Sem 1', revenue: 185.0, fretTons: 5200 },
+    { day: 'Sem 2', revenue: 210.5, fretTons: 6100 },
+    { day: 'Sem 3', revenue: 245.8, fretTons: 7400 },
+    { day: 'Sem 4', revenue: 284.5, fretTons: 8900 },
+  ])
+
+  const [revenueDataYear] = useState([
+    { day: 'Jan', revenue: 620, fretTons: 18000 },
+    { day: 'Fév', revenue: 710, fretTons: 21000 },
+    { day: 'Mar', revenue: 840, fretTons: 25000 },
+    { day: 'Avr', revenue: 790, fretTons: 23500 },
+    { day: 'Mai', revenue: 920, fretTons: 28000 },
+    { day: 'Juin', revenue: 1050, fretTons: 31000 },
+    { day: 'Juil', revenue: 1180, fretTons: 34500 },
+  ])
+
+  const activeChartData = period === 'year' ? revenueDataYear : period === 'month' ? revenueDataMonth : revenueDataWeek;
 
   const [fleetStatusData] = useState([
     { name: 'En Mission Active', count: 82, color: '#10b981' },
@@ -279,22 +298,28 @@ export default function GlobalDashboard() {
             <div className="flex items-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
               <button
                 onClick={() => setPeriod('week')}
-                className={`px-3 py-1 rounded-lg font-bold transition ${period === 'week' ? 'bg-amber-500 text-slate-950' : 'text-slate-400'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${period === 'week' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
               >
                 Semaine
               </button>
               <button
                 onClick={() => setPeriod('month')}
-                className={`px-3 py-1 rounded-lg font-bold transition ${period === 'month' ? 'bg-amber-500 text-slate-950' : 'text-slate-400'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${period === 'month' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
               >
                 Mois
+              </button>
+              <button
+                onClick={() => setPeriod('year')}
+                className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${period === 'year' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
+              >
+                Année
               </button>
             </div>
           </div>
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueDataWeek}>
+              <AreaChart data={activeChartData}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4} />
