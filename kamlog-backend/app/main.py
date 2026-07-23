@@ -197,10 +197,17 @@ async def lifespan(app: FastAPI):
 
         await asyncio.to_thread(check_db)
 
-        print("' Database connection OK")
+        print(" ' Database connection OK")
 
         startup_errors.clear()
 
+        # Auto-seed database records if needed
+        try:
+            from scripts.seed_data import seed_all
+            await asyncio.to_thread(seed_all, False)
+            print(" Auto-seeding completed successfully!")
+        except Exception as seed_err:
+            print(f" Auto-seeding notice: {seed_err}")
     except Exception as e:
 
         err_msg = f"Database connection failed: {e}"
@@ -575,13 +582,16 @@ safe_include_router(notifications, prefix="/api/notifications", tags=["Notificat
 safe_include_router(purchase, prefix="/api/purchase", tags=["Achats - DEPRECATED"])
 safe_include_router(incidents, prefix="/api/incidents", tags=["Incidents - DEPRECATED"])
 safe_include_router(public_api, prefix="/api/public", tags=["Public API - DEPRECATED"])
-safe_include_router(rh, prefix="/api/rh", tags=["Ressources Humaines - DEPRECATED"])
-safe_include_router(qhse, prefix="/api/qhse", tags=["QHSE - DEPRECATED"])
-
-
-
-
-
+@app.post("/api/v1/admin/seed")
+@app.get("/api/v1/admin/seed")
+async def trigger_admin_seed(force: bool = False):
+    """Permet d'exécuter à tout moment le seeder de la base de données ERP KAMLOG."""
+    try:
+        from scripts.seed_data import seed_all
+        res = await asyncio.to_thread(seed_all, force)
+        return res
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
 
 @app.get('/api/health')
 

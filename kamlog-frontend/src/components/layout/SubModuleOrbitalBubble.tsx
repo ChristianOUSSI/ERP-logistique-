@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { X } from "lucide-react";
+import { X, Layers, LayoutDashboard } from "lucide-react";
 import { NAVIGATION_REGISTRY, getFilteredNavigationForUser, ModuleNavConfig } from "@/config/navigationRegistry";
 
 export default function SubModuleOrbitalBubble() {
@@ -160,47 +160,49 @@ export default function SubModuleOrbitalBubble() {
             />
 
             {/* Central Module Sphere */}
-            <div
-              className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-slate-900 border-4 flex flex-col items-center justify-center p-2 text-center shadow-2xl pointer-events-auto cursor-pointer group hover:scale-105 transition-all"
-              style={{ borderColor: activeOrbit.color, boxShadow: `0 0 25px ${activeOrbit.color}40` }}
-              onClick={() => setIsOpen(false)}
-            >
-              <div className={`w-12 h-12 rounded-full bg-gradient-to-tr ${activeOrbit.bgGradient} text-white flex items-center justify-center shadow-lg mb-1`}>
-                <MainIcon className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-[11px] font-black text-slate-100 truncate w-full px-1">{activeOrbit.title}</span>
-              <span className="text-[9px] font-bold" style={{ color: activeOrbit.color }}>Fermer ({itemsCount})</span>
-            </div>
+            {(() => {
+              const MainIconComponent = activeOrbit.icon || LayoutDashboard;
+              return (
+                <div
+                  className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-slate-900 border-4 flex flex-col items-center justify-center p-2 text-center shadow-2xl pointer-events-auto cursor-pointer group hover:scale-105 transition-all"
+                  style={{ borderColor: activeOrbit.color, boxShadow: `0 0 25px ${activeOrbit.color}40` }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-tr ${activeOrbit.bgGradient} text-white flex items-center justify-center shadow-lg mb-1`}>
+                    <MainIconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-[11px] font-black text-slate-100 truncate w-full px-1">{activeOrbit.title}</span>
+                  <span className="text-[9px] font-bold" style={{ color: activeOrbit.color }}>Fermer ({itemsCount})</span>
+                </div>
+              );
+            })()}
 
             {/* Orbiting Sub-Module Items */}
             {activeOrbit.subModules.map((item, index) => {
               const angle = (index / itemsCount) * 2 * Math.PI - Math.PI / 2;
               const x = Math.cos(angle) * orbitRadius;
               const y = Math.sin(angle) * orbitRadius;
-              const ItemIcon = item.icon;
+              const ItemIconComponent = item.icon || Layers;
               const isActiveRoute = pathname === item.path;
 
               return (
                 <div
                   key={item.path}
-                  style={{
-                    transform: `translate(${x}px, ${y}px)`,
-                    transitionDelay: `${index * 35}ms`
-                  }}
-                  className="absolute pointer-events-auto animate-in zoom-in-50 duration-300"
+                  style={{ transform: `translate(${x}px, ${y}px)` }}
+                  className="absolute pointer-events-auto transition-transform duration-300"
                 >
                   <button
                     onClick={() => {
                       setIsOpen(false);
                       router.push(item.path);
                     }}
-                    className={`group relative flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-900/90 border transition-all duration-300 hover:scale-125 hover:z-30 hover:bg-slate-800 ${
+                    className={`flex flex-col items-center justify-center w-16 h-16 sm:w-18 sm:h-18 rounded-2xl p-2 border shadow-lg transition-all duration-200 hover:scale-110 group ${
                       isActiveRoute
-                        ? "border-amber-400 text-amber-400 shadow-xl shadow-amber-500/40 scale-110"
-                        : "border-slate-700/80 text-slate-200 hover:border-indigo-400 shadow-lg"
+                        ? 'bg-slate-900 text-white border-blue-500 shadow-blue-500/30'
+                        : 'bg-slate-900/90 text-slate-200 border-slate-700/60 hover:bg-slate-800 hover:border-slate-500'
                     }`}
                   >
-                    <ItemIcon className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:rotate-12" />
+                    <ItemIconComponent className={`w-5 h-5 mb-1 transition-colors ${isActiveRoute ? 'text-blue-400' : 'text-slate-300 group-hover:text-white'}`} />
 
                     {/* Tooltip Label on Hover */}
                     <div className="absolute -bottom-8 whitespace-nowrap bg-slate-950 text-slate-100 font-bold text-[10px] sm:text-xs px-2.5 py-1 rounded-xl border border-slate-800 shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">

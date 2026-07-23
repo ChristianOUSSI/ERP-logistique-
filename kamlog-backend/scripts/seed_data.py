@@ -157,7 +157,7 @@ def seed_users(agency_id: int):
                     user.must_change_password = u.get("must_change_password", True)
                     continue
 
-                logger.info(f"  → Creating User {u['email']}")
+                logger.info(f"  -> Creating User {u['email']}")
                 user = User(
                     email=u["email"],
                     username=u["username"],
@@ -247,10 +247,11 @@ def seed_missions():
 from app.database import Base
 import app.models
 
-def main():
-    logger.info("Starting KAMLOG ERP seed data script...")
+def seed_all(force_reset: bool = False):
+    logger.info(f"Starting KAMLOG ERP seed data script (force_reset={force_reset})...")
     try:
-        Base.metadata.drop_all(bind=engine)
+        if force_reset:
+            Base.metadata.drop_all(bind=engine)
         Base.metadata.create_all(bind=engine)
         agency_id = seed_agency()
         seed_rbac()
@@ -258,12 +259,13 @@ def main():
         seed_tiers()
         seed_missions()
         logger.info("[SUCCESS] All seed data completed successfully!")
+        return {"status": "success", "message": "All seed data completed successfully!"}
     except Exception as e:
         logger.error(f"[ERROR] Error during seed execution: {e}")
-        import traceback
-        traceback.print_exc()
-    finally:
-        engine.dispose()
+        return {"status": "error", "message": str(e)}
+
+def main():
+    seed_all(force_reset=True)
 
 if __name__ == "__main__":
     main()

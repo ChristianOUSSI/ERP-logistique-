@@ -199,3 +199,69 @@ def get_bi_summary():
         "taux_livraison_ponctuel_pct": 97.8,
         "economie_carburant_xaf": 8400000.0
     }
+
+# --- Endpoints Acconage & Handling Portuaire ---
+@router.get("/acconage")
+@router.get("/acconage/operations")
+def get_acconage_operations():
+    return {
+        "items": [
+            {"id": 1, "navire": "MV MAERSK CAMEROUN", "escale": "ESC-2026-089", "conteneurs_teu": 420, "quai": "Quai 23 - Port de Douala", "statut": "EN_DECHARGEMENT", "created_at": datetime.utcnow().isoformat()},
+            {"id": 2, "navire": "MV CMA CGM KRIBI", "escale": "ESC-2026-092", "conteneurs_teu": 680, "quai": "Quai 04 - Kribi Deep Seaport", "statut": "TERMINÉ", "created_at": datetime.utcnow().isoformat()}
+        ],
+        "total": 2
+    }
+
+# --- Endpoints Transit & Douane ---
+@router.get("/transit")
+@router.get("/transit/dossiers")
+def get_transit_dossiers():
+    return {
+        "items": [
+            {"id": 1, "reference_dossier": "TR-2026-0012", "client": "CFAO CAMEROUN", "bureau_douane": "Douala Port V (10P)", "bva_numero": "BVA-88129", "statut": "DEDOUANE", "created_at": datetime.utcnow().isoformat()},
+            {"id": 2, "reference_dossier": "TR-2026-0015", "client": "SABC BRASSERIES", "bureau_douane": "Kribi Conteneurs (K12)", "bva_numero": "BVA-99012", "statut": "EN_COURS_INSPECTION", "created_at": datetime.utcnow().isoformat()}
+        ],
+        "total": 2
+    }
+
+# --- Endpoints Removal Slips (Bons d'Enlèvement) ---
+@router.get("/magasin/removal-slips")
+def get_removal_slips():
+    return {
+        "items": [
+            {"id": 1, "numero_be": "BE-2026-044", "client": "TOTALENERGIES MARKETING", "entrepot": "Magasin Central Zone Industrielle Bassa", "statut": "VALIDE", "created_at": datetime.utcnow().isoformat()}
+        ],
+        "total": 1
+    }
+
+# --- Endpoints Master Data Articles ---
+@router.get("/master-data/articles")
+def get_master_data_articles():
+    return {
+        "items": [
+            {"id": 1, "code_sku": "ART-001", "designation": "Ciment Portland ZLECAF 42.5", "categorie": "MATERIAUX", "prix_unitaire_xaf": 4800, "stock_disponible": 12500},
+            {"id": 2, "code_sku": "ART-002", "designation": "Huile Moteur Synthétique 15W40 20L", "categorie": "PIECES_RECHANGE", "prix_unitaire_xaf": 45000, "stock_disponible": 320}
+        ],
+        "total": 2
+    }
+
+# --- Endpoints Ordres de Transfert ---
+@router.get("/magasin/ordres-transfert")
+def get_ordres_transfert():
+    return {
+        "items": [
+            {"id": 1, "reference": "OTR-2026-001", "source": "Magasin Douala Port", "destination": "Magasin Yaoundé Depot", "statut": "EN_TRANSIT", "created_at": datetime.utcnow().isoformat()}
+        ],
+        "total": 1
+    }
+
+# --- Endpoints Bandes de Livraison ---
+@router.get("/magasin/bandes-livraison")
+def get_bandes_livraison():
+    return {
+        "items": [
+            {"id": 1, "reference": "BL-2026-0891", "transporteur": "KAMLOG FREIGHT", "statut": "CONFIRME", "created_at": datetime.utcnow().isoformat()}
+        ],
+        "total": 1
+    }
+
