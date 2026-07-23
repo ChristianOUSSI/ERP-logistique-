@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { getFilteredNavigationForUser, ModuleNavConfig } from "@/config/navigationRegistry";
 import {
   LayoutDashboard,
   Truck,
