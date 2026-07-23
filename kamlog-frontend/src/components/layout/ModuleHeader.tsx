@@ -209,11 +209,12 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
 
           {/* ── Zone 1: Identity ── */}
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            {/* Hamburger */}
+            {/* Hamburger / Sidebar Toggle */}
             <button
               onClick={onMenuClick}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-outline bg-surface-container-low text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface lg:hidden"
-              aria-label="Ouvrir le menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-outline bg-surface-container-low text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+              aria-label="Rétracter/Ouvrir le menu"
+              title="Activer/Rétracter la Sidebar"
             >
               <span className="material-symbols-outlined text-[20px]">menu</span>
             </button>

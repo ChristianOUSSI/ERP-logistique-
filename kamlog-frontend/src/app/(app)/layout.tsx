@@ -14,6 +14,7 @@ import { Toaster } from 'sonner';
 import { ComingSoonProvider } from '@/contexts/ComingSoonContext';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { KeyboardShortcutHandler } from '@/components/shared/KeyboardShortcutHandler';
+import SubModuleOrbitalBubble from '@/components/layout/SubModuleOrbitalBubble';
 
 export default function AppLayout({
 
@@ -180,6 +181,7 @@ function AppLayoutContent({
       <Toaster position="top-right" richColors theme={uiTheme === 'system' ? 'system' : uiTheme} />
       <CommandPalette />
       <KeyboardShortcutHandler />
+      <SubModuleOrbitalBubble />
 
       {/* ── Sticky Header (full width) ── */}
 
