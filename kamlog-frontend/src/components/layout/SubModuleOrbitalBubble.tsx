@@ -155,21 +155,21 @@ export default function SubModuleOrbitalBubble() {
           >
             {/* Pulsating Orbital Ring */}
             <div
-              style={{ width: `${orbitRadius * 2}px`, height: `${orbitRadius * 2}px` }}
-              className="absolute rounded-full border-2 border-dashed border-indigo-500/40 animate-spin-slow"
+              style={{ width: `${orbitRadius * 2}px`, height: `${orbitRadius * 2}px`, borderColor: `${activeOrbit.color}66` }}
+              className="absolute rounded-full border-2 border-dashed animate-spin-slow"
             />
 
             {/* Central Module Sphere */}
             <div
               className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-slate-900 border-4 flex flex-col items-center justify-center p-2 text-center shadow-2xl pointer-events-auto cursor-pointer group hover:scale-105 transition-all"
-              style={{ borderColor: activeOrbit.color }}
+              style={{ borderColor: activeOrbit.color, boxShadow: `0 0 25px ${activeOrbit.color}40` }}
               onClick={() => setIsOpen(false)}
             >
               <div className={`w-12 h-12 rounded-full bg-gradient-to-tr ${activeOrbit.bgGradient} text-white flex items-center justify-center shadow-lg mb-1`}>
-                <MainIcon className="w-6 h-6" />
+                <MainIcon className="w-6 h-6 text-white" />
               </div>
               <span className="text-[11px] font-black text-slate-100 truncate w-full px-1">{activeOrbit.title}</span>
-              <span className="text-[9px] text-amber-400 font-bold">Fermer ({itemsCount})</span>
+              <span className="text-[9px] font-bold" style={{ color: activeOrbit.color }}>Fermer ({itemsCount})</span>
             </div>
 
             {/* Orbiting Sub-Module Items */}
