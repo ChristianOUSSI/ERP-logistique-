@@ -1,0 +1,1 @@
+[32m2026-07-19 23:36:47[0m | [1mINFO    [0m | [36mapp.services.blockchain_service[0m:[36m_create_genesis_block[0m:[36m51[0m | [36mno-request-id[0m | [1mGenesis block created for blockchain service[0m

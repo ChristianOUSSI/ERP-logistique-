@@ -85,7 +85,7 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
       { label: "Configuration des Rôles", path: "/admin/configuration-des-roles-rbac", icon: ShieldAlert },
       { label: "Agences Portuaires", path: "/admin/agencies", icon: Building },
       { label: "Journal d'Audit Système", path: "/admin/journal", icon: Activity },
-      { label: "Alertes & Sécurité", path: "/admin/alerts", icon: Zap },
+      { label: "Centre Alertes & Sécurité", path: "/security/notifications", icon: Zap },
       { label: "Paramètres Globaux", path: "/settings", icon: Settings },
     ]
   },
@@ -169,8 +169,9 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     bgGradient: "from-blue-600 to-cyan-500",
     requiredRoles: ["ADMIN", "DISPATCHER", "ACCONAGE", "MANAGER"],
     subModules: [
-      { label: "Dashboard Acconage", path: "/acconage", icon: LayoutDashboard },
-      { label: "Manifestes de Quai", path: "/transport/goods-declaration", icon: FileText },
+      { label: "Dashboard Acconage", path: "/acconage", icon: LayoutDashboard, badge: "Quai" },
+      { label: "Manifestes & Escales Navires", path: "/acconage", icon: FileText },
+      { label: "Opérations de Quai", path: "/acconage", icon: Layers },
       { label: "Dossiers Transit Portuaire", path: "/transit", icon: Globe },
       { label: "Contrôle Porte Gate", path: "/parc/gate", icon: Navigation },
     ]
@@ -220,10 +221,12 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     bgGradient: "from-orange-600 to-amber-500",
     requiredRoles: ["ADMIN", "MAINTENANCE", "PARC", "MANAGER"],
     subModules: [
-      { label: "Ordres de Réparation Workshop", path: "/maintenance", icon: Wrench, badge: "Atelier" },
-      { label: "Work Orders Parc", path: "/parc/work-orders", icon: ClipboardList },
+      { label: "Tableau de Bord Maintenance", path: "/maintenance", icon: LayoutDashboard, badge: "Atelier" },
+      { label: "Ordres de Réparation", path: "/maintenance", icon: Wrench },
+      { label: "Pièces de Rechange & Stock", path: "/maintenance", icon: Package },
+      { label: "Work Orders Parc Véhicules", path: "/parc/work-orders", icon: ClipboardList },
       { label: "Télémétrie FuelGuard", path: "/fuel-guard", icon: Fuel },
-      { label: "Pièces & Procurement PO", path: "/procurement", icon: ShoppingCart },
+      { label: "Achats & Pièces PO", path: "/procurement", icon: ShoppingCart },
     ]
   },
 
@@ -353,8 +356,8 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
       { label: "Dashboard Ressources Humaines", path: "/rh/dashboard", icon: LayoutDashboard, badge: "RH" },
       { label: "Annuaire & Gestion Employés", path: "/rh/employes", icon: Users, badge: "Personnel" },
       { label: "Mon Espace RH & Demandes", path: "/rh/mon-espace", icon: UserCheck },
-      { label: "Gestion de la Paie", path: "/rh/dashboard", icon: DollarSign, badge: "Paie" },
-      { label: "Affectation & Permis Chauffeurs", path: "/transport/drivers", icon: Truck, badge: "Flotte" },
+      { label: "Gestion de la Paie", path: "/rh/paie", icon: DollarSign, badge: "Paie" },
+      { label: "Congés & Absences", path: "/rh/conges", icon: FileText, badge: "Congés" },
     ]
   },
 

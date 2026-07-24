@@ -120,7 +120,7 @@ from app.routers.v1 import auth, tiers, transport, finance, parc, documents, ale
 
 from app.routers.v1 import goods_declaration, removal_slip, reception_mag3, suppliers, master_data, admin_agency, notifications, purchase, incidents, public_api, rh
 
-from app.routers.v1 import bill_of_loading, qhse, new_k_modules
+from app.routers.v1 import bill_of_loading, qhse, new_k_modules, ai_assistant
 
 from app.config import settings
 
@@ -556,6 +556,7 @@ safe_include_router(incidents, prefix="/api/v1/incidents", tags=["Incidents"])
 safe_include_router(public_api, prefix="/api/v1/public", tags=["Public API"])
 safe_include_router(rh, prefix="/api/v1/rh", tags=["Ressources Humaines"])
 safe_include_router(qhse, prefix="/api/v1/qhse", tags=["QHSE"])
+safe_include_router(ai_assistant, prefix="/api/v1/ai", tags=["AI Assistant"])
 safe_include_router(new_k_modules)
 
 safe_include_router(auth, prefix="/api/auth", tags=["Auth - DEPRECATED"])
