@@ -81,11 +81,11 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     bgGradient: "from-indigo-600 to-violet-600",
     requiredRoles: ["ADMIN"],
     subModules: [
-      { label: "Utilisateurs & RBAC", path: "/admin", icon: Users, badge: "Admin" },
-      { label: "Configuration des Rôles", path: "/admin/configuration-des-roles-rbac", icon: ShieldAlert },
+      { label: "Utilisateurs & Comptes", path: "/admin/user-management/listing", icon: Users, badge: "Admin" },
+      { label: "Configuration des Rôles RBAC", path: "/admin/configuration-des-roles-rbac", icon: ShieldAlert },
       { label: "Agences Portuaires", path: "/admin/agencies", icon: Building },
       { label: "Journal d'Audit Système", path: "/admin/journal", icon: Activity },
-      { label: "Centre Alertes & Sécurité", path: "/security/notifications", icon: Zap },
+      { label: "Centre Alertes & Sécurité", path: "/admin/alerts", icon: Zap },
       { label: "Paramètres Globaux", path: "/settings", icon: Settings },
     ]
   },
@@ -224,9 +224,9 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
       { label: "Tableau de Bord Maintenance", path: "/maintenance", icon: LayoutDashboard, badge: "Atelier" },
       { label: "Ordres de Réparation", path: "/maintenance", icon: Wrench },
       { label: "Pièces de Rechange & Stock", path: "/maintenance", icon: Package },
-      { label: "Work Orders Parc Véhicules", path: "/parc/work-orders", icon: ClipboardList },
+      { label: "Work Orders Parc Véhicules", path: "/parc/work-orders/create", icon: ClipboardList },
       { label: "Télémétrie FuelGuard", path: "/fuel-guard", icon: Fuel },
-      { label: "Achats & Pièces PO", path: "/procurement", icon: ShoppingCart },
+      { label: "Achats Pièces & PO", path: "/purchase", icon: ShoppingCart },
     ]
   },
 
@@ -321,9 +321,11 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     requiredRoles: ["ADMIN", "MANAGER", "AUDITOR"],
     subModules: [
       { label: "Tableau de Bord BI Executive", path: "/bi", icon: BarChart3, badge: "KPIs" },
+      { label: "Analyse Marges & Rentabilité", path: "/bi/margins", icon: DollarSign },
       { label: "Journal d'Audit Système", path: "/admin/journal", icon: Activity },
+      { label: "Rapports Personnalisés", path: "/reports/generateur-rapports-personnalises", icon: FileText },
       { label: "Statistiques WMS", path: "/magasin/dashboard", icon: LayoutDashboard },
-      { label: "Statistiques Transport", path: "/transport/control", icon: Truck },
+      { label: "Statistiques Transport", path: "/transport/analytics", icon: Truck },
     ]
   },
 
@@ -339,7 +341,9 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     subModules: [
       { label: "Répertoire Tiers & Clients", path: "/master-data/tiers", icon: Users, badge: "Tiers" },
       { label: "Catalogue Articles & Stock", path: "/master-data/articles", icon: Package, badge: "Articles" },
+      { label: "Catégories Articles", path: "/master-data/article-categories", icon: Layers },
       { label: "Emplacements WMS", path: "/magasin/wms-slots", icon: MapPin },
+      { label: "Incoterms & Types Conteneurs", path: "/master-data/tiers", icon: Globe },
     ]
   },
 
@@ -371,9 +375,13 @@ export const NAVIGATION_REGISTRY: Record<string, ModuleNavConfig> = {
     bgGradient: "from-sky-600 to-indigo-600",
     requiredRoles: ["ADMIN", "CLIENT", "CLIENT_B2B", "MANAGER"],
     subModules: [
-      { label: "Tableau de Bord Client B2B", path: "/client-portal", icon: LayoutDashboard },
-      { label: "Suivi des Expéditions", path: "/tracking", icon: Radio },
-      { label: "Documents & Factures Client", path: "/finance/factures", icon: FileText },
+      { label: "Tableau de Bord Client", path: "/client-portal", icon: LayoutDashboard, badge: "B2B" },
+      { label: "Mes Expéditions", path: "/client-portal/shipments", icon: Radio, badge: "Tracking" },
+      { label: "Mes Commandes", path: "/client-portal/orders", icon: ShoppingCart },
+      { label: "Mes Factures", path: "/client-portal/invoices", icon: FileText },
+      { label: "Mes Litiges", path: "/client-portal/litiges", icon: ShieldAlert },
+      { label: "Rapports Personnalisés", path: "/client-portal/reports", icon: BarChart3 },
+      { label: "Mon Profil", path: "/client-portal/profile", icon: UserCheck },
     ]
   },
 
