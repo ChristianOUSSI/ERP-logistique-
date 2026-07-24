@@ -1,9 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Body
+from typing import List, Optional, Dict
 from datetime import datetime
 from pydantic import BaseModel
 
 router = APIRouter(prefix="", tags=["Transport"])
+
+class MissionUpdateStatus(BaseModel):
+    statut: str  # PLANIFIE, EN_COURS, LIVREE, ANNULEE
+    epod_signature: Optional[str] = None
+    epod_note: Optional[str] = None
+    montant_fret_xaf: Optional[float] = 1500000.0
+    client_nom: Optional[str] = "CLIENT LOGISTIQUE CEMAC"
 
 _missions = [
     {
@@ -14,6 +21,8 @@ _missions = [
         "origine": "Port de Douala",
         "destination": "Yaoundé Depot SABC",
         "fret": "Boissons & Brasserie",
+        "client": "SABC CAMEROUN",
+        "montant_fret_xaf": 1850000.0,
         "statut": "EN_COURS",
         "created_at": datetime.utcnow().isoformat()
     },
@@ -25,6 +34,8 @@ _missions = [
         "origine": "Kribi Container Terminal",
         "destination": "N'Djamena (Tchad)",
         "fret": "Ciment & Matériaux",
+        "client": "CIMENTERIES DU TCHAD",
+        "montant_fret_xaf": 4500000.0,
         "statut": "PLANIFIE",
         "created_at": datetime.utcnow().isoformat()
     }
@@ -36,10 +47,47 @@ _missions = [
 def list_missions():
     return {"items": _missions, "total": len(_missions)}
 
+@router.get("/missions/{mission_id}")
+def get_mission(mission_id: int):
+    mission = next((m for m in _missions if m["id"] == mission_id), None)
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission non trouvée")
+    return mission
+
+@router.patch("/missions/{mission_id}/status")
+@router.post("/missions/{mission_id}/deliver")
+def deliver_mission(mission_id: int, payload: MissionUpdateStatus):
+    """Workflow Senior : Passage de la mission en LIVREE et déclenchement facture automatique"""
+    mission = next((m for m in _missions if m["id"] == mission_id), None)
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission non trouvée")
+
+    mission["statut"] = payload.statut
+    mission["delivered_at"] = datetime.utcnow().isoformat()
+    if payload.epod_signature:
+        mission["epod_signature"] = payload.epod_signature
+    if payload.epod_note:
+        mission["epod_note"] = payload.epod_note
+
+    # Importer le registre factures finance pour générer la facture brouillon auto
+    from app.routers.v1.finance import create_automatic_invoice_from_mission
+    invoice = create_automatic_invoice_from_mission(
+        mission_ref=mission["reference"],
+        client=mission.get("client", payload.client_nom),
+        montant_ht=mission.get("montant_fret_xaf", payload.montant_fret_xaf or 1500000.0)
+    )
+
+    return {
+        "message": f"Mission {mission['reference']} mise à jour ({payload.statut}). Facture automatique créée avec succès.",
+        "mission": mission,
+        "facture_auto": invoice
+    }
+
 @router.get("/kpis")
 def get_transport_kpis():
     return {
         "missions_actives": len([m for m in _missions if m["statut"] == "EN_COURS"]),
+        "missions_livrees": len([m for m in _missions if m["statut"] == "LIVREE"]),
         "missions_total": len(_missions),
         "taux_ponctualite_pct": 98.2,
         "consommation_moyenne_litres_100km": 32.4

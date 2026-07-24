@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { QrCode, CheckCircle, AlertTriangle, Info, Printer, Save, Camera } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface InventoryItem {
   status: 'match' | 'shortage' | 'overage' | 'pending'
@@ -16,7 +18,10 @@ interface InventoryItem {
 export default function SaisieInventairePhysiquePage() {
   const [selectedWarehouse, setSelectedWarehouse] = useState('WH-A (Terminal 1)')
   const [selectedZone, setSelectedZone] = useState('Zone A-12')
-  const [inventoryDate, setInventoryDate] = useState('2023-10-27')
+  const [inventoryDate, setInventoryDate] = useState('2026-08-15')
+  const [showScanner, setShowScanner] = useState(false)
+  const [scannedCode, setScannedCode] = useState('')
+
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     {
       status: 'match',
@@ -94,193 +99,189 @@ export default function SaisieInventairePhysiquePage() {
     setInventoryItems(newItems)
   }
 
-  const getStatusIcon = (status: InventoryItem['status']) => {
-    switch (status) {
-      case 'match':
-        return <span className="material-symbols-outlined text-green-500 text-base">check_circle</span>
-      case 'shortage':
-        return <span className="material-symbols-outlined text-error text-base fill">warning</span>
-      case 'overage':
-        return <span className="material-symbols-outlined text-blue-500 text-base fill">info</span>
-      case 'pending':
-        return <span className="material-symbols-outlined text-outline text-base">radio_button_unchecked</span>
+  const handleSimulateScan = (codeToScan: string) => {
+    const idx = inventoryItems.findIndex(i => i.code.toLowerCase() === codeToScan.toLowerCase())
+    if (idx !== -1) {
+      const item = inventoryItems[idx]
+      const currentQty = typeof item.realQty === 'number' ? item.realQty : 0
+      handleRealQtyChange(idx, (currentQty + 1).toString())
+      toast.success(`Code-barres scanné : ${item.code} (+1 sur qté réelle)`)
+    } else {
+      toast.error(`Article ${codeToScan} non trouvé dans cet inventaire`)
     }
+    setScannedCode('')
+    setShowScanner(false)
   }
 
-  const getRowBgClass = (status: InventoryItem['status']) => {
-    switch (status) {
-      case 'shortage':
-        return 'bg-red-50/10'
-      default:
-        return ''
-    }
-  }
-
-  const getVarianceClass = (status: InventoryItem['status']) => {
-    switch (status) {
-      case 'shortage':
-        return 'text-error font-bold bg-error-container/30'
-      case 'overage':
-        return 'text-blue-700 font-bold bg-blue-50'
-      default:
-        return 'text-on-surface-variant'
-    }
+  const handleValidateInventory = () => {
+    const shortages = inventoryItems.filter(i => i.status === 'shortage').length
+    const overages = inventoryItems.filter(i => i.status === 'overage').length
+    toast.success(`Inventaire WMS validé ! Écritures de régularisation générées : ${shortages} pertes, ${overages} surplus.`)
   }
 
   return (
-    <>
-      <style jsx global>{`
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL 0, wght 400, GRAD 0, opsz 24';
-        }
-        .material-symbols-outlined.fill {
-          font-variation-settings: 'FILL 1';
-        }
-      `}</style>
-      <div className="bg-surface-container-low text-on-surface font-body-lg antialiased">
-        
-        
-
-        
-        
-
-        {/* Main Content Stage */}
-        <main className="p-gutter max-w-max-width mx-auto">
-          {/* Context Header */}
-          <div className="mb-6 flex justify-between items-end">
-            <div>
-              <div className="flex items-center gap-2 text-sm text-on-surface-variant mb-1">
-                <span className="material-symbols-outlined text-xs">home</span>
-                <span className="material-symbols-outlined text-xs">chevron_right</span>
-                <span>K-Magasin</span>
-                <span className="material-symbols-outlined text-xs">chevron_right</span>
-                <span className="font-medium text-error">Inventaire</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-8 bg-error rounded-full"></div>
-                <h2 className="font-headline-lg text-headline-lg text-on-surface">Saisie Inventaire Physique</h2>
-                <span className="bg-error-container text-on-error-container text-xs px-2 py-0.5 rounded font-mono ml-2 border border-red-200">T-CODE: KM01</span>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button className="px-4 py-2 bg-surface text-on-surface border border-outline-variant rounded flex items-center gap-2 hover:bg-surface-variant transition-colors text-sm font-medium">
-                <span className="material-symbols-outlined text-sm">print</span> Imprimer Fiche
-              </button>
-              <button className="px-4 py-2 bg-error text-white rounded flex items-center gap-2 hover:bg-red-700 transition-colors shadow-sm text-sm font-bold">
-                <span className="material-symbols-outlined text-sm">save</span> Valider Écarts
-              </button>
-            </div>
+    <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+            <span>K-Magasin WMS</span> • <span className="text-amber-400 font-semibold">Inventaire Physique</span>
           </div>
-
-          {/* Meta Data Form */}
-          <div className="bg-surface border border-outline-variant rounded p-4 mb-6 shadow-sm flex gap-6 items-center flex-wrap">
-            <div className="flex flex-col gap-1 w-48">
-              <label className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Magasin</label>
-              <select 
-                className="bg-surface-container-low border border-outline-variant rounded p-1.5 text-sm focus:border-error focus:ring-1 focus:ring-error"
-                value={selectedWarehouse}
-                onChange={(e) => setSelectedWarehouse(e.target.value)}
-              >
-                <option>WH-A (Terminal 1)</option>
-                <option>WH-B (Terminal 2)</option>
-                <option>Zone Quarantaine</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-1 w-32">
-              <label className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Allée/Zone</label>
-              <select 
-                className="bg-surface-container-low border border-outline-variant rounded p-1.5 text-sm focus:border-error focus:ring-1 focus:ring-error"
-                value={selectedZone}
-                onChange={(e) => setSelectedZone(e.target.value)}
-              >
-                <option>Zone A-12</option>
-                <option>Zone B-04</option>
-                <option>Toutes</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-1 w-40">
-              <label className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Date Inventaire</label>
-              <input 
-                className="bg-surface-container-low border border-outline-variant rounded p-1.5 text-sm focus:border-error focus:ring-1 focus:ring-error text-on-surface" 
-                type="date" 
-                value={inventoryDate}
-                onChange={(e) => setInventoryDate(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col gap-1 w-40">
-              <label className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">Responsable</label>
-              <input className="bg-surface-container-low border border-outline-variant rounded p-1.5 text-sm focus:border-error focus:ring-1 focus:ring-error text-on-surface" readOnly type="text" value="J. Dupont"/>
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-sm font-medium text-green-700">En cours de saisie</span>
-            </div>
-          </div>
-
-          {/* High-Density Data Table */}
-          <div className="bg-surface border border-outline-variant rounded shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left font-data-tabular text-data-tabular">
-                <thead className="bg-surface-container-high border-b border-outline-variant sticky top-0">
-                  <tr>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-12">Statut</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-24">Empl.</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-32">Code Article</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant">Description</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-20 text-center">UoM</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-24 text-right bg-surface-dim">Qté Sys.</th>
-                    <th className="py-2 px-3 font-semibold text-error w-32 text-center border-x border-red-200 bg-red-50">Qté Réelle</th>
-                    <th className="py-2 px-3 font-semibold text-on-surface-variant w-24 text-right">Écart</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant">
-                  {inventoryItems.map((item, index) => (
-                    <tr key={index} className={`hover:bg-surface-container-low transition-colors group ${getRowBgClass(item.status)}`}>
-                      <td className="py-2 px-3 text-center">{getStatusIcon(item.status)}</td>
-                      <td className="py-2 px-3 font-mono text-xs">{item.location}</td>
-                      <td className="py-2 px-3 font-mono text-primary font-medium">{item.code}</td>
-                      <td className="py-2 px-3 truncate max-w-[200px]" title={item.description}>{item.description}</td>
-                      <td className="py-2 px-3 text-center text-on-surface-variant">{item.uom}</td>
-                      <td className="py-2 px-3 text-right text-on-surface-variant bg-surface-container-lowest">{item.systemQty.toFixed(2)}</td>
-                      <td className="py-1 px-3 border-x border-red-100 bg-red-50/30">
-                        <input 
-                          className={`w-full text-center border rounded py-1 px-2 text-sm focus:border-error focus:ring-1 focus:ring-error bg-white font-mono font-medium ${
-                            item.status === 'shortage' ? 'border-error text-error' :
-                            item.status === 'overage' ? 'border-blue-400 text-blue-700' :
-                            'border-outline-variant'
-                          }`}
-                          type="number" 
-                          value={item.realQty}
-                          onChange={(e) => handleRealQtyChange(index, e.target.value)}
-                          placeholder="..."
-                        />
-                      </td>
-                      <td className={`py-2 px-3 text-right font-mono ${getVarianceClass(item.status)}`}>
-                        {typeof item.variance === 'number' ? (item.variance > 0 ? '+' : '') + item.variance.toFixed(2) : item.variance}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="bg-surface-container p-3 flex justify-between items-center text-sm border-t border-outline-variant">
-              <span className="text-on-surface-variant">Affichage 1-5 sur 142 articles</span>
-              <div className="flex gap-1">
-                <button className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface disabled:opacity-50" disabled>
-                  <span className="material-symbols-outlined text-sm">chevron_left</span>
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded bg-error text-white font-medium">1</button>
-                <button className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface font-medium">2</button>
-                <button className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface font-medium">3</button>
-                <span className="w-8 h-8 flex items-center justify-center text-on-surface-variant">...</span>
-                <button className="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface">
-                  <span className="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            Saisie Inventaire Physique WMS
+            <span className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded-full font-mono">T-CODE: KM01</span>
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowScanner(!showScanner)}
+            className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl flex items-center gap-2 hover:bg-amber-500/20 text-sm font-medium transition-colors"
+          >
+            <QrCode size={16} /> Scanner Douchette / QR
+          </button>
+          <button
+            onClick={handleValidateInventory}
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-amber-600/20 transition-all"
+          >
+            <Save size={16} /> Valider Écarts WMS
+          </button>
+        </div>
       </div>
-    </>
+
+      {/* Zone Scanner Douchette */}
+      {showScanner && (
+        <div className="p-4 rounded-2xl border border-amber-500/40 bg-amber-500/5 space-y-3 animate-in fade-in duration-300">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-amber-400 uppercase tracking-wide flex items-center gap-2">
+              <Camera size={14} /> Mode Scan Douchette / Caméra Mobile
+            </span>
+            <button onClick={() => setShowScanner(false)} className="text-xs text-muted-foreground hover:text-foreground">Fermer ✕</button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Scanner ou saisir un code article (ex: ART-4492-X)..."
+              value={scannedCode}
+              onChange={(e) => setScannedCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSimulateScan(scannedCode)}
+              className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-sm font-mono focus:ring-2 focus:ring-amber-500"
+              autoFocus
+            />
+            <button
+              onClick={() => handleSimulateScan(scannedCode)}
+              className="px-4 py-2 bg-amber-500 text-black font-bold text-sm rounded-xl hover:bg-amber-400 transition-colors"
+            >
+              Simuler Scan
+            </button>
+          </div>
+          <div className="flex gap-2 text-xs text-muted-foreground">
+            <span>Raccourcis rapides test :</span>
+            {inventoryItems.map(i => (
+              <button key={i.code} onClick={() => handleSimulateScan(i.code)} className="font-mono text-amber-400 underline hover:text-amber-300">
+                {i.code}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Meta Form */}
+      <div className="bg-card border border-border rounded-2xl p-4 flex gap-6 items-center flex-wrap">
+        <div className="flex flex-col gap-1 w-48">
+          <label className="text-xs font-bold text-muted-foreground uppercase">Magasin</label>
+          <select 
+            className="bg-background border border-border rounded-xl p-2 text-sm"
+            value={selectedWarehouse}
+            onChange={(e) => setSelectedWarehouse(e.target.value)}
+          >
+            <option>WH-A (Terminal 1)</option>
+            <option>WH-B (Terminal 2)</option>
+            <option>Zone Quarantaine</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1 w-36">
+          <label className="text-xs font-bold text-muted-foreground uppercase">Allée/Zone</label>
+          <select 
+            className="bg-background border border-border rounded-xl p-2 text-sm"
+            value={selectedZone}
+            onChange={(e) => setSelectedZone(e.target.value)}
+          >
+            <option>Zone A-12</option>
+            <option>Zone B-04</option>
+            <option>Toutes</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1 w-40">
+          <label className="text-xs font-bold text-muted-foreground uppercase">Date Inventaire</label>
+          <input 
+            className="bg-background border border-border rounded-xl p-2 text-sm text-foreground" 
+            type="date" 
+            value={inventoryDate}
+            onChange={(e) => setInventoryDate(e.target.value)}
+          />
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-sm font-medium text-emerald-400">Saisie active (142 articles)</span>
+        </div>
+      </div>
+
+      {/* Data Table */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-muted/40 border-b border-border">
+              <tr>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase w-12">Statut</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase w-24">Empl.</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase w-32">Code Article</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase">Description</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase text-center w-20">UoM</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase text-right w-28">Qté Sys.</th>
+                <th className="py-3 px-4 font-semibold text-amber-400 text-xs uppercase text-center w-36 bg-amber-500/5">Qté Réelle</th>
+                <th className="py-3 px-4 font-semibold text-muted-foreground text-xs uppercase text-right w-28">Écart</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {inventoryItems.map((item, index) => (
+                <tr key={index} className="hover:bg-muted/20 transition-colors">
+                  <td className="py-3 px-4 text-center">
+                    {item.status === 'match' && <CheckCircle size={16} className="text-emerald-400 mx-auto" />}
+                    {item.status === 'shortage' && <AlertTriangle size={16} className="text-red-400 mx-auto" />}
+                    {item.status === 'overage' && <Info size={16} className="text-blue-400 mx-auto" />}
+                    {item.status === 'pending' && <span className="w-3 h-3 rounded-full border border-muted-foreground inline-block"></span>}
+                  </td>
+                  <td className="py-3 px-4 font-mono text-xs text-muted-foreground">{item.location}</td>
+                  <td className="py-3 px-4 font-mono text-xs font-bold text-amber-400">{item.code}</td>
+                  <td className="py-3 px-4 text-foreground font-medium">{item.description}</td>
+                  <td className="py-3 px-4 text-center text-xs text-muted-foreground">{item.uom}</td>
+                  <td className="py-3 px-4 text-right font-bold text-foreground">{item.systemQty.toFixed(2)}</td>
+                  <td className="py-2 px-4 text-center bg-amber-500/5">
+                    <input 
+                      type="number" 
+                      className={`w-full text-center border rounded-xl py-1.5 px-2 text-sm font-mono font-bold focus:ring-2 focus:ring-amber-500 bg-background ${
+                        item.status === 'shortage' ? 'border-red-500/50 text-red-400' :
+                        item.status === 'overage' ? 'border-blue-500/50 text-blue-400' :
+                        'border-border text-foreground'
+                      }`}
+                      value={item.realQty}
+                      onChange={(e) => handleRealQtyChange(index, e.target.value)}
+                      placeholder="..."
+                    />
+                  </td>
+                  <td className={`py-3 px-4 text-right font-mono font-bold ${
+                    item.status === 'shortage' ? 'text-red-400' :
+                    item.status === 'overage' ? 'text-blue-400' :
+                    'text-muted-foreground'
+                  }`}>
+                    {typeof item.variance === 'number' ? (item.variance > 0 ? '+' : '') + item.variance.toFixed(2) : item.variance}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   )
 }
