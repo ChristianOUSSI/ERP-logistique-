@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
@@ -43,7 +43,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
         <p className="mt-8 text-sm text-on-surface-variant">
           {t.errors.helpPersists}
-          <a href="mailto:support@kamlog.cm" className="text-primary hover:underline">support@kamlog.cm</a>
+          <a href="mailto:support@evo-log.cm" className="text-primary hover:underline">support@evo-log.cm</a>
         </p>
         <p className="mt-10 text-xs text-on-surface-variant/50">{t.errors.confidentialFooter}</p>
       </div>

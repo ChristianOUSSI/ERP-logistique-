@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+﻿from fastapi import APIRouter, HTTPException, status
 from datetime import datetime, timedelta
 import re
 from app.schemas.auth import LoginRequest, LoginResponse, AdminCreateUserRequest, ChangePasswordRequest
@@ -13,9 +13,9 @@ ALL_MODULES = [
 
 # Base de données certifiée d'utilisateurs rattachés par rôle et modules autorisés (Seeders ERP)
 USERS_DB = {
-    "admin@kamlog.cm": {
+    "admin@evo-log.cm": {
         "id": "usr-001",
-        "email": "admin@kamlog.cm",
+        "email": "admin@evo-log.cm",
         "nom_complet": "Administrateur Système CADC",
         "role": "ADMIN",
         "roles": ["ADMIN", "DIRECTEUR_LOGISTIQUE"],
@@ -24,9 +24,9 @@ USERS_DB = {
         "must_change_password": False,
         "password_changed_at": datetime.utcnow() - timedelta(days=10),
     },
-    "kamga@kamlog.cm": {
+    "kamga@evo-log.cm": {
         "id": "usr-002",
-        "email": "kamga@kamlog.cm",
+        "email": "kamga@evo-log.cm",
         "nom_complet": "Monsieur Kamga (Chauffeur)",
         "role": "CHAUFFEUR",
         "roles": ["CHAUFFEUR"],
@@ -35,9 +35,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=80),
     },
-    "chauffeur@kamlog.cm": {
+    "chauffeur@evo-log.cm": {
         "id": "usr-002",
-        "email": "chauffeur@kamlog.cm",
+        "email": "chauffeur@evo-log.cm",
         "nom_complet": "Monsieur Kamga (Chauffeur)",
         "role": "CHAUFFEUR",
         "roles": ["CHAUFFEUR"],
@@ -46,9 +46,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=80),
     },
-    "magasinier@kamlog.cm": {
+    "magasinier@evo-log.cm": {
         "id": "usr-003",
-        "email": "magasinier@kamlog.cm",
+        "email": "magasinier@evo-log.cm",
         "nom_complet": "Chef Magasinier MAG3",
         "role": "MAGASINIER",
         "roles": ["MAGASINIER", "MAGASIN"],
@@ -57,9 +57,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=5),
     },
-    "magasin@kamlog.cm": {
+    "magasin@evo-log.cm": {
         "id": "usr-003",
-        "email": "magasin@kamlog.cm",
+        "email": "magasin@evo-log.cm",
         "nom_complet": "Chef Magasinier MAG3",
         "role": "MAGASINIER",
         "roles": ["MAGASINIER", "MAGASIN"],
@@ -68,9 +68,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=5),
     },
-    "financier@kamlog.cm": {
+    "financier@evo-log.cm": {
         "id": "usr-004",
-        "email": "financier@kamlog.cm",
+        "email": "financier@evo-log.cm",
         "nom_complet": "Responsable Financier ERP",
         "role": "FINANCE",
         "roles": ["FINANCE", "FINANCIER"],
@@ -79,9 +79,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=12),
     },
-    "finance@kamlog.cm": {
+    "finance@evo-log.cm": {
         "id": "usr-004",
-        "email": "finance@kamlog.cm",
+        "email": "finance@evo-log.cm",
         "nom_complet": "Responsable Financier ERP",
         "role": "FINANCE",
         "roles": ["FINANCE", "FINANCIER"],
@@ -90,9 +90,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=12),
     },
-    "qhse@kamlog.cm": {
+    "qhse@evo-log.cm": {
         "id": "usr-005",
-        "email": "qhse@kamlog.cm",
+        "email": "qhse@evo-log.cm",
         "nom_complet": "Inspecteur QHSE Port",
         "role": "QHSE",
         "roles": ["QHSE"],
@@ -101,9 +101,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=15),
     },
-    "douane@kamlog.cm": {
+    "douane@evo-log.cm": {
         "id": "usr-006",
-        "email": "douane@kamlog.cm",
+        "email": "douane@evo-log.cm",
         "nom_complet": "Déclarant en Douane & Transit",
         "role": "DOUANE",
         "roles": ["DOUANE", "TRANSIT"],
@@ -112,9 +112,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=20),
     },
-    "parc@kamlog.cm": {
+    "parc@evo-log.cm": {
         "id": "usr-007",
-        "email": "parc@kamlog.cm",
+        "email": "parc@evo-log.cm",
         "nom_complet": "Gestionnaire Parc & Flotte",
         "role": "PARC",
         "roles": ["PARC"],
@@ -123,9 +123,9 @@ USERS_DB = {
         "must_change_password": True,
         "password_changed_at": datetime.utcnow() - timedelta(days=2),
     },
-    "auditor@kamlog.cm": {
+    "auditor@evo-log.cm": {
         "id": "usr-008",
-        "email": "auditor@kamlog.cm",
+        "email": "auditor@evo-log.cm",
         "nom_complet": "Auditeur Interne ERP",
         "role": "AUDITOR",
         "roles": ["AUDITOR"],
@@ -165,7 +165,7 @@ def login(payload: LoginRequest):
     show_warning = days_left <= 15
 
     return {
-        "access_token": f"jwt-kamlog-{user['id']}-secure-token",
+        "access_token": f"jwt-EVO-LOG-{user['id']}-secure-token",
         "token_type": "bearer",
         "must_change_password": must_change,
         "password_expiry_days": 90,
@@ -183,7 +183,7 @@ def login(payload: LoginRequest):
     }
 
 @router.get("/me")
-def get_me(email: str = "admin@kamlog.cm"):
+def get_me(email: str = "admin@evo-log.cm"):
     user = USERS_DB.get(email.lower(), list(USERS_DB.values())[0])
     return {
         "id": user["id"],
@@ -226,7 +226,7 @@ def create_user_admin(payload: AdminCreateUserRequest):
     }
 
 @router.post("/change-password-mandatory")
-def change_password_mandatory(payload: ChangePasswordRequest, email: str = "kamga@kamlog.cm"):
+def change_password_mandatory(payload: ChangePasswordRequest, email: str = "kamga@evo-log.cm"):
     if payload.new_password == "admin123":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

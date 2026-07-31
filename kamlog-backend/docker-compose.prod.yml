@@ -1,11 +1,11 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   web:
     build: 
       context: .
       dockerfile: Dockerfile
-    image: kamlog-backend:latest
+    image: EVO-LOG-backend:latest
     restart: always
     ports:
       - "8000:8000"
@@ -21,7 +21,7 @@ services:
       - db
 
   celery_worker:
-    image: kamlog-backend:latest
+    image: EVO-LOG-backend:latest
     restart: always
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -34,7 +34,7 @@ services:
       - db
 
   celery_beat:
-    image: kamlog-backend:latest
+    image: EVO-LOG-backend:latest
     restart: always
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -80,7 +80,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=kamlog_admin
+      - GF_SECURITY_ADMIN_PASSWORD=EVO-LOG_admin
     depends_on:
       - prometheus
 

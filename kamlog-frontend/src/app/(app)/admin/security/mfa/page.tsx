@@ -1,4 +1,4 @@
-// src/app/(app)/admin/security/mfa/page.tsx - Security MFA Configuration - Fidèle 100% au HTML original
+﻿// src/app/(app)/admin/security/mfa/page.tsx - Security MFA Configuration - Fidèle 100% au HTML original
 'use client'
 
 
@@ -32,7 +32,7 @@ export default function MfaConfigurationPage() {
               <div className="flex justify-between items-end mb-lg">
                 <div>
                   <h2 className="font-headline-lg text-headline-lg text-on-surface">Multi-Factor Authentication</h2>
-                  <p className="font-body-md text-body-md text-on-surface-variant mt-xxs">Secure your KAMLOG ERP account with two-step verification.</p>
+                  <p className="font-body-md text-body-md text-on-surface-variant mt-xxs">Secure your EVO-LOG ERP account with two-step verification.</p>
                 </div>
                 <div className="flex items-center gap-sm bg-surface-container-lowest px-md py-xs rounded border border-outline-variant">
                   <span className="material-symbols-outlined text-secondary fill text-[20px]">shield</span>

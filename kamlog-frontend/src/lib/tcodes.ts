@@ -1,5 +1,5 @@
-// src/lib/tcodes.ts
-// T-Code Registry for KAMLOG EM-ERP
+﻿// src/lib/tcodes.ts
+// T-Code Registry for EVO-LOG SaaS
 
 export const T_CODES: Record<string, string> = {
   // Global & Dashboards

@@ -1,4 +1,4 @@
----
+﻿---
 name: implementation-plan
 description: Plan to fix data creation issues and mock data problems in Railway deployment
 metadata:
@@ -17,7 +17,7 @@ Fix the deployment sequence to ensure proper database migrations and visible err
 ## Changes Required
 
 ### 1. Fix Alembic Migration Logic in start.sh
-**File**: `kamlog-backend/start.sh`
+**File**: `EVO-LOG-backend/start.sh`
 **Change**: Modify the Alembic section to always run migrations, regardless of SEED_DATA setting
 **Current problematic code**:
 ```bash
@@ -39,7 +39,7 @@ alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
 **Reasoning**: Migrations must always be applied to ensure database schema matches application models. Seeding should happen after migrations are successfully applied.
 
 ### 2. Improve Seeder Error Handling (Optional but Recommended)
-**File**: `kamlog-backend/scripts/seed_data.py`
+**File**: `EVO-LOG-backend/scripts/seed_data.py`
 **Change**: Modify seeders that currently silently fail to either:
 - Re-raise critical errors when SEED_DATA=true
 - Or at least exit with non-zero code to signal failure
@@ -48,8 +48,8 @@ alembic upgrade head || echo "⚠️  Alembic upgrade failed (check logs)"
 
 ### 3. Verify Core API Endpoints
 **Files to check**: 
-- `kamlog-backend/app/routers/tiers.py`
-- `kamlog-backend/app/routers/magasin.py` (articles section)
+- `EVO-LOG-backend/app/routers/tiers.py`
+- `EVO-LOG-backend/app/routers/magasin.py` (articles section)
 **Verification**: Ensure no try-except blocks return mock data on failure
 **Current status**: Appears correct - endpoints propagate errors properly
 

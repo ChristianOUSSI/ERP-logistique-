@@ -1,4 +1,4 @@
-# Railway / Vercel Deployment
+﻿# Railway / Vercel Deployment
 
 ## Cible actuelle
 
@@ -13,7 +13,7 @@ Cette documentation est volontairement limitee a ce qui est visible dans le depo
 
 ### Root directory
 
-- `kamlog-backend`
+- `EVO-LOG-backend`
 
 ### Variables minimales a fournir
 
@@ -44,7 +44,7 @@ Variables optionnelles selon l'usage:
 
 ### Root directory
 
-- `kamlog-frontend`
+- `EVO-LOG-frontend`
 
 ### Variables minimales
 

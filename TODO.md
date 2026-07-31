@@ -1,4 +1,4 @@
-# TODO — Avancement Global & Plan d'Action KAMLOG EM-ERP
+﻿# TODO — Avancement Global & Plan d'Action EVO-LOG SaaS
 
 ---
 
@@ -18,7 +18,7 @@
 ### 3. Résilience Conteneur & Déploiement Production
 - [x] Rendre les importations Celery/Sentry résilientes et ajouter `REDIS_URL` dans `Settings` (`app/config.py`).
 - [x] Implémenter le wrapper `safe_include_router()` dans `app/main.py` pour éviter tout plantage sur les stubs de routeurs.
-- [x] Corriger les règles du Builder Dockerfile avec l'auto-aplatissement (`cp -rn /app/kamlog-backend/* /app/`) pour supporter tous les contextes de build Railway (Racine et sous-dossier).
+- [x] Corriger les règles du Builder Dockerfile avec l'auto-aplatissement (`cp -rn /app/EVO-LOG-backend/* /app/`) pour supporter tous les contextes de build Railway (Racine et sous-dossier).
 - [x] Pousser et forcer les commits `92e2819`, `1928598`, `2a7a66e` et `7c5bea4` sur toutes les branches distantes (`logistique` et `origin`).
 
 ---

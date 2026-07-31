@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
 import {
@@ -167,7 +167,7 @@ export default function GlobalDashboard() {
             <Sparkles className="w-3.5 h-3.5" /> Écosystème Logistique Global • Port de Douala & Kribi Deep Sea
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-            Vue d'Ensemble Entreprise KAMLOG
+            Vue d'Ensemble Entreprise EVO-LOG
           </h1>
           <p className="text-xs text-slate-400 mt-1">
             Supervision stratégique en temps réel des opérations de transport, stockage entrepôt, douane et finance.

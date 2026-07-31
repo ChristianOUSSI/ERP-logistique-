@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -37,7 +37,7 @@ export default function CreateUserPage() {
             <UserPlus className="text-slate-400" size={26} />
             Créer un Utilisateur
           </h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Ajouter un nouveau compte utilisateur KAMLOG ERP</p>
+          <p className="text-muted-foreground text-sm mt-0.5">Ajouter un nouveau compte utilisateur EVO-LOG ERP</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export default function CreateUserPage() {
                 <label className="text-xs font-medium text-muted-foreground">Email *</label>
                 <div className="relative">
                   <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input required type="email" className="w-full bg-background border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500/30" placeholder="nom@kamlog.cm" value={form.email} onChange={e => set("email", e.target.value)} />
+                  <input required type="email" className="w-full bg-background border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500/30" placeholder="nom@evo-log.cm" value={form.email} onChange={e => set("email", e.target.value)} />
                 </div>
               </div>
               <div className="space-y-1.5">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -34,14 +34,14 @@ const roleColors: Record<string, string> = {
 };
 
 const USERS: UserEntry[] = [
-  { id: 1, nom: "NJOYA", prenom: "Christian", email: "admin@kamlog.cm", telephone: "+237 699 000 001", role: "ADMIN", departement: "Direction Générale", statut: "ACTIF", derniere_connexion: new Date().toISOString(), avatar_initiales: "CN" },
-  { id: 2, nom: "NGUEMA", prenom: "Marie-Claire", email: "rh@kamlog.cm", telephone: "+237 677 890 123", role: "RH", departement: "Ressources Humaines", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 7200000).toISOString(), avatar_initiales: "MN" },
-  { id: 3, nom: "KAMGA", prenom: "Paul", email: "dispatcher@kamlog.cm", telephone: "+237 699 222 333", role: "DISPATCHER", departement: "Transport", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 1800000).toISOString(), avatar_initiales: "PK" },
-  { id: 4, nom: "EBANG", prenom: "Patrick", email: "finance@kamlog.cm", telephone: "+237 677 444 555", role: "FINANCE", departement: "Finance & Comptabilité", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 3600000).toISOString(), avatar_initiales: "PE" },
-  { id: 5, nom: "MVONDO", prenom: "Jean-Marc", email: "jm.mvondo@kamlog.cm", telephone: "+237 655 678 901", role: "CHAUFFEUR", departement: "Transport", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 86400000).toISOString(), avatar_initiales: "JM" },
-  { id: 6, nom: "ONDOUA", prenom: "Pierre", email: "magasin@kamlog.cm", telephone: "+237 699 111 222", role: "MAGASINIER", departement: "Magasin WMS", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 14400000).toISOString(), avatar_initiales: "PO" },
-  { id: 7, nom: "EKOTTO", prenom: "Jules", email: "transit@kamlog.cm", telephone: "+237 677 333 444", role: "TRANSIT", departement: "Transit & Douane", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 21600000).toISOString(), avatar_initiales: "JE" },
-  { id: 8, nom: "MBIDA", prenom: "Albert", email: "qhse@kamlog.cm", telephone: "+237 655 555 666", role: "QHSE", departement: "QHSE & Sécurité", statut: "SUSPENDU", derniere_connexion: new Date(Date.now() - 604800000).toISOString(), avatar_initiales: "AM" },
+  { id: 1, nom: "NJOYA", prenom: "Christian", email: "admin@evo-log.cm", telephone: "+237 699 000 001", role: "ADMIN", departement: "Direction Générale", statut: "ACTIF", derniere_connexion: new Date().toISOString(), avatar_initiales: "CN" },
+  { id: 2, nom: "NGUEMA", prenom: "Marie-Claire", email: "rh@evo-log.cm", telephone: "+237 677 890 123", role: "RH", departement: "Ressources Humaines", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 7200000).toISOString(), avatar_initiales: "MN" },
+  { id: 3, nom: "KAMGA", prenom: "Paul", email: "dispatcher@evo-log.cm", telephone: "+237 699 222 333", role: "DISPATCHER", departement: "Transport", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 1800000).toISOString(), avatar_initiales: "PK" },
+  { id: 4, nom: "EBANG", prenom: "Patrick", email: "finance@evo-log.cm", telephone: "+237 677 444 555", role: "FINANCE", departement: "Finance & Comptabilité", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 3600000).toISOString(), avatar_initiales: "PE" },
+  { id: 5, nom: "MVONDO", prenom: "Jean-Marc", email: "jm.mvondo@evo-log.cm", telephone: "+237 655 678 901", role: "CHAUFFEUR", departement: "Transport", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 86400000).toISOString(), avatar_initiales: "JM" },
+  { id: 6, nom: "ONDOUA", prenom: "Pierre", email: "magasin@evo-log.cm", telephone: "+237 699 111 222", role: "MAGASINIER", departement: "Magasin WMS", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 14400000).toISOString(), avatar_initiales: "PO" },
+  { id: 7, nom: "EKOTTO", prenom: "Jules", email: "transit@evo-log.cm", telephone: "+237 677 333 444", role: "TRANSIT", departement: "Transit & Douane", statut: "ACTIF", derniere_connexion: new Date(Date.now() - 21600000).toISOString(), avatar_initiales: "JE" },
+  { id: 8, nom: "MBIDA", prenom: "Albert", email: "qhse@evo-log.cm", telephone: "+237 655 555 666", role: "QHSE", departement: "QHSE & Sécurité", statut: "SUSPENDU", derniere_connexion: new Date(Date.now() - 604800000).toISOString(), avatar_initiales: "AM" },
 ];
 
 function timeAgo(dateStr: string) {

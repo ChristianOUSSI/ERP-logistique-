@@ -1,4 +1,4 @@
----
+﻿---
 name: fix-hardcoded-mock-elements
 description: Plan to fix hardcoded/mock elements in alerts WebSocket and fuel ticket page
 metadata:
@@ -17,7 +17,7 @@ Fix the two main placeholder implementations to use real data and backend connec
 ## Changes Required
 
 ### 1. Fix Alerts WebSocket Endpoint
-**File**: `kamlog-backend/app/routers/alerts.py`
+**File**: `EVO-LOG-backend/app/routers/alerts.py`
 **Current issue**: WebSocket endpoint (`/ws/alerts`) sends mock welcome and ping messages instead of real-time alerts
 **Solution**: 
 - Replace mock implementation with actual alert streaming
@@ -25,7 +25,7 @@ Fix the two main placeholder implementations to use real data and backend connec
 - Implement proper WebSocket broadcasting of real alerts
 
 ### 2. Fix Fuel Ticket Page
-**File**: `kamlog-frontend/src/app/(app)/transport/fuel/ticket/page.tsx`
+**File**: `EVO-LOG-frontend/src/app/(app)/transport/fuel/ticket/page.tsx`
 **Current issues**:
 - Hardcoded initial form values (date, time, odometer, fuel type, volume, unit price)
 - Static sample data in "Recent Tickets List" and "Vehicle Info Card"

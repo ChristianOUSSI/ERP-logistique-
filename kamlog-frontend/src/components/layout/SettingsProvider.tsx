@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 
-const SOUND_SETTINGS_KEY = 'kamlog_erp_sound_enabled';
-const THEME_SETTINGS_KEY = 'kamlog_erp_theme';
-const LANG_SETTINGS_KEY = 'kamlog_erp_language';
+const SOUND_SETTINGS_KEY = 'evolog_erp_sound_enabled';
+const THEME_SETTINGS_KEY = 'evolog_erp_theme';
+const LANG_SETTINGS_KEY = 'evolog_erp_language';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 export type LanguagePreference = 'fr' | 'en';

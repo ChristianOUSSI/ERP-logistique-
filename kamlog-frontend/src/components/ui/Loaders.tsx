@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 /**
  * FullScreenLoader: Écran de chargement ultra-pro & élégant CADC EM-ERP
@@ -32,7 +32,7 @@ export const FullScreenLoader = () => {
         </div>
 
         <h1 className="text-3xl font-black bg-gradient-to-r from-amber-100 via-amber-300 to-amber-500 bg-clip-text text-transparent tracking-tight mb-2">
-          KAMLOG EM-ERP
+          EVO-LOG SaaS
         </h1>
         <p className="text-xs font-bold text-amber-400 uppercase tracking-widest animate-pulse">
           Chargement du Profil & Sécurisation de Session...

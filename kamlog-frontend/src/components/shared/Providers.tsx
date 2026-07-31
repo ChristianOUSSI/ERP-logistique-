@@ -1,4 +1,4 @@
-// src/components/shared/Providers.tsx
+﻿// src/components/shared/Providers.tsx
 'use client'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { Toaster } from '@/components/ui/sonner'
@@ -23,7 +23,7 @@ function AuthSync({ children }: { children: React.ReactNode }) {
       
       if (token) {
         localStorage.setItem('access_token', token);
-        localStorage.setItem('kamlog_token', token);
+        localStorage.setItem('evolog_token', token);
       }
       if (refreshToken) {
         localStorage.setItem('refresh_token', refreshToken);
@@ -41,7 +41,7 @@ function AuthSync({ children }: { children: React.ReactNode }) {
       });
     } else {
       localStorage.removeItem('access_token');
-      localStorage.removeItem('kamlog_token');
+      localStorage.removeItem('evolog_token');
       localStorage.removeItem('refresh_token');
       logout();
     }

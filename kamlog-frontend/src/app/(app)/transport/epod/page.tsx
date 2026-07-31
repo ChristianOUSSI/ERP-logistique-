@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { transportAPI } from '@/lib/api-client';
@@ -119,7 +119,7 @@ export default function EPodPage() {
         <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/3 -translate-y-1/3">
           <Truck className="w-48 h-48" />
         </div>
-        <p className="text-blue-100 text-sm font-bold uppercase tracking-widest mb-1">KAMLOG E-POD</p>
+        <p className="text-blue-100 text-sm font-bold uppercase tracking-widest mb-1">EVO-LOG E-POD</p>
         <h1 className="text-3xl font-black mb-4">Mission Actuelle</h1>
         <div className="inline-flex items-center gap-2 bg-blue-700/50 px-3 py-1.5 rounded-full text-sm font-bold border border-blue-500/50">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>

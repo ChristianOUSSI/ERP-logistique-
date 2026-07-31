@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 interface RoleBadgesProps {
   onRoleSelect: (email: string, password: string) => void
@@ -7,43 +7,43 @@ interface RoleBadgesProps {
 const ROLES_TEST = [
   { 
     label: 'Admin', 
-    email: 'admin@kamlog.cm', 
+    email: 'admin@evo-log.cm', 
     password: 'admin123',
     color: 'border-red-400 text-red-600 hover:bg-red-50'
   },
   { 
     label: 'Dispatcher', 
-    email: 'dispatcher@kamlog.cm', 
+    email: 'dispatcher@evo-log.cm', 
     password: 'dispatcher123',
     color: 'border-blue-400 text-blue-600 hover:bg-blue-50'
   },
   { 
     label: 'Finance', 
-    email: 'finance@kamlog.cm', 
+    email: 'finance@evo-log.cm', 
     password: 'finance123',
     color: 'border-green-400 text-green-600 hover:bg-green-50'
   },
   { 
     label: 'Douane', 
-    email: 'douane@kamlog.cm', 
+    email: 'douane@evo-log.cm', 
     password: 'douane123',
     color: 'border-orange-400 text-orange-600 hover:bg-orange-50'
   },
   { 
     label: 'Agent Guérite', 
-    email: 'gate@kamlog.cm', 
+    email: 'gate@evo-log.cm', 
     password: 'gate123',
     color: 'border-gray-400 text-gray-600 hover:bg-gray-50'
   },
   { 
     label: 'Magasinier', 
-    email: 'magasin@kamlog.cm', 
+    email: 'magasin@evo-log.cm', 
     password: 'magasin123',
     color: 'border-purple-400 text-purple-600 hover:bg-purple-50'
   },
   { 
     label: 'Auditeur', 
-    email: 'auditor@kamlog.cm', 
+    email: 'auditor@evo-log.cm', 
     password: 'auditor123',
     color: 'border-teal-400 text-teal-600 hover:bg-teal-50'
   },

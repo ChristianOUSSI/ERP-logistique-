@@ -1,8 +1,8 @@
-import os
+﻿import os
 import re
 
-backend_dir = r"d:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\app"
-backend_scripts = r"d:\Projet\ERP\KAMLOG-EM-ERP\kamlog-backend\scripts"
+backend_dir = r"d:\Projet\ERP\EVO-LOG\EVO-LOG-backend\app"
+backend_scripts = r"d:\Projet\ERP\EVO-LOG\EVO-LOG-backend\scripts"
 
 replacements = {
     r"User\.Role\.ADMIN": '"admin"',

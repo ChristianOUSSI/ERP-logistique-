@@ -1,4 +1,4 @@
-import loginPanelSvg from '@/app/login-panel.svg'
+﻿import loginPanelSvg from '@/app/login-panel.svg'
 
 export function AuthLeftPanel() {
   return (
@@ -10,7 +10,7 @@ export function AuthLeftPanel() {
       <div className="w-full h-full flex items-center justify-center">
         <img
           src={loginPanelSvg.src}
-          alt="KAMLOG EM-ERP - Port Autonome de Douala"
+          alt="EVO-LOG SaaS - Port Autonome de Douala"
           className="w-full h-full object-cover"
         />
       </div>

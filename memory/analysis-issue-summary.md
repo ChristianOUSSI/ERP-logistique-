@@ -1,4 +1,4 @@
----
+﻿---
 name: analysis-issue-summary
 description: Summary of issues found causing problems with data creation and mock data in Railway deployment
 metadata:
@@ -8,7 +8,7 @@ metadata:
 ## Issues Identified
 
 ### Primary Issue: Incorrect Alembic Migration Logic
-**Location**: `kamlog-backend/start.sh`, lines 50-56
+**Location**: `EVO-LOG-backend/start.sh`, lines 50-56
 **Problem**: When `SEED_DATA=true` (set in `.env.railway.example`), the script runs `alembic stamp head` instead of `alembic upgrade head`. This means database migrations are not actually applied - only pretended to be applied.
 **Impact**: 
 - Schema migrations are skipped
@@ -17,7 +17,7 @@ metadata:
 - Users experience inability to create articles, tiers, etc.
 
 ### Secondary Issue: Silent Seeder Failures
-**Locations**: Multiple seeder functions in `kamlog-backend/scripts/seed_data.py`:
+**Locations**: Multiple seeder functions in `EVO-LOG-backend/scripts/seed_data.py`:
 - `seed_agency()` (lines 51-53)
 - `seed_users()` (lines 152-153)  
 - `seed_tiers()` (lines 230-231)
@@ -32,7 +32,7 @@ metadata:
 - Application starts but with missing essential data
 
 ### Minor Issue: OCR Endpoint Mock Data
-**Location**: `kamlog-backend/app/routers/parc.py`, lines 284-289
+**Location**: `EVO-LOG-backend/app/routers/parc.py`, lines 284-289
 **Problem**: The `/ocr-extract` endpoint returns hardcoded mock data instead of real OCR results when Tesseract is not configured.
 **Impact**: 
 - Users may see mock license plate/chauffeur data

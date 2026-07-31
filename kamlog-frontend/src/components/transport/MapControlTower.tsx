@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
@@ -90,7 +90,7 @@ export default function MapControlTower({ missions }: { missions: any[] }) {
 
         {/* Sites fixes */}
         <Marker position={DIT_DOUALA as [number, number]}>
-          <Popup><strong className="text-slate-800">Port Autonome de Douala</strong><br/>Hub Principal KAMLOG</Popup>
+          <Popup><strong className="text-slate-800">Port Autonome de Douala</strong><br/>Hub Principal EVO-LOG</Popup>
         </Marker>
         <Marker position={YAOUNDE as [number, number]}>
           <Popup><strong className="text-slate-800">Magasin Yaoundé</strong><br/>Destinataire</Popup>

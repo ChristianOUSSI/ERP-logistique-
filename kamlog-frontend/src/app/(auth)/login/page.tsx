@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -235,7 +235,7 @@ export default function LoginPage() {
             <span className="text-xs font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 mb-1 inline-block">
               CADC • Code Axis Digital Cameroun
             </span>
-            <h1 className="text-3xl font-black text-white tracking-tight">KAMLOG EM-ERP</h1>
+            <h1 className="text-3xl font-black text-white tracking-tight">EVO-LOG SaaS</h1>
           </div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">
             Authentification Administrateur & Personnel
@@ -268,7 +268,7 @@ export default function LoginPage() {
                   {...register('email')}
                   id="email"
                   type="email"
-                  placeholder="kamga@kamlog.cm"
+                  placeholder="kamga@evo-log.cm"
                   className="w-full h-11 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all font-mono"
                 />
               </div>

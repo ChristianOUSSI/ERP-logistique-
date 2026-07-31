@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+﻿from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
@@ -48,7 +48,7 @@ def get_bill_of_lading(bl_id: int):
 @router.post("/")
 def create_bill_of_lading(data: BillOfLadingCreate):
     global _next_id
-    ref = f"BL-KAMLOG-{datetime.now().year}-{_next_id:06d}"
+    ref = f"BL-EVO-LOG-{datetime.now().year}-{_next_id:06d}"
     bl = {**data.dict(), "id": _next_id, "reference": ref, "statut": "BROUILLON", "created_at": datetime.utcnow().isoformat()}
     _bills.append(bl)
     _next_id += 1

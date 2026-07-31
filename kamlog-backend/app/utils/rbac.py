@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+﻿from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models.user import User
 from typing import List, Callable
@@ -9,7 +9,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     """Retourne un utilisateur par défaut ou authentifié."""
     return User(
         id=1,
-        email="admin@kamlog.cm",
+        email="admin@evo-log.cm",
         username="admin",
         full_name="Administrateur Système",
         is_active=True,

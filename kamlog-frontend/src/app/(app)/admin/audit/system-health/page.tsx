@@ -1,4 +1,4 @@
-// src/app/(app)/admin/audit/system-health/page.tsx - Audit System Health Monitor - Fidèle 100% au HTML original
+﻿// src/app/(app)/admin/audit/system-health/page.tsx - Audit System Health Monitor - Fidèle 100% au HTML original
 'use client'
 
 
@@ -99,7 +99,7 @@ export default function SystemHealthMonitorPage() {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-title-md text-title-md text-on-surface">DB Connection Pool</h3>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant">PostgreSQL - KAMLOG_MAIN</p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">PostgreSQL - EVOLOG_MAIN</p>
                   </div>
                   <span className="material-symbols-outlined text-error">database</span>
                 </div>
@@ -153,7 +153,7 @@ export default function SystemHealthMonitorPage() {
                       <td className="py-3 px-4">
                         <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
                       </td>
-                      <td className="py-3 px-4 text-on-surface-variant">KAMLOG-Finance-Svc</td>
+                      <td className="py-3 px-4 text-on-surface-variant">EVO-LOG-Finance-Svc</td>
                       <td className="py-3 px-4 font-medium">Connection timeout to payment gateway (Retry 3/3)</td>
                       <td className="py-3 px-4 text-outline text-[11px] font-mono">req-7b8a-4c2d-9f1e</td>
                     </tr>
@@ -162,7 +162,7 @@ export default function SystemHealthMonitorPage() {
                       <td className="py-3 px-4">
                         <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
                       </td>
-                      <td className="py-3 px-4 text-on-surface-variant">KAMLOG-Auth-Svc</td>
+                      <td className="py-3 px-4 text-on-surface-variant">EVO-LOG-Auth-Svc</td>
                       <td className="py-3 px-4 font-medium">Invalid LDAP credentials supplied for user_id: 8442</td>
                       <td className="py-3 px-4 text-outline text-[11px] font-mono">req-11a2-9b4f-00c1</td>
                     </tr>
@@ -180,7 +180,7 @@ export default function SystemHealthMonitorPage() {
                       <td className="py-3 px-4">
                         <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Error</span>
                       </td>
-                      <td className="py-3 px-4 text-on-surface-variant">KAMLOG-Logistics-Svc</td>
+                      <td className="py-3 px-4 text-on-surface-variant">EVO-LOG-Logistics-Svc</td>
                       <td className="py-3 px-4 font-medium">Failed to parse manifest XML from T-Code: MNF-209</td>
                       <td className="py-3 px-4 text-outline text-[11px] font-mono">req-88c1-2d3e-4a5b</td>
                     </tr>

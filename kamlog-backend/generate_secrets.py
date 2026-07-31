@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Générateur de secrets sécurisés pour Railway
 Exécutez ce script pour générer des valeurs sécurisées à utiliser dans les variables d'environnement Railway
@@ -29,7 +29,7 @@ def generate_minio_secret():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("SECRETS RAILWAY - KAMLOG EM-ERP")
+    print("SECRETS RAILWAY - EVO-LOG SaaS")
     print("=" * 70)
     print()
     print("Copiez ces valeurs dans les variables d'environnement Railway:")

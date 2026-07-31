@@ -1,4 +1,4 @@
-# TODO Projet
+﻿# TODO Projet
 
 ## Priorite haute
 
@@ -31,7 +31,7 @@
 ## Tache en cours (Manuel utilisateur)
 
 - [ ] Relecture globale repo (backend routers/services + frontend app/routes)
-- [ ] Rédaction `docs/Manuel_Utilisateur_KAMLOG_ERP_v2.md` (≥25 pages)
-- [ ] Conversion en PDF `docs/Manuel_Utilisateur_KAMLOG_ERP_v2.pdf`
+- [ ] Rédaction `docs/Manuel_Utilisateur_evolog_erp_v2.md` (≥25 pages)
+- [ ] Conversion en PDF `docs/Manuel_Utilisateur_evolog_erp_v2.pdf`
 - [ ] Vérification : présence de tous les modules + relations + sécurité + RBAC + scénarios transverses
 

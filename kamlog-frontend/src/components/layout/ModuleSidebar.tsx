@@ -99,11 +99,11 @@ export default function ModuleSidebar({
       <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white font-black flex items-center justify-center shadow-lg shadow-indigo-600/30">
-            K
+            E
           </div>
           {!isCollapsed && (
             <div>
-              <span className="font-black text-slate-100 tracking-wider text-sm block">KAMLOG ERP</span>
+              <span className="font-black text-slate-100 tracking-wider text-sm block">EVO-LOG SaaS</span>
               <span className="text-[10px] text-slate-400 font-mono block">
                 {isAdmin ? "Accès Admin Total" : `Profil : ${userRoles[0] || 'Utilisateur'}`}
               </span>

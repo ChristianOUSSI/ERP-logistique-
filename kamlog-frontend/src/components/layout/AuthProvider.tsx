@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
 import { UserRole } from '@/utils/tcodeLookup';
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Nettoyer le localStorage
     localStorage.removeItem('access_token');
-    localStorage.removeItem('kamlog_token');
+    localStorage.removeItem('evolog_token');
     localStorage.removeItem('refresh_token');
     
     // Nettoyer les cookies backend

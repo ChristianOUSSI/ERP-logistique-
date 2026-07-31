@@ -1,5 +1,5 @@
----
-name: KAMLOG EM-ERP
+﻿---
+name: EVO-LOG SaaS
 colors:
   surface: '#f9f9ff'
   surface-dim: '#d3daea'

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -8,7 +8,7 @@ import {
   Filter, RefreshCw, Zap
 } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://kamlog-backend-production.up.railway.app";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://EVO-LOG-backend-production.up.railway.app";
 
 interface Alert {
   id: number;
@@ -67,7 +67,7 @@ export default function AdminAlertsPage() {
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
             {critiques > 0 && <span className="text-red-400 font-semibold">{critiques} alerte{critiques > 1 ? "s" : ""} critique{critiques > 1 ? "s" : ""} active{critiques > 1 ? "s" : ""} — </span>}
-            Supervision globale de toutes les alertes système KAMLOG
+            Supervision globale de toutes les alertes système EVO-LOG
           </p>
         </div>
         <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors">

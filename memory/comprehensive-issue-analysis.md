@@ -1,6 +1,6 @@
----
+﻿---
 name: comprehensive-issue-analysis
-description: Comprehensive analysis of all hardcoded/mock data and issues found in the KAMLOG-EM-ERP project
+description: Comprehensive analysis of all hardcoded/mock data and issues found in the EVO-LOG project
 metadata:
   type: analysis
 ---
@@ -10,13 +10,13 @@ metadata:
 ### Issues Fixed
 
 #### 1. **Primary Deployment Issue - Migration Logic** ✅ FIXED
-**Location**: `kamlog-backend/start.sh` (lines 50-56)
+**Location**: `EVO-LOG-backend/start.sh` (lines 50-56)
 **Problem**: When `SEED_DATA=true`, used `alembic stamp head` instead of `alembic upgrade head`
 **Impact**: Migrations not applied, causing schema mismatches and seed data failures
 **Fix**: Changed to always run `alembic upgrade head` regardless of SEED_DATA setting
 
 #### 2. **Alerts WebSocket Mock Data** ✅ FIXED
-**Location**: `kamlog-backend/app/routers/alerts.py` (WebSocket endpoint)
+**Location**: `EVO-LOG-backend/app/routers/alerts.py` (WebSocket endpoint)
 **Problem**: Sent mock welcome/ping messages instead of real alerts
 **Fix**: Replaced with real alert checking from:
    - Fuel siphoning alerts (existing endpoint logic)
@@ -25,7 +25,7 @@ metadata:
    - Proper WebSocket broadcasting of real alerts
 
 #### 3. **Fuel Ticket Page Hardcoded Data** ✅ FIXED
-**Location**: `kamlog-frontend/src/app/(app)/transport/fuel/ticket/page.tsx`
+**Location**: `EVO-LOG-frontend/src/app/(app)/transport/fuel/ticket/page.tsx`
 **Problems Fixed**:
    - Hardcoded initial values (date, time, odometer, fuel type, volume, unit price)
    - Static sample data in "Recent Tickets List" and "Vehicle Info Card"
@@ -39,14 +39,14 @@ metadata:
    - Show proper loading states, error handling, and success feedback
 
 #### 4. **OCR Endpoint Mock Data** ✅ FIXED
-**Location**: `kamlog-backend/app/routers/parc.py` (OCR endpoint)
+**Location**: `EVO-LOG-backend/app/routers/parc.py` (OCR endpoint)
 **Problem**: Returned hardcoded mock license plates and driver names
 **Fix**: Replaced with clear indication that OCR is not configured, returning appropriate error status
 
 ### Issues Identified (Requiring Attention)
 
 #### 5. **WhatsApp Service Mock** ⚠️ IDENTIFIED
-**Location**: `kamlog-backend/app/services/whatsapp.py`
+**Location**: `EVO-LOG-backend/app/services/whatsapp.py`
 **Problem**: Clearly marked as mock implementation with simulated logging
 **Details**: 
    - Function `send_message()` logs mock actions instead of sending real WhatsApp messages
@@ -71,7 +71,7 @@ metadata:
 **Recommendation**: These should be progressively converted to use real data from backend APIs
 
 #### 7. **Audit Logs Placeholder** ℹ️ IDENTIFIED
-**Location**: `kamlog-backend/app/routers/admin.py` (lines 33-36)
+**Location**: `EVO-LOG-backend/app/routers/admin.py` (lines 33-36)
 **Problem**: Returns empty list with TODO comment
 **Details**: 
    - Comment: "Currently returns empty list as AuditMiddleware is disabled due to missing DB models."

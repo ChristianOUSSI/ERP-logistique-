@@ -1,6 +1,6 @@
-{
-  "name": "KAMLOG Enterprise ERP",
-  "short_name": "KAMLOG",
+﻿{
+  "name": "EVO-LOG Enterprise ERP",
+  "short_name": "EVO-LOG",
   "description": "Système ERP Écosystème Logistique, Transport, Finance & Portuaire — CADC",
   "start_url": "/login",
   "scope": "/",

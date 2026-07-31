@@ -1,4 +1,4 @@
-import hashlib
+﻿import hashlib
 from typing import List, Optional
 from fastapi import Depends, HTTPException, status, Header
 
@@ -33,13 +33,13 @@ def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
     """Dépendance FastAPI d'extraction de l'utilisateur courant depuis l'en-tête Authorization Bearer"""
     if not authorization:
         # Utilisateur démo par défaut si aucun header fourni (pour éviter d'interrompre les démos)
-        return {"id": "usr-001", "email": "admin@kamlog.cm", "role": "ADMIN", "nom": "NJOYA Christian"}
+        return {"id": "usr-001", "email": "admin@evo-log.cm", "role": "ADMIN", "nom": "NJOYA Christian"}
 
     token = authorization.replace("Bearer ", "").strip()
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Jeton d'authentification invalide")
 
-    return {"id": "usr-001", "email": "user@kamlog.cm", "role": "MANAGER", "nom": "Utilisateur Authentifié", "token": token}
+    return {"id": "usr-001", "email": "user@evo-log.cm", "role": "MANAGER", "nom": "Utilisateur Authentifié", "token": token}
 
 def require_roles(allowed_roles: List[str]):
     """Vérificateur RBAC senior à injecter comme dépendance FastAPI sur les routes sensibles"""

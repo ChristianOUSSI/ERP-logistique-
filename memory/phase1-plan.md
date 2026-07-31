@@ -1,4 +1,4 @@
----
+﻿---
 name: phase1-plan
 description: Plan for enhancing Declaration-Reception-Transfer Order-Delivery Slip workflow
 metadata:
@@ -67,10 +67,10 @@ User described a detailed workflow for managing goods from Bill of Loading (Decl
   - Historical performance of involved magasins
 
 ## Files to Modify
-1. `kamlog-backend/app/models/magasin.py` - BandeLivraison model changes
-2. `kamlog-backend/app/schemas/magasin.py` - BandeLivraison schema updates
-3. `kamlog-backend/app/services/magasin_service.py` - BandeLivraisonService and OrdreTransfertService enhancements
-4. `kamlog-backend/app/routers/magasin.py` - New API endpoints
+1. `EVO-LOG-backend/app/models/magasin.py` - BandeLivraison model changes
+2. `EVO-LOG-backend/app/schemas/magasin.py` - BandeLivraison schema updates
+3. `EVO-LOG-backend/app/services/magasin_service.py` - BandeLivraisonService and OrdreTransfertService enhancements
+4. `EVO-LOG-backend/app/routers/magasin.py` - New API endpoints
 5. (Optional) Add AI prediction endpoint in magasin router
 
 ## Dependencies

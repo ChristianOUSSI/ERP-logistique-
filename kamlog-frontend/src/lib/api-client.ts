@@ -1,4 +1,4 @@
-// src/lib/api-client.ts  Client API TypeScript KAMLOG
+﻿// src/lib/api-client.ts  Client API TypeScript EVO-LOG
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 let BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-83b1.up.railway.app';

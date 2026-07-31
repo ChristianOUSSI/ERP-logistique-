@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+﻿from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel
@@ -351,7 +351,7 @@ def get_ordres_transfert():
 def get_bandes_livraison():
     return {
         "items": [
-            {"id": 1, "reference": "BL-2026-0891", "transporteur": "KAMLOG FREIGHT", "statut": "CONFIRME", "created_at": datetime.utcnow().isoformat()}
+            {"id": 1, "reference": "BL-2026-0891", "transporteur": "EVO-LOG FREIGHT", "statut": "CONFIRME", "created_at": datetime.utcnow().isoformat()}
         ],
         "total": 1
     }

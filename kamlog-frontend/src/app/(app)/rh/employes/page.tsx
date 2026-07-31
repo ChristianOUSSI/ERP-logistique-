@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
@@ -116,7 +116,7 @@ export default function EmployesPage() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', `Annuaire_Employes_KAMLOG_${new Date().toISOString().split('T')[0]}.csv`)
+    link.setAttribute('download', `Annuaire_Employes_EVO-LOG_${new Date().toISOString().split('T')[0]}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -146,7 +146,7 @@ export default function EmployesPage() {
               Annuaire & Gestion des Employés
             </h1>
             <p className="text-slate-500 dark:text-slate-400 mt-1">
-              Gérez le registre du personnel, importez/exportez la liste des collaborateurs KAMLOG.
+              Gérez le registre du personnel, importez/exportez la liste des collaborateurs EVO-LOG.
             </p>
           </div>
 
@@ -314,7 +314,7 @@ export default function EmployesPage() {
               <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
                 <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                   <UserPlus className="w-6 h-6 text-pink-600" />
-                  Nouveau Collaborateur KAMLOG
+                  Nouveau Collaborateur EVO-LOG
                 </h3>
                 <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
                   <X className="w-5 h-5" />
@@ -355,7 +355,7 @@ export default function EmployesPage() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold"
-                      placeholder="Ex: mvondo@kamlog.cm"
+                      placeholder="Ex: mvondo@evo-log.cm"
                     />
                   </div>
 

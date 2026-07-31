@@ -1,4 +1,4 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+﻿from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import List, Dict, Optional
 import asyncio
 import json
@@ -55,13 +55,13 @@ manager = ConnectionManager()
 
 @router.websocket("/events")
 async def websocket_events(websocket: WebSocket, token: Optional[str] = None):
-    """WebSocket principal pour les événements temps réel KAMLOG"""
+    """WebSocket principal pour les événements temps réel EVO-LOG"""
     await manager.connect(websocket, client_id=token)
     try:
         # Envoyer message de bienvenue
         await manager.send_personal_message({
             "type": "connected",
-            "message": "Connecté au flux événements KAMLOG en temps réel",
+            "message": "Connecté au flux événements EVO-LOG en temps réel",
             "timestamp": datetime.utcnow().isoformat(),
             "active_connections": len(manager.active_connections)
         }, websocket)

@@ -58,6 +58,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="SET NULL"), nullable=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     username = Column(String(100), unique=True, index=True, nullable=True)
     hashed_password = Column(String(255), nullable=False, default="$2b$12$default_admin123_hash")
@@ -67,11 +68,13 @@ class User(Base):
     agency_id = Column(Integer, ForeignKey("agencies.id", ondelete="SET NULL"), nullable=True)
     modules_allowed = Column(JSON, nullable=True, default=[])
     is_active = Column(Boolean, default=True)
+    is_superadmin = Column(Boolean, default=False, nullable=False)
     must_change_password = Column(Boolean, default=True)
     password_changed_at = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    organization = relationship("Organization", back_populates="users")
     roles = relationship("RoleModel", secondary=user_roles, back_populates="users", lazy="joined")
 
     password_hash = synonym("hashed_password")

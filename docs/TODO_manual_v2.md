@@ -1,4 +1,4 @@
-# TODO — Manuel_Utilisateur_KAMLOG_ERP_v2
+﻿# TODO — Manuel_Utilisateur_evolog_erp_v2
 
 - [ ] Consolider la progression rédactionnelle (chapitres 1 à 26)
 - [ ] Augmenter les détails chapitre par chapitre (UI ↔ API ↔ backend/services)

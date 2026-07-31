@@ -1,8 +1,8 @@
-# Architecture Technique KAMLOG EM-ERP
+﻿# Architecture Technique EVO-LOG SaaS
 
 ## Résumé Executif
 
-**KAMLOG EM-ERP** est structuré comme un monolithe modulaire haute performance avec découplage clair entre le backend API FastAPI et le frontend Next.js 14 PWA.
+**EVO-LOG SaaS** est structuré comme un monolithe modulaire haute performance avec découplage clair entre le backend API FastAPI et le frontend Next.js 14 PWA.
 
 - **Frontend** : Next.js 14 (App Router), Vanilla CSS Design System 3D Métallique, PWA (`sw.js`).
 - **Backend** : FastAPI 0.115, SQLAlchemy 2.0, PostgreSQL (Production) / SQLite (Dev).
@@ -22,12 +22,12 @@ Stack complète démarrant avec `docker-compose up -d --build` :
 - `frontend` : Next.js sur le port 3000
 
 ### 2. Environnement de Production (Railway & Vercel)
-- **Railway** : Héberge le conteneur Docker multi-stage du backend avec auto-aplatissement de contexte (`cp -rn /app/kamlog-backend/* /app/`).
+- **Railway** : Héberge le conteneur Docker multi-stage du backend avec auto-aplatissement de contexte (`cp -rn /app/EVO-LOG-backend/* /app/`).
 - **Vercel** : Héberge le frontend Next.js compilé statiquement (153 pages).
 
 ---
 
-## 🔌 Cartographie des Routeurs Backend (`kamlog-backend/app/main.py`)
+## 🔌 Cartographie des Routeurs Backend (`EVO-LOG-backend/app/main.py`)
 
 Les 19 routeurs enregistrés avec vérification de sécurité `safe_include_router()` :
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -7,7 +7,7 @@ import { FileCheck, ArrowLeft, Send, DollarSign, CheckCircle2, AlertCircle } fro
 import { toast } from 'sonner';
 import Link from 'next/link';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://kamlog-backend-production.up.railway.app';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://EVO-LOG-backend-production.up.railway.app';
 
 export default function EPodCapturePage() {
   const queryClient = useQueryClient();

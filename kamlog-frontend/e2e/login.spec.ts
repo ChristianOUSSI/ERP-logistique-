@@ -8,7 +8,7 @@ test('utilisateur peut se connecter et être redirigé vers le dashboard', async
   await expect(page.getByRole('heading', { name: /System Authentication/i })).toBeVisible();
 
   // 3. Remplir le formulaire
-  await page.getByPlaceholder('user@kamlog.com').fill('admin@kamlog.cm');
+  await page.getByPlaceholder('user@evo-log.cm').fill('admin@evo-log.cm');
   await page.getByPlaceholder('••••••••••••').fill('admin123');
 
   // 4. Soumettre le formulaire

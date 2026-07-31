@@ -1,4 +1,4 @@
-// src/app/layout.tsx  RootLayout KAMLOG
+﻿// src/app/layout.tsx  RootLayout EVO-LOG
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
-  title: 'KAMLOG EM-ERP • Code Axis Digital Cameroun',
-  description: 'Système ERP Logistique, Transport & Portuaire de Classe Mondiale',
+  title: 'EVO-LOG — Plateforme ERP Logistique SaaS • CADC',
+  description: 'Plateforme ERP Logistique SaaS Multi-Entreprises de Classe Mondiale par Code Axis Digital Cameroun',
   icons: {
     icon: [
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'KAMLOG ERP',
+    title: 'EVO-LOG SaaS',
   },
 }
 

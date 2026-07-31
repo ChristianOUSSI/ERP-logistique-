@@ -1,7 +1,7 @@
-import os
+﻿import os
 import re
 
-search_dir = "d:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend"
+search_dir = "d:/Projet/ERP/EVO-LOG/EVO-LOG-backend"
 
 for root, dirs, files in os.walk(search_dir):
     if "venv" in root or "env" in root or "__pycache__" in root or ".git" in root or ".pytest_cache" in root:

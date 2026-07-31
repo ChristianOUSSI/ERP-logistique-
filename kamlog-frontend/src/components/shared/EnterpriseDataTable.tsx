@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { Download, Search, ChevronDown, ChevronUp, Filter } from "lucide-react";
@@ -23,7 +23,7 @@ export function EnterpriseDataTable<T extends Record<string, any>>({
   columns,
   title,
   searchPlaceholder = "Rechercher...",
-  exportFileName = "export-kamlog.csv",
+  exportFileName = "export-evolog.csv",
 }: EnterpriseDataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);

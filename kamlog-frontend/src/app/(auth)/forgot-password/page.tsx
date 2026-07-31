@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/40 mb-4">
             <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>precision_manufacturing</span>
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">KAMLOG EM-ERP</h1>
+          <h1 className="text-2xl font-black text-white tracking-tight">EVO-LOG SaaS</h1>
           <p className="text-xs font-bold text-blue-300 uppercase tracking-[0.2em] mt-1">Operational Control Systems</p>
         </div>
 
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t.auth.emailInstitutionalLabel}</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">alternate_email</span>
-                    <input {...register('email')} type="email" placeholder="user@kamlog.com" disabled={isLoading}
+                    <input {...register('email')} type="email" placeholder="user@EVO-LOG.com" disabled={isLoading}
                       className="w-full h-11 pl-9 pr-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                   </div>
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
             </>
           )}
         </div>
-        <p className="text-center text-xs text-white/30 mt-4">v4.8.2-stable · © 2026 KAMLOG LOGISTICS GROUP</p>
+        <p className="text-center text-xs text-white/30 mt-4">v4.8.2-stable · © 2026 EVO-LOG LOGISTICS GROUP</p>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -76,7 +76,7 @@ export default function RHCongesPage() {
             Congés & Absences
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Gestion et validation des demandes de congés du personnel KAMLOG
+            Gestion et validation des demandes de congés du personnel EVO-LOG
           </p>
         </div>
         <div className="flex gap-2">
