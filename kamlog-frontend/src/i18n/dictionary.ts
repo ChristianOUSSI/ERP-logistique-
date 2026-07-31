@@ -255,7 +255,7 @@ export type Dictionary = {
 export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
   fr: {
     home: {
-      welcomeTitle: 'Bienvenue sur KAMLOG',
+      welcomeTitle: 'Bienvenue sur EVO-LOG',
       welcomeSubtitle: "La plateforme d'entreprise premium pour la gestion logistique.",
       loadingSystem: 'Chargement du système...',
       platformLoading: 'Chargement du système...'
@@ -282,7 +282,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
       forgotSpamNote: 'Vérifiez aussi vos spams. Le lien expire dans 30 minutes.',
       backToLogin: 'Retour à la connexion',
       registerTitle: 'Créer un compte',
-      registerSubtitle: 'Accédez aux modules opérationnels KAMLOG',
+      registerSubtitle: 'Accédez aux modules opérationnels EVO-LOG',
       firstNameLabel: 'Prénom',
       lastNameLabel: 'Nom',
       departmentLabel: "Département d'affectation",
@@ -323,7 +323,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
       notFoundMessage: "La page que vous recherchez n'existe pas ou a été déplacée.",
       previousPage: 'Page précédente',
       help: "Besoin d'aide ? ",
-      confidentialFooter: '© 2026 CADC - KAMLOG EM-ERP • Confidentiel',
+      confidentialFooter: '© 2026 CADC - EVO-LOG SaaS • Confidentiel',
       forbiddenTitle: 'Accès refusé',
       forbiddenMessage: "Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.",
       backHome: "Retour à l'accueil",
@@ -375,7 +375,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
     },
     dashboard: {
       title: 'Vue d\'ensemble',
-      subtitle: 'Tableau de bord global du système KAMLOG',
+      subtitle: 'Tableau de bord global du système EVO-LOG',
       systemOverview: 'System Overview',
       criticalAlerts: 'Alertes Critiques',
       stockValue: 'Valeur du Stock',
@@ -499,7 +499,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
 
   en: {
     home: {
-      welcomeTitle: 'Welcome to KAMLOG',
+      welcomeTitle: 'Welcome to EVO-LOG',
       welcomeSubtitle: 'The premium enterprise platform for logistics management.',
       loadingSystem: 'Loading system...',
       platformLoading: 'Loading system...'
@@ -526,7 +526,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
       forgotSpamNote: 'Check your spam folder. The link expires in 30 minutes.',
       backToLogin: 'Back to login',
       registerTitle: 'Create an account',
-      registerSubtitle: 'Access KAMLOG operational modules',
+      registerSubtitle: 'Access EVO-LOG operational modules',
       firstNameLabel: 'First name',
       lastNameLabel: 'Last name',
       departmentLabel: 'Department',
@@ -567,7 +567,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
       notFoundMessage: 'The page you are looking for does not exist or has been moved.',
       previousPage: 'Previous page',
       help: "Need help? ",
-      confidentialFooter: '© 2026 CADC - KAMLOG EM-ERP • Confidential',
+      confidentialFooter: '© 2026 CADC - EVO-LOG SaaS • Confidential',
       forbiddenTitle: 'Access refused',
       forbiddenMessage: 'You do not have the required permissions to access this resource.',
       backHome: 'Back to home',
@@ -619,7 +619,7 @@ export const DICTIONARIES: Record<AppLanguage, Dictionary> = {
     },
     dashboard: {
       title: 'Overview',
-      subtitle: 'KAMLOG system global dashboard',
+      subtitle: 'EVO-LOG system global dashboard',
       systemOverview: 'System Overview',
       criticalAlerts: 'Critical Alerts',
       stockValue: 'Stock Value',

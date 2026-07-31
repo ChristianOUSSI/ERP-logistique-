@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+﻿from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from typing import List, Optional, Dict
 from pydantic import BaseModel
 from datetime import datetime
@@ -50,7 +50,7 @@ _messages: Dict[str, List[dict]] = {
         {"id": 2, "user_id": "chauffeur-001", "user_nom": "Jean-Marc MVONDO", "message": "Chargement terminé. En route pour N'Djamena. ETA 16 août à 14h00.", "type": "TEXT", "timestamp": datetime.utcnow().isoformat()},
     ],
     "global-ops": [
-        {"id": 1, "user_id": "admin-001", "user_nom": "Administrateur", "message": "Bienvenue dans le centre opérationnel KAMLOG Port de Douala.", "type": "SYSTEM", "timestamp": datetime.utcnow().isoformat()},
+        {"id": 1, "user_id": "admin-001", "user_nom": "Administrateur", "message": "Bienvenue dans le centre opérationnel EVO-LOG Port de Douala.", "type": "SYSTEM", "timestamp": datetime.utcnow().isoformat()},
     ]
 }
 

@@ -1,4 +1,4 @@
-import logging
+﻿import logging
 
 logger = logging.getLogger(__name__)
 
@@ -31,5 +31,5 @@ def get_missing_required_tables(existing_tables=None):
 
 def bootstrap_system(*args, **kwargs):
     """Initialisation du système."""
-    print("🚀 KAMLOG System Bootstrap initialized.")
+    print("🚀 EVO-LOG System Bootstrap initialized.")
     return True

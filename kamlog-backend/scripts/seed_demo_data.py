@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
-KAMLOG EM-ERP - Seed Demo Data Script
+EVO-LOG SaaS - Seed Demo Data Script
 Ce script peuple la base de données avec des milliers de données factices réalistes
 pour les démonstrations commerciales.
 """
@@ -98,7 +98,7 @@ def seed_transport(db: Session, count_camions=50, count_chauffeurs=50, count_mis
     db.commit()
 
 def main():
-    print("Démarrage du script de Seeding KAMLOG EM-ERP...")
+    print("Démarrage du script de Seeding EVO-LOG SaaS...")
     db = SessionLocal()
     try:
         # Vider les tables existantes (Approuvé par l'utilisateur pour les démos)

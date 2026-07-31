@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useI18n } from '@/hooks/useI18n'
@@ -32,7 +32,7 @@ export default function SessionExpiredPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/40 mb-4">
             <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>precision_manufacturing</span>
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">KAMLOG EM-ERP</h1>
+          <h1 className="text-2xl font-black text-white tracking-tight">EVO-LOG SaaS</h1>
           <p className="text-xs font-bold text-blue-300 uppercase tracking-[0.2em] mt-1">Operational Control Systems</p>
         </div>
 
@@ -56,7 +56,7 @@ export default function SessionExpiredPage() {
             <p className="text-xs">{t.auth.mfaSecuredLabel}</p>
           </div>
         </div>
-        <p className="text-center text-xs text-white/30 mt-4">v4.8.2-stable · © 2026 KAMLOG LOGISTICS GROUP</p>
+        <p className="text-center text-xs text-white/30 mt-4">v4.8.2-stable · © 2026 EVO-LOG LOGISTICS GROUP</p>
       </div>
     </div>
   )

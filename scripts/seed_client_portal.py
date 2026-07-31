@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-# Ajuster le chemin Python pour inclure kamlog-backend
+# Ajuster le chemin Python pour inclure kamlog-backend (evolog-backend)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'kamlog-backend')))
 
 from app.database import SessionLocal
@@ -18,14 +18,14 @@ from app.models.bill_of_loading import BillOfLoading, ContainerDetail, GoodsDeta
 
 def seed_client_portal_data():
     db = SessionLocal()
-    print("[SEED] Initialisation des donnees B2B Client Portal KAMLOG ERP...")
+    print("[SEED] Initialisation des donnees B2B Client Portal EVO-LOG ERP...")
 
     try:
 
         # 1. Agence Principale
         agency = db.query(Agency).filter(Agency.code == "DLA-01").first()
         if not agency:
-            agency = Agency(nom="KAMLOG Douala Port Agency", code="DLA-01", is_active=True, ville="Douala", pays="Cameroun")
+            agency = Agency(nom="EVO-LOG Douala Port Agency", code="DLA-01", is_active=True, ville="Douala", pays="Cameroun")
             db.add(agency)
             db.flush()
 

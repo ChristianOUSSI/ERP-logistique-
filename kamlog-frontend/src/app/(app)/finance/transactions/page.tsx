@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -12,8 +12,8 @@ const TRANSACTIONS = [
   { id: "TXN-2026-001", type: "ENCAISSEMENT", libelle: "Paiement Facture FAC-2026-0234 – CFAO LOGISTICS", montant_xaf: 4850000, compte: "UBA Douala - Compte Ops", tiers: "CFAO LOGISTICS CAMEROUN", date: "2026-08-10", statut: "VALIDE" },
   { id: "TXN-2026-002", type: "PAIEMENT", libelle: "Règlement Fournisseur TOTALENERGIES – PO-2026-001", montant_xaf: -3600000, compte: "UBA Douala - Compte Ops", tiers: "TOTALENERGIES CAMEROUN", date: "2026-08-11", statut: "VALIDE" },
   { id: "TXN-2026-003", type: "ENCAISSEMENT", libelle: "Acompte Mission Transport – MAERSK CM", montant_xaf: 2250000, compte: "Ecobank Douala - Compte Clients", tiers: "MAERSK CAMEROUN", date: "2026-08-09", statut: "EN_ATTENTE" },
-  { id: "TXN-2026-004", type: "VIREMENT_INTERNE", libelle: "Virement UBA → Ecobank – Trésorerie", montant_xaf: 5000000, compte: "UBA Douala → Ecobank Douala", tiers: "Interne KAMLOG", date: "2026-08-08", statut: "VALIDE" },
-  { id: "TXN-2026-005", type: "PAIEMENT", libelle: "Salaires Juillet 2026 – Masse salariale", montant_xaf: -3656000, compte: "UBA Douala - Compte Salaires", tiers: "Personnel KAMLOG", date: "2026-07-31", statut: "VALIDE" },
+  { id: "TXN-2026-004", type: "VIREMENT_INTERNE", libelle: "Virement UBA → Ecobank – Trésorerie", montant_xaf: 5000000, compte: "UBA Douala → Ecobank Douala", tiers: "Interne EVO-LOG", date: "2026-08-08", statut: "VALIDE" },
+  { id: "TXN-2026-005", type: "PAIEMENT", libelle: "Salaires Juillet 2026 – Masse salariale", montant_xaf: -3656000, compte: "UBA Douala - Compte Salaires", tiers: "Personnel EVO-LOG", date: "2026-07-31", statut: "VALIDE" },
 ];
 
 const typeConfig: Record<string, { label: string; color: string }> = {

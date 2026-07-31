@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -86,12 +86,12 @@ export default function DocumentBLPage() {
           {/* Header */}
           <div className="flex justify-between items-start border-b-2 border-slate-800 pb-8 mb-8">
             <div>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-2">KAMLOG</h1>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-2">EVO-LOG</h1>
               <p className="text-sm font-bold text-slate-600 tracking-widest uppercase">Enterprise Management ERP</p>
               <div className="mt-4 text-xs text-slate-500 space-y-1">
                 <p>Port Autonome de Douala, Cameroun</p>
                 <p>Tel: +237 200 00 00 00</p>
-                <p>Email: dispatch@kamlog.cm</p>
+                <p>Email: dispatch@evo-log.cm</p>
               </div>
             </div>
             <div className="text-right">
@@ -208,7 +208,7 @@ export default function DocumentBLPage() {
 
           {/* Footer Footer */}
           <div className="mt-12 text-center text-[10px] text-slate-400 uppercase tracking-widest">
-            <p>Document généré par le module K-Docs de KAMLOG ERP.</p>
+            <p>Document généré par le module K-Docs de EVO-LOG ERP.</p>
             <p>Ce bon de livraison fait foi en cas de litige concernant les marchandises transportées.</p>
           </div>
 

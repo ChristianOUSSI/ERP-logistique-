@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Package, Search, TrendingUp, Calendar, ArrowRight, FileText, CheckCircle, Clock, ShieldCheck, Plus, X } from 'lucide-react';
@@ -65,7 +65,7 @@ export default function ClientPortalHome() {
         camion_id: 1,
         chauffeur_id: 1
       });
-      toast.success('Demande de cotation transmise avec succès aux équipes KAMLOG !');
+      toast.success('Demande de cotation transmise avec succès aux équipes EVO-LOG !');
       setIsQuoteModalOpen(false);
       setQuoteOrigin('');
       setQuoteDestination('');

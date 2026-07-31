@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+﻿from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 
 router = APIRouter(tags=["Public API"])
@@ -30,9 +30,9 @@ def public_tracking(reference: str):
 
 @router.get("/status")
 def public_status():
-    """Status public de l'API KAMLOG"""
+    """Status public de l'API EVO-LOG"""
     return {
-        "service": "KAMLOG ERP API",
+        "service": "EVO-LOG ERP API",
         "status": "operational",
         "version": "1.0.0",
         "uptime": "99.9%",

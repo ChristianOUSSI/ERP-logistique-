@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import GenericDataPage from '@/components/ui/GenericDataPage';
@@ -45,7 +45,7 @@ export default function TiersPage() {
   return (
     <GenericDataPage
       title="Clients & Partenaires"
-      description="Gestion de la base de données des clients et partenaires KAMLOG."
+      description="Gestion de la base de données des clients et partenaires EVO-LOG."
       icon={<Users className="w-5 h-5 text-primary" />}
       columns={columns}
       data={tiers}

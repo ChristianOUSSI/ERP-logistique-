@@ -1,9 +1,9 @@
-import os
+﻿import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Database URL from environment or SQLite fallback
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./kamlog_erp.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./evolog_erp.db")
 
 # Railway/Heroku PostgreSQL compatibility fix
 if DATABASE_URL.startswith("postgres://"):

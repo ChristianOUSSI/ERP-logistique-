@@ -1,11 +1,11 @@
-apiVersion: keda.sh/v1alpha1
+﻿apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: kamlog-backend-scaler
+  name: EVO-LOG-backend-scaler
   namespace: erp-production
 spec:
   scaleTargetRef:
-    name: kamlog-backend-deployment
+    name: EVO-LOG-backend-deployment
   minReplicaCount: 2
   maxReplicaCount: 15
   triggers:
@@ -22,4 +22,4 @@ spec:
         metricName: http_requests_total
         # Scale up si plus de 100 requêtes par seconde
         threshold: "100"
-        query: sum(rate(http_requests_total{job="kamlog-backend"}[2m]))
+        query: sum(rate(http_requests_total{job="EVO-LOG-backend"}[2m]))

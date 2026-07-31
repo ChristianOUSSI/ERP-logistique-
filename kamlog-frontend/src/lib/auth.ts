@@ -1,4 +1,4 @@
-// src/lib/auth.ts - Configuration NextAuth KAMLOG
+// src/lib/auth.ts - Configuration NextAuth EVO-LOG
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authAPI } from './api-client';
@@ -10,25 +10,25 @@ const ALL_MODULES = [
 ];
 
 const PREDEFINED_USERS: Record<string, { id: string; nom_complet: string; role: string; roles: string[]; modules_allowed: string[] }> = {
-  'admin@kamlog.cm': { id: 'usr-001', nom_complet: 'Administrateur CADC', role: 'ADMIN', roles: ['ADMIN'], modules_allowed: ALL_MODULES },
-  'kamga@kamlog.cm': { id: 'usr-002', nom_complet: 'Monsieur Kamga (Chauffeur)', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
-  'chauffeur@kamlog.cm': { id: 'usr-002', nom_complet: 'Chauffeur Routier Port', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
-  'magasinier@kamlog.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
-  'magasin@kamlog.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
-  'financier@kamlog.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
-  'finance@kamlog.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
-  'qhse@kamlog.cm': { id: 'usr-005', nom_complet: 'Inspecteur QHSE Port', role: 'QHSE', roles: ['QHSE'], modules_allowed: ['qhse', 'compliance'] },
-  'douane@kamlog.cm': { id: 'usr-006', nom_complet: 'Déclarant en Douane & Transit', role: 'DOUANE', roles: ['DOUANE', 'TRANSIT'], modules_allowed: ['transit', 'master-data', 'acconage'] },
-  'parc@kamlog.cm': { id: 'usr-007', nom_complet: 'Gestionnaire Parc & Flotte', role: 'PARC', roles: ['PARC'], modules_allowed: ['parc', 'transport', 'maintenance', 'fuel-guard'] },
-  'maintenance@kamlog.cm': { id: 'usr-008', nom_complet: 'Ingénieur Maintenance Garages', role: 'MAINTENANCE', roles: ['MAINTENANCE'], modules_allowed: ['maintenance', 'parc'] },
-  'b2b@kamlog.cm': { id: 'usr-009', nom_complet: 'Client Partenaire B2B', role: 'CLIENT', roles: ['CLIENT', 'CLIENT_B2B'], modules_allowed: ['client-portal', 'tracking', 'cotations'] },
-  'dispatcher@kamlog.cm': { id: 'usr-010', nom_complet: 'Chef Dispatch Transport', role: 'DISPATCHER', roles: ['DISPATCHER'], modules_allowed: ['transport', 'parc', 'magasin', 'tracking'] },
-  'auditor@kamlog.cm': { id: 'usr-011', nom_complet: 'Auditeur Interne ERP', role: 'AUDITOR', roles: ['AUDITOR'], modules_allowed: ['audit', 'compliance', 'bi'] },
+  'admin@evo-log.cm': { id: 'usr-001', nom_complet: 'Administrateur CADC', role: 'ADMIN', roles: ['ADMIN'], modules_allowed: ALL_MODULES },
+  'kamga@evo-log.cm': { id: 'usr-002', nom_complet: 'Monsieur Kamga (Chauffeur)', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
+  'chauffeur@evo-log.cm': { id: 'usr-002', nom_complet: 'Chauffeur Routier Port', role: 'CHAUFFEUR', roles: ['CHAUFFEUR'], modules_allowed: ['transport', 'tracking', 'fuel-guard'] },
+  'magasinier@evo-log.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
+  'magasin@evo-log.cm': { id: 'usr-003', nom_complet: 'Chef Magasinier MAG3', role: 'MAGASINIER', roles: ['MAGASINIER', 'MAGASIN'], modules_allowed: ['magasin', 'master-data'] },
+  'financier@evo-log.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
+  'finance@evo-log.cm': { id: 'usr-004', nom_complet: 'Responsable Financier ERP', role: 'FINANCE', roles: ['FINANCE', 'FINANCIER'], modules_allowed: ['finance', 'cotations', 'procurement'] },
+  'qhse@evo-log.cm': { id: 'usr-005', nom_complet: 'Inspecteur QHSE Port', role: 'QHSE', roles: ['QHSE'], modules_allowed: ['qhse', 'compliance'] },
+  'douane@evo-log.cm': { id: 'usr-006', nom_complet: 'Déclarant en Douane & Transit', role: 'DOUANE', roles: ['DOUANE', 'TRANSIT'], modules_allowed: ['transit', 'master-data', 'acconage'] },
+  'parc@evo-log.cm': { id: 'usr-007', nom_complet: 'Gestionnaire Parc & Flotte', role: 'PARC', roles: ['PARC'], modules_allowed: ['parc', 'transport', 'maintenance', 'fuel-guard'] },
+  'maintenance@evo-log.cm': { id: 'usr-008', nom_complet: 'Ingénieur Maintenance Garages', role: 'MAINTENANCE', roles: ['MAINTENANCE'], modules_allowed: ['maintenance', 'parc'] },
+  'b2b@evo-log.cm': { id: 'usr-009', nom_complet: 'Client Partenaire B2B', role: 'CLIENT', roles: ['CLIENT', 'CLIENT_B2B'], modules_allowed: ['client-portal', 'tracking', 'cotations'] },
+  'dispatcher@evo-log.cm': { id: 'usr-010', nom_complet: 'Chef Dispatch Transport', role: 'DISPATCHER', roles: ['DISPATCHER'], modules_allowed: ['transport', 'parc', 'magasin', 'tracking'] },
+  'auditor@evo-log.cm': { id: 'usr-011', nom_complet: 'Auditeur Interne ERP', role: 'AUDITOR', roles: ['AUDITOR'], modules_allowed: ['audit', 'compliance', 'bi'] },
 };
 
 export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
-  secret: process.env.NEXTAUTH_SECRET || 'kamlog-secret-key-super-secure-2026',
+  secret: process.env.NEXTAUTH_SECRET || 'evo-log-secret-key-super-secure-2026',
   session: {
     strategy: 'jwt',
     maxAge: 7 * 24 * 60 * 60, // 7 jours
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const email = (credentials?.email || 'admin@kamlog.cm').toLowerCase().trim();
+        const email = (credentials?.email || 'admin@evo-log.cm').toLowerCase().trim();
         const password = credentials?.password || 'admin123';
 
         try {
@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
             const predefined = getFallbackForEmail(email);
 
             responseData = {
-              access_token: `jwt-kamlog-${Date.now()}`,
+              access_token: `jwt-evolog-${Date.now()}`,
               user: {
                 id: predefined.id,
                 email: email,

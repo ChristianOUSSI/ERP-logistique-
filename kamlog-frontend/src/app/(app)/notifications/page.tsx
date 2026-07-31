@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -18,7 +18,7 @@ interface Notification {
   created_at: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://kamlog-backend-production.up.railway.app";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://EVO-LOG-backend-production.up.railway.app";
 
 const moduleIconMap: Record<string, React.ReactNode> = {
   TRANSPORT: <Truck size={14} />,

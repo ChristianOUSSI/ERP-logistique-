@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import {
@@ -25,7 +25,7 @@ export default function SettingsPage() {
   const { theme, setTheme, language, setLanguage } = useSettings()
 
   const [fullName, setFullName] = useState(user?.fullName || 'Utilisateur ERP')
-  const [email, setEmail] = useState(user?.email || 'user@kamlog.cm')
+  const [email, setEmail] = useState(user?.email || 'user@evo-log.cm')
   const [phone, setPhone] = useState('+237 690 00 00 00')
   const [departement, setDepartement] = useState('LOGISTIQUE')
 

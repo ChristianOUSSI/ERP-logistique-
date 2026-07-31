@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import {
@@ -47,7 +47,7 @@ export default function AdminHubPage() {
   const [users, setUsers] = useState<SystemUser[]>([
     {
       id: 'usr-001',
-      email: 'admin@kamlog.cm',
+      email: 'admin@evo-log.cm',
       nom_complet: 'Administrateur Système CADC',
       role: 'ADMIN',
       roles: ['ADMIN', 'DIRECTEUR_LOGISTIQUE'],
@@ -59,7 +59,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-002',
-      email: 'kamga@kamlog.cm',
+      email: 'kamga@evo-log.cm',
       nom_complet: 'Monsieur Kamga',
       role: 'CHAUFFEUR',
       roles: ['CHAUFFEUR'],
@@ -71,7 +71,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-003',
-      email: 'magasinier@kamlog.cm',
+      email: 'magasinier@evo-log.cm',
       nom_complet: 'Chef Magasinier MAG3',
       role: 'MAGASINIER',
       roles: ['MAGASINIER', 'MAGASIN'],
@@ -83,7 +83,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-004',
-      email: 'financier@kamlog.cm',
+      email: 'financier@evo-log.cm',
       nom_complet: 'Responsable Financier',
       role: 'FINANCE',
       roles: ['FINANCE', 'FINANCIER'],
@@ -95,7 +95,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-005',
-      email: 'qhse@kamlog.cm',
+      email: 'qhse@evo-log.cm',
       nom_complet: 'Inspecteur QHSE Port',
       role: 'QHSE',
       roles: ['QHSE'],
@@ -107,7 +107,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-006',
-      email: 'douane@kamlog.cm',
+      email: 'douane@evo-log.cm',
       nom_complet: 'Déclarant en Douane',
       role: 'DOUANE',
       roles: ['DOUANE', 'TRANSIT'],
@@ -119,7 +119,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-007',
-      email: 'parc@kamlog.cm',
+      email: 'parc@evo-log.cm',
       nom_complet: 'Gestionnaire Parc & Flotte',
       role: 'PARC',
       roles: ['PARC'],
@@ -131,7 +131,7 @@ export default function AdminHubPage() {
     },
     {
       id: 'usr-008',
-      email: 'auditor@kamlog.cm',
+      email: 'auditor@evo-log.cm',
       nom_complet: 'Auditeur Interne ERP',
       role: 'AUDITOR',
       roles: ['AUDITOR'],
@@ -192,10 +192,10 @@ export default function AdminHubPage() {
 
   // Audit Logs List
   const [auditLogs] = useState([
-    { id: 'LOG-109', action: 'Création Compte Utilisateur', user: 'admin@kamlog.cm', target: 'kamga@kamlog.cm', timestamp: '22/07/2026 01:15', status: 'SUCCESS' },
-    { id: 'LOG-108', action: 'Changement Obligatoire Mot de Passe', user: 'kamga@kamlog.cm', target: 'kamga@kamlog.cm', timestamp: '22/07/2026 01:05', status: 'SUCCESS' },
-    { id: 'LOG-107', action: 'Connexion Réussie (NextAuth)', user: 'admin@kamlog.cm', target: 'Système ERP', timestamp: '22/07/2026 00:45', status: 'SUCCESS' },
-    { id: 'LOG-106', action: 'Modification Matrice RBAC', user: 'admin@kamlog.cm', target: 'Rôle MAGASINIER', timestamp: '21/07/2026 23:30', status: 'SUCCESS' },
+    { id: 'LOG-109', action: 'Création Compte Utilisateur', user: 'admin@evo-log.cm', target: 'kamga@evo-log.cm', timestamp: '22/07/2026 01:15', status: 'SUCCESS' },
+    { id: 'LOG-108', action: 'Changement Obligatoire Mot de Passe', user: 'kamga@evo-log.cm', target: 'kamga@evo-log.cm', timestamp: '22/07/2026 01:05', status: 'SUCCESS' },
+    { id: 'LOG-107', action: 'Connexion Réussie (NextAuth)', user: 'admin@evo-log.cm', target: 'Système ERP', timestamp: '22/07/2026 00:45', status: 'SUCCESS' },
+    { id: 'LOG-106', action: 'Modification Matrice RBAC', user: 'admin@evo-log.cm', target: 'Rôle MAGASINIER', timestamp: '21/07/2026 23:30', status: 'SUCCESS' },
   ])
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -554,7 +554,7 @@ export default function AdminHubPage() {
                 <Building className="w-5 h-5 text-cyan-400" /> Regional Hubs & Succursales CADC
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Gestion des agences régionales KAMLOG au Cameroun (Douala Port, Kribi, Yaoundé, Garoua).
+                Gestion des agences régionales EVO-LOG au Cameroun (Douala Port, Kribi, Yaoundé, Garoua).
               </p>
             </div>
           </div>
@@ -648,7 +648,7 @@ export default function AdminHubPage() {
                     type="email"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="kamga@kamlog.cm"
+                    placeholder="kamga@evo-log.cm"
                     className="w-full h-10 pl-10 pr-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono"
                     required
                   />

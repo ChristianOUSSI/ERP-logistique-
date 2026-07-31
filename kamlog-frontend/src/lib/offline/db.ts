@@ -3,7 +3,7 @@
  * Allows operators (dockers, yard crane operators, drivers) to record entries offline.
  */
 
-const DB_NAME = "kamlog_offline_db";
+const DB_NAME = "evo_log_offline_db";
 const DB_VERSION = 1;
 
 export interface SyncQueueItem {

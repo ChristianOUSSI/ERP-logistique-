@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+﻿from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from datetime import datetime
@@ -18,7 +18,7 @@ class FeedbackMessage(BaseModel):
 _conversation_history = []
 _next_msg_id = 1
 
-# Base de connaissances logistique KAMLOG
+# Base de connaissances logistique EVO-LOG
 _knowledge_base = {
     "TRANSPORT": {
         "missions_actives": 12,
@@ -40,12 +40,12 @@ _knowledge_base = {
 }
 
 def _generate_ai_response(message: str, context: str) -> str:
-    """Génère une réponse contextuelle simulée pour l'assistant IA KAMLOG"""
+    """Génère une réponse contextuelle simulée pour l'assistant IA EVO-LOG"""
     msg_lower = message.lower()
     
     # Réponses contextuelles Transport
     if any(w in msg_lower for w in ["mission", "chauffeur", "camion", "transport", "livraison"]):
-        return f"""**Assistant IA KAMLOG – Module Transport**
+        return f"""**Assistant IA EVO-LOG – Module Transport**
 
 Voici ce que je vois dans le système en temps réel :
 
@@ -67,7 +67,7 @@ Voici ce que je vois dans le système en temps réel :
 
     # Réponses contextuelles Magasin
     elif any(w in msg_lower for w in ["stock", "magasin", "inventaire", "conteneur", "palette"]):
-        return f"""**Assistant IA KAMLOG – Module WMS**
+        return f"""**Assistant IA EVO-LOG – Module WMS**
 
 📦 **État des stocks en temps réel :**
 - **6 références** articles cataloguées
@@ -88,7 +88,7 @@ Voici ce que je vois dans le système en temps réel :
 
     # Réponses Finance
     elif any(w in msg_lower for w in ["facture", "finance", "paiement", "trésorerie", "cotation", "devis"]):
-        return f"""**Assistant IA KAMLOG – Module Finance**
+        return f"""**Assistant IA EVO-LOG – Module Finance**
 
 💰 **Situation financière du mois :**
 - Encaissements : **45.000.000 XAF** réalisés
@@ -105,9 +105,9 @@ Voici ce que je vois dans le système en temps réel :
 
     # Réponse générale
     else:
-        return f"""**Assistant IA KAMLOG** 🤖
+        return f"""**Assistant IA EVO-LOG** 🤖
 
-Bonjour ! Je suis l'assistant intelligent de KAMLOG ERP Port de Douala.
+Bonjour ! Je suis l'assistant intelligent de EVO-LOG ERP Port de Douala.
 
 Je peux vous aider avec :
 - 🚛 **Transport** : Missions, dispatch, flotte, chauffeurs

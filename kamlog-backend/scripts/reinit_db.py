@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 
 # Ensure backend root is in PYTHONPATH
@@ -7,7 +7,7 @@ if backend_root not in sys.path:
     sys.path.insert(0, backend_root)
 
 def main():
-    db_file = os.path.join(backend_root, "kamlog_erp.db")
+    db_file = os.path.join(backend_root, "evolog_erp.db")
     if os.path.exists(db_file):
         print(f"Removing existing local database: {db_file}")
         try:

@@ -1,4 +1,4 @@
-# ✅ VÉRIFICATION FIDÉLITÉ ERP - KAMLOG EM-ERP
+﻿# ✅ VÉRIFICATION FIDÉLITÉ ERP - EVO-LOG SaaS
 
 ## 🎯 STATUS : 100% FIDÈLE AU DESIGN ORIGINAL
 
@@ -11,7 +11,7 @@
    - Material Symbols + Google Fonts chargés.
 
 2. **Dashboard Global** (`/dashboard/global`) 
-   - Layout Bento identique à ERP/kamlog_erp_tableau_de_bord_global/code.html
+   - Layout Bento identique à ERP/evolog_erp_tableau_de_bord_global/code.html
    - KPIs, navigation, couleurs exactes
    - TopBar + Sidebar navigation dynamisées (toutes les 102 pages reliées)
 
@@ -88,7 +88,7 @@
 
 **Commandes pour vérifier :**
 ```bash
-cd kamlog-frontend
+cd EVO-LOG-frontend
 npm install          # Installe @tailwindcss/forms
 npm run dev         # Lance sur port 3000
 # → Toutes les pages s'affichent avec le design ERP exact
@@ -104,7 +104,7 @@ Afin de porter le projet au niveau d'excellence requis (World Pro), quatre fonct
 
 ### 🎯 CONCLUSION
 
-Le frontend KAMLOG EM-ERP est **100% fidèle** aux maquettes HTML originales du dossier ERP/. 
+Le frontend EVO-LOG SaaS est **100% fidèle** aux maquettes HTML originales du dossier ERP/. 
 
 **Chaque pixel, couleur, espacement et interaction** correspond exactement au design system défini. La logique métier (T-Codes, workflows, validation) est implémentée conformément à la documentation, et les ajouts **"World Pro"** ont été faits de manière chirurgicale.
 

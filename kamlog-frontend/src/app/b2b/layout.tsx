@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -42,7 +42,7 @@ export default function B2BLayout({ children }: { children: React.ReactNode }) {
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
               <Building2 className="w-5 h-5" />
             </div>
-            <span className="text-lg font-black text-white tracking-tight">KAMLOG <span className="text-blue-500 font-medium">B2B</span></span>
+            <span className="text-lg font-black text-white tracking-tight">EVO-LOG <span className="text-blue-500 font-medium">B2B</span></span>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <X className="w-6 h-6" />

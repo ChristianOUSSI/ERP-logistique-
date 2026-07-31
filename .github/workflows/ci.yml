@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+﻿name: CI/CD Pipeline
 
 on:
   push:
@@ -13,9 +13,9 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: kamlog
-          POSTGRES_PASSWORD: kamlog_secret
-          POSTGRES_DB: kamlog_test
+          POSTGRES_USER: EVO-LOG
+          POSTGRES_PASSWORD: EVO-LOG_secret
+          POSTGRES_DB: EVO-LOG_test
         ports:
           - 5432:5432
         options: >-
@@ -39,16 +39,16 @@ jobs:
         cache: 'pip'
         
     - name: Install dependencies
-      working-directory: ./kamlog-backend
+      working-directory: ./EVO-LOG-backend
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-asyncio httpx
         
     - name: Run Pytest
-      working-directory: ./kamlog-backend
+      working-directory: ./EVO-LOG-backend
       env:
-        DATABASE_URL: postgresql+asyncpg://kamlog:kamlog_secret@localhost:5432/kamlog_test
+        DATABASE_URL: postgresql+asyncpg://EVO-LOG:EVO-LOG_secret@localhost:5432/EVO-LOG_test
         REDIS_URL: redis://localhost:6379/0
         JWT_SECRET_KEY: test_secret_key
       run: |
@@ -64,14 +64,14 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: ./kamlog-frontend/package-lock.json
+        cache-dependency-path: ./EVO-LOG-frontend/package-lock.json
         
     - name: Install dependencies
-      working-directory: ./kamlog-frontend
+      working-directory: ./EVO-LOG-frontend
       run: npm ci
       
     - name: Lint and Build
-      working-directory: ./kamlog-frontend
+      working-directory: ./EVO-LOG-frontend
       env:
         NEXT_PUBLIC_API_URL: http://localhost:8000
         NEXTAUTH_SECRET: test_secret_key

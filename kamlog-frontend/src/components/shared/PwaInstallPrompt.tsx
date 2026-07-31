@@ -15,7 +15,7 @@ export default function PwaInstallPrompt() {
       navigator.serviceWorker
         .register('/sw.js')
         .then((reg) => {
-          console.log('✅ Service Worker KAMLOG enregistré avec succès:', reg.scope);
+          console.log('✅ Service Worker EVO-LOG enregistré avec succès:', reg.scope);
         })
         .catch((err) => {
           console.warn('⚠️ Échec enregistrement Service Worker:', err);
@@ -62,7 +62,7 @@ export default function PwaInstallPrompt() {
       setIsInstalled(true);
       setShowPrompt(false);
       setDeferredPrompt(null);
-      console.log('🎉 KAMLOG EM-ERP installé avec succès comme PWA !');
+      console.log('🎉 EVO-LOG SaaS installé avec succès comme PWA !');
     });
 
     return () => {
@@ -120,7 +120,7 @@ export default function PwaInstallPrompt() {
               </span>
             </div>
 
-            <h3 className="text-sm font-black text-slate-100">Installer KAMLOG EM-ERP</h3>
+            <h3 className="text-sm font-black text-slate-100">Installer EVO-LOG SaaS</h3>
 
             {isIOS ? (
               <p className="text-xs text-slate-300 mt-1 leading-relaxed">

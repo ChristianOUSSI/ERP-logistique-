@@ -1,8 +1,8 @@
-# Documentation KAMLOG EM-ERP
+﻿# Documentation EVO-LOG SaaS
 
 ## Vue d'ensemble
 
-KAMLOG EM-ERP est aujourd'hui un monorepo compose de:
+EVO-LOG SaaS est aujourd'hui un monorepo compose de:
 
 - un backend FastAPI 0.115 en Python 3.12;
 - un frontend Next.js 14 en TypeScript;
@@ -13,19 +13,19 @@ KAMLOG EM-ERP est aujourd'hui un monorepo compose de:
 
 Inventaire releve sur le code actuel:
 
-- `kamlog-backend/app/models`: 22 fichiers Python hors `__init__.py`
-- `kamlog-backend/app/schemas`: 16 fichiers
-- `kamlog-backend/app/routers`: 19 routeurs
-- `kamlog-backend/app/services`: 16 fichiers
-- `kamlog-backend/app/repositories`: 12 fichiers
-- `kamlog-frontend/src/app`: 92 pages `page.tsx`
+- `EVO-LOG-backend/app/models`: 22 fichiers Python hors `__init__.py`
+- `EVO-LOG-backend/app/schemas`: 16 fichiers
+- `EVO-LOG-backend/app/routers`: 19 routeurs
+- `EVO-LOG-backend/app/services`: 16 fichiers
+- `EVO-LOG-backend/app/repositories`: 12 fichiers
+- `EVO-LOG-frontend/src/app`: 92 pages `page.tsx`
 
 ## Structure utile
 
 ```text
-KAMLOG-EM-ERP/
+EVO-LOG/
 ├── docs/
-├── kamlog-backend/
+├── EVO-LOG-backend/
 │   ├── app/
 │   │   ├── models/
 │   │   ├── repositories/
@@ -36,7 +36,7 @@ KAMLOG-EM-ERP/
 │   ├── migrations/
 │   ├── scripts/
 │   └── tests/
-├── kamlog-frontend/
+├── EVO-LOG-frontend/
 │   ├── e2e/
 │   ├── src/app/
 │   ├── src/components/

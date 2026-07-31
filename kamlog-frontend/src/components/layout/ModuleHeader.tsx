@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,7 @@ import { useI18n } from '@/hooks/useI18n'
 import { toast } from 'sonner'
 import { useTheme } from 'next-themes'
 
-const NOTIFICATIONS_STORAGE_KEY = 'kamlog_erp_notifications'
+const NOTIFICATIONS_STORAGE_KEY = 'evolog_erp_notifications'
 
 type ERPNotification = {
   id: string
@@ -228,7 +228,7 @@ export function ModuleHeader({ currentModule, onMenuClick }: ModuleHeaderProps) 
 
             {/* Logo */}
             <div className="hidden items-center gap-1.5 sm:flex">
-              <span className="text-[18px] font-black tracking-tight text-kamlog-primary">KAMLOG</span>
+              <span className="text-[18px] font-black tracking-tight text-EVO-LOG-primary">EVO-LOG</span>
               <span className="hidden text-[11px] font-medium text-on-surface-variant md:block">EM-ERP</span>
             </div>
 

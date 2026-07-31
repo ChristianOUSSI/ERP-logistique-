@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -6,7 +6,7 @@ import {
   CheckCircle, Clock, Eye, Download, Filter, RefreshCw
 } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://kamlog-backend-production.up.railway.app";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://EVO-LOG-backend-production.up.railway.app";
 
 interface GoodsDeclaration {
   id: number;

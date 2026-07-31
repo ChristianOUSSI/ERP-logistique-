@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ export default function ClientPortalLayout({ children }: { children: React.React
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Hexagon className="w-5 h-5 text-white" />
             </div>
-            <span className="font-black text-xl tracking-tight">KAMLOG <span className="font-medium text-slate-400">B2B</span></span>
+            <span className="font-black text-xl tracking-tight">EVO-LOG <span className="font-medium text-slate-400">B2B</span></span>
           </div>
           
           <nav className="hidden md:flex items-center gap-6">
@@ -54,7 +54,7 @@ export default function ClientPortalLayout({ children }: { children: React.React
       {/* Footer B2B */}
       <footer className="bg-white border-t border-slate-200 py-8 text-center">
         <p className="text-sm font-semibold text-slate-500">
-          © {new Date().getFullYear()} KAMLOG Enterprise Management. Espace Client Sécurisé.
+          © {new Date().getFullYear()} EVO-LOG Enterprise Management. Espace Client Sécurisé.
         </p>
       </footer>
 

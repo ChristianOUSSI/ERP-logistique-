@@ -1,7 +1,7 @@
-import logging
+﻿import logging
 import sys
 
-def setup_logger(name: str = "kamlog"):
+def setup_logger(name: str = "EVO-LOG"):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     if not logger.handlers:

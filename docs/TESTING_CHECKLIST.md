@@ -1,4 +1,4 @@
-# Testing Checklist
+﻿# Testing Checklist
 
 ## Objectif
 
@@ -9,14 +9,14 @@ Verifier le depot tel qu'il existe aujourd'hui, sans s'appuyer sur d'anciens che
 ### Backend
 
 ```bash
-cd kamlog-backend
+cd EVO-LOG-backend
 pytest
 ```
 
 ### Frontend
 
 ```bash
-cd kamlog-frontend
+cd EVO-LOG-frontend
 npm run lint
 npm run build
 npx playwright test

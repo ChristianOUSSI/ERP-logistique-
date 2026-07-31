@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -70,7 +70,7 @@ export default function SplashScreenPage() {
         </h2>
 
         <p className="text-slate-400 text-sm sm:text-base max-w-2xl font-medium leading-relaxed tracking-wide mb-8">
-          <span className="text-amber-300 font-semibold">KAMLOG EM-ERP</span> • Système Intégré de Gestion Portuaire, Transport Multimodal & Douanes ZLECAF.
+          <span className="text-amber-300 font-semibold">EVO-LOG SaaS</span> • Système Intégré de Gestion Portuaire, Transport Multimodal & Douanes ZLECAF.
         </p>
 
         {/* Progress Bar Container */}

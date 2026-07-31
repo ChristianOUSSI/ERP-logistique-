@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Response
+﻿from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Response
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
@@ -39,7 +39,7 @@ _employes = [
         "matricule": "EMP-2024-001",
         "nom": "MVONDO",
         "prenom": "Jean-Marc",
-        "email": "mvondo@kamlog.cm",
+        "email": "mvondo@evo-log.cm",
         "telephone": "+237 677 12 34 56",
         "poste": "Responsable Operations Portuaires",
         "departement": "ACCONAGE",
@@ -53,7 +53,7 @@ _employes = [
         "matricule": "EMP-2024-002",
         "nom": "NGUEMA",
         "prenom": "Paul",
-        "email": "nguema@kamlog.cm",
+        "email": "nguema@evo-log.cm",
         "telephone": "+237 699 88 77 66",
         "poste": "Chauffeur Poids Lourds Senior",
         "departement": "TRANSPORT",
@@ -67,7 +67,7 @@ _employes = [
         "matricule": "EMP-2024-003",
         "nom": "EBANG",
         "prenom": "Clarisse",
-        "email": "ebang@kamlog.cm",
+        "email": "ebang@evo-log.cm",
         "telephone": "+237 655 44 33 22",
         "poste": "Chef de Magasin WMS",
         "departement": "LOGISTIQUE",
@@ -81,7 +81,7 @@ _employes = [
         "matricule": "EMP-2024-004",
         "nom": "KAMGA",
         "prenom": "Alain",
-        "email": "kamga@kamlog.cm",
+        "email": "kamga@evo-log.cm",
         "telephone": "+237 670 99 88 11",
         "poste": "Déclarant en Douane Agrée",
         "departement": "TRANSIT",
@@ -147,7 +147,7 @@ async def import_employes_excel(file: UploadFile = File(...)):
                     "matricule": f"EMP-IMP-00{len(_employes)+1}",
                     "nom": parts[0].strip(),
                     "prenom": parts[1].strip() if len(parts) > 1 else "",
-                    "email": parts[2].strip() if len(parts) > 2 else f"emp{len(_employes)+1}@kamlog.cm",
+                    "email": parts[2].strip() if len(parts) > 2 else f"emp{len(_employes)+1}@evo-log.cm",
                     "telephone": "+237 600 00 00 00",
                     "poste": parts[3].strip() if len(parts) > 3 else "Agent Logistique",
                     "departement": "LOGISTIQUE",
@@ -164,14 +164,14 @@ async def import_employes_excel(file: UploadFile = File(...)):
 
 @router.get("/employes/export-excel")
 def export_employes_csv():
-    """Génère et télécharge le fichier CSV/Excel de la liste des employés KAMLOG."""
+    """Génère et télécharge le fichier CSV/Excel de la liste des employés EVO-LOG."""
     header = "Matricule;Nom;Prénom;Email;Téléphone;Poste;Département;Date Embauche;Type Contrat;Salaire Base (XAF);Statut\n"
     rows = [
         f"{e['matricule']};{e['nom']};{e['prenom']};{e['email']};{e['telephone']};{e['poste']};{e['departement']};{e['date_embauche']};{e['type_contrat']};{e['salaire_base_xaf']};{e['statut']}"
         for e in _employes
     ]
     csv_data = header + "\n".join(rows)
-    return Response(content=csv_data, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=employes_kamlog.csv"})
+    return Response(content=csv_data, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=employes_EVO-LOG.csv"})
 
 @router.get("/conges")
 def list_conges():

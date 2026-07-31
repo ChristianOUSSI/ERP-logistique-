@@ -1,6 +1,6 @@
-import os
+﻿import os
 
-search_dir = "d:/Projet/ERP/KAMLOG-EM-ERP/kamlog-backend/app/models"
+search_dir = "d:/Projet/ERP/EVO-LOG/EVO-LOG-backend/app/models"
 
 for root, dirs, files in os.walk(search_dir):
     if "__pycache__" in root:

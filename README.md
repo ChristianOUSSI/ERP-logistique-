@@ -1,6 +1,6 @@
-# KAMLOG EM-ERP — Plateforme ERP Logistique Portuaire & Transit (v2.0)
+﻿# EVO-LOG SaaS — Plateforme ERP Logistique Portuaire & Transit (v2.0)
 
-**KAMLOG EM-ERP** est une solution ERP d'entreprise haute performance dédiée à la gestion des opérations logistiques, portuaires, douanières, de transport, de parc et de stockage d'entrepôt (WMS) en Afrique Centrale.
+**EVO-LOG SaaS** est une solution ERP d'entreprise haute performance dédiée à la gestion des opérations logistiques, portuaires, douanières, de transport, de parc et de stockage d'entrepôt (WMS) en Afrique Centrale.
 
 ---
 
@@ -8,8 +8,8 @@
 
 La plateforme repose sur un monolithe modulaire moderne avec découplage strict entre l'API REST backend et l'application web PWA frontend :
 
-- **Frontend (`kamlog-frontend`)** : Next.js 14 (App Router), TypeScript, Système de Design Vanilla CSS 3D Metallique / Indigo, PWA complète (Service Worker, Bannières d'installation PWA, Icônes 3D metallic 512x512/192x192, Apple Touch Icon, Favicon).
-- **Backend (`kamlog-backend`)** : FastAPI 0.115, Python 3.12, SQLAlchemy 2.0, PostgreSQL (Production) / SQLite (Dev), Alembic, Celery, Redis, WeasyPrint (Génération PDF).
+- **Frontend (`EVO-LOG-frontend`)** : Next.js 14 (App Router), TypeScript, Système de Design Vanilla CSS 3D Metallique / Indigo, PWA complète (Service Worker, Bannières d'installation PWA, Icônes 3D metallic 512x512/192x192, Apple Touch Icon, Favicon).
+- **Backend (`EVO-LOG-backend`)** : FastAPI 0.115, Python 3.12, SQLAlchemy 2.0, PostgreSQL (Production) / SQLite (Dev), Alembic, Celery, Redis, WeasyPrint (Génération PDF).
 - **Contrôle d'Accès par Module (RBAC)** : Gestion fine des rôles et autorisations par module (`modules_allowed`), verrouillage dynamique des menus de la Sidebar avec icônes de cadenas 🔒 et modale d'accès restreint.
 - **Seeder de Données Opérationnelles** : Script d'initialisation idempotent alimentant 8 comptes utilisateurs réels (`admin`, `magasinier`, `kamga`, `qhse`, `financier`, `douane`, `parc`, `auditor`) liés à des entités métiers réelles (Agences, Tiers, Missions, Stocks).
 
@@ -18,19 +18,19 @@ La plateforme repose sur un monolithe modulaire moderne avec découplage strict 
 ## 📁 Structure du Monorepo
 
 ```text
-KAMLOG-EM-ERP/
+EVO-LOG/
 ├── docs/                        Documentation officielle complète et à jour
 │   ├── API_DOCUMENTATION.md     Cartographie complète des 19 routeurs FastAPI
 │   ├── ARCHITECTURE.md          Architecture technique (FastAPI, Next.js 14, RBAC)
 │   ├── DEPLOYMENT.md            Guide de déploiement (Railway, Vercel, Docker)
 │   ├── STATUT_GLOBAL_PROJET.md  Bilan fonctionnel et statut 100% à jour
 │   └── TESTING_CHECKLIST.md     Matrice de tests et procédures de validation
-├── kamlog-backend/              API FastAPI + migrations Alembic + seeders + Dockerfile
+├── EVO-LOG-backend/              API FastAPI + migrations Alembic + seeders + Dockerfile
 │   ├── app/                     Code source FastAPI (routers, models, services, utils)
 │   ├── scripts/                 Scripts d'initialisation (seed_data.py)
 │   ├── start.sh                 Script d'entrée conteneur résilient
 │   └── Dockerfile               Dockerfile multi-stage auto-résilient
-├── kamlog-frontend/             Application Web PWA Next.js 14
+├── EVO-LOG-frontend/             Application Web PWA Next.js 14
 │   ├── src/app/                 App Router (153 pages statiques compilées)
 │   ├── src/components/          Composants UI Vanilla CSS
 │   └── public/                  Assets PWA (sw.js, manifest, icônes 3D metallic)
@@ -81,7 +81,7 @@ Services disponibles :
 ### 2. Démarrage Backend Manuel
 
 ```bash
-cd kamlog-backend
+cd EVO-LOG-backend
 python -m venv .venv
 .venv\Scripts\activate      # Sur Windows
 source .venv/bin/activate    # Sur Linux/macOS
@@ -93,7 +93,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ### 3. Démarrage Frontend Manuel
 
 ```bash
-cd kamlog-frontend
+cd EVO-LOG-frontend
 npm install
 npm run build                # Vérification compilation (153/153 pages)
 npm run dev                  # Serveur de développement

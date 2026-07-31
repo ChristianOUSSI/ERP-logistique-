@@ -1,5 +1,5 @@
----
-name: KAMLOG EM-ERP Design System
+﻿---
+name: EVO-LOG SaaS Design System
 colors:
   surface: '#f9f9ff'
   surface-dim: '#d8d9e3'

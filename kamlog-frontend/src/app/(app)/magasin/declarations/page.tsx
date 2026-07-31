@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { ModuleLayout } from '@/components/layout/ModuleLayout'
@@ -334,7 +334,7 @@ function DeclarationModal({ onClose, onSuccess }: { onClose: () => void, onSucce
               <InputField label="Port de Chargement" field="port_chargement" placeholder="Ex: Bangkok" />
               <InputField label="Port de Déchargement" field="port_dechargement" placeholder="Ex: Douala" />
               <div className="col-span-2">
-                <InputField label="Lieu de Livraison Finale" field="lieu_livraison" placeholder="Ex: Magasin KAMLOG Douala" />
+                <InputField label="Lieu de Livraison Finale" field="lieu_livraison" placeholder="Ex: Magasin EVO-LOG Douala" />
               </div>
             </div>
           </div>

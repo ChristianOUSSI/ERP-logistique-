@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+﻿from fastapi import APIRouter, HTTPException, status
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.auth import AdminCreateUserRequest
@@ -65,10 +65,10 @@ def get_roles():
 def get_audit_logs():
     """Consulter les traces d'audit d'accès et d'administration."""
     return [
-        {"id": "LOG-109", "action": "Création Compte Utilisateur", "user": "admin@kamlog.cm", "target": "kamga@kamlog.cm", "timestamp": "22/07/2026 01:15", "status": "SUCCESS"},
-        {"id": "LOG-108", "action": "Changement Obligatoire Mot de Passe", "user": "kamga@kamlog.cm", "target": "kamga@kamlog.cm", "timestamp": "22/07/2026 01:05", "status": "SUCCESS"},
-        {"id": "LOG-107", "action": "Connexion Réussie (NextAuth)", "user": "admin@kamlog.cm", "target": "Système ERP", "timestamp": "22/07/2026 00:45", "status": "SUCCESS"},
-        {"id": "LOG-106", "action": "Modification Matrice RBAC", "user": "admin@kamlog.cm", "target": "Rôle MAGASINIER", "timestamp": "21/07/2026 23:30", "status": "SUCCESS"},
+        {"id": "LOG-109", "action": "Création Compte Utilisateur", "user": "admin@evo-log.cm", "target": "kamga@evo-log.cm", "timestamp": "22/07/2026 01:15", "status": "SUCCESS"},
+        {"id": "LOG-108", "action": "Changement Obligatoire Mot de Passe", "user": "kamga@evo-log.cm", "target": "kamga@evo-log.cm", "timestamp": "22/07/2026 01:05", "status": "SUCCESS"},
+        {"id": "LOG-107", "action": "Connexion Réussie (NextAuth)", "user": "admin@evo-log.cm", "target": "Système ERP", "timestamp": "22/07/2026 00:45", "status": "SUCCESS"},
+        {"id": "LOG-106", "action": "Modification Matrice RBAC", "user": "admin@evo-log.cm", "target": "Rôle MAGASINIER", "timestamp": "21/07/2026 23:30", "status": "SUCCESS"},
     ]
 
 @router.get("/dashboard/global-kpis")

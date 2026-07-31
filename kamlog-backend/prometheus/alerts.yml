@@ -1,5 +1,5 @@
-# Prometheus Alerting Rules for KAMLOG ERP
-# This file defines alerting rules for monitoring the KAMLOG ERP application
+﻿# Prometheus Alerting Rules for EVO-LOG ERP
+# This file defines alerting rules for monitoring the EVO-LOG ERP application
 
 groups:
   # Application Health Alerts
@@ -7,14 +7,14 @@ groups:
     interval: 30s
     rules:
       - alert: ApplicationDown
-        expr: up{job="kamlog-backend"} == 0
+        expr: up{job="EVO-LOG-backend"} == 0
         for: 1m
         labels:
           severity: critical
           team: backend
         annotations:
           summary: "Application is down"
-          description: "The KAMLOG ERP backend application has been down for more than 1 minute."
+          description: "The EVO-LOG ERP backend application has been down for more than 1 minute."
 
       - alert: HighErrorRate
         expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05

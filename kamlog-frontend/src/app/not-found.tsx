@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useI18n } from '@/hooks/useI18n'
@@ -44,7 +44,7 @@ export default function NotFound() {
         </div>
         
         <p className="mt-8 text-xs text-on-surface-variant/50">
-          {t.errors.help || "Besoin d'aide ?"} <a href="mailto:support@kamlog.cm" className="text-primary hover:underline">support@kamlog.cm</a>
+          {t.errors.help || "Besoin d'aide ?"} <a href="mailto:support@evo-log.cm" className="text-primary hover:underline">support@evo-log.cm</a>
         </p>
       </div>
     </div>

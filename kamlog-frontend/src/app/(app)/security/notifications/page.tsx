@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Bell, ShieldAlert, AlertTriangle, Info, CheckCircle2, Search, Filter, Trash2 } from 'lucide-react';
@@ -54,7 +54,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
     id: 'NOTIF-005',
     title: 'Sauvegarde BDD Réussie',
-    message: 'La sauvegarde automatique de la base de données PostgreSQL KAMLOG ERP s\'est achevée avec succès.',
+    message: 'La sauvegarde automatique de la base de données PostgreSQL EVO-LOG ERP s\'est achevée avec succès.',
     severity: 'INFO',
     timestamp: '2026-07-23T16:00:00Z',
     agency: 'Système Central',

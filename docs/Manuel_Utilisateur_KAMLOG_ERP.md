@@ -1,4 +1,4 @@
-# Manuel d'Utilisation Détaillé : KAMLOG EM-ERP
+﻿# Manuel d'Utilisation Détaillé : EVO-LOG SaaS
 **Développé et propulsé par CADC (Code Axis Digital Cameroun)**
 
 ---
@@ -20,7 +20,7 @@
 
 ## 1. Introduction et Philosophie du Système
 
-Bienvenue dans le manuel d'utilisation ultra-détaillé de **KAMLOG EM-ERP**. Cette plateforme est une solution de gestion intégrée de bout en bout, fièrement conçue et développée par les ingénieurs de **CADC (Code Axis Digital Cameroun)**.
+Bienvenue dans le manuel d'utilisation ultra-détaillé de **EVO-LOG SaaS**. Cette plateforme est une solution de gestion intégrée de bout en bout, fièrement conçue et développée par les ingénieurs de **CADC (Code Axis Digital Cameroun)**.
 
 ### La Logique Métier (Comment l'ERP réfléchit-il ?)
 Pour bien utiliser ce logiciel, il est crucial de comprendre son "flux de travail" (Workflow). Le système est interconnecté ; les informations créées dans un module sont utilisées dans un autre.
@@ -31,9 +31,9 @@ Pour bien utiliser ce logiciel, il est crucial de comprendre son "flux de travai
 4. Le document officiel (Bon de Livraison) est généré en un clic grâce à **K-Docs**.
 5. Enfin, le module **Finance** récupère cet OT validé pour générer automatiquement une **Facture**, mais aussi pour calculer la **Paie du Chauffeur** !
 
-Si vous comprenez cette chaîne, vous maîtriserez KAMLOG EM-ERP !
+Si vous comprenez cette chaîne, vous maîtriserez EVO-LOG SaaS !
 
-![Logo CADC / KAMLOG](https://via.placeholder.com/800x200.png?text=KAMLOG+EM-ERP+by+CADC)
+![Logo CADC / EVO-LOG](https://via.placeholder.com/800x200.png?text=EVO-LOG+EM-ERP+by+CADC)
 
 ---
 
@@ -101,7 +101,7 @@ L'Ordre de Transport est le document officiel qui ordonne à un camion d'aller d
 Pour visualiser visuellement toutes les expéditions :
 1. Allez dans **K-Planning**.
 2. Le système organise vos missions en colonnes (Programmées, En Chargement, En Route, Livrées).
-3. **Imprimer le Bon de Livraison (BL)** : Au survol d'une carte "En Route", cliquez sur l'icône **Imprimante**. KAMLOG va générer automatiquement un BL officiel au format A4 en récupérant toutes les données du système (K-Docs) !
+3. **Imprimer le Bon de Livraison (BL)** : Au survol d'une carte "En Route", cliquez sur l'icône **Imprimante**. EVO-LOG va générer automatiquement un BL officiel au format A4 en récupérant toutes les données du système (K-Docs) !
 
 ### 4.3. Gestion du Carburant
 Avant de lancer un camion sur une longue distance, il faut le ravitailler.
@@ -165,17 +165,17 @@ Vos chauffeurs reçoivent des per diems, et le module automatise ces calculs com
 ### 7.3. Rapprochement Bancaire et Lettrage
 1. Si le client vous paye (ex: virement bancaire de 500 000 FCFA), enregistrez cet encaissement via **Paiements & Encaissements**.
 2. Vous pouvez y effectuer le **Lettrage**, c'est-à-dire lier ce paiement à une ou plusieurs factures pour les marquer comme payées.
-3. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans KAMLOG EM-ERP avec le relevé de votre banque.
+3. Le module **Rapprochement bancaire** vous permettra ensuite de comparer les chiffres entrés dans EVO-LOG SaaS avec le relevé de votre banque.
 
 ---
 
 ## 8. Les Nouveaux Super-Pouvoirs : Portail Client, E-POD et Cartographie
 
-KAMLOG EM-ERP ne s'arrête pas aux frontières de votre bureau. Il s'étend à vos clients et vos camions !
+EVO-LOG SaaS ne s'arrête pas aux frontières de votre bureau. Il s'étend à vos clients et vos camions !
 
 ### 8.1. E-POD : L'Application Mobile pour Chauffeurs
-Fini le papier perdu ! Vos chauffeurs accèdent à KAMLOG depuis leur smartphone (lien : `/transport/epod`).
-1. Le chauffeur voit sa mission actuelle en gros caractères ("KAMLOG E-POD").
+Fini le papier perdu ! Vos chauffeurs accèdent à EVO-LOG depuis leur smartphone (lien : `/transport/epod`).
+1. Le chauffeur voit sa mission actuelle en gros caractères ("EVO-LOG E-POD").
 2. Il peut cliquer sur le bouton **Scanner BL & Valider Livraison** pour signer électroniquement, envoyer la preuve directement au système central, et déclencher instantanément la facture !
 
 ### 8.2. Le Portail Client B2B

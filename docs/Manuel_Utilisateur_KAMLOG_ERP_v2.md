@@ -1,4 +1,4 @@
-# Manuel d’utilisation (Ultra-détaillé) — KAMLOG EM-ERP
+﻿# Manuel d’utilisation (Ultra-détaillé) — EVO-LOG SaaS
 
 > **Version : v2 (brouillon enrichi)**
 >
@@ -45,7 +45,7 @@
 ## 1) Introduction
 
 ### 1.1 À qui s’adresse ce manuel ?
-Ce manuel est destiné à toute personne amenée à utiliser KAMLOG EM-ERP au quotidien :
+Ce manuel est destiné à toute personne amenée à utiliser EVO-LOG SaaS au quotidien :
 - opérateurs logistiques (dispatch, suivi véhicules),
 - agents magasin (réceptions, stocks, Mag3),
 - agents finance (facturation, encaissements, lettrage),
@@ -54,8 +54,8 @@ Ce manuel est destiné à toute personne amenée à utiliser KAMLOG EM-ERP au qu
 - utilisateurs externes (portail client / B2B),
 - équipe CADC (support et évolution).
 
-### 1.2 Ce que KAMLOG EM-ERP fait (résumé)
-KAMLOG EM-ERP est un **ERP logistique portuaire** sous forme de **monolithe modulaire** :
+### 1.2 Ce que EVO-LOG SaaS fait (résumé)
+EVO-LOG SaaS est un **ERP logistique portuaire** sous forme de **monolithe modulaire** :
 - **Backend** : FastAPI
 - **Frontend** : Next.js
 - **DB** : PostgreSQL
@@ -144,7 +144,7 @@ Le backend fournit/contrôle :
 
 ## 4) Rôles (RBAC) et permissions
 
-KAMLOG utilise une stratégie **RBAC** (Role-Based Access Control) :
+EVO-LOG utilise une stratégie **RBAC** (Role-Based Access Control) :
 - Un utilisateur appartient à **une ou plusieurs roles**.
 - Les roles possèdent des **permissions** (codes de permissions en base).
 - L’accès à un endpoint/une action dépend des permissions ou d’un rôle spécial **admin**.
@@ -279,7 +279,7 @@ En pratique, cela sert à :
 
 ## 5) Navigation générale (UI)
 
-Cette section décrit comment travailler efficacement dans KAMLOG EM-ERP : comment se repérer dans l’interface, quelles conventions suivent les écrans (listes, formulaires, statuts), et comment éviter les erreurs classiques.
+Cette section décrit comment travailler efficacement dans EVO-LOG SaaS : comment se repérer dans l’interface, quelles conventions suivent les écrans (listes, formulaires, statuts), et comment éviter les erreurs classiques.
 
 ### 5.1 Principaux repères
 - **Barre supérieure** : accès rapide aux grands modules (Transport, Documents, Parc, Magasin, Finance…), et actions globales (profil, déconnexion).
@@ -308,7 +308,7 @@ Cette section décrit comment travailler efficacement dans KAMLOG EM-ERP : comme
 
 ## 6) Santé & diagnostics (health checks)
 
-KAMLOG EM-ERP expose des endpoints de diagnostic afin que l’équipe exploitation puisse identifier rapidement si la plateforme est fonctionnelle.
+EVO-LOG SaaS expose des endpoints de diagnostic afin que l’équipe exploitation puisse identifier rapidement si la plateforme est fonctionnelle.
 
 ### 6.1 Endpoint simple
 - `GET /api/health`
@@ -688,7 +688,7 @@ Cette section sert à documenter les fonctionnalités en cours d’implémentati
 
 ## 25) Annexe B — Cartographie API (par préfixe)
 
-> Cartographie dérivée des routers backend présents dans `kamlog-backend/app/routers/*`.
+> Cartographie dérivée des routers backend présents dans `EVO-LOG-backend/app/routers/*`.
 >
 > Remarque : le backend expose en général ces endpoints via un préfixe `/api` (ex: `/api/transport/*`).
 

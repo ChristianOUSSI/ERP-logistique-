@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -7,7 +7,7 @@ import {
   RefreshCw, ChevronDown, Activity
 } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://kamlog-backend-production.up.railway.app";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://EVO-LOG-backend-production.up.railway.app";
 
 interface AuditLog {
   id: number;
@@ -23,14 +23,14 @@ interface AuditLog {
 }
 
 const FALLBACK_LOGS: AuditLog[] = [
-  { id: 1, timestamp: new Date().toISOString(), utilisateur: "admin@kamlog.cm", role: "ADMIN", action: "LOGIN", module: "AUTH", ressource: "/api/auth/login", resultat: "SUCCES", ip_adresse: "196.188.12.45", details: "Connexion réussie depuis navigateur Chrome/Windows" },
-  { id: 2, timestamp: new Date(Date.now() - 3600000).toISOString(), utilisateur: "dispatcher@kamlog.cm", role: "DISPATCHER", action: "CREATE", module: "TRANSPORT", ressource: "Mission OT-2026-00401", resultat: "SUCCES", ip_adresse: "196.188.12.51", details: "Nouvelle mission créée — Douala → N'Djamena" },
-  { id: 3, timestamp: new Date(Date.now() - 7200000).toISOString(), utilisateur: "finance@kamlog.cm", role: "FINANCE", action: "EXPORT", module: "FINANCE", ressource: "Rapport-Juillet-2026.xlsx", resultat: "SUCCES", ip_adresse: "196.188.12.67", details: "Export rapport financier juillet 2026" },
+  { id: 1, timestamp: new Date().toISOString(), utilisateur: "admin@evo-log.cm", role: "ADMIN", action: "LOGIN", module: "AUTH", ressource: "/api/auth/login", resultat: "SUCCES", ip_adresse: "196.188.12.45", details: "Connexion réussie depuis navigateur Chrome/Windows" },
+  { id: 2, timestamp: new Date(Date.now() - 3600000).toISOString(), utilisateur: "dispatcher@evo-log.cm", role: "DISPATCHER", action: "CREATE", module: "TRANSPORT", ressource: "Mission OT-2026-00401", resultat: "SUCCES", ip_adresse: "196.188.12.51", details: "Nouvelle mission créée — Douala → N'Djamena" },
+  { id: 3, timestamp: new Date(Date.now() - 7200000).toISOString(), utilisateur: "finance@evo-log.cm", role: "FINANCE", action: "EXPORT", module: "FINANCE", ressource: "Rapport-Juillet-2026.xlsx", resultat: "SUCCES", ip_adresse: "196.188.12.67", details: "Export rapport financier juillet 2026" },
   { id: 4, timestamp: new Date(Date.now() - 10800000).toISOString(), utilisateur: "inconnu@externe.cm", role: "N/A", action: "LOGIN", module: "AUTH", ressource: "/api/auth/login", resultat: "ECHEC", ip_adresse: "41.202.219.33", details: "Tentative de connexion avec mot de passe incorrect (3x)" },
-  { id: 5, timestamp: new Date(Date.now() - 14400000).toISOString(), utilisateur: "rh@kamlog.cm", role: "RH", action: "UPDATE", module: "RH", ressource: "Paie Juillet 2026", resultat: "SUCCES", ip_adresse: "196.188.12.52", details: "Validation masse salariale juillet 2026 — 5 bulletins validés" },
-  { id: 6, timestamp: new Date(Date.now() - 18000000).toISOString(), utilisateur: "magasinier@kamlog.cm", role: "MAGASINIER", action: "DELETE", module: "MAGASIN", ressource: "Stock MAT-SOUDURE-006", resultat: "WARNING", ip_adresse: "196.188.12.78", details: "Tentative suppression article en dessous seuil critique — bloqué" },
-  { id: 7, timestamp: new Date(Date.now() - 21600000).toISOString(), utilisateur: "admin@kamlog.cm", role: "ADMIN", action: "CONFIG", module: "ADMIN", ressource: "RBAC Rôle TRANSIT", resultat: "SUCCES", ip_adresse: "196.188.12.45", details: "Modification permissions rôle TRANSIT — ajout acconage.read" },
-  { id: 8, timestamp: new Date(Date.now() - 25200000).toISOString(), utilisateur: "qhse@kamlog.cm", role: "QHSE", action: "CREATE", module: "QHSE", ressource: "Rapport QHSE-2026-012", resultat: "SUCCES", ip_adresse: "196.188.12.91", details: "Nouveau rapport d'inspection quai 3 soumis" },
+  { id: 5, timestamp: new Date(Date.now() - 14400000).toISOString(), utilisateur: "rh@evo-log.cm", role: "RH", action: "UPDATE", module: "RH", ressource: "Paie Juillet 2026", resultat: "SUCCES", ip_adresse: "196.188.12.52", details: "Validation masse salariale juillet 2026 — 5 bulletins validés" },
+  { id: 6, timestamp: new Date(Date.now() - 18000000).toISOString(), utilisateur: "magasinier@evo-log.cm", role: "MAGASINIER", action: "DELETE", module: "MAGASIN", ressource: "Stock MAT-SOUDURE-006", resultat: "WARNING", ip_adresse: "196.188.12.78", details: "Tentative suppression article en dessous seuil critique — bloqué" },
+  { id: 7, timestamp: new Date(Date.now() - 21600000).toISOString(), utilisateur: "admin@evo-log.cm", role: "ADMIN", action: "CONFIG", module: "ADMIN", ressource: "RBAC Rôle TRANSIT", resultat: "SUCCES", ip_adresse: "196.188.12.45", details: "Modification permissions rôle TRANSIT — ajout acconage.read" },
+  { id: 8, timestamp: new Date(Date.now() - 25200000).toISOString(), utilisateur: "qhse@evo-log.cm", role: "QHSE", action: "CREATE", module: "QHSE", ressource: "Rapport QHSE-2026-012", resultat: "SUCCES", ip_adresse: "196.188.12.91", details: "Nouveau rapport d'inspection quai 3 soumis" },
 ];
 
 const resultatConfig = {
@@ -86,7 +86,7 @@ export default function AdminJournalPage() {
             Journal d'Audit Système
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Traçabilité complète de toutes les actions utilisateurs — KAMLOG ERP
+            Traçabilité complète de toutes les actions utilisateurs — EVO-LOG ERP
           </p>
         </div>
         <div className="flex gap-2">

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import GenericDataPage from '@/components/ui/GenericDataPage';
@@ -44,7 +44,7 @@ export default function AgenciesPage() {
   return (
     <GenericDataPage
       title="Agences Portuaires"
-      description="Gestion des agences et succursales KAMLOG."
+      description="Gestion des agences et succursales EVO-LOG."
       icon={<Building2 className="w-5 h-5 text-primary" />}
       columns={columns}
       data={agencies}

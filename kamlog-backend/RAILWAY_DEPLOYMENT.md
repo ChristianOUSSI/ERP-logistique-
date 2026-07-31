@@ -1,4 +1,4 @@
-# Railway Deployment Guide - KAMLOG Backend
+﻿# Railway Deployment Guide - EVO-LOG Backend
 
 ## Variables d'environnement à configurer dans Railway
 
@@ -19,7 +19,7 @@ Pour le stockage des documents:
 - `MINIO_ENDPOINT` = (URL du service MinIO externe ou utiliser Railway Disk)
 - `MINIO_ACCESS_KEY` = (Clé d'accès MinIO)
 - `MINIO_SECRET_KEY` = (Clé secrète MinIO)
-- `MINIO_BUCKET_DOCUMENTS` = kamlog-documents
+- `MINIO_BUCKET_DOCUMENTS` = EVO-LOG-documents
 - `MINIO_SECURE` = true
 
 ### Authentification JWT
@@ -31,15 +31,15 @@ Pour le stockage des documents:
 ### Email (Optionnel)
 - `SMTP_HOST` = smtp.gmail.com
 - `SMTP_PORT` = 587
-- `SMTP_USER` = noreply@kamlog.cm
+- `SMTP_USER` = noreply@evo-log.cm
 - `SMTP_PASSWORD` = (Mot de passe application Gmail)
-- `SMTP_FROM` = KAMLOG ERP <noreply@kamlog.cm>
+- `SMTP_FROM` = EVO-LOG ERP <noreply@evo-log.cm>
 
 ### Application
-- `APP_NAME` = KAMLOG EM-ERP
+- `APP_NAME` = EVO-LOG SaaS
 - `APP_VERSION` = 1.0.0
 - `DEBUG` = false
-- `ALLOWED_ORIGINS` = https://kamlog.vercel.app,http://localhost:3000
+- `ALLOWED_ORIGINS` = https://EVO-LOG.vercel.app,http://localhost:3000
 - `SEED_DATA` = true (pour exécuter automatiquement les seeders au démarrage)
 
 ### Celery
@@ -51,8 +51,8 @@ Pour le stockage des documents:
 1. **Connecter le repository GitHub à Railway**
    - Allez sur https://railway.com/project/5a9c4b25-d977-4d38-842d-909f4a2baf97
    - Cliquez sur "New Project" > "Deploy from GitHub repo"
-   - Sélectionnez le repository KAMLOG-EM-ERP
-   - Sélectionnez le dossier `kamlog-backend` comme root directory
+   - Sélectionnez le repository EVO-LOG
+   - Sélectionnez le dossier `EVO-LOG-backend` comme root directory
 
 2. **Ajouter les plugins Railway**
    - Ajoutez un plugin **PostgreSQL** (Railway le détectera automatiquement)
@@ -76,34 +76,34 @@ Pour le stockage des documents:
 
 ## Utilisateurs par défaut (après seeders)
 
-- **Admin**: admin@kamlog.cm / admin123
-- **Dispatcher**: dispatcher@kamlog.cm / dispatcher123
-- **Finance**: finance@kamlog.cm / finance123
-- **Douane**: douane@kamlog.cm / douane123
-- **Gate**: gate@kamlog.cm / gate123
+- **Admin**: admin@evo-log.cm / admin123
+- **Dispatcher**: dispatcher@evo-log.cm / dispatcher123
+- **Finance**: finance@evo-log.cm / finance123
+- **Douane**: douane@evo-log.cm / douane123
+- **Gate**: gate@evo-log.cm / gate123
 
 ## Vérification
 
 1. **Health Check**
    - Accédez à `https://votre-backend.railway.app/api/health`
-   - Vous devriez voir: `{"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}`
+   - Vous devriez voir: `{"status": "ok", "service": "EVO-LOG SaaS", "version": "1.0.0"}`
 
 2. **Test de connexion frontend**
    - Mettez à jour `NEXT_PUBLIC_API_URL` dans votre frontend Vercel avec l'URL Railway
-   - Testez la connexion depuis https://kamlog.vercel.app
+   - Testez la connexion depuis https://EVO-LOG.vercel.app
 
 3. **Test d'authentification**
-   - Essayez de vous connecter avec admin@kamlog.cm / admin123
+   - Essayez de vous connecter avec admin@evo-log.cm / admin123
    - Vérifiez que vous recevez un token JWT valide
 
 ## URL Frontend à configurer
 
 Une fois le backend déployé sur Railway, vous obtiendrez une URL comme:
-`https://kamlog-backend-production.up.railway.app`
+`https://EVO-LOG-backend-production.up.railway.app`
 
 Vous devez configurer cette URL dans votre frontend Vercel:
 1. Allez sur votre projet Vercel: https://vercel.com/dashboard
-2. Sélectionnez le projet kamlog-frontend
+2. Sélectionnez le projet EVO-LOG-frontend
 3. Allez dans Settings > Environment Variables
 4. Ajoutez ou modifiez la variable:
    - Nom: `NEXT_PUBLIC_API_URL`
@@ -112,17 +112,17 @@ Vous devez configurer cette URL dans votre frontend Vercel:
 
 ## Configuration Next.js pour le domaine Railway
 
-Mettez à jour `kamlog-frontend/next.config.mjs` pour autoriser le domaine Railway:
+Mettez à jour `EVO-LOG-frontend/next.config.mjs` pour autoriser le domaine Railway:
 
 ```javascript
 const nextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ['http://localhost:3000', 'localhost:3000', 'https://kamlog.vercel.app'],
+      allowedOrigins: ['http://localhost:3000', 'localhost:3000', 'https://EVO-LOG.vercel.app'],
     },
   },
   images: {
-    domains: ['localhost', 'kamlog.vercel.app'],
+    domains: ['localhost', 'EVO-LOG.vercel.app'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -142,7 +142,7 @@ const nextConfig = {
 4. Testez l'endpoint `/api/health` pour vérifier que le backend est en ligne
 
 ### Erreur CORS
-1. Vérifiez que `ALLOWED_ORIGINS` contient `https://kamlog.vercel.app`
+1. Vérifiez que `ALLOWED_ORIGINS` contient `https://EVO-LOG.vercel.app`
 2. Vérifiez que le frontend utilise la bonne URL backend
 3. Redéployez le backend après avoir modifié les variables d'environnement
 

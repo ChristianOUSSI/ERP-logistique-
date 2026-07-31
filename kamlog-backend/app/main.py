@@ -1,4 +1,4 @@
-# app/main.py  Configuration Principale FastAPI KAMLOG
+﻿# app/main.py  Configuration Principale FastAPI EVO-LOG
 
 
 
@@ -286,95 +286,25 @@ async def _heartbeat_loop():
 
 app = FastAPI(
 
-    title="KAMLOG EM-ERP API",
+    title="EVO-LOG SaaS Platform API",
 
-    description="""ERP Logistique Portuaire - Systme de gestion complet pour le port de Douala.
-
-
+    description="""Plateforme ERP Logistique SaaS Multi-Entreprises (Version 1.3/cadc/EVO-LOG).
+    Développée par Code Axis Digital Cameroun (CADC).
 
     ## Modules disponibles
 
-
-
-    * **Auth** - Authentification et gestion des utilisateurs
-
-    * **Tiers** - Gestion des clients, fournisseurs et partenaires
-
-    * **Transport** - Suivi des vhicules, conducteurs et missions
-
-    * **Finance** - Comptabilit, facturation et gestion financire
-
-    * **Parc** - Gestion du parc automobile et des quipements
-
-    * **Documents** - Gnration et gestion des documents logistiques
-
-    * **Alerts** - Systme d'alertes et de notifications en temps rel
-
-    * **Magasin** - Gestion des stocks et entrepts
-
-    * **Gateway** - Intgration avec les systmes externes
-
-    * **Transactions** - Suivi des oprations commerciales
-
-    * **Master Data** - Donnes de rfrence (articles, incoterms, types de conteneurs)
-
-# Setup Prometheus Metrics
-
-instrumentator = Instrumentator().instrument(app)
-
-
-
-    * **Administratif** - Gestion des agences et paramtres systme
-
-    * **Notifications** - Centre de notifications
-
-    * **Achats** - Gestion des achats et approvisionnements
-
-    * **Incidents** - Signalement et suivi des incidents
-
-    * **Public API** - Endpoints publics accessibles sans authentification
-
-    * **RH** - Gestion des ressources humaines
-
-
-
-    ## Authentification
-
-
-
-    La plupart des endpoints ncessitent une authentification JWT. Utilisez l'endpoint `/api/v1/auth/login` pour obtenir un token d'accs.
-
-
-
-    ## Versioning
-
-
-
-    Cet API utilise le versioning par URL. La version actuelle est v1 disponible sous `/api/v1/*`.
-
-    Les endpoints sous `/api/*` sont maintenus pour la compatibilit ascendante mais sont dprcis.
-
-
-
-    ## Rate Limiting
-
-
-
-    Des limites de taux sont appliques pour protger contre les abus:
-
-    * Authentification: 5 requtes/minute
-
-    * Connexion: 10 requtes/minute
-
-    * Utilisateurs rguliers: 1000 requtes/heure
-
-    * Administrateurs: 2000 requtes/heure
-
-    * Oprations en lot: 10 requtes/heure
-
+    * **Multi-Tenant & SuperAdmin** - Gestion des organisations, abonnements et RLS
+    * **Auth** - Authentification JWT et RBAC dynamique
+    * **Tiers** - Clients, fournisseurs et armateurs
+    * **Transport** - Dispatcheur, flotte, E-POD et déclarations
+    * **Finance** - Facturation, encaissements et comptabilité OHADA
+    * **Parc & Yard** - Gate in/out, ateliers et maintenance
+    * **Magasin (WMS)** - Réceptions Mag3, sorties, transferts et inventaires
+    * **Documents (GED)** - Archiving, versionning et génération PDF
+    * **Sectoriel & Ingestion** - Pont-bascule, lot/série, chaîne du froid, FDS, OCR
     """,
 
-    version="1.0.0",
+    version="1.3.0",
 
     docs_url="/api/docs",
 
@@ -386,23 +316,23 @@ instrumentator = Instrumentator().instrument(app)
 
     contact={
 
-        "name": "quipe KAMLOG",
+        "name": "Code Axis Digital Cameroun (CADC)",
 
-        "url": "https://kamlog.cm",
+        "url": "https://codeaxis.cm",
 
-        "email": "tech@kamlog.cm",
+        "email": "contact@codeaxis.cm",
 
     },
 
     license_info={
 
-        "name": "Propritaire",
+        "name": "Propriétaire CADC / Placide Kouayep",
 
-        "url": "https://kamlog.cm/license",
+        "url": "https://codeaxis.cm/license",
 
     },
 
-    terms_of_service="https://kamlog.cm/terms",
+    terms_of_service="https://codeaxis.cm/terms",
 
 )
 
@@ -477,9 +407,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://kamlog.vercel.app",
-        "https://kamlog-frontend.vercel.app",
-        "https://kamlog-erp.cm"
+        "https://EVO-LOG.vercel.app",
+        "https://EVO-LOG-frontend.vercel.app",
+        "https://EVO-LOG-erp.cm"
     ],
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
@@ -541,14 +471,39 @@ safe_include_router(suppliers, prefix="/api/v1/suppliers", tags=["Suppliers"])
 try:
     from app.routers.webhook_whatsapp import router as webhook_router
     safe_include_router(webhook_router)
-except Exception:
-    pass
+except Exception as e:
+    logger.warning(f"Could not register WhatsApp router: {e}")
 
 try:
     from app.routers.telematics import router as telematics_router
     safe_include_router(telematics_router)
 except Exception:
     pass
+
+# EVO-LOG v1.3 New Core & SaaS Routers
+from app.routers.v1 import superadmin, subscription, onboarding, privacy
+from app.routers.v1 import ohada_accounting, crm, projects, fixed_assets, ged, e_invoicing
+from app.routers.v1 import ai_predictive, bi_advanced, marketplace, freight_exchange, digital_twin, gamification, sectoral_features, status
+
+safe_include_router(superadmin, prefix="/api/v1/superadmin", tags=["SuperAdmin Multi-Tenant"])
+safe_include_router(subscription, prefix="/api/v1/saas/subscription", tags=["SaaS Subscription & Billing"])
+safe_include_router(onboarding, prefix="/api/v1/auth/onboarding", tags=["Self-Service Onboarding"])
+safe_include_router(privacy, prefix="/api/v1/privacy", tags=["Data Privacy Law 2024/017"])
+safe_include_router(ohada_accounting, prefix="/api/v1/accounting/ohada", tags=["Comptabilité SYSCOHADA"])
+safe_include_router(crm, prefix="/api/v1/crm", tags=["CRM & Commercial Pipeline"])
+safe_include_router(projects, prefix="/api/v1/projects", tags=["Extended Project Management"])
+safe_include_router(fixed_assets, prefix="/api/v1/assets", tags=["Fixed Assets & Depreciation"])
+safe_include_router(ged, prefix="/api/v1/ged", tags=["GED Complete Document Vault"])
+safe_include_router(e_invoicing, prefix="/api/v1/e-invoicing", tags=["Normalized E-Invoicing DGI"])
+safe_include_router(ai_predictive, prefix="/api/v1/ai/predictive", tags=["Predictive AI Engine"])
+safe_include_router(bi_advanced, prefix="/api/v1/bi/advanced", tags=["Advanced BI Engine"])
+safe_include_router(marketplace, prefix="/api/v1/marketplace", tags=["Marketplace & Public API Keys"])
+safe_include_router(freight_exchange, prefix="/api/v1/freight-exchange", tags=["Bourse de Fret"])
+safe_include_router(digital_twin, prefix="/api/v1/digital-twin", tags=["Digital Twin 2D/3D Occupancy"])
+safe_include_router(gamification, prefix="/api/v1/gamification", tags=["Gamification & Driver Badges"])
+safe_include_router(sectoral_features, prefix="/api/v1/sectoral", tags=["Paramétrage Sectoriel (Lot, Bascule, FDS, Phyto)"])
+safe_include_router(status, prefix="/api/v1/status", tags=["System Public Status & SLA"])
+
 safe_include_router(notifications, prefix="/api/v1/notifications", tags=["Notifications"])
 safe_include_router(bill_of_loading, prefix="/api/v1/bill-of-loading", tags=["Bill of Loading"])
 safe_include_router(purchase, prefix="/api/v1/purchase", tags=["Achats"])
@@ -584,7 +539,7 @@ safe_include_router(public_api, prefix="/api/public", tags=["Public API - DEPREC
 @app.post("/api/v1/admin/seed")
 @app.get("/api/v1/admin/seed")
 async def trigger_admin_seed(force: bool = False):
-    """Permet d'exécuter à tout moment le seeder de la base de données ERP KAMLOG."""
+    """Permet d'exécuter à tout moment le seeder de la base de données ERP EVO-LOG."""
     try:
         from scripts.seed_data import seed_all
         res = await asyncio.to_thread(seed_all, force)
@@ -608,7 +563,7 @@ async def health_check():
 
             "status": "degraded",
 
-            "service": "KAMLOG EM-ERP",
+            "service": "EVO-LOG SaaS",
 
             "version": "1.0.0",
 
@@ -616,7 +571,7 @@ async def health_check():
 
         }
 
-    return {"status": "ok", "service": "KAMLOG EM-ERP", "version": "1.0.0"}
+    return {"status": "ok", "service": "EVO-LOG SaaS", "version": "1.0.0"}
 
 
 
@@ -634,7 +589,7 @@ async def detailed_health_check():
 
         "status": "ok",
 
-        "service": "KAMLOG EM-ERP",
+        "service": "EVO-LOG SaaS",
 
         "version": "1.0.0",
 
