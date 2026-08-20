@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import ModuleLayout from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
-import { useComingSoon } from '@/contexts/ComingSoonContext';
 import { parcAPI } from '@/lib/api-client';
 
 // Dynamic import of MapViewer to avoid SSR window is not defined errors
@@ -16,7 +15,6 @@ const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
 export default function YardMapPage() {
   const [points, setPoints] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const { showComingSoon } = useComingSoon();
 
   const fetchYardPositions = useCallback(async () => {
     setRefreshing(true);
@@ -75,7 +73,7 @@ export default function YardMapPage() {
               Actualiser Cour
             </button>
             <button 
-              onClick={() => showComingSoon('Configuration Zones')}
+              onClick={() => console.log('Configuration Zones')}
               className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
             >
               <Settings2 className="w-4 h-4" />
