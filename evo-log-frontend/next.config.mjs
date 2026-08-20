@@ -3,7 +3,7 @@
  */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true, // Enable SWC for production (Linux - Vercel works fine)
+  swcMinify: true,
   images: {
     domains: ['localhost'],
     remotePatterns: [
@@ -16,15 +16,13 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
   },
-  // Optimizations for production
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Performance optimizations
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['lucide-react', '@heroicons/react'],
   },
 }
 
-module.exports = nextConfig
+export default nextConfig
