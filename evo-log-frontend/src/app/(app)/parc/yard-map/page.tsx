@@ -1,16 +1,19 @@
 ﻿'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import dynamic from 'next/dynamic';
 import ModuleLayout from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
 import { parcAPI } from '@/lib/api-client';
 
-// Dynamic import of MapViewer to avoid SSR window is not defined errors
-const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
-  ssr: false,
-  loading: () => <div className="w-full h-[600px] bg-slate-100 animate-pulse rounded-2xl flex items-center justify-center text-slate-400">Initialisation de la cour...</div>
-});
+// Simple placeholder for Map
+const MapPlaceholder = () => (
+  <div className="w-full h-[600px] bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400">
+    <div className="text-center">
+      <Map className="w-16 h-16 mx-auto mb-4" />
+      <p className="text-sm font-semibold">Carte de la Cour - En développement</p>
+    </div>
+  </div>
+);
 
 export default function YardMapPage() {
   const [points, setPoints] = useState<any[]>([]);
@@ -109,7 +112,7 @@ export default function YardMapPage() {
           </div>
 
           <div className="w-full h-full">
-            <MapViewer points={points} center={[4.0511, 9.7679]} zoom={16} mode="yard_management" />
+            <MapPlaceholder />
           </div>
         </div>
 
