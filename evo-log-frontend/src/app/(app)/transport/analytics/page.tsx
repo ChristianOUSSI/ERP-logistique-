@@ -5,7 +5,6 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { financeAPI } from '@/lib/api-client';
 import { PieChart, Activity, TrendingUp, DollarSign } from 'lucide-react';
-import { toast } from 'sonner';
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<any[]>([]);
@@ -17,7 +16,7 @@ export default function AnalyticsPage() {
         const res = await financeAPI.getAnalyticsChartData();
         setData(res.data || res);
       } catch (e) {
-        toast.error("Erreur lors du chargement des analytiques");
+        console.log("Erreur lors du chargement des analytiques");
       } finally {
         setLoading(false);
       }

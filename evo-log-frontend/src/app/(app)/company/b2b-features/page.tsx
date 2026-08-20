@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { FileText, Plus, Send, MessageCircle, RefreshCw, CheckCircle } from 'lucide-react'
-import { toast } from 'sonner'
 
 const b2bAPI = {
   getQuotes: async (companyId: number) => {
@@ -67,12 +66,12 @@ export default function B2BFeaturesPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Devis créé avec succès')
+      console.log('Devis créé avec succès')
       queryClient.invalidateQueries({ queryKey: ['b2b-quotes'] })
       setIsQuoteModalOpen(false)
     },
     onError: () => {
-      toast.error('Erreur lors de la création du devis')
+      console.log('Erreur lors de la création du devis')
     },
   })
 

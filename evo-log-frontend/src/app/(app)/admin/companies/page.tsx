@@ -18,7 +18,6 @@ import {
   RefreshCw,
   Download
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 // Mock API
 const tenantAPI = {
@@ -119,12 +118,12 @@ export default function CompaniesPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Entreprise créée avec succès')
+      console.log('Entreprise créée avec succès')
       queryClient.invalidateQueries({ queryKey: ['companies'] })
       setIsModalOpen(false)
     },
     onError: () => {
-      toast.error('Erreur lors de la création de l\'entreprise')
+      console.log('Erreur lors de la création de l\'entreprise')
     },
   })
 
@@ -134,7 +133,7 @@ export default function CompaniesPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Entreprise activée')
+      console.log('Entreprise activée')
       queryClient.invalidateQueries({ queryKey: ['companies'] })
     },
   })
@@ -145,7 +144,7 @@ export default function CompaniesPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Entreprise suspendue')
+      console.log('Entreprise suspendue')
       queryClient.invalidateQueries({ queryKey: ['companies'] })
     },
   })

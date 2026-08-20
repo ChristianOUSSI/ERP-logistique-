@@ -6,7 +6,6 @@ import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
 import { useComingSoon } from '@/contexts/ComingSoonContext';
 import { parcAPI } from '@/lib/api-client';
-import { toast } from 'sonner';
 
 // Dynamic import of MapViewer to avoid SSR window is not defined errors
 const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
@@ -43,7 +42,7 @@ export default function YardMapPage() {
       setPoints(mapPoints);
     } catch (error) {
       console.error(error);
-      toast.error('Erreur lors du chargement de la cour');
+      console.log('Erreur lors du chargement de la cour');
     } finally {
       setRefreshing(false);
     }

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Bell, ShieldAlert, AlertTriangle, Info, CheckCircle2, Search, Filter, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface NotificationItem {
   id: string;
@@ -76,12 +75,12 @@ export default function NotificationsPage() {
 
   const handleMarkAllRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast.success("Toutes les notifications ont été marquées comme lues.");
+    console.log("Toutes les notifications ont été marquées comme lues.");
   };
 
   const handleClearRead = () => {
     setNotifications(prev => prev.filter(n => !n.read));
-    toast.info("Notifications lues supprimées.");
+    console.log("Notifications lues supprimées.");
   };
 
   const handleToggleRead = (id: string) => {

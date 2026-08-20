@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ModuleLayout } from '@/components/layout/ModuleLayout';
 import { MessageSquare, Bot, User, Send, Smartphone, RefreshCw, CarFront, PackageCheck, Fuel } from 'lucide-react';
-import { toast } from 'sonner';
 
 export default function ChatOpsDashboard() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -47,10 +46,10 @@ export default function ChatOpsDashboard() {
         body: JSON.stringify({ message: testMessage, sender: testSender })
       });
       setTestMessage('');
-      toast.success("Message envoyÃ© Ã  EVO-Bot !");
+      console.log("Message envoyé à EVO-Bot !");
       setTimeout(fetchLogs, 500); // Quick refresh after sending
     } catch (err) {
-      toast.error("Erreur lors de l'envoi");
+      console.log("Erreur lors de l'envoi");
     }
   };
 

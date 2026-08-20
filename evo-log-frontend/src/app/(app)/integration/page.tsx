@@ -16,7 +16,6 @@ import {
   Plus,
   Search
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 // Mock API integration (à remplacer par api-client.ts)
 const integrationAPI = {
@@ -114,10 +113,10 @@ export default function IntegrationPage() {
       return res.data
     },
     onSuccess: (data) => {
-      toast.success(data.message || 'Connexion testée avec succès')
+      console.log(data.message || 'Connexion testée avec succès')
     },
     onError: () => {
-      toast.error('Erreur lors du test de connexion')
+      console.log('Erreur lors du test de connexion')
     },
   })
 

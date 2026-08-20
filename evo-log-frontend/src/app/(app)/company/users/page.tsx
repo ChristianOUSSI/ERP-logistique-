@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Users, Plus, Search, UserCheck, ShieldCheck, MoreVertical, Mail, XCircle } from 'lucide-react'
-import { toast } from 'sonner'
 
 const companyAPI = {
   getUsers: async (companyId: number) => {
@@ -45,12 +44,12 @@ export default function CompanyUsersPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Invitation envoyée avec succès')
+      console.log('Invitation envoyée avec succès')
       queryClient.invalidateQueries({ queryKey: ['company-users'] })
       setIsModalOpen(false)
     },
     onError: () => {
-      toast.error('Erreur lors de l\'invitation')
+      console.log('Erreur lors de l\'invitation')
     },
   })
 

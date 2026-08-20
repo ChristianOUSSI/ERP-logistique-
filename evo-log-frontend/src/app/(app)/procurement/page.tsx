@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { procurementAPI } from '@/lib/api-client';
 import { ShoppingCart, Plus, Search, CheckCircle2, ShieldCheck, X } from 'lucide-react';
-import { toast } from 'sonner';
 
 export default function ProcurementPage() {
   const [mounted, setMounted] = useState(false);
@@ -36,14 +35,14 @@ export default function ProcurementPage() {
       return res.data;
     },
     onSuccess: () => {
-      toast.success('Bon de commande (PO) Ã©mis avec succÃ¨s !');
+      console.log('Bon de commande (PO) émis avec succès !');
       queryClient.invalidateQueries({ queryKey: ['procurement-orders'] });
       setIsModalOpen(false);
       setFournisseur('');
       setDescription('');
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.detail || 'Erreur lors de la crÃ©ation de la commande.');
+      console.log(err?.response?.data?.detail || 'Erreur lors de la création de la commande.');
     },
   });
 

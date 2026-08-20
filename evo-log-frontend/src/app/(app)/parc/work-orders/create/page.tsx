@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Wrench, ArrowLeft, CheckCircle2, AlertTriangle, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 export default function CreateWorkOrderPage() {
   const [mounted, setMounted] = useState(false);
@@ -22,7 +21,7 @@ export default function CreateWorkOrderPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Ordre de travail Workshop crÃ©Ã© avec succÃ¨s !");
+    console.log("Ordre de travail Workshop créé avec succès !");
     router.push('/parc/worEVO-orders');
   };
 

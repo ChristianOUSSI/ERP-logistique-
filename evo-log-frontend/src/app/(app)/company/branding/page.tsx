@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Palette, Save, XCircle, Brush, Image, Link } from 'lucide-react'
-import { toast } from 'sonner'
 
 const b2bAPI = {
   getPortal: async (companyId: number) => {
@@ -69,11 +68,11 @@ export default function B2BBrandingPage() {
       return res.data
     },
     onSuccess: () => {
-      toast.success('Portail personnalisé avec succès')
+      console.log('Portail personnalisé avec succès')
       queryClient.invalidateQueries({ queryKey: ['b2b-portal'] })
     },
     onError: () => {
-      toast.error('Erreur lors de la personnalisation')
+      console.log('Erreur lors de la personnalisation')
     },
   })
 
