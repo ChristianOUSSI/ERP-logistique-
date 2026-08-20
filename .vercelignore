@@ -1,19 +1,12 @@
-﻿# Backend files
-evo-log-backend/
-docker-compose.yml
-setup.ps1
-setup.sh
-scripts/
-
-# Documentation (optional - remove if you want docs deployed)
-docs/
-ERP/
-
-# Git
-.git/
-.github/
-
-# Other
-*.md
-!README.md
-
+﻿node_modules
+.next
+.env
+.env.local
+.env.production
+*.log
+coverage
+.nyc_output
+.cache
+dist
+.DS_Store
+Thumbs.db

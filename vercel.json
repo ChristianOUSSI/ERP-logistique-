@@ -2,18 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "evo-log-backend/app/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.11"
-      }
+      "src": "evo-log-frontend/package.json",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "evo-log-backend/app/main.py"
+      "dest": "/evo-log-frontend/$1"
     }
   ]
 }
