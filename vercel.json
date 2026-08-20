@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "evo-log-frontend/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/evo-log-frontend/$1"
-    }
-  ]
+  "buildCommand": "cd evo-log-frontend && npm install && npm run build",
+  "outputDirectory": "evo-log-frontend/.next",
+  "framework": "nextjs",
+  "installCommand": "cd evo-log-frontend && npm install",
+  "devCommand": "cd evo-log-frontend && npm run dev"
 }
