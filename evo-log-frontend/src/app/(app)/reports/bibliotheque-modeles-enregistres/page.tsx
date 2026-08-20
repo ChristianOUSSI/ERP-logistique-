@@ -1,4 +1,4 @@
-﻿import { ModuleLayout } from '@/components/layout/ModuleLayout';
+﻿import ModuleLayout from '@/components/layout/ModuleLayout';
 
 export default function BibliothequeModelesEnregistresPage() {
   return (

@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import ModuleLayout from '@/components/layout/ModuleLayout';
 import { MessageSquare, Bot, User, Send, Smartphone, RefreshCw, CarFront, PackageCheck, Fuel } from 'lucide-react';
 
 export default function ChatOpsDashboard() {

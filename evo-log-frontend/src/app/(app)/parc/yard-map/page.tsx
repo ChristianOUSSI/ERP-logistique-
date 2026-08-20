@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import ModuleLayout from '@/components/layout/ModuleLayout';
 import { Map, Navigation, Settings2, RefreshCw, Box } from 'lucide-react';
 import { useComingSoon } from '@/contexts/ComingSoonContext';
 import { parcAPI } from '@/lib/api-client';

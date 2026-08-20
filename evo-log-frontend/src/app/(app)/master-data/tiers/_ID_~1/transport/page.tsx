@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ModuleLayout } from '@/components/layout/ModuleLayout'
+import ModuleLayout from '@/components/layout/ModuleLayout'
 import { ArrowLeft, Truck, MapPin, Package, Calendar, CircleDollarSign } from 'lucide-react'
 import { CardSkeletonLoader } from '@/components/ui/Loaders'
 

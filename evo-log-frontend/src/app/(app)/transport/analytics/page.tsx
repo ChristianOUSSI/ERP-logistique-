@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import ModuleLayout from '@/components/layout/ModuleLayout';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { financeAPI } from '@/lib/api-client';
 import { PieChart, Activity, TrendingUp, DollarSign } from 'lucide-react';

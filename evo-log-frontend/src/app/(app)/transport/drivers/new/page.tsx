@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { transportAPI } from '@/lib/api-client';
 import { UserPlus, User, Phone, MapPin, Truck, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { ModuleLayout } from '@/components/layout/ModuleLayout';
+import ModuleLayout from '@/components/layout/ModuleLayout';
 
 export default function NewDriverPage() {
   const router = useRouter();
