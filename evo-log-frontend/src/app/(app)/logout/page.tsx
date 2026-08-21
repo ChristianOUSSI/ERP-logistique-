@@ -1,1 +1,53 @@
-Instrumentation:c,chevronDownIcon:p}=o;if(e.config.wsbImprovedPreviewPane){l.__verticalCleanup&&(l.__verticalCleanup(),l.__verticalCleanup=null);let e=l.querySelector(".actionMenu");e&&e.__actionMenuCleanup&&e.__actionMenuCleanup()}if(!d){l.innerHTML="";return}let{suggestion:u,sections:g,suggestionClickHandler:m,itemClickHandler:h,jumpListItemClickHandler:C,contextMenuClickHandler:v,backButtonItem:f,settingsOnlineModules:S,appSuggestionsModules:b,messageDataModel:w,previewLocation:T,appStore:H,modelBasedDisclaimerMessage:y}=d,E=u.department,I=u.jobTitle,N=u.previewMetadata?Object.keys(u.previewMetadata):[],x=HitHighlightingParser.removeMarkers(u.primaryMetadata),k=e.isImageGridEnabledForItem(u.type),L=e.isModelBasedSearchType(u.type);if(l.innerHTML="",e.config.wsbImprovedPreviewPane){if("SPP"===u.type&&!(null==u?void 0:u.installed)||"SAPP"===u.type){let e=t.createStorePreviewPane({suggestion:u,clickHandler:m,sections:g,itemClickHandler:h});e&&l.appendChild(e);return}if(e.isDocument(u.type)&&(2==u.handoffType||8==u.handoffType||12==u.handoffType)||e.isMusic(u.type)&&2==u.handoffType)return void t.renderDocumentPreviewPane(l,{suggestion:u,clickHandler:m,sections:g,itemClickHandler:h});if(k||(e.isPhoto(u.type)||e.isVideo(u.type))&&2==u.handoffType)return void t.renderImagePreviewPane(l,{suggestion:u,clickHandler:m,sections:g,itemClickHandler:h});if(e.isSetting(u.type)&&2==u.handoffType)return void t.renderSettingPreviewPane(l,{suggestion:u,clickHandler:m,sections:g,itemClickHandler:h,settingsOnlineModules:S});if(e.isFolder(u.type)&&2==u.handoffType||"PT"==u.type&&2==u.handoffType||"SDFE"===u.type){let e=t.createFolderPreviewPane({suggestion:u,clickHandler:m,sections:g,itemClickHandler:h});e&&l.appendChild(e);return}if((e.isApp(u.type)||"CG"==u.type)&&2==u.handoffType){let e=t.createAppPreviewPane({suggestion:u,clickHandler:m,sections:g,itemClickHandler:h,jumpListItemClickHandler:C,contextMenuClickHandler:v});e&&l.appendChild(e);return}if(e.isPeople(u.type)&&("CSTORE"===u.type||u.previewMetadata)){let e=t.createPeoplePreviewPane({suggestion:u,clickHandler:m,sections:g,itemClickHandler:h});e&&l.appendChild(e);return}}if("SPP"===u.type&&!(null==u?void 0:u.installed)||"SAPP"===u.type){let e=t.createElement("div",null);t.renderAppStorePreviewPane(e,{suggestion:u,appStore:H,clickHandler:m}),l.appendChild(e);return}let B=t.createElement("div",null),A=t.create
+﻿'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+
+export default function Page() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">logout</h1>
+        <p className="text-gray-600 text-sm mt-1">Module logout</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="text-center py-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Module en dÃ©veloppement</h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            Ce module est en cours de dÃ©veloppement et sera bientÃ´t disponible.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

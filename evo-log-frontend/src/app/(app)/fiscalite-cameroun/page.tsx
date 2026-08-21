@@ -7,8 +7,8 @@ export default function FiscaliteCamerounPage() {
   const [activeTab, setActiveTab] = useState('declarations');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [declarations, setDeclarations] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [declarations, setDeclarations] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
   const [calculationResult, setCalculationResult] = useState(null);
 
   const handleCreateDeclaration = async (e: React.FormEvent) => {

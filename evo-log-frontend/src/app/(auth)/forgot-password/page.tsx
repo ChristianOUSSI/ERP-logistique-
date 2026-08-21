@@ -1,16 +1,10 @@
 ﻿'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hooEVO-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import Link from 'next/link'
-import { apiClient } from '@/lib/api-client'
+import { api } from '@/lib/api-client'
 import { useI18n } from '@/hooks/useI18n'
 import { useSettings, ThemePreference } from '@/components/layout/SettingsProvider'
-
-const forgotSchema = z.object({ email: z.string().min(1).email() })
-type ForgotFormData = z.infer<typeof forgotSchema>
 
 export default function ForgotPasswordPage() {
   const t = useI18n()
@@ -18,18 +12,33 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [submittedEmail, setSubmittedEmail] = useState('')
-
-  const { register, handleSubmit, formState: { errors } } = useForm<ForgotFormData>({ resolver: zodResolver(forgotSchema) })
+  const [emailInput, setEmailInput] = useState('')
+  const [emailError, setEmailError] = useState('')
 
   const cycleTheme = () => {
     const themes: ThemePreference[] = ['light', 'dark', 'system']
     setTheme(themes[(themes.indexOf(uiTheme) + 1) % themes.length])
   }
 
-  const onSubmit = async (data: ForgotFormData) => {
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!emailInput.trim()) {
+      setEmailError('L\'email est requis')
+      return
+    }
+    if (!validateEmail(emailInput)) {
+      setEmailError('Email invalide')
+      return
+    }
+    setEmailError('')
     setIsLoading(true)
-    try { await apiClient.post('/api/auth/forgot-password', { email: data.email }) } catch { }
-    finally { setSubmittedEmail(data.email); setIsSuccess(true); setIsLoading(false) }
+    try { await api.post('/api/auth/forgot-password', { email: emailInput }) } catch { }
+    finally { setSubmittedEmail(emailInput); setIsSuccess(true); setIsLoading(false) }
   }
 
   return (
@@ -77,15 +86,15 @@ export default function ForgotPasswordPage() {
                 <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t.auth.forgotTitle}</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t.auth.forgotSubtitle}</p>
               </div>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={onSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">{t.auth.emailInstitutionalLabel}</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">alternate_email</span>
-                    <input {...register('email')} type="email" placeholder="user@EVO-LOG.com" disabled={isLoading}
+                    <input value={emailInput} onChange={(e) => { setEmailInput(e.target.value); if (emailError) setEmailError('') }} type="email" placeholder="user@EVO-LOG.com" disabled={isLoading}
                       className="w-full h-11 pl-9 pr-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                   </div>
-                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                  {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
                 </div>
                 <button type="submit" disabled={isLoading} className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 transition-all disabled:opacity-70">
                   {isLoading ? <><span className="material-symbols-outlined animate-spin text-[20px]">sync</span><span>{t.auth.forgotSending}</span></> : <><span>{t.auth.forgotCta}</span><span className="material-symbols-outlined text-[20px]">send</span></>}

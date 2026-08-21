@@ -52,15 +52,18 @@ export default function B2BBrandingPage() {
       return res.data
     },
     enabled: mounted,
-    onSuccess: (data) => {
-      setPrimaryColor(data.primary_color)
-      setSecondaryColor(data.secondary_color)
-      setAccentColor(data.accent_color)
-      setLogoUrl(data.logo_url || '')
-      setBannerUrl(data.banner_url || '')
-      setSubdomain(data.subdomain || '')
-    }
   })
+
+  useEffect(() => {
+    if (portal) {
+      setPrimaryColor(portal.primary_color)
+      setSecondaryColor(portal.secondary_color)
+      setAccentColor(portal.accent_color)
+      setLogoUrl(portal.logo_url || '')
+      setBannerUrl(portal.banner_url || '')
+      setSubdomain(portal.subdomain || '')
+    }
+  }, [portal])
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {

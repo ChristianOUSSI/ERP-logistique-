@@ -2,8 +2,11 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+export type ThemePreference = 'light' | 'dark' | 'system';
+
 interface SettingsContextType {
-  theme: 'light' | 'dark';
+  theme: ThemePreference;
+  setTheme: (theme: ThemePreference) => void;
   toggleTheme: () => void;
   language: 'fr' | 'en';
   setLanguage: (lang: 'fr' | 'en') => void;
@@ -12,15 +15,15 @@ interface SettingsContextType {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<ThemePreference>('light');
   const [language, setLanguage] = useState<'fr' | 'en'>('fr');
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light');
   };
 
   return (
-    <SettingsContext.Provider value={{ theme, toggleTheme, language, setLanguage }}>
+    <SettingsContext.Provider value={{ theme, setTheme, toggleTheme, language, setLanguage }}>
       {children}
     </SettingsContext.Provider>
   );

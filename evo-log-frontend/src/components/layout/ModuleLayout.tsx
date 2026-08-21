@@ -2,11 +2,12 @@
 
 import { ReactNode } from 'react';
 
-export default function ModuleLayout({
-  children,
-}: {
+interface ModuleLayoutProps {
   children: ReactNode;
-}) {
+  module?: string;
+}
+
+export default function ModuleLayout({ children, module }: ModuleLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-100">
       {children}

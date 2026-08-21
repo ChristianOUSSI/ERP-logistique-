@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'blacEVO-translucent',
+    statusBarStyle: 'black-translucent',
     title: 'EVO-LOG SaaS',
   },
 }

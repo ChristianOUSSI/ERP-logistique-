@@ -1,1 +1,53 @@
-archHome&&h&&e.config.enableIconBackplate||e.config.enableRecentLocalSearchWebIcon||e.config.enableRecentASSearchWebIcon)&&"MRS"===g.dataSource?" recentSearchWebIcon":""),q={};Z&&(q.height=Z),c=P?t.createIcon({icon:g.secondaryIcon,type:"SecondaryIcon",additionalCssClass:j,badgeIcon:e.shouldShowBadgeIcon()?g.badgeIcon:void 0}):W?t.createElement("div",{className:"wsb-ts__img",style:{backgroundImage:`url(${null==(r=g.icon)?void 0:r.content})`}}):t.createIcon({icon:g.icon,suggestionType:g.type,badgeIcon:e.shouldShowBadgeIcon()?g.badgeIcon:void 0});let z=e.config.enableCuratedSearchHome&&h&&D&&g.hasMruData&&(g.relativeTime||g.lastLaunchTime),Q=function(n,i,o,r,s,d){let c=t.classNames("details",{small2Margin:s}),p=a(n,i,o,r);n.removeIcon&&!n.removeIcon.title&&(n.removeIcon.title=n.narratorText);let u=t.createElement("div",{className:c}),g=t.createElement("div",{className:"primaryText","data-partnertag":t.whenTestHooks("Suggestion.PrimaryText")});if(p||d){let a=t.createElement("div",{className:"primaryTextContent"}),c=t.createElement("span",{className:t.classNames("title",{isNotRTLLan:e.isRtl()&&!e.isRTLLan(null==n?void 0:n.text),underlineSuggOnHov:e.config.enableLSuggUnderlineOnHover}),"data-partnertag":t.whenTestHooks("Suggestion.PrimaryTextTitle")});if(c.appendChild(t.buildHighlightedTextNode(n,r)),a.appendChild(c),!s||d){let e=t.createElement("span",{className:"additionalInfoText annotation"});e.appendChild(l(n,i,o,r,p)),a.appendChild(e);let s=t.createElement("div",{className:"additionalCallout"});n.additionalCalloutIcon&&s.appendChild(t.createIcon({additionalCssClass:"additionalCalloutIcon",icon:n.additionalCalloutIcon})),n.additionalCalloutText&&s.appendChild(t.createElement("span",{className:"additionalCalloutText"},n.additionalCalloutText)),a.appendChild(s)}g.appendChild(a)}else{let a=t.createElement("div",{className:"primaryTextContent"}),l=t.createElement("span",{className:t.classNames("title",{isNotRTLLan:e.isRtl()&&!e.isRTLLan(null==n?void 0:n.text),underlineSuggOnHov:e.config.enableLSuggUnderlineOnHover}),"data-partnertag":t.whenTestHooks("Suggestion.PrimaryTextTitle")});l.appendChild(t.buildHighlightedTextNode(n,r)),a.appendChild(l),g.appendChild(a)}if(n.additionalSubText){let e=t.createElement("ul",{className:"additionalSubText"});n.additionalSubText.forEach(n=>{e.appendChild(t.createElement("li",{className:"subText"},n))}),g.appendChild(e)}if(!p&&n.additionalCalloutIcon&&g.appendChild(t.createIcon({additionalCssClass:"additionalCalloutIcon",icon:n.additionalCalloutIcon})),!p&&n.additionalCalloutText&&g.appendChild(t.createElement("div",{className:"additionalCalloutText","data-partnertag":t.whenTestHooks("AutoSuggest.AdditionalCalloutText")},n.additionalCalloutText)),u.appendChild(g),r&&!d){let e=t.createRemoveIcon({icon:n.removeIcon});e&&u.appendChild(e)}return u}(g,C,f,h,P,!!z),J={className:t.classNames("suggDetailsContainer",{leftPill:g.selected},{limitScaleRange:e.config.limitScaleRange},{imageGridIconContainer:M}),"data-partnertag":t.whenTestHooks("Suggestion.SuggDetailsContainer"),type:"button"};Object.keys(q).length>0&&(J.style=q),M&&(J["aria-label"]=A(null!=w?w:-1),J["aria-hidden"]="true"),O&&V&&(J.onMouseEnter=()=>null==u?void 0:u.onMouseEnter(g.id),J.onMouseLeave=()=>null==u?void 0:u.onMouseLeave(g.id));let K=t.createElement("button",J);if(K.appendChild(c),K.appendChild(Q),z){let n,a,l,o,r=g.url,s=t.createElement("div",{className:"cshRightSide"});s.appendChild(function e(n){let a=i(n),l=t.createElement("div",{className:"cshTimestamp"},a);return t.bindHighlight(l,{field:"relativeTime",getValue:e=>i(e),build:e},a)}(g));let d=t.createElement("div",{className:"cshHoverActions"}),c=g.deviceItem,u=()=>(ee.__suggestion||g).deviceItem||c,m=e.isApp(g.type)&&!!c,h="PPL"===g.type||"CSTORE"===g.type,C="FL"===g.type||"RFS"===g.type||"LI"===g.type||"LV"===g.type,v="FD"===g.type,f=g.webUrl||r,S=!!(f&&/^https?:/i.test(f)),b=(C||v)&&S,w="runas",T="taskbarpin",H="taskbarunpin",y="openfilelocation",E="opencontaining",I="share",N=(t,n,a)=>{let l=Array.isArray(t)?t:[t],i=u();(null==i?void 0:i.getVerbsAsync)?e.Async.safeChain("cshHoverVerb",()=>i.getVerbsAsync(),e=>{let t=!1;for(let n of l){let l=(null!=e?e:[]).find(e=>{var t;return(null==(t=null==e?void 0:e.verb)?void 0:t.toLowerCase())===n.toLowerCase()&&e.executeAsync});if(l){t=!0;try{let e=l.executeAsync();a&&((null==e?void 0:e.then)?e.then(()=>a(),()=>a()):a())}catch(e){null==a||a()}break}}null==n||n(),t||null==a||a()},null,null,l[0]):(null==n||n(),null==a||a())},x=(n,a,l,i,o)=>t.createElement("button",{className:"cshActionBtn",type:"button",tabIndex:-1,"aria-label":n,title:n,"data-tooltip":o||n,onClick:i,onMouseEnter:t=>e.nativeTitleHoverSuppressor(t,n,e.CSH_ROW_ANCESTOR_SELECTOR),onMouseLeave:t=>e.nativeTitleHoverSuppressor(t,n,e.CSH_ROW_ANCESTOR_SELECTOR)},t.createIcon({icon:{content:a,type:l}})),k={RunAs:e.JumplistActionItemType[e.JumplistActionItemType.RunAs],Pin:e.JumplistActionItemType[e.JumplistActionItemType.TaskbarPin],Unpin:e.JumplistActionItemType[e.JumplistActionItemType.TaskbarUnpin],CopyPerson:e.JumplistActionItemType[e.JumplistActionItemType.S_CopyPersonDetails],OpenFileLocation:e.JumplistActionItemType[e.JumplistActionItemType.OpenFileLocation],OpenInBrowser:e.JumplistActionItemType[e.JumplistActionItemType.OpenInBrowser],Share:e.JumplistActionItemType[e.JumplistActionItemType.Share]},L=(t,n)=>{let a=ee.__suggestion||g;e.InstrumentationHelper.instrumentItemClickForContextMenu(e.getCurrentTime(),a.instItem,a.sequenceNumber,a.instrumentPingBack,e.getInputType(n),null,t)};if(m){let n=!!(null==c?void 0:c.getVerbsAsync),a=()=>x(e.Host.getLocString("CuratedSearchHomeRunAsAdminAction"),"&#xE7EF",1,e=>{e.stopPropagation(),L(k.RunAs,e),N(w)}),l=!1,i=()=>{let n=x(e.Host.getLocString(g.pinnedToTaskbar?"CuratedSearchHomeUnpinFromTaskbarAction":"CuratedSearchHomePinToTaskbarAction"),g.pinnedToTaskbar?"&#xE77A":"&#xE718",g.pinnedToTaskbar?1:2,n=>{if(n.stopPropagation(),l)return;l=!0;let a=()=>{l=!1},i=n.currentTarget,o=ee.__suggestion;if(o.pinnedToTaskbar){L(k.Unpin,n),N(H,null,a),(null==c?void 0:c.id)&&e.Host.removeItemFromPinnedToTaskbar(c.id),o.pinnedToTaskbar=!1;let l=e.Host.getLocString("CuratedSearchHomePinToTaskbarAction");i.setAttribute("aria-label",l),e.hoverToggleAttribute(i,"title",l),i.setAttribute("data-tooltip",l),i.setAttribute("aria-pressed","false"),i.innerHTML="";let r=t.createIcon({icon:{content:"&#xE718",type:2}});r&&i.appendChild(r)}else{L(k.Pin,n),N(T,null,a),(null==c?void 0:c.id)&&e.Host.addItemToPinnedToTaskbar(c.id),o.pinnedToTaskbar=!0;let l=e.Host.getLocString("CuratedSearchHomeUnpinFromTaskbarAction");i.setAttribute("aria-label",l),e.hoverToggleAttribute(i,"title",l),i.setAttribute("data-tooltip",l),i.setAttribute("aria-pressed","true"),i.innerHTML="";let r=t.createIcon({icon:{content:"&#xE77A",type:1}});r&&i.appendChild(r)}});return n.setAttribute("data-csh-pin","true"),n.setAttribute("aria-pressed",String(!!g.pinnedToTaskbar)),n},o=d.children.length;n&&g._cshRunAsAvailable&&d.appendChild(a()),n&&g._cshPinAvailable&&d.appendChild(i()),n&&!g._cshAppVerbsChecked&&(g._cshAppVerbsChecked=!0,e.Async.safeChain("cshAppVerbsCheck",()=>c.getVerbsAsync(),e=>{let t=null!=e?e:[];g._cshRunAsAvailable=t.some(e=>{var t;return(null==(t=null==e?void 0:e.verb)?void 0:t.toLowerCase())===w&&!!e.executeAsync});let n=t.some(e=>{var t;let n=null==(t=null==e?void 0:e.verb)?void 0:t.toLowerCase();return(n===T||n===H)&&!!e.executeAsync});g._cshPinAvailable=n,n&&(g.pinnedToTaskbar=t.some(e=>{var t;return(null==(t=null==e?void 0:e.verb)?void 0:t.toLowerCase())===H}));let l=(()=>{let e=d.closest("li");if(d.isConnected&&e&&e.__suggestion===g)return d;let t=document.querySelectorAll(".cshHoverActions");for(let e=0;e<t.length;e++){let n=t[e],a=n.closest("li");if(a&&a.__suggestion===g)return n}return null})();if(l){let e=l.children[o],t=t=>{e&&e.parentNode===l?l.insertBefore(t,e):l.appendChild(t)};g._cshRunAsAvailable&&t(a()),n&&t(i())}},()=>{g._cshPinAvailable=!1,g._cshRunAsAvailable=!1},void 0,void 0,1,void 0,e.Async.isExpectedShellVerbError))}h&&d.appendChild(x(e.Host.getLocString("CopyDetails"),"&#xE8C8",1,e=>{var t;e.stopPropagation(),L(k.CopyPerson,e);let n=g.tooltip||HitHighlightingParser.removeMarkers(g.text);(null==(t=SearchAppWrapper.CortanaApp)?void 0:t.copyToClipboard)&&SearchAppWrapper.CortanaApp.copyToClipboard(n.replace(/\n/g,
+﻿'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+
+export default function Page() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">transactions</h1>
+        <p className="text-gray-600 text-sm mt-1">Module transactions</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="text-center py-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Module en dÃ©veloppement</h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            Ce module est en cours de dÃ©veloppement et sera bientÃ´t disponible.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

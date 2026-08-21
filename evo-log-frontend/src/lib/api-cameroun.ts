@@ -3,7 +3,7 @@
  * Connects frontend to backend endpoints
  */
 
-import { api } from './api'
+import api from './api'
 
 // Types for Cameroon/CEMAC modules
 export interface BSC {

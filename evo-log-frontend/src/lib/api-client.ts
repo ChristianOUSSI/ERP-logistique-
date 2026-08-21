@@ -29,6 +29,14 @@ export const transportAPI = {
   getStocksActifs: async () => {
     const response = await import('./api').then(m => m.default.get('/api/v1/parc/stocks-actifs'))
     return response.data
+  },
+  createChauffeur: async (data: any) => {
+    const response = await import('./api').then(m => m.default.post('/api/v1/transport/chauffeurs', data))
+    return response.data
+  },
+  getChauffeurs: async () => {
+    const response = await import('./api').then(m => m.default.get('/api/v1/transport/chauffeurs'))
+    return response.data
   }
 }
 
@@ -46,6 +54,10 @@ export const parcAPI = {
   },
   getStocksActifs: async () => {
     const response = await import('./api').then(m => m.default.get('/api/v1/parc/stocks-actifs'))
+    return response.data
+  },
+  getZones: async () => {
+    const response = await import('./api').then(m => m.default.get('/api/v1/parc/zones'))
     return response.data
   }
 }

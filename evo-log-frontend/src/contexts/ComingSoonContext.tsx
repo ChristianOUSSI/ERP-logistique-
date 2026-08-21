@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import ComingSoonModal from '@/components/ui/ComingSoonModal';
+import { ComingSoonModal } from '@/components/ui/ComingSoonModal';
 
 interface ComingSoonContextType {
   showComingSoon: (featureName?: string) => void;

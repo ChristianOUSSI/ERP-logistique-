@@ -7,8 +7,8 @@ export default function PaiementLocalPage() {
   const [selectedMethod, setSelectedMethod] = useState('orange');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [paiementHistory, setPaiementHistory] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [paiementHistory, setPaiementHistory] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
 
   const handlePaiement = async (e: React.FormEvent) => {
     e.preventDefault();

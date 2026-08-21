@@ -8,8 +8,8 @@ export default function IntegrationCamerounPage() {
   const [activeTab, setActiveTab] = useState('bsc');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [bscList, setBscList] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [bscList, setBscList] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
 
   const handleCreateBSC = async (e: React.FormEvent) => {
     e.preventDefault();
