@@ -1,20 +1,18 @@
 """
 Tracing middleware for request correlation and distributed tracing
 """
-from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 import uuid
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class TracingMiddleware:
+class TracingMiddleware(BaseHTTPMiddleware):
     """Middleware to add trace IDs to requests for correlation"""
     
-    def __init__(self, app):
-        self.app = app
-    
-    async def __call__(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):
         # Generate or extract trace ID
         trace_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
         
