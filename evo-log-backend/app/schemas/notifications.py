@@ -17,10 +17,10 @@ class NotificationCreate(NotificationBase):
     categorie: str = ""
     donnees: dict = {}
     priorite: str = "normale"
-    expire_le: datetime = None
+    expire_le: Optional[datetime] = None
     reference_externe: str = ""
-    correlation_id = str = ""
-    template_id: int = None
+    correlation_id: str = ""
+    template_id: Optional[int] = None
 
 
 class NotificationUpdate(BaseModel):

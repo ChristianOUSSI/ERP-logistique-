@@ -28,7 +28,7 @@ class Peremption(Base):
     date_peremption = Column(Date, nullable=False)
     date_alerte = Column(Date)  # Alert date before expiration
     quantite = Column(Numeric, nullable=False)
-    methode_evaluation = Column(Enum(MethodeEvaluation), default=MethodeEvaluation.FIFO)
+    methode_evaluation = Column(Enum(MethodeEvaluationStock), default=MethodeEvaluationStock.FIFO)
     statut = Column(String(20), default="actif")  # actif, expire, vendu, consomme
     fournisseur_lot = Column(String(100))
     cout_acquisition = Column(Numeric)
@@ -338,7 +338,7 @@ class LigneBonSortie(Base):
     stock_id = Column(Integer, ForeignKey('stocks.id'), nullable=False)
     quantite_sortie = Column(Numeric, nullable=False)
     prix_unitaire = Column(Numeric)
-    methode_evaluation = Column(Enum(MethodeEvaluation), default=MethodeEvaluation.FIFO)
+    methode_evaluation = Column(Enum(MethodeEvaluationStock), default=MethodeEvaluationStock.FIFO)
     numero_lot = Column(String(50))
     date_peremption = Column(Date)
     statut = Column(String(20), default="conforme")  # conforme, ecart, refuse

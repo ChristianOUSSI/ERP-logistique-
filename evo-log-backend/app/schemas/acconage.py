@@ -497,3 +497,33 @@ class RapportEscaleResponse(BaseModel):
     escale: dict
     operations: dict
     surestaries: dict
+
+
+# Operation Acconage schemas
+class OperationAcconageCreate(BaseModel):
+    numero_operation: str
+    navire_id: int
+    type_operation: str
+    date_debut: datetime
+    date_fin_prevue: Optional[datetime] = None
+    nombre_conteneurs: int = 0
+    statut: str = "en_cours"
+    observations: Optional[str] = None
+
+
+class OperationAcconageResponse(BaseModel):
+    id: int
+    numero_operation: str
+    navire_id: int
+    type_operation: str
+    date_debut: datetime
+    date_fin_prevue: Optional[datetime] = None
+    date_fin_effective: Optional[datetime] = None
+    nombre_conteneurs: int
+    statut: str
+    observations: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

@@ -79,7 +79,7 @@ class KPIService:
             raise ValueError("KPI non trouvé")
         
         valeur_precedente = kpi.derniere_valeur or 0
-        variation = ((derniere_valeur - valeur_precedente) / valeur_precedente * 100) if valeur_precedente > 0 else 0)
+        variation = ((derniere_valeur - valeur_precedente) / valeur_precedente * 100) if valeur_precedente > 0 else 0
         
         if variation > 0:
             tendance = "hausse"
@@ -286,3 +286,14 @@ class ReportingReportingService:
                 for i in indicateurs
             ]
         }
+
+
+# Facade service for backward compatibility
+class ReportingService:
+    """Unified reporting service facade"""
+    dashboard = DashboardExecutifService
+    kpis = KPIService
+    rapports = RapportService
+    exports = ExportService
+    tableau_bord = TableauBordOperationnelService
+    reporting = ReportingReportingService

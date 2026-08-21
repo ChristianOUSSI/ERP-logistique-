@@ -470,3 +470,22 @@ class QHSEReportingService:
                 "eleves": sum(1 for a in analyses if a.niveau_risque == "eleve")
             }
         }
+
+
+# Facade service for backward compatibility
+class QHSEService:
+    """Unified QHSE service facade"""
+    risques = AnalyseRisqueService
+    prevention = ActionPreventionService
+    plans = PlanPreventionService
+    epi = EPIRequisService
+    accidents = AccidentTravailService
+    investigations = InvestigationAccidentService
+    normes = NormeCertificationService
+    audits = AuditQualiteService
+    haccp = HACCPPlanService
+    points_critiques = PointCritiqueCCPService
+    enregistrements = EnregistrementHACCPService
+    formations = FormationQHSEService
+    indicateurs = IndicateurQHSEService
+    reporting = QHSEReportingService

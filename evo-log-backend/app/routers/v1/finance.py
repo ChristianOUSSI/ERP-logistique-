@@ -30,7 +30,7 @@ from app.services.finance_service import (
     CentimesAdditionnelsService, PatenteService, BilanService, CompteResultatService,
     SignatureElectroniqueService, FinanceReportingService
 )
-from app.models.finance import PlanComptableOHADA, EcritureComptable, ExerciceComptable, Facture
+from app.models.finance_ohada import PlanComptableOHADA, EcritureComptableNew as EcritureComptable, ExerciceComptable, FactureNew as Facture
 
 router = APIRouter(prefix="/finance", tags=["Finance"])
 

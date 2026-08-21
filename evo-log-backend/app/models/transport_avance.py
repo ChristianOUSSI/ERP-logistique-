@@ -223,7 +223,7 @@ class AccidentTransport(Base):
     type_accident = Column(String(50))  # collision, renversement, blessure, materiel
     gravite = Column(String(20))  # legere, moyenne, grave, mortel
     blesses = Column(Integer, default=0)
-    deces = Integer, default=0)
+    deces = Column(Integer, default=0)
     degats_materiels = Column(Text)
     temoins = Column(Text)
     rapport_police = Column(String(100))

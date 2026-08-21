@@ -13,7 +13,7 @@ class PlanComptableOHADABase(BaseModel):
     sous_classe: int
 
 
-class PlanComptableOHDACreate(PlanComptableOHADABase):
+class PlanComptableOHADACreate(PlanComptableOHADABase):
     compte_racine: str = ""
     description: str = ""
     compte_centralisateur: bool = False
@@ -608,3 +608,60 @@ class SignatureElectroniqueResponse(SignatureElectroniqueBase):
 class RapportFiscalResponse(BaseModel):
     exercice: dict
     fiscalite: dict
+
+
+# Paiement (Reglement) schemas
+class PaiementCreate(BaseModel):
+    numero_reglement: str
+    facture_id: int
+    date_reglement: date
+    montant: float
+    devise: str = "XAF"
+    mode_paiement: str = "virement"
+    reference_bancaire: Optional[str] = None
+    banque: Optional[str] = None
+    notes: Optional[str] = None
+    effectue_par: Optional[str] = None
+
+
+class PaiementResponse(BaseModel):
+    id: int
+    numero_reglement: str
+    facture_id: int
+    date_reglement: date
+    montant: float
+    devise: str
+    mode_paiement: str
+    reference_bancaire: Optional[str] = None
+    banque: Optional[str] = None
+    notes: Optional[str] = None
+    effectue_par: Optional[str] = None
+    statut: str
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# Compte schemas
+class CompteCreate(BaseModel):
+    numero_compte: str
+    intitule: str
+    type_compte: str = "courant"
+    solde_initial: float = 0.0
+    devise: str = "XAF"
+
+
+class CompteResponse(BaseModel):
+    id: int
+    numero_compte: str
+    intitule: str
+    type_compte: str
+    solde_initial: float
+    devise: str
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

@@ -568,3 +568,19 @@ class AcconageReportingService:
                 "montant": total_surestaries
             }
         }
+
+
+# Facade service for backward compatibility
+class AcconageService:
+    """Unified acconage service facade"""
+    stowage = StowagePlanService
+    grues = GrueService
+    remorqueurs = RemorqueurService
+    conteneurs = ConteneurService
+    connaissements = ConnaissementService
+    packing_lists = PackingListService
+    manifestes = ManifesteService
+    surestaries = SurestarieService
+    thc = THCService
+    nettoyage = NettoyageCaleService
+    reporting = AcconageReportingService

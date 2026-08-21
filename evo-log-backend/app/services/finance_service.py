@@ -3,8 +3,8 @@ from datetime import datetime, date, timedelta
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
-from app.models.finance import (
-    PlanComptableOHADA, EcritureComptable, ExerciceComptable, Facture, LigneFacture,
+from app.models.finance_ohada import (
+    PlanComptableOHADA, EcritureComptableNew as EcritureComptable, ExerciceComptable, FactureNew as Facture, LigneFactureOHADA as LigneFacture,
     Reglement, TVADeclarable, RetenueSource, ISDeclarable, CentimesAdditionnels,
     Patente, Bilan, CompteResultat, SignatureElectronique,
     TypeCompte, RegimeTVA, RegimeIS, StatutTaxe
@@ -515,3 +515,22 @@ class FinanceReportingService:
                 "total_charges_fiscales": total_tva + total_is
             }
         }
+
+
+# Facade service for backward compatibility
+class FinanceService:
+    """Unified finance service facade"""
+    plan_comptable = PlanComptableOHADAService
+    ecritures = EcritureComptableService
+    exercices = ExerciceComptableService
+    factures = FactureService
+    reglements = ReglementService
+    tva = TVADeclarableService
+    retenues = RetenueSourceService
+    is_decl = ISDeclarableService
+    centimes = CentimesAdditionnelsService
+    patente = PatenteService
+    bilan = BilanService
+    compte_resultat = CompteResultatService
+    signature = SignatureElectroniqueService
+    reporting = FinanceReportingService

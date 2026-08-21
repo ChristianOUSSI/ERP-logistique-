@@ -560,3 +560,87 @@ class RapportSecuriteResponse(BaseModel):
     annee: int
     accidents: dict
     risques: dict
+
+
+# Incident schemas
+class IncidentCreate(BaseModel):
+    numero_incident: str
+    type_incident: str
+    date_incident: datetime
+    lieu: str
+    description: str
+    gravite: str = "mineur"
+    personnes_impliquees: Optional[str] = None
+    actions_immediates: Optional[str] = None
+    statut: str = "declare"
+
+
+class IncidentUpdate(BaseModel):
+    gravite: Optional[str] = None
+    description: Optional[str] = None
+    actions_correctives: Optional[str] = None
+    statut: Optional[str] = None
+    date_cloture: Optional[datetime] = None
+
+
+class IncidentResponse(BaseModel):
+    id: int
+    numero_incident: str
+    type_incident: str
+    date_incident: datetime
+    lieu: str
+    description: str
+    gravite: str
+    personnes_impliquees: Optional[str] = None
+    actions_immediates: Optional[str] = None
+    actions_correctives: Optional[str] = None
+    statut: str
+    date_cloture: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# Rapport QHSE
+class RapportQHSEResponse(BaseModel):
+    id: int
+    periode: str
+    nb_incidents: int = 0
+    nb_accidents: int = 0
+    nb_inspections: int = 0
+    nb_actions_correctives: int = 0
+    taux_frequence: Optional[float] = None
+    taux_gravite: Optional[float] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# Procedure Securite schemas
+class ProcedureSecuriteCreate(BaseModel):
+    numero_procedure: str
+    titre: str
+    type_procedure: str
+    description: str
+    frequence: Optional[str] = None
+    responsable: Optional[str] = None
+    statut: str = "active"
+
+
+class ProcedureSecuriteResponse(BaseModel):
+    id: int
+    numero_procedure: str
+    titre: str
+    type_procedure: str
+    description: str
+    frequence: Optional[str] = None
+    responsable: Optional[str] = None
+    statut: str
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

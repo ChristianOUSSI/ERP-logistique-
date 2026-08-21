@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 
-from app.models.maintenance import Intervention, PieceRechange
+from app.models.maintenance_gmao import OrdreMaintenance as Intervention, PieceRechangeGMAO as PieceRechange
 from app.schemas.maintenance import InterventionCreate, InterventionUpdate, PieceRechangeCreate
 
 
