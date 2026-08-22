@@ -3,7 +3,6 @@
  * Re-exports apiClient and specific API modules
  */
 export { default as api } from './api'
-export * from './api-cameroun'
 
 // Basic API modules
 export const financeAPI = {
