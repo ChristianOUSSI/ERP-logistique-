@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd evo-log-frontend && npm install && npm run build",
-  "outputDirectory": "evo-log-frontend/.next",
-  "framework": "nextjs",
-  "installCommand": "cd evo-log-frontend && npm install",
-  "devCommand": "cd evo-log-frontend && npm run dev"
+  "rootDirectory": "evo-log-frontend",
+  "framework": "nextjs"
 }
