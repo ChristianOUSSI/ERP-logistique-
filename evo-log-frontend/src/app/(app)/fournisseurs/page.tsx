@@ -14,7 +14,7 @@ import {
   Filter,
   Download
 } from 'lucide-react'
-import { api } from '@/lib/api-client'
+import api from '@/lib/api'
 
 interface Fournisseur {
   id: number
